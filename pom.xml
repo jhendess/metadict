@@ -45,7 +45,6 @@
         <wildfly.version>8.1.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
         <jackson.version>2.4.0</jackson.version>
-        <guice.version>4.0-beta5</guice.version>
     </properties>
 
 

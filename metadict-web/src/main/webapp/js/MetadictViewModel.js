@@ -90,7 +90,7 @@ function MetadictViewModel() {
         this.isTemporalError(false);
         this.errorMessage(undefined);
         this.enableQueryElements();
-    }
+    } ;
 
     this.disableQueryElements = function () {
         $("#query_input").prop("disable", true);
@@ -145,6 +145,15 @@ function MetadictViewModel() {
 
     this.submitQuery = function () {
         try {
+            if (self.queryString() == undefined || self.queryString().length <= 0) {
+                Materialize.toast('No query entered', 4000);
+                return;
+            }
+            if (self.selectedDictionaries() == undefined || self.selectedDictionaries().length <= 0) {
+                Materialize.toast('No dictionaries selected', 4000);
+                return;
+            }
+
             self.isLoading(true);
             self.disableQueryElements();
 

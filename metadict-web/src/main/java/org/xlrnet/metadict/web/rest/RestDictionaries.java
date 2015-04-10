@@ -39,6 +39,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -70,7 +71,7 @@ public class RestDictionaries {
     public Response listAllRegisteredDictionaries() {
         try {
             return Response.ok(ResponseContainer.fromSuccessful(metadictCore.getEngineRegistry().getSupportedDictionaries())).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
         }
     }
@@ -81,7 +82,7 @@ public class RestDictionaries {
     public Response listBidirectedRegisteredDictionaries() {
         try {
             return Response.ok(ResponseContainer.fromSuccessful(getBidirectedDictionaries())).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
         }
     }
@@ -92,18 +93,21 @@ public class RestDictionaries {
     public Response listUnidirectedRegisteredDictionaries() {
         try {
             return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
         }
     }
 
     @NotNull
     private Collection<Dictionary> getBidirectedDictionaries() {
-        return metadictCore
+        List<Dictionary> bidirectional = metadictCore
                 .getEngineRegistry()
                 .getSupportedDictionaries()
                 .stream()
                 .filter(Dictionary::isBidirectional)
+                .collect(Collectors.toList());
+        return bidirectional.stream()
+                .filter(d -> !bidirectional.contains(Dictionary.fromLanguages(d.getOutput(), d.getInput(), true)))
                 .collect(Collectors.toList());
     }
 

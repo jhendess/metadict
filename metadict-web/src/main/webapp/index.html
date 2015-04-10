@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="128x128" href="img/logo-icon.png">
+
     <title>Metadict Search Engine</title>
 
     <!-- Materialize CSS  -->
@@ -29,7 +32,7 @@
 </head>
 <body>
 
-<a class="hide-on-small-only" href="https://github.com/jhendess">
+<a class="hide-on-small-only" href="https://github.com/jhendess/metadict">
     <img style="position: absolute; top: 0; right: 0; border: 0;" src="img/forkme.png" alt="Fork me on GitHub">
 </a>
 
@@ -38,13 +41,13 @@
         <ul class="right hide-on-med-and-down">
             <li><a href="#">Statistics</a></li>
             <li><a href="#">Configuration</a></li>
-            <li><a href="#">About</a></li>
+            <li><a class="dialogTrigger" href="#aboutDialog">About</a></li>
         </ul>
 
         <ul id="nav-mobile" class="side-nav">
             <li><a href="#">Statistics</a></li>
             <li><a href="#">Configuration</a></li>
-            <li><a href="#">About</a></li>
+            <li><a class="dialogTrigger" href="#aboutDialog">About</a></li>
         </ul>
         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -96,7 +99,7 @@
                     <div class="row">
                         <div class="col input-field s9 m9">
                             <input placeholder="Your search query" id="query_input" type="text" class="validate"
-                                   data-bind="value: queryString">
+                                   autofocus data-bind="value: queryString">
                             <label for="query_input">Search dictionaries...</label>
                         </div>
                         <div class="col s3 m3 right-align">
@@ -160,6 +163,45 @@
         </div>
     </div>
 </main>
+
+<!-- About dialog -->
+<div id="aboutDialog" class="modal modal-close">
+    <div class="modal-content">
+        <div class="row">
+            <div class="col offset-s4 s4 m4">
+                <img class="responsive-img circle" src="img/logo-large.png">
+            </div>
+            <div class="col s12 m8">
+                <h4>About Metadict</h4>
+
+                <p>Metadict is a modular meta search engine for dictionaries. With metadict you can look up translations
+                    in multiple dictionaries with just a single query. According to the selected languages, Metadict
+                    will automatically decide which backend engines should be used to provide the most diverse and
+                    accurate results possible.</p>
+
+                <p>The Metadict Webapp is based on the following frameworks and libraries:</p>
+                <ul>
+                    <li><a href="http://materializecss.com/">Materialze CSS</a></li>
+                    <li><a href="http://knockoutjs.com">KnockoutJS</a></li>
+                    <li><a href="http://lipis.github.io/flag-icon-css/">jQuery</a></li>
+                    <li><a href="https://jquery.com/">Flag-icon-css</a></li>
+                </ul>
+
+                <p>The Metadict server is written in Java and built upon the following frameworks and libraries:</p>
+                <ul>
+                    <li><a href="http://weld.cdi-spec.org/">JBoss Weld</a></li>
+                    <li><a href="http://resteasy.jboss.org/">JBoss RESTEasy</a></li>
+                    <li><a href="https://commons.apache.org/proper/commons-lang/">Apache Commons Lang</a></li>
+                    <li><a href="https://code.google.com/p/guava-libraries/">Google Guava</a></li>
+                    <li><a href="http://wiki.fasterxml.com/JacksonHome">FasterXML Jackson JSON Processor</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+</div>
 
 <footer class="page-footer #e53935 red darken-1 modal-footer">
     <div class="footer-copyright">
