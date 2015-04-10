@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <title>Metadict Search Engine</title>
+
+    <!-- Materialize CSS  -->
+    <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <!-- Flag icon CSS -->
+    <link href="css/flag-icon.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <!-- Custom CSS -->
+    <link href="css/app.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <!-- jQuery -->
+    <script src="lib/jquery-2.1.1.min.js"></script>
+    <!-- Knockout -->
+    <script src="lib/knockout-3.3.0.js"></script>
+    <!-- Materialize -->
+    <script src="lib/materialize.min.js"></script>
+    <!-- Underscore -->
+    <script src="lib/underscore-min.js"></script>
+    <!-- Main App -->
+    <script src="js/MetadictClient.js"></script>
+    <script src="js/MetadictViewModel.js"></script>
+    <script src="js/Application.js"></script>
+
+</head>
+<body>
+
+<a class="hide-on-small-only" href="https://github.com/jhendess">
+    <img style="position: absolute; top: 0; right: 0; border: 0;" src="img/forkme.png" alt="Fork me on GitHub">
+</a>
+
+<nav class="#1976d2 blue darken-2" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Metadict</a>
+        <ul class="right hide-on-med-and-down">
+            <li><a href="#">Statistics</a></li>
+            <li><a href="#">Configuration</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+
+        <ul id="nav-mobile" class="side-nav">
+            <li><a href="#">Statistics</a></li>
+            <li><a href="#">Configuration</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+    </div>
+</nav>
+
+<main>
+
+    <div class="section no-pad-bot" id="index-banner">
+        <div class="container">
+
+            <h1 class="header center red-text lighten-1">Metadict <span
+                    class="hide-on-small-and-down">Search Engine</span>
+            </h1>
+            <br>
+
+        </div>
+    </div>
+
+
+    <div class="container">
+        <!-- Error card -->
+        <div class="row" data-bind="visible: isError">
+            <div class="col s12 offset-m3 m6 center-block">
+                <div class="card #e53935 red darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Application error<i class="mdi-alert-error right"></i></span>
+
+                        <p>An unexpected error occurred in the Metadict webapp.
+                            <span data-bind="visible: !isTemporalError">Please reload the Application.</span>
+                        </p>
+
+                        <p>If this error persists, you should open an issue in the official github.com
+                            repository of Metadict.</p>
+
+                        <p data-bind="visible: errorMessage != undefined">Error message: <span
+                                data-bind="text: errorMessage"></span></p>
+
+                        <div class="card-action" data-bind="visible: isTemporalError">
+                            <a class="right" href="#" data-bind="click: closeError">Close this message</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section for input and query fields -->
+        <div class="section" id="mainSection" data-bind="visible: (isConnected() && !isError())">
+            <div class="row">
+                <form class="col s12 offset-m2 m8" data-bind="submit: submitQuery">
+                    <div class="row">
+                        <div class="col input-field s9 m9">
+                            <input placeholder="Your search query" id="query_input" type="text" class="validate"
+                                   data-bind="value: queryString">
+                            <label for="query_input">Search dictionaries...</label>
+                        </div>
+                        <div class="col s3 m3 right-align">
+                            <a id="query_button" data-bind="click: submitQuery"
+                               class="waves-effect waves-light btn #0091ea light-blue accent-4">
+                                <i class="mdi-action-search right"></i>
+                                <span class="hide-on-small-only">Find</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row s12">
+                        <div class="container" data-bind="foreach: dictionaries">
+                            <div class="col m3 s6">
+                                <input type="checkbox" class="filled-in"
+                                       data-bind=" attr: {id: 'dict_' + $index()}, checked: $root.selectedDictionaries, checkedValue: $data.queryStringWithDialect"/>
+                                <label data-bind="attr: {for: 'dict_' + $index()}">
+                                    <span data-bind="text: $data.queryStringWithDialect"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Loading indicator -->
+        <div class="section" data-bind="visible: isLoading">
+            <div class="col s12 m4 center">
+                <div class="preloader-wrapper active">
+                    <div class="spinner-layer spinner-red-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Results -->
+    <div class="row">
+        <div class="col s12 offset-m3 m6">
+            <div data-bind="foreach: entryGroups">
+                <div class="section">
+                    <h5 data-bind="text: groupIdentifier + ':'"></h5>
+                    <table class="striped">
+                        <tbody data-bind="foreach: $data.resultEntries">
+                        <tr>
+                            <td data-bind="template: {name: 'dictionaryObject-template', data: input}"></td>
+                            <td data-bind="template: {name: 'dictionaryObject-template', data: output}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer #e53935 red darken-1 modal-footer">
+    <div class="footer-copyright">
+        <div class="container">
+            Copryright by <a class="orange-text text-lighten-3" href="https://github.com/jhendess/">Jakob Hendeß</a>
+            |
+            MIT License
+        </div>
+    </div>
+</footer>
+
+<script type="text/html" id="dictionaryObject-template">
+    <span data-bind="css: $root.resolveFlagClasses(language)"></span>
+    <span data-bind="text: generalForm"></span>
+</script>
+
+</body>
+</html>

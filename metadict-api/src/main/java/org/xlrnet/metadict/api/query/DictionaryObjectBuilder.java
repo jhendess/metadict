@@ -1,0 +1,211 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Jakob Hendeß
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package org.xlrnet.metadict.api.query;
+
+import org.xlrnet.metadict.api.language.GrammaticalForm;
+import org.xlrnet.metadict.api.language.GrammaticalGender;
+import org.xlrnet.metadict.api.language.Language;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Builder for creating new {@link DictionaryObject} objects.
+ */
+public class DictionaryObjectBuilder {
+
+    private Language language;
+
+    private String generalForm;
+
+    private String description;
+
+    private String meaning;
+
+    private String abbreviation;
+
+    private String domain;
+
+    private GrammaticalGender grammaticalGender;
+
+    private Map<GrammaticalForm, String> additionalForms = new HashMap<>();
+
+    /**
+     * Build a new instance of {@link DictionaryObject} with the set properties.
+     *
+     * @return a new instance of {@link DictionaryObject}.
+     */
+    public DictionaryObject build() {
+        checkArgument(language != null, "Language may not be null");
+        return new DictionaryObjectImpl(language, generalForm, description, meaning, abbreviation, domain, grammaticalGender, additionalForms);
+    }
+
+    /**
+     * Sets an abbreviation for the new object.
+     * <p>
+     * Example:
+     * The abbreviation for "for example" is "e.g.".
+     *
+     * @param abbreviation
+     *         An abbreviation for the new object.
+     */
+    public DictionaryObjectBuilder setAbbreviation(String abbreviation) {
+        checkNotNull(abbreviation);
+
+        this.abbreviation = abbreviation;
+        return this;
+    }
+
+    /**
+     * Sets the value for a given irregular form of the new object. See {@link #setAdditionalForm(GrammaticalForm,
+     * String)}.
+     *
+     * @param key
+     *         The key (i.e. grammatical form) for which a value should be stored.
+     * @param value
+     *         The value for the grammatical form.
+     */
+    public DictionaryObjectBuilder setAdditionalForm(GrammaticalForm key, String value) {
+        checkNotNull(key);
+        checkNotNull(value);
+
+        this.additionalForms.put(key, value);
+        return this;
+    }
+
+    /**
+     * Set the map of all irregular forms of the new object. These include e.g. special plural forms or
+     * gender-dependent
+     * forms (in case of nouns) or irregular tenses on verbs.
+     *
+     * @return The map of all irregular forms of the new object.
+     */
+    public DictionaryObjectBuilder setAdditionalForms(Map<GrammaticalForm, String> additionalForms) {
+        checkNotNull(additionalForms);
+
+        this.additionalForms = additionalForms;
+        return this;
+    }
+
+    /**
+     * Set a description for the object. The description field should be used for everything that is not a meaning
+     * and does not fit in the other fields of this interface.
+     *
+     * @param description
+     *         A description for the new object.
+     */
+    public DictionaryObjectBuilder setDescription(String description) {
+        checkNotNull(description);
+
+        this.description = description;
+        return this;
+    }
+
+    /**
+     * Set the special domain the new object is used in. This can e.g. be something like "tech." if the object is only
+     * used in technical contexts.
+     *
+     * @param domain
+     *         The special domain the new object is used in.
+     */
+    public DictionaryObjectBuilder setDomain(String domain) {
+        checkNotNull(domain);
+
+        this.domain = domain;
+        return this;
+    }
+
+    /**
+     * Set the general form of this object. The general form should be the most generic form of a word/phrase
+     * whenever possible. This method should always return a non-null value, unless there is no specific general form
+     * of a word.
+     * That can e.g. be the case if the object represents an irregular word where each grammatical gender has a
+     * different form and thus no general form exists.
+     * <p>
+     * Example use cases:
+     * <ul>
+     * <li>Singular form of nouns</li>
+     * <li>Present tense of verbs</li>
+     * <li>Basic form of regular adjectives</li>
+     * <li>Any type of phrase</li>
+     * </ul>
+     *
+     * @param generalForm
+     *         The general form of the new object.
+     */
+    public DictionaryObjectBuilder setGeneralForm(String generalForm) {
+        checkNotNull(generalForm);
+
+        this.generalForm = generalForm;
+        return this;
+    }
+
+    /**
+     * Sets the grammatical gender of the new object. This field should be used on nouns (or other types) where the
+     * general form has a grammatical gender.
+     *
+     * @param grammaticalGender
+     *         The grammatical gender of the new object.
+     */
+    public DictionaryObjectBuilder setGrammaticalGender(GrammaticalGender grammaticalGender) {
+        checkNotNull(grammaticalGender);
+
+        this.grammaticalGender = grammaticalGender;
+        return this;
+    }
+
+    /**
+     * Set the {@link Language} this object is written in.
+     *
+     * @param language
+     *         The language the new object is written in.
+     */
+    public DictionaryObjectBuilder setLanguage(Language language) {
+        checkNotNull(language);
+
+        this.language = language;
+        return this;
+    }
+
+    /**
+     * Set the meaning for the new object.
+     * <p>
+     * Example:
+     * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
+     *
+     * @param meaning
+     *         A new meaning for the new object.
+     */
+    public DictionaryObjectBuilder setMeaning(String meaning) {
+        checkNotNull(meaning);
+
+        this.meaning = meaning;
+        return this;
+    }
+
+}
