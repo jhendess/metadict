@@ -56,13 +56,34 @@ function MetadictViewModel() {
     /** Selected dictionaries for querying */
     this.selectedDictionaries = ko.observableArray([]);
 
+    /** Grouped entry results */
     this.entryGroups = ko.observableArray([]);
+
+    /** Computed string concatenation of selected dictionaries */
+    this.selectedDictionariesString = ko.computed(function() {
+        if (self.selectedDictionaries != undefined)
+            return self.selectedDictionaries().join(",");
+        return "";
+    });
+
 
     this.setError = function (message, temporalError) {
         this.isLoading(false);
         this.isError(true);
         this.errorMessage(message);
         this.isTemporalError(temporalError)
+    };
+
+    this.initFromParameters = function() {
+        var queryString = getParameterByName("queryString");
+        var dictionaries = getParameterByName("dictionaries");
+        if (queryString != undefined && queryString !== "")
+            self.queryString(queryString);
+        if (dictionaries != undefined && dictionaries !== "") {
+            var dictionaryArray = dictionaries.split(",");
+            if (dictionaryArray instanceof Array)
+                self.selectedDictionaries(dictionaryArray);
+        }
     };
 
     this.reloadDictionaries = function () {
@@ -75,14 +96,18 @@ function MetadictViewModel() {
     };
 
     this.reloadDictionariesSuccessCallback = function (responseData) {
+        self.isLoading(false);
         if (responseData == undefined || responseData.status == undefined || responseData.data == undefined) {
             self.setError("Internal system error")
         } else {
             self.dictionaries(responseData.data);
             self.isConnected(true);
-            console.log(self.dictionaries())
+            console.log(self.dictionaries());
+            // Submit query based on current get parameters
+            if (self.selectedDictionariesString() != "" && self.queryString() != undefined && self.queryString() != "") {
+                self.submitQuery();
+            }
         }
-        self.isLoading(false)
     };
 
     this.closeError = function () {
@@ -117,7 +142,7 @@ function MetadictViewModel() {
         if (dictionaryIndex >= 0)
             self.selectedDictionaries(_.without(self.selectedDictionaries(), queryString))
         else
-            self.selectedDictionaries.push(queryString)
+            self.selectedDictionaries.push(queryString);
         console.log(self.selectedDictionaries())
     };
 
@@ -187,5 +212,6 @@ function MetadictViewModel() {
 
     // Initialize the ViewModel
     this.reloadDictionaries();
+    this.initFromParameters();
 
 }

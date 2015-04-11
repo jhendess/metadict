@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 /**
  * Main application file for the Metadict webapp.
  */
