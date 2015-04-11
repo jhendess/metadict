@@ -134,6 +134,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!-- Wildfly deployment -->
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
@@ -141,6 +142,27 @@
                 <configuration>
                     <skip>true</skip>   <!-- Skip deployment in parent pom -->
                 </configuration>
+            </plugin>
+            <!-- Code coverage with jacoco -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.2.201409121644</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-tests</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>coverage-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
