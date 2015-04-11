@@ -27,6 +27,7 @@ package org.xlrnet.metadict.impl.query;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.impl.aggregation.GroupingType;
+import org.xlrnet.metadict.impl.aggregation.OrderType;
 import org.xlrnet.metadict.impl.core.MetadictCore;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class QueryRequestBuilder {
 
     private GroupingType groupingType = GroupingType.NONE;
 
+    private OrderType orderType = OrderType.RELEVANCE;
+
     protected QueryRequestBuilder(@NotNull MetadictCore metadictCore) {
         this.metadictCore = metadictCore;
     }
@@ -66,7 +69,7 @@ public class QueryRequestBuilder {
     }
 
     public QueryRequest build() {
-        return new QueryRequestImpl(metadictCore, queryString, queryDictionaries, groupingType);
+        return new QueryRequestImpl(metadictCore, queryString, queryDictionaries, groupingType, orderType);
     }
 
     /**
@@ -77,10 +80,25 @@ public class QueryRequestBuilder {
      *         The grouping type that should be used for the result set.
      * @return the current builder
      */
-    public QueryRequestBuilder setGroupingType(GroupingType groupingType) {
+    public QueryRequestBuilder setGroupBy(GroupingType groupingType) {
         checkNotNull(groupingType);
 
         this.groupingType = groupingType;
+        return this;
+    }
+
+    /**
+     * Set the order type that should be used for the result set. If none is set, the order type {@link
+     * OrderType#RELEVANCE} will be used as default.
+     *
+     * @param orderType
+     *         The order type that should be used for the result set.
+     * @return the current builder
+     */
+    public QueryRequestBuilder setOrderBy(OrderType orderType) {
+        checkNotNull(orderType);
+
+        this.orderType = orderType;
         return this;
     }
 

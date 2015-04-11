@@ -30,7 +30,7 @@ import org.xlrnet.metadict.api.query.DictionaryEntry;
  * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
  * {@link DictionaryEntry} but also provides information about the source of the entry and scoring information.
  */
-public interface ResultEntry extends DictionaryEntry {
+public interface ResultEntry extends DictionaryEntry, Comparable<ResultEntry> {
 
     /**
      * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0

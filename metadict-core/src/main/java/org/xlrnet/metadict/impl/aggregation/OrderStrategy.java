@@ -24,27 +24,27 @@
 
 package org.xlrnet.metadict.impl.aggregation;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.impl.query.QueryRequest;
+
+import java.util.Collection;
 
 /**
- * The {@link ResultGroup} is used to group {@link ResultEntry} objects according to a specified method like e.g. the
- * type of the entry.
+ * A {@link OrderStrategy} defines how multiple {@link ResultGroup} objects should be sorted.
  */
-public interface ResultGroup extends Iterable<ResultEntry> {
+public interface OrderStrategy {
 
     /**
-     * Returns a string representation of the group identifier. For example if the group is based on entry types the
-     * identifier might be "NOUNS" for a group that contains only nouns.
+     * Sort the entries in the given result groups with the internal strategy and return a new collection of {@link
+     * ResultGroup} objects in the specified order.
      *
-     * @return a string representation of the group identifier.
+     * @param queryRequest
+     *         The query request that was used to create the result groups.
+     * @param unorderedResultGroups
+     *         An unsorted collection of result groups.
+     * @return a sorted collection of groups.
      */
-    String getGroupIdentifier();
-
-    /**
-     * Returns the entries of this group.
-     *
-     * @return the entries of this group.
-     */
-    List<ResultEntry> getResultEntries();
+    @NotNull
+    Collection<ResultGroup> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> unorderedResultGroups);
 
 }

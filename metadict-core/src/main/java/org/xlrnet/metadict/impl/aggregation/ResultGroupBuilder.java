@@ -26,6 +26,7 @@ package org.xlrnet.metadict.impl.aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,7 +38,7 @@ public class ResultGroupBuilder {
 
     private String groupIdentifier;
 
-    private Collection<ResultEntry> resultEntries = new ArrayList<>();
+    private List<ResultEntry> resultEntries = new ArrayList<>();
 
     /**
      * Adds all results from the given Iterable to this group.
@@ -100,7 +101,7 @@ public class ResultGroupBuilder {
      *         The collection of result entries that should be added.
      * @return The current builder.
      */
-    public ResultGroupBuilder setResultEntries(Collection<ResultEntry> resultEntries) {
+    public ResultGroupBuilder setResultEntries(List<ResultEntry> resultEntries) {
         checkNotNull(resultEntries);
 
         this.resultEntries = resultEntries;

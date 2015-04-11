@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Implementation of {@link ResultGroup}.
@@ -36,9 +37,9 @@ public class ResultGroupImpl implements ResultGroup {
 
     private final String groupIdentifier;
 
-    private final Collection<ResultEntry> resultEntries;
+    private final List<ResultEntry> resultEntries;
 
-    ResultGroupImpl(String groupIdentifier, Collection<ResultEntry> resultEntries) {
+    ResultGroupImpl(String groupIdentifier, List<ResultEntry> resultEntries) {
         this.groupIdentifier = groupIdentifier;
         this.resultEntries = resultEntries;
     }
@@ -60,7 +61,7 @@ public class ResultGroupImpl implements ResultGroup {
      * @return the entries of this group.
      */
     @Override
-    public Collection<ResultEntry> getResultEntries() {
+    public List<ResultEntry> getResultEntries() {
         return resultEntries;
     }
 

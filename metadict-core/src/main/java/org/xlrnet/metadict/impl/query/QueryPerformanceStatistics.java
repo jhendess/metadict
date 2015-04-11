@@ -40,6 +40,8 @@ public class QueryPerformanceStatistics {
 
     long groupPhaseDuration;
 
+    long orderPhaseDuration;
+
     long collectPhaseDuration;
 
     public long getCollectPhaseDuration() {
@@ -57,6 +59,15 @@ public class QueryPerformanceStatistics {
 
     protected QueryPerformanceStatistics setGroupPhaseDuration(long groupPhaseDuration) {
         this.groupPhaseDuration = groupPhaseDuration;
+        return this;
+    }
+
+    public long getOrderPhaseDuration() {
+        return orderPhaseDuration;
+    }
+
+    protected QueryPerformanceStatistics setOrderPhaseDuration(long orderPhaseDuration) {
+        this.orderPhaseDuration = orderPhaseDuration;
         return this;
     }
 
@@ -94,6 +105,7 @@ public class QueryPerformanceStatistics {
                 .add("planningPhaseDuration", planningPhaseDuration)
                 .add("queryPhaseDuration", queryPhaseDuration)
                 .add("groupPhaseDuration", groupPhaseDuration)
+                .add("orderPhaseDuration", orderPhaseDuration)
                 .add("collectPhaseDuration", collectPhaseDuration)
                 .toString();
     }

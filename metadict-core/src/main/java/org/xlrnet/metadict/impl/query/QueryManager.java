@@ -31,6 +31,7 @@ import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
 import org.xlrnet.metadict.impl.aggregation.GroupingType;
+import org.xlrnet.metadict.impl.aggregation.OrderType;
 import org.xlrnet.metadict.impl.aggregation.ResultGroup;
 import org.xlrnet.metadict.impl.core.EngineRegistry;
 import org.xlrnet.metadict.impl.core.MetadictCore;
@@ -105,7 +106,7 @@ public class QueryManager {
     }
 
     @NotNull
-    private Collection<ResultGroup> aggregateQueryResults(QueryRequest queryRequest, Iterable<QueryStepResult> engineQueryResults) {
+    private Collection<ResultGroup> groupQueryResults(QueryRequest queryRequest, Iterable<QueryStepResult> engineQueryResults) {
         GroupingType groupingType = queryRequest.getQueryGrouping();
 
         LOGGER.debug("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
@@ -150,7 +151,10 @@ public class QueryManager {
         Iterable<QueryStepResult> engineQueryResults = executeQueryPlan(queryPlan);
 
         long startGroupingTime = System.currentTimeMillis();
-        Collection<ResultGroup> resultGroups = aggregateQueryResults(queryRequest, engineQueryResults);
+        Collection<ResultGroup> resultGroups = groupQueryResults(queryRequest, engineQueryResults);
+
+        long startOrderTime = System.currentTimeMillis();
+        Collection<ResultGroup> orderedResultGroups = orderQueryResults(queryRequest, resultGroups);
 
         long startCollectingTime = System.currentTimeMillis();
         List<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
@@ -159,10 +163,22 @@ public class QueryManager {
         long finishTime = System.currentTimeMillis();
         performanceStatistics.setPlanningPhaseDuration(startQueryTime - startPlanningTime)
                 .setQueryPhaseDuration(startGroupingTime - startQueryTime)
-                .setGroupPhaseDuration(startCollectingTime - startGroupingTime)
+                .setGroupPhaseDuration(startOrderTime - startGroupingTime)
+                .setOrderPhaseDuration(startCollectingTime - startOrderTime)
                 .setCollectPhaseDuration(finishTime - startCollectingTime)
                 .setTotalDuration(finishTime - startPlanningTime);
 
-        return buildQueryResponse(queryRequest, resultGroups, similarRecommendations, externalContents, performanceStatistics);
+        return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics);
+    }
+
+    @NotNull
+    private Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
+        OrderType orderType = queryRequest.getQueryOrdering();
+
+        LOGGER.debug("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
+        Collection<ResultGroup> sortedResultGroups = orderType.getOrderStrategy().sortResultGroups(queryRequest, resultGroups);
+        LOGGER.debug("Finished sorting results for query {} using strategy {}.", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
+
+        return sortedResultGroups;
     }
 }

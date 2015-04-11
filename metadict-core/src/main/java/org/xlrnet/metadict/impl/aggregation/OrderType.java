@@ -24,27 +24,23 @@
 
 package org.xlrnet.metadict.impl.aggregation;
 
-import java.util.List;
-
 /**
- * The {@link ResultGroup} is used to group {@link ResultEntry} objects according to a specified method like e.g. the
- * type of the entry.
+ * Use the {@link OrderType} to determine how the entries in each {@link ResultGroup} should be ordered.
  */
-public interface ResultGroup extends Iterable<ResultEntry> {
+public enum OrderType {
 
-    /**
-     * Returns a string representation of the group identifier. For example if the group is based on entry types the
-     * identifier might be "NOUNS" for a group that contains only nouns.
-     *
-     * @return a string representation of the group identifier.
-     */
-    String getGroupIdentifier();
+    RELEVANCE(new LevenstheinRelevanceOrderStrategy()),
 
-    /**
-     * Returns the entries of this group.
-     *
-     * @return the entries of this group.
-     */
-    List<ResultEntry> getResultEntries();
+    PASSTHROUGH(new PassthroughOrderStrategy());
+
+    private OrderStrategy orderStrategy;
+
+    OrderType(OrderStrategy orderStrategy) {
+        this.orderStrategy = orderStrategy;
+    }
+
+    public OrderStrategy getOrderStrategy() {
+        return this.orderStrategy;
+    }
 
 }

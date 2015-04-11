@@ -29,6 +29,7 @@ import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.impl.aggregation.GroupingType;
+import org.xlrnet.metadict.impl.aggregation.OrderType;
 import org.xlrnet.metadict.impl.core.MetadictCore;
 
 import java.util.List;
@@ -46,11 +47,14 @@ public class QueryRequestImpl implements QueryRequest {
 
     private final GroupingType groupingType;
 
-    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<Dictionary> queryDictionaries, GroupingType groupingType) {
+    private final OrderType orderType;
+
+    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<Dictionary> queryDictionaries, GroupingType groupingType, OrderType orderType) {
         this.metadictCore = metadictCore;
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
         this.groupingType = groupingType;
+        this.orderType = orderType;
     }
 
     @Override
@@ -102,6 +106,17 @@ public class QueryRequestImpl implements QueryRequest {
     @Override
     public GroupingType getQueryGrouping() {
         return groupingType;
+    }
+
+    /**
+     * Returns how the result groups should be ordered.
+     *
+     * @return how the result groups should be ordered.
+     */
+    @NotNull
+    @Override
+    public OrderType getQueryOrdering() {
+        return orderType;
     }
 
     /**

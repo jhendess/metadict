@@ -27,6 +27,7 @@ package org.xlrnet.metadict.impl.query;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.impl.aggregation.GroupingType;
+import org.xlrnet.metadict.impl.aggregation.OrderType;
 import org.xlrnet.metadict.impl.exception.MetadictException;
 
 import java.util.List;
@@ -61,6 +62,14 @@ public interface QueryRequest {
      */
     @NotNull
     GroupingType getQueryGrouping();
+
+    /**
+     * Returns how the result groups should be ordered.
+     *
+     * @return how the result groups should be ordered.
+     */
+    @NotNull
+    OrderType getQueryOrdering();
 
     /**
      * Returns the query string for this request. This is usually the string that will be forwarded to the search
