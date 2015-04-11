@@ -134,6 +134,14 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.0.1.Final</version>
+                <configuration>
+                    <skip>true</skip>   <!-- Skip deployment in parent pom -->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
