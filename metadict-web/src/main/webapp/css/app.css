@@ -23,7 +23,6 @@
  */
 
 
-
 /* Sticky footer */
 
 body {
@@ -34,4 +33,14 @@ body {
 
 main {
     flex: 1 0 auto;
+}
+
+/* Different font sizes */
+
+.large-150 {
+    font-size: 150% !important;
+}
+
+.large-130 {
+    font-size: 130% !important;
 }

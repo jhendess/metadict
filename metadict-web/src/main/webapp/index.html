@@ -99,14 +99,15 @@
                 <form class="col s12 offset-m2 m8" data-bind="submit: submitQuery">
                     <div class="row">
                         <div class="col input-field s9 m9">
-                            <input placeholder="Your search query" id="query_input" name="queryString" type="text" class="validate"
+                            <input placeholder="Your search query" id="query_input" name="queryString" type="text"
+                                   class="validate"
                                    autofocus data-bind="value: queryString">
                             <label for="query_input">Search dictionaries...</label>
                             <input type="hidden" name="dictionaries" data-bind="value: selectedDictionariesString"/>
                         </div>
                         <div class="col s3 m3 right-align">
                             <button id="query_button" data-bind="click: submitQuery" type="submit"
-                               class="waves-effect waves-light btn #0091ea light-blue accent-4">
+                                    class="waves-effect waves-light btn #0091ea light-blue accent-4">
                                 <i class="mdi-action-search right"></i>
                                 <span class="hide-on-small-only">Find</span>
                             </button>
@@ -118,8 +119,10 @@
                             <div class="col m3 s6">
                                 <input type="checkbox" class="filled-in"
                                        data-bind=" attr: {id: 'dict_' + $index()}, checked: $root.selectedDictionaries, checkedValue: $data.queryStringWithDialect"/>
-                                <label data-bind="attr: {for: 'dict_' + $index()}">
-                                    <span data-bind="text: $data.queryStringWithDialect"></span>
+                                <label class="large-130" data-bind="attr: {for: 'dict_' + $index()}">
+                                    <span data-bind="template: {name: 'flag-template', data: $data.input}"></span>
+                                    <span data-bind="template: {name: 'flag-template', data: $data.output}"></span>
+                                    <!--<span data-bind="text: $data.queryStringWithDialect"></span>-->
                                 </label>
                             </div>
                         </div>
@@ -183,7 +186,7 @@
 
                 <p>The Metadict Webapp is based on the following frameworks and libraries:</p>
                 <ul>
-                    <li><a href="http://materializecss.com/">Materialze CSS</a></li>
+                    <li><a href="http://materializecss.com/">Materialize CSS</a></li>
                     <li><a href="http://knockoutjs.com">KnockoutJS</a></li>
                     <li><a href="https://jquery.com/">jQuery</a></li>
                     <li><a href="http://lipis.github.io/flag-icon-css/">Flag-icon-css</a></li>
@@ -215,9 +218,17 @@
     </div>
 </footer>
 
+<!-- Templates -->
+
 <script type="text/html" id="dictionaryObject-template">
-    <span data-bind="css: $root.resolveFlagClasses(language)"></span>
+    <span data-bind="template: {name: 'flag-template', data: language}"></span>
     <span data-bind="text: generalForm"></span>
+</script>
+
+<script type="text/html" id="flag-template">
+    <a class="tooltipped" data-position="top" data-delay="50" data-bind="attr: {'data-tooltip' : $root.buildLanguageString($data)}">
+        <span data-bind="css: $root.resolveFlagClasses($data)"></span>
+    </a>
 </script>
 
 </body>

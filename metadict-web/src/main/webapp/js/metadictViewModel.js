@@ -66,6 +66,16 @@ function MetadictViewModel() {
         return "";
     });
 
+    this.buildLanguageString = function(language) {
+        if (language == undefined)
+            return "";
+        var displayName = language.displayName;
+        var dialect = language.dialectDisplayName;
+        if (dialect != undefined)
+            return displayName + " (" + dialect + ")";
+        else
+            return displayName
+    };
 
     this.setError = function (message, temporalError) {
         this.isLoading(false);
@@ -102,7 +112,7 @@ function MetadictViewModel() {
         } else {
             self.dictionaries(responseData.data);
             self.isConnected(true);
-            console.log(self.dictionaries());
+            $('.tooltipped').tooltip({delay: 50});
             // Submit query based on current get parameters
             if (self.selectedDictionariesString() != "" && self.queryString() != undefined && self.queryString() != "") {
                 self.submitQuery();
@@ -161,7 +171,8 @@ function MetadictViewModel() {
             }
             self.entryGroups(responseData.groupedResults);
             self.enableQueryElements();
-            console.log(self.entryGroups())
+            console.log(self.entryGroups());
+            $('.tooltipped').tooltip({delay: 50});
         } catch (e) {
             console.log(e);
             self.setError(e);
