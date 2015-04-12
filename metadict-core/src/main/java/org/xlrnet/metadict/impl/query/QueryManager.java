@@ -106,7 +106,7 @@ public class QueryManager {
     }
 
     @NotNull
-    private Collection<ResultGroup> groupQueryResults(QueryRequest queryRequest, Iterable<QueryStepResult> engineQueryResults) {
+    private Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
         GroupingType groupingType = queryRequest.getQueryGrouping();
 
         LOGGER.debug("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());

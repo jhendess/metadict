@@ -38,6 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,10 +106,15 @@ public class RestDictionaries {
                 .getSupportedDictionaries()
                 .stream()
                 .filter(Dictionary::isBidirectional)
+                .distinct()
                 .collect(Collectors.toList());
-        return bidirectional.stream()
-                .filter(d -> !bidirectional.contains(Dictionary.fromLanguages(d.getOutput(), d.getInput(), true)))
-                .collect(Collectors.toList());
+
+        List<Dictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
+        for (Dictionary dictionary: bidirectional) {
+            if (!distinctBidirectional.contains(Dictionary.inverse(dictionary)))
+                distinctBidirectional.add(dictionary);
+        }
+        return distinctBidirectional;
     }
 
     @NotNull

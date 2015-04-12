@@ -27,6 +27,7 @@ package org.xlrnet.metadict.impl.core;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
@@ -215,31 +216,40 @@ public class EngineRegistry {
         searchEngineMap.put(canonicalEngineName, searchEngine);
 
         // Register supported dictionaries for engine
-        registerDictionaries(canonicalEngineName, featureSet);
+        registerDictionariesFromFeatureSet(canonicalEngineName, featureSet);
 
         logger.info("Registered engine {} from provider {}", canonicalEngineName, canonicalProviderName);
     }
 
-    private void registerDictionaries(String canonicalEngineName, FeatureSet featureSet) {
+    private void registerDictionariesFromFeatureSet(@NotNull String canonicalEngineName, @NotNull FeatureSet featureSet) {
         for (Dictionary dictionary : featureSet.getSupportedDictionaries()) {
-            if (!dictionaryEngineNameMap.containsEntry(dictionary, canonicalEngineName)) {
-                dictionaryEngineNameMap.put(dictionary, canonicalEngineName);
+            registerDictionary(canonicalEngineName, dictionary);
+        }
+    }
+
+    private void registerDictionary(@NotNull String canonicalEngineName, @NotNull Dictionary dictionary) {
+        if (!dictionaryEngineNameMap.containsEntry(dictionary, canonicalEngineName)) {
+            dictionaryEngineNameMap.put(dictionary, canonicalEngineName);
+        }
+        if (dictionary.isBidirectional()) {
+            // Register inverted bidirectional dictionary
+            Dictionary inverseBidirectional = Dictionary.inverse(dictionary);
+            if (!dictionaryEngineNameMap.containsEntry(inverseBidirectional, canonicalEngineName)) {
+                dictionaryEngineNameMap.put(inverseBidirectional, canonicalEngineName);
             }
-            if (dictionary.isBidirectional()) {
-                // Register as non-bidirectional to improve lookup speeds
-                Dictionary simpleDictionary = Dictionary.fromLanguages(dictionary.getInput(), dictionary.getOutput(), false);
-                if (!dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
-                    dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
-                }
-                Dictionary inverseSimpleDictionary = Dictionary.fromLanguages(dictionary.getOutput(), dictionary.getInput(), false);
-                if (!dictionaryEngineNameMap.containsEntry(inverseSimpleDictionary, canonicalEngineName)) {
-                    dictionaryEngineNameMap.put(inverseSimpleDictionary, canonicalEngineName);
-                }
+            // Register as non-bidirectional to improve lookup speeds
+            Dictionary simpleDictionary = Dictionary.fromLanguages(dictionary.getInput(), dictionary.getOutput(), false);
+            if (!dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
+                dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
+            }
+            Dictionary inverseSimpleDictionary = Dictionary.inverse(simpleDictionary);
+            if (!dictionaryEngineNameMap.containsEntry(inverseSimpleDictionary, canonicalEngineName)) {
+                dictionaryEngineNameMap.put(inverseSimpleDictionary, canonicalEngineName);
             }
         }
     }
 
-    private void validateSearchProvider(String canonicalName, EngineDescription engineDescription, FeatureSet featureSet) {
+    private void validateSearchProvider(@NotNull String canonicalName, @Nullable EngineDescription engineDescription, @Nullable FeatureSet featureSet) {
         checkNotNull(engineDescription, "Search provider %s returned null description", canonicalName);
         checkNotNull(featureSet, "Search provider %s returned null feature set", canonicalName);
 
@@ -247,8 +257,8 @@ public class EngineRegistry {
 
         for (Dictionary dictionary : featureSet.getSupportedDictionaries()) {
             checkNotNull(dictionary, "Dictionary from search provider %s may not be null", canonicalName);
-            checkNotNull(dictionary, "Input language in dictionary from search provider %s may not be null", canonicalName);
-            checkNotNull(dictionary, "Output language in dictionary from search provider %s may not be null", canonicalName);
+            checkNotNull(dictionary.getInput(), "Input language in dictionary from search provider %s may not be null", canonicalName);
+            checkNotNull(dictionary.getOutput(), "Output language in dictionary from search provider %s may not be null", canonicalName);
         }
     }
 

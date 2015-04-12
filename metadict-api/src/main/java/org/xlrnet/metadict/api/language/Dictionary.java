@@ -26,6 +26,8 @@ package org.xlrnet.metadict.api.language;
 
 import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 
 import java.util.HashMap;
@@ -57,7 +59,7 @@ public class Dictionary {
 
     private final String queryStringWithDialect;
 
-    private Dictionary(Language input, Language output, boolean bidirectional) {
+    private Dictionary(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
         this.input = input;
         this.output = output;
         this.bidirectional = bidirectional;
@@ -77,7 +79,8 @@ public class Dictionary {
      *         The output language.
      * @return a dictionary query string
      */
-    public static String buildQueryString(Language input, Language output) {
+    @NotNull
+    public static String buildQueryString(@Nullable Language input, @Nullable Language output) {
         checkNotNull(input);
         checkNotNull(output);
 
@@ -100,7 +103,8 @@ public class Dictionary {
      *         The output language.
      * @return a dictionary query string
      */
-    public static String buildQueryStringWithDialect(Language input, Language output) {
+    @NotNull
+    public static String buildQueryStringWithDialect(@Nullable Language input, @Nullable Language output) {
         checkNotNull(input);
         checkNotNull(output);
 
@@ -126,7 +130,8 @@ public class Dictionary {
      * @return a new instance of {@link Dictionary} or lookup if such a configuration already exists in the
      * internal cache.
      */
-    public static Dictionary fromLanguages(Language input, Language output, boolean bidirectional) {
+    @NotNull
+    public static Dictionary fromLanguages(@Nullable Language input, @Nullable Language output, boolean bidirectional) {
         checkNotNull(input, "Input language for dictionary may not be null");
         checkNotNull(output, "Input language for dictionary may not be null");
 
@@ -160,10 +165,13 @@ public class Dictionary {
      * @param queryString
      *         The query string - see method description body.
      * @return all dictionaries matching the query.
+     * @throws IllegalArgumentException
+     *         Will be thrown if the given dictionary query is invalid.
      */
-    public static Dictionary fromQueryString(String queryString, boolean bidirectional) {
+    @NotNull
+    public static Dictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException {
         if (!isValidDictionaryQuery(queryString))
-            return null;
+            throw new IllegalArgumentException("Illegal dictionary query string: " + queryString);
 
         if (bidirectional) {
             if (instanceMap.containsKey("<>" + queryString)) {
@@ -175,6 +183,22 @@ public class Dictionary {
             }
         } else
             return instanceMap.get(queryString);
+    }
+
+    /**
+     * Inverses the language direction of the given {@link Dictionary} object.
+     * <p>
+     * Example:
+     * If the given dictionary is de-en this method will return a dictionary with en-de. The bidirectional state will
+     * not change.
+     *
+     * @param dictionary
+     *         The dictionary object to invert.
+     * @return
+     */
+    @NotNull
+    public static Dictionary inverse(@NotNull Dictionary dictionary) {
+        return Dictionary.fromLanguages(dictionary.getOutput(), dictionary.getInput(), dictionary.isBidirectional());
     }
 
     /**
