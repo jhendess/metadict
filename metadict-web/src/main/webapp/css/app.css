@@ -44,3 +44,10 @@ main {
 .large-130 {
     font-size: 130% !important;
 }
+
+/* Format for additional forms */
+
+.additionalData {
+    margin-left: 5px;
+    font-style: italic;
+}

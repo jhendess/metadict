@@ -223,6 +223,7 @@
 <script type="text/html" id="dictionaryObject-template">
     <span data-bind="template: {name: 'flag-template', data: language}"></span>
     <span data-bind="text: generalForm"></span>
+    <span class="additionalData" data-bind="text: $root.buildAdditionalDataString($data)"></span>
 </script>
 
 <script type="text/html" id="flag-template">

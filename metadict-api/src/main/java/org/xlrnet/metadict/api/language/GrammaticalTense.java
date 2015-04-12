@@ -34,7 +34,9 @@ public enum GrammaticalTense implements GrammaticalForm {
 
     PAST_TENSE,
 
-    PAST_PERFECT, PERFECT_PARTICIPLE;
+    PAST_PERFECT,
+
+    PERFECT_PARTICIPLE;
 
     /**
      * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
