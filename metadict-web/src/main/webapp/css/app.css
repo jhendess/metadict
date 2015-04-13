@@ -45,6 +45,14 @@ main {
     font-size: 130% !important;
 }
 
+a:hover.underlinedLink {
+    text-decoration: underline;
+}
+
+a.underlinedLink {
+    cursor: pointer;
+}
+
 /* Format for additional forms */
 
 .additionalData {

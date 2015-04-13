@@ -62,6 +62,12 @@ function MetadictViewModel() {
     /** Grouped entry results */
     this.entryGroups = ko.observableArray([]);
 
+    /** Search recommendations */
+    this.similarRecommendations = ko.observableArray([]);
+
+    /** External contents */
+    this.externalContents = ko.observableArray([]);
+
     /** Computed string concatenation of selected dictionaries */
     this.selectedDictionariesString = ko.computed(function () {
         if (self.selectedDictionaries != undefined)
@@ -170,18 +176,29 @@ function MetadictViewModel() {
                 self.setError("The last query failed: " + response.status + " - " + (response.message != undefined) ? response.message : "", true);
                 return;
             }
-            if (!(responseData.groupedResults instanceof Array)) {
+            if (!(responseData.groupedResults instanceof Array) ||
+                !(responseData.similarRecommendations instanceof Array) ||
+                !(responseData.externalContents instanceof Array)
+            ) {
                 self.setError("Illegal data structure", true);
                 return;
             }
             self.entryGroups(responseData.groupedResults);
+            self.similarRecommendations(responseData.similarRecommendations);
+            self.externalContents(responseData.externalContents);
+            console.log(self.externalContents());
             self.enableQueryElements();
-            console.log(self.entryGroups());
             $('.tooltipped').tooltip({delay: 50});
         } catch (e) {
             console.log(e);
             self.setError(e);
         }
+    };
+
+    this.requery = function(queryString) {
+        self.queryString(queryString);
+        $("html, body").animate({ scrollTop: "0" });
+        self.submitQuery();
     };
 
     this.submitQuery = function () {
@@ -206,7 +223,6 @@ function MetadictViewModel() {
     };
 
     this.resolveFlagClasses = function (languageObject) {
-        console.log(languageObject);
         if (languageObject == undefined || languageObject.identifier == undefined)
             return "mdi-alert-warning";
         var identifier = languageObject.identifier.substr(0, 2);

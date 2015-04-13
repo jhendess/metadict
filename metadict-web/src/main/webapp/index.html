@@ -146,21 +146,46 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Results -->
-    <div class="row">
-        <div class="col s12 offset-m3 m6">
-            <div data-bind="foreach: entryGroups">
-                <div class="section">
-                    <h5 data-bind="text: groupIdentifier + ':'"></h5>
-                    <table class="striped">
-                        <tbody data-bind="foreach: $data.resultEntries">
-                        <tr>
-                            <td data-bind="template: {name: 'dictionaryObject-template', data: input}"></td>
-                            <td data-bind="template: {name: 'dictionaryObject-template', data: output}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+        <!-- Results -->
+        <div class="row">
+            <div class="col s12 offset-m1 m10">
+                <div data-bind="foreach: entryGroups">
+                    <div class="section">
+                        <h5 data-bind="text: groupIdentifier + ':'"></h5>
+                        <table class="striped">
+                            <tbody data-bind="foreach: $data.resultEntries">
+                            <tr>
+                                <td data-bind="template: {name: 'dictionaryObject-template', data: input}"></td>
+                                <td data-bind="template: {name: 'dictionaryObject-template', data: output}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" data-bind="if: similarRecommendations().length > 0">
+                    <div class="section">
+                        <div class="divider"></div>
+                        <h5>Similar words:</h5>
+
+                        <div data-bind="foreach: similarRecommendations">
+                            <div class="col s4 m3 l2"
+                                 data-bind="template: {name: 'dictionaryObject-template', data: $data}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" data-bind="if: externalContents().length > 0">
+
+                    <div class="divider"></div>
+                    <div class="section">
+                        <h5>External content:</h5>
+
+                        <div data-bind="foreach: externalContents">
+                            <div class="col s12 m6"
+                                 data-bind="template: {name: 'externalContent-template', data: $data}">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -278,15 +303,25 @@
 
 <script type="text/html" id="dictionaryObject-template">
     <span data-bind="template: {name: 'flag-template', data: language}"></span>
-    <span data-bind="text: generalForm"></span>
+    <a data-bind="text: generalForm, click: function(data, event) { $root.requery($data.generalForm) }"
+       class="underlinedLink black-text"></a>
     <span class="additionalData" data-bind="text: $root.buildAdditionalDataString($data)"></span>
 </script>
 
 <script type="text/html" id="flag-template">
-    <a class="tooltipped" data-position="top" data-delay="50"
+    <a class="tooltipped" data-position="top" data-delay="50" href="#"
        data-bind="attr: {'data-tooltip' : $root.buildLanguageString($data)}">
         <span data-bind="css: $root.resolveFlagClasses($data)"></span>
     </a>
+</script>
+
+<script type="text/html" id="externalContent-template">
+    <h6>
+        <a target="_blank" class="underlinedLink" data-bind="attr: {href: link}, text: title"></a>
+    </h6>
+    <span data-bind="if: $data.description">
+        <span data-bind="text: description"></span>
+    </span>
 </script>
 
 </body>
