@@ -88,7 +88,6 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                         .setEngineQueryResult(EngineQueryResultBuilder.EMPTY_QUERY_RESULT)
                         .build();
             }
-
             queryResults.add(queryStepResult);
         }
 
@@ -124,7 +123,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             LOGGER.debug("Executed query step {} in {} ms", step, executionTime);
 
         } catch (Exception e) {
-            LOGGER.error("Query step {} failed: {}", step, e);
+            LOGGER.error("Query step {} failed", step, e);
             stepResultBuilder.setFailedStep(true).setErrorMessage(e.getMessage())
                     .setEngineQueryResult(EngineQueryResultBuilder.EMPTY_QUERY_RESULT)
                     .setExecutionTime(System.currentTimeMillis() - startTime);
