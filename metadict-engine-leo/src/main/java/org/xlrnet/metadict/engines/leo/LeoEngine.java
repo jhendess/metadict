@@ -270,7 +270,7 @@ public class LeoEngine implements SearchEngine {
         // Extract representation value:
         String representation = side.getElementsByTag("repr").text();
         if (!StringUtils.equals(generalForm, representation))
-            dictionaryObjectBuilder.setDescription(representation);
+            dictionaryObjectBuilder.setDescription(StringUtils.removeStart(representation, generalForm));
 
         // Test for domain specific content:
         String domain = extractDomainString(representation);
