@@ -40,14 +40,12 @@
 <nav class="#1976d2 blue darken-2" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Metadict</a>
         <ul class="right hide-on-med-and-down">
-            <li><a href="#">Statistics</a></li>
-            <li><a href="#">Configuration</a></li>
+            <li><a class="statusDialogTrigger" href="#statusDialog">Status</a></li>
             <li><a class="dialogTrigger" href="#aboutDialog">About</a></li>
         </ul>
 
         <ul id="nav-mobile" class="side-nav">
-            <li><a href="#">Statistics</a></li>
-            <li><a href="#">Configuration</a></li>
+            <li><a class="statusDialogTrigger" href="#statusDialog">Status</a></li>
             <li><a class="dialogTrigger" href="#aboutDialog">About</a></li>
         </ul>
         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -208,6 +206,64 @@
     </div>
 </div>
 
+
+<!-- Status dialog -->
+<div id="statusDialog" class="modal modal-close">
+    <div class="modal-content">
+        <div class="row">
+            <div class="col offset-s4 s4 m4">
+                <img class="responsive-img circle" src="img/logo-large.png">
+            </div>
+            <div class="col s12 m8">
+                <h4>Status overview</h4>
+
+                <!-- Loading indicator -->
+                <div class="section" data-bind="visible: isLoadingStatus">
+                    <div class="col s12 m4 center">
+                        <div class="preloader-wrapper active">
+                            <div class="spinner-layer spinner-red-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-bind="visible: statusObject != undefined">
+                    <table data-bind="with: statusObject">
+                        <tr>
+                            <td>Server version:</td>
+                            <td data-bind="text: version"></td>
+                        </tr>
+                        <tr>
+                            <td>Build time:</td>
+                            <td data-bind="text: buildTime"></td>
+                        </tr>
+                        <tr>
+                            <td>Start time:</td>
+                            <td data-bind="text: startTime"></td>
+                        </tr>
+                        <tr>
+                            <td>Uptime:</td>
+                            <td data-bind="text: uptime"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+</div>
+
 <footer class="page-footer #e53935 red darken-1 modal-footer">
     <div class="footer-copyright">
         <div class="container">
@@ -227,7 +283,8 @@
 </script>
 
 <script type="text/html" id="flag-template">
-    <a class="tooltipped" data-position="top" data-delay="50" data-bind="attr: {'data-tooltip' : $root.buildLanguageString($data)}">
+    <a class="tooltipped" data-position="top" data-delay="50"
+       data-bind="attr: {'data-tooltip' : $root.buildLanguageString($data)}">
         <span data-bind="css: $root.resolveFlagClasses($data)"></span>
     </a>
 </script>

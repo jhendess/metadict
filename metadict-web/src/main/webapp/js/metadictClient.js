@@ -60,21 +60,26 @@ function MetadictClient(baseUrl) {
         var path = "/query/" + dictionaryString + "/" + queryString
 
         console.log("Querying entries from " + path + " ...");
-        this._invokeRequest(path, success, fail);
+        self._invokeRequest(path, success, fail);
     };
 
     this.getBidirectedDictionaries = function (success, fail) {
         console.log("Querying for bidirected dictionaries...");
-        this._invokeRequest("/dict/bi", success, fail);
+        self._invokeRequest("/dict/bi", success, fail);
     };
 
     this.getUnidirectedDictionaries = function (success, fail) {
         console.log("Querying for unidirected dictionaries...");
-        this._invokeRequest("/dict/uni", success, fail);
+        self._invokeRequest("/dict/uni", success, fail);
     };
 
     this.getAllDictionaries = function (success, fail) {
         console.log("Querying for all dictionaries...");
-        this._invokeRequest("/dict/all", success, fail);
-    }
+        self._invokeRequest("/dict/all", success, fail);
+    };
+
+    this.getMainStatus = function(success, fail) {
+        console.log("Loading system status...");
+        self._invokeRequest("/status", success, fail)
+    };
 }

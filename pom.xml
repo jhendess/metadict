@@ -42,6 +42,7 @@
     </modules>
 
     <properties>
+        <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <wildfly.version>8.1.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
@@ -141,7 +142,8 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.0.1.Final</version>
                 <configuration>
-                    <skip>true</skip>   <!-- Skip deployment in parent pom -->
+                    <skip>true</skip>
+                    <!-- Skip deployment in parent pom -->
                 </configuration>
             </plugin>
             <!-- Code coverage with jacoco -->

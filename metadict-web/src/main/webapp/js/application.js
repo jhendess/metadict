@@ -26,10 +26,22 @@
  * Main application file for the Metadict webapp.
  */
 $(document).ready(function () {
-    $('.button-collapse').sideNav();
+    var metadictViewModel = new MetadictViewModel();
+    ko.applyBindings(metadictViewModel);
+
+    $('.button-collapse').sideNav({
+        ready: function() {
+            $('.button-collapse').sideNav('hide');
+        }
+    });
     $('.dialogTrigger').leanModal();
 
-    ko.applyBindings(new MetadictViewModel());
+    $(".statusDialogTrigger").leanModal({
+        ready: function() {
+            metadictViewModel.reloadStatus()
+        }
+    });
+
 
     console.log("Application started");
 });
