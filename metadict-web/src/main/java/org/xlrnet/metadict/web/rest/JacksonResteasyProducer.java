@@ -43,7 +43,7 @@ import javax.ws.rs.ext.Provider;
 public class JacksonResteasyProducer implements ContextResolver<ObjectMapper> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
-            // Find JDK 8 Time API Converters
+            // Find additional modules
             .findAndRegisterModules()
                     // Don't print null-values
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
