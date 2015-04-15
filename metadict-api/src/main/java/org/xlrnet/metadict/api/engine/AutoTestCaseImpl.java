@@ -74,6 +74,6 @@ public class AutoTestCaseImpl implements AutoTestCase {
      */
     @Override
     public String getTestQueryString() {
-        return null;
+        return testQueryString;
     }
 }
