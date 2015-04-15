@@ -30,11 +30,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
 import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
+import org.xlrnet.metadict.impl.autotest.AutoTestManager;
 import org.xlrnet.metadict.impl.exception.UnknownSearchEngineException;
 
 import javax.annotation.PostConstruct;
@@ -59,6 +61,9 @@ public class EngineRegistry {
 
     @Inject
     Instance<SearchProvider> searchProviderInstances;
+
+    @Inject
+    AutoTestManager autoTestManager;
 
     Multimap<Dictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
 
@@ -182,7 +187,7 @@ public class EngineRegistry {
             try {
                 registerSearchProvider(searchProvider);
             } catch (Exception e) {
-                logger.error("Registering search provider {} failed: {}", searchProvider.getClass().getCanonicalName(), e.getMessage());
+                logger.error("Registering search provider {} failed", searchProvider.getClass().getCanonicalName(), e);
             }
         }
     }
@@ -209,16 +214,24 @@ public class EngineRegistry {
         SearchEngine searchEngine = searchProvider.newEngineInstance();
         checkNotNull(searchEngine, "Search provider returned null engine", canonicalProviderName);
 
+        registerAutoTestSuite(searchProvider, searchEngine);
+
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
 
         engineDescriptionMap.put(canonicalEngineName, engineDescription);
         featureSetMap.put(canonicalEngineName, featureSet);
         searchEngineMap.put(canonicalEngineName, searchEngine);
-
-        // Register supported dictionaries for engine
         registerDictionariesFromFeatureSet(canonicalEngineName, featureSet);
 
         logger.info("Registered engine {} from provider {}", canonicalEngineName, canonicalProviderName);
+    }
+
+    private void registerAutoTestSuite(@NotNull SearchProvider searchProvider, @NotNull SearchEngine searchEngine) {
+        AutoTestSuite testSuite = searchProvider.getAutoTestSuite();
+        if (testSuite == null)
+            logger.warn("Provider {} provides no auto test suite", searchProvider.getClass().getCanonicalName());
+        else
+            autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
     }
 
     private void registerDictionariesFromFeatureSet(@NotNull String canonicalEngineName, @NotNull FeatureSet featureSet) {
