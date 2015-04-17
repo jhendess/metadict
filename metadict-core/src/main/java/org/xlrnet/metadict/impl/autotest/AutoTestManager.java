@@ -31,10 +31,15 @@ import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.ExternalContent;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -72,6 +77,17 @@ public class AutoTestManager {
     }
 
     /**
+     * Execute all internally registered auto test cases return a full {@link AutoTestReport}.
+     *
+     * @return an {@link AutoTestReport} for all executed test cases.
+     */
+    public AutoTestReport runAllRegisteredAutoTests() {
+        AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
+        engineAutoTestSuiteMap.keySet().forEach(searchEngine -> runAutoTestsForEngine(searchEngine, reportBuilder));
+        return reportBuilder.build();
+    }
+
+    /**
      * Run the registered test cases for a given engine. This will create a new {@link AutoTestReportBuilder} and
      * return it after completion.
      *
@@ -106,7 +122,7 @@ public class AutoTestManager {
         LOGGER.info("Starting auto tests for engine {} ...", searchEngine.getClass().getCanonicalName());
         for (@NotNull AutoTestCase autoTestCase : engineTestSuite) {
             LOGGER.info("Running test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
-            AutoTestResult autoTestResult = runAutoTestCase(searchEngine, autoTestCase);
+            AutoTestResult autoTestResult = internalRunAutoTestCase(searchEngine, autoTestCase);
             reportBuilder.addAutoTestResult(autoTestResult);
             testCount++;
         }
@@ -121,16 +137,7 @@ public class AutoTestManager {
     }
 
     @NotNull
-    private EngineQueryResult invokeQueryAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResults) throws Exception {
-        EngineQueryResult queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
-
-        // FIXME: Compare result sets and create report
-
-        return queryResult;
-    }
-
-    @NotNull
-    private AutoTestResult runAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+    private AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
         EngineQueryResult expectedResults = autoTestCase.getExpectedResults();
         Dictionary targetDictionary = autoTestCase.getTargetDictionary();
@@ -139,13 +146,51 @@ public class AutoTestManager {
         EngineQueryResult autoTestResult;
 
         try {
-            autoTestResult = invokeQueryAndValidate(searchEngine, targetDictionary, requestString, expectedResults);
+            autoTestResult = invokeAndValidate(searchEngine, targetDictionary, requestString, expectedResults);
         } catch (Exception e) {
             LOGGER.error("Test case with query \"{}\" in dictionary {} failed", requestString, targetDictionary);
             return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, e);
         }
 
         return AutoTestResult.succeeded(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult);
+    }
+
+    @NotNull
+    private EngineQueryResult invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
+        EngineQueryResult queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
+
+        List<DictionaryEntry> expectedResultEntries = expectedResult.getEntries();
+        List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
+        List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
+
+        List<DictionaryEntry> actualResultEntries = queryResult.getEntries();
+        List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
+        List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
+
+        validateActualObjects(expectedResultEntries, actualResultEntries);
+        validateActualObjects(expectedExternalContents, actualExternalContents);
+        validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+
+        return queryResult;
+    }
+
+    /**
+     * Check if the given collection of actual result objects contains all specified expected objects. If any expected
+     * object is not inside the actual collection, a {@link AutoTestAssertionException} will be thrown. The validation
+     * was successful if no exception was thrown.
+     *
+     * @param expectedObjects
+     *         Collection of expected objects.
+     * @param actualObjects
+     *         Collection of actual objects.
+     * @throws AutoTestAssertionException
+     *         Will be thrown if a certain expected object could not be found in the collection of actual objects.
+     */
+    private void validateActualObjects(Collection<?> expectedObjects, Collection<?> actualObjects) throws AutoTestAssertionException {
+        for (Object expectedEntry : expectedObjects) {
+            if (!actualObjects.contains(expectedEntry))
+                throw new AutoTestAssertionException(expectedEntry);
+        }
     }
 
 }
