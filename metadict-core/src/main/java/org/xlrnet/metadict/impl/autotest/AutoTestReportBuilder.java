@@ -47,7 +47,7 @@ public class AutoTestReportBuilder {
     AutoTestReportBuilder addAutoTestResult(@NotNull AutoTestResult autoTestResult) {
         checkNotNull(autoTestResult);
 
-        if (autoTestResult.wasSuccessful())
+        if (autoTestResult.isSuccessful())
             successfulTests++;
         else
             failedTests++;

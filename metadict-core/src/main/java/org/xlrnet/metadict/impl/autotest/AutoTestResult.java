@@ -48,7 +48,7 @@ public class AutoTestResult {
 
     private final Optional<Exception> thrownException;
 
-    private final boolean wasSuccessful;
+    private final boolean isSuccessful;
 
     private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @NotNull EngineQueryResult actualEngineQueryResult) {
         this.actualEngineQueryResult = Optional.of(actualEngineQueryResult);
@@ -56,7 +56,7 @@ public class AutoTestResult {
         this.executionTime = executionTime;
         this.testCase = testCase;
         this.thrownException = Optional.empty();
-        this.wasSuccessful = true;
+        this.isSuccessful = true;
     }
 
     private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @Nullable Exception thrownException, @Nullable EngineQueryResult actualEngineQueryResult) {
@@ -65,7 +65,7 @@ public class AutoTestResult {
         this.executionTime = executionTime;
         this.testCase = testCase;
         this.thrownException = Optional.ofNullable(thrownException);
-        this.wasSuccessful = false;
+        this.isSuccessful = false;
     }
 
     /**
@@ -171,8 +171,8 @@ public class AutoTestResult {
      *
      * @return true if the test was successful, false otherwise.
      */
-    public boolean wasSuccessful() {
-        return this.wasSuccessful;
+    public boolean isSuccessful() {
+        return this.isSuccessful;
     }
 
 }
