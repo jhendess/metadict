@@ -183,7 +183,8 @@ public class LeoEngine implements SearchEngine {
                     LOGGER.warn("Tenses array {} has unexpected length {} instead of 2", tensesArray, tensesArray.length);
                 }
                 dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, StringUtils.strip(tensesArray[0], " \u00A0\n\t\r"));
-                dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, StringUtils.strip(tensesArray[1], " \u00A0\n\t\r"));
+                if (tensesArray.length >= 2)
+                    dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, StringUtils.strip(tensesArray[1], " \u00A0\n\t\r"));
             }
         }
     }
@@ -268,22 +269,26 @@ public class LeoEngine implements SearchEngine {
         Language language = Language.getExistingLanguageById(languageIdentifier);
 
         // Extract representation value:
-        String representation = side.getElementsByTag("repr").text();
-        if (!StringUtils.equals(generalForm, representation))
-            dictionaryObjectBuilder.setDescription(StringUtils.removeStart(representation, generalForm));
+        String fullRepresentation = side.getElementsByTag("repr").text();
+        String trimmedRepresentation = StringUtils.removeStart(fullRepresentation, generalForm).trim();
+        String substringBeforeDomain = StringUtils.substringBefore(trimmedRepresentation, "[");
+        String substringBeforeForms = StringUtils.substringBefore(substringBeforeDomain, "|");
+        if (!StringUtils.equals(generalForm, substringBeforeForms) && StringUtils.isNoneBlank(substringBeforeForms))
+            dictionaryObjectBuilder.setDescription(StringUtils.strip(substringBeforeForms, " \u00A0\n\t\r"));
 
         // Test for domain specific content:
-        String domain = extractDomainString(representation);
+        String domain = extractDomainString(fullRepresentation);
         if (StringUtils.isNotEmpty(domain))
             dictionaryObjectBuilder.setDomain(domain);
 
         // Test for abbreviation
-        String abbreviation = extractAbbreviationString(representation);
+        String abbreviation = extractAbbreviationString(fullRepresentation);
         if (StringUtils.isNotEmpty(abbreviation))
             dictionaryObjectBuilder.setAbbreviation(abbreviation);
 
         // Process additional forms (e.g. verb tenses):
-        processAdditionalForms(entryType, dictionaryObjectBuilder, language, representation);
+        String additionalFormText = side.getElementsByTag("repr").get(0).getElementsByTag("small").text();
+        processAdditionalForms(entryType, dictionaryObjectBuilder, language, additionalFormText);
 
         return dictionaryObjectBuilder
                 .setGeneralForm(generalForm)
