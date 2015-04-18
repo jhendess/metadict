@@ -53,7 +53,7 @@ public class AutoTestManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoTestManager.class);
 
-    private Map<SearchEngine, AutoTestSuite> engineAutoTestSuiteMap = new HashMap<>();
+    final Map<SearchEngine, AutoTestSuite> engineAutoTestSuiteMap = new HashMap<>();
 
     /**
      * Register the given {@link AutoTestSuite} as a test suite for the given {@link SearchEngine}. This will validate
@@ -137,7 +137,7 @@ public class AutoTestManager {
     }
 
     @NotNull
-    private AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+    AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
         EngineQueryResult expectedResults = autoTestCase.getExpectedResults();
         Dictionary targetDictionary = autoTestCase.getTargetDictionary();
@@ -156,7 +156,7 @@ public class AutoTestManager {
     }
 
     @NotNull
-    private EngineQueryResult invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
+    EngineQueryResult invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
         EngineQueryResult queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
 
         List<DictionaryEntry> expectedResultEntries = expectedResult.getEntries();
@@ -186,7 +186,7 @@ public class AutoTestManager {
      * @throws AutoTestAssertionException
      *         Will be thrown if a certain expected object could not be found in the collection of actual objects.
      */
-    private void validateActualObjects(Collection<?> expectedObjects, Collection<?> actualObjects) throws AutoTestAssertionException {
+    void validateActualObjects(Collection<?> expectedObjects, Collection<?> actualObjects) throws AutoTestAssertionException {
         for (Object expectedEntry : expectedObjects) {
             if (!actualObjects.contains(expectedEntry))
                 throw new AutoTestAssertionException(expectedEntry);
