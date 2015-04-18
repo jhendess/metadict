@@ -243,6 +243,10 @@ function MetadictViewModel() {
     this.buildAdditionalDataString = function (data) {
         var contentArray = [];
 
+        if (data.description != undefined) {
+            contentArray.push(data.description)
+        }
+
         if (data.additionalForms != undefined) {
             var additionalForms = data.additionalForms;
             // Forms for nouns
@@ -270,16 +274,16 @@ function MetadictViewModel() {
                 contentArray.push("def.: " + additionalForms.DEFINITE_FORM);
         }
 
-        if (data.description != undefined) {
-            contentArray.push(data.description)
-        }
-
         if (data.abbreviation != undefined) {
             contentArray.push("abbr.: " + data.abbreviation)
         }
 
         if (data.domain != undefined) {
             contentArray.push("dom.: " + data.domain)
+        }
+
+        if (data.grammaticalGender != undefined) {
+            contentArray.push("(" + data.grammaticalGender.toLowerCase() + ")")
         }
 
         return contentArray.join(", ")

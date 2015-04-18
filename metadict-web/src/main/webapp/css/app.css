@@ -59,3 +59,15 @@ a.underlinedLink {
     margin-left: 5px;
     font-style: italic;
 }
+
+/* Format for the different table cells */
+
+.entryTypeCell {
+    font-weight: lighter;
+    width: 20%;
+    font-size: 80%;
+}
+
+.dictionaryObjectCell {
+    width: 40%;
+}

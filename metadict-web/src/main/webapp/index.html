@@ -60,11 +60,10 @@
             <h1 class="header center red-text lighten-1">Metadict <span
                     class="hide-on-small-and-down">Search Engine</span>
             </h1>
-            <br>
+            <br class="hide-on-small-and-down">
 
         </div>
     </div>
-
 
     <div class="container">
         <!-- Error card -->
@@ -120,7 +119,6 @@
                                 <label class="large-130" data-bind="attr: {for: 'dict_' + $index()}">
                                     <span data-bind="template: {name: 'flag-template', data: $data.input}"></span>
                                     <span data-bind="template: {name: 'flag-template', data: $data.output}"></span>
-                                    <!--<span data-bind="text: $data.queryStringWithDialect"></span>-->
                                 </label>
                             </div>
                         </div>
@@ -146,17 +144,19 @@
                 </div>
             </div>
         </div>
+    </div>
         <!-- Results -->
         <div class="row">
-            <div class="col s12 offset-m1 m10">
+            <div class="col s12 offset-m2 m8 offset-l3 l6">
                 <div data-bind="foreach: entryGroups">
                     <div class="section">
                         <h5 data-bind="text: groupIdentifier + ':'"></h5>
                         <table class="striped">
                             <tbody data-bind="foreach: $data.resultEntries">
                             <tr>
-                                <td data-bind="template: {name: 'dictionaryObject-template', data: input}"></td>
-                                <td data-bind="template: {name: 'dictionaryObject-template', data: output}"></td>
+                                <td class="dictionaryObjectCell" data-bind="template: {name: 'dictionaryObject-template', data: input}"></td>
+                                <td class="entryTypeCell center" data-bind="text: $data.entryType"></td>
+                                <td class="dictionaryObjectCell" data-bind="template: {name: 'dictionaryObject-template', data: output}"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -189,7 +189,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
 <!-- About dialog -->
