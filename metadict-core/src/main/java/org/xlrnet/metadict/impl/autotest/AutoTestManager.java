@@ -130,12 +130,6 @@ public class AutoTestManager {
         return reportBuilder;
     }
 
-    void validateTestCase(@NotNull AutoTestCase testCase) {
-        checkNotNull(testCase.getExpectedResults(), "Expected result set may not be null");
-        checkNotNull(testCase.getTargetDictionary(), "Target dictionary may not be null");
-        checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
-    }
-
     @NotNull
     AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
@@ -143,21 +137,31 @@ public class AutoTestManager {
         Dictionary targetDictionary = autoTestCase.getTargetDictionary();
         String requestString = autoTestCase.getTestQueryString();
         long startTime = System.currentTimeMillis();
-        EngineQueryResult autoTestResult;
+
+        ResultData autoTestResult;
 
         try {
             autoTestResult = invokeAndValidate(searchEngine, targetDictionary, requestString, expectedResults);
+            if (autoTestResult.thrownException != null) {
+                LOGGER.error("Test case with query \"{}\" in dictionary {} failed", requestString, targetDictionary);
+                return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult.thrownException, autoTestResult.queryResult);
+            }
         } catch (Exception e) {
-            LOGGER.error("Test case with query \"{}\" in dictionary {} failed", requestString, targetDictionary);
-            return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, e);
+            LOGGER.error("Internal error on test case with query \"{}\" in dictionary {}", requestString, targetDictionary, e);
+            return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, e, null);
         }
 
-        return AutoTestResult.succeeded(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult);
+        return AutoTestResult.succeeded(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult.queryResult);
     }
 
     @NotNull
-    EngineQueryResult invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
-        EngineQueryResult queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
+    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
+        EngineQueryResult queryResult;
+        try {
+            queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
+        } catch (Exception e) {
+            return new ResultData(null, e);
+        }
 
         List<DictionaryEntry> expectedResultEntries = expectedResult.getEntries();
         List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
@@ -167,11 +171,15 @@ public class AutoTestManager {
         List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
         List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
 
-        validateActualObjects(expectedResultEntries, actualResultEntries);
-        validateActualObjects(expectedExternalContents, actualExternalContents);
-        validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+        try {
+            validateActualObjects(expectedResultEntries, actualResultEntries);
+            validateActualObjects(expectedExternalContents, actualExternalContents);
+            validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+        } catch (AutoTestAssertionException ae) {
+            return new ResultData(queryResult, ae);
+        }
 
-        return queryResult;
+        return new ResultData(queryResult, null);
     }
 
     /**
@@ -190,6 +198,25 @@ public class AutoTestManager {
         for (Object expectedEntry : expectedObjects) {
             if (!actualObjects.contains(expectedEntry))
                 throw new AutoTestAssertionException(expectedEntry);
+        }
+    }
+
+    void validateTestCase(@NotNull AutoTestCase testCase) {
+        checkNotNull(testCase.getExpectedResults(), "Expected result set may not be null");
+        checkNotNull(testCase.getTargetDictionary(), "Target dictionary may not be null");
+        checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
+    }
+
+
+    private class ResultData {
+
+        private final EngineQueryResult queryResult;
+
+        private final Exception         thrownException;
+
+        public ResultData(EngineQueryResult queryResult, Exception thrownException) {
+            this.queryResult = queryResult;
+            this.thrownException = thrownException;
         }
     }
 

@@ -151,7 +151,7 @@ public class AutoTestManagerTest {
         Exception mockedException = new Exception();
         AutoTestCase mockedTestCase = mock(AutoTestCase.class);
         AutoTestSuite mockedTestSuite = new AutoTestSuiteBuilder().addAutoTestCase(mockedTestCase).build();
-        AutoTestResult testResult = AutoTestResult.failed("canonicalName", 1, mockedTestCase, mockedException);
+        AutoTestResult testResult = AutoTestResult.failed("canonicalName", 1, mockedTestCase, mockedException, null);
         autoTestManagerSpy.engineAutoTestSuiteMap.put(mockedSearchEngine, mockedTestSuite);
         doReturn(testResult)
                 .when(autoTestManagerSpy)

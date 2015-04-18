@@ -59,12 +59,6 @@ public class EngineRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(EngineRegistry.class);
 
-    @Inject
-    Instance<SearchProvider> searchProviderInstances;
-
-    @Inject
-    AutoTestManager autoTestManager;
-
     Multimap<Dictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
 
     Map<String, EngineDescription> engineDescriptionMap = new HashMap<>();
@@ -72,6 +66,12 @@ public class EngineRegistry {
     Map<String, FeatureSet> featureSetMap = new HashMap<>();
 
     Map<String, SearchEngine> searchEngineMap = new HashMap<>();
+
+    @Inject
+    private Instance<SearchProvider> searchProviderInstances;
+
+    @Inject
+    private AutoTestManager autoTestManager;
 
     /**
      * Returns the amount of currently registered search engines. Search engines are provided by implementations of
@@ -177,6 +177,15 @@ public class EngineRegistry {
     @NotNull
     public Collection<Dictionary> getSupportedDictionaries() {
         return Collections.unmodifiableCollection(dictionaryEngineNameMap.keySet());
+    }
+
+    /**
+     * Returns the internal {@link AutoTestManager} instance.
+     *
+     * @return the internal {@link AutoTestManager} instance.
+     */
+    AutoTestManager getAutoTestManager() {
+        return autoTestManager;
     }
 
     @PostConstruct

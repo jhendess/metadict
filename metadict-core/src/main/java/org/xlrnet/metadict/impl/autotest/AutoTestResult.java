@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.impl.autotest;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.impl.core.EngineRegistry;
@@ -58,12 +59,12 @@ public class AutoTestResult {
         this.wasSuccessful = true;
     }
 
-    private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @NotNull Exception thrownException) {
-        this.actualEngineQueryResult = Optional.empty();
+    private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @Nullable Exception thrownException, @Nullable EngineQueryResult actualEngineQueryResult) {
+        this.actualEngineQueryResult = Optional.ofNullable(actualEngineQueryResult);
         this.canonicalEngineName = canonicalEngineName;
         this.executionTime = executionTime;
         this.testCase = testCase;
-        this.thrownException = Optional.of(thrownException);
+        this.thrownException = Optional.ofNullable(thrownException);
         this.wasSuccessful = false;
     }
 
@@ -78,10 +79,12 @@ public class AutoTestResult {
      *         The original test case object.
      * @param thrownException
      *         The exception that was thrown during execution.
+     * @param actualEngineQueryResult
+     *         The actual query result that was returned from the queried engine, if any available.
      * @return a new auto test result object for a failed auto test.
      */
-    public static AutoTestResult failed(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @NotNull Exception thrownException) {
-        return new AutoTestResult(canonicalEngineName, executionTime, testCase, thrownException);
+    public static AutoTestResult failed(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @Nullable Exception thrownException, @Nullable EngineQueryResult actualEngineQueryResult) {
+        return new AutoTestResult(canonicalEngineName, executionTime, testCase, thrownException, actualEngineQueryResult);
     }
 
     /**

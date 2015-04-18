@@ -73,7 +73,7 @@ public class MetadictCore {
      */
     @NotNull
     public AutoTestReport executeAllAutoTests() {
-        return engineRegistry.autoTestManager.runAllRegisteredAutoTests();
+        return engineRegistry.getAutoTestManager().runAllRegisteredAutoTests();
     }
 
     @NotNull
