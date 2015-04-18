@@ -24,40 +24,26 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Iterator;
 
 /**
- * Builder for creating new {@link AutoTestSuite} objects.
+ * Immutable implementation for {@link AutoTestSuite}.
  */
-public class AutoTestSuiteBuilder {
+public class AutoTestSuiteImpl implements AutoTestSuite{
 
-    private List<AutoTestCase> testCases = new ArrayList<>();
+    private final Iterable<AutoTestCase> autoTestCases;
 
-    /**
-     * Add a new {@link AutoTestCase} to this builder.
-     *
-     * @param autoTestCase
-     *         A new test case which should be executed.
-     * @return the current builder
-     */
-    public AutoTestSuiteBuilder addAutoTestCase(AutoTestCase autoTestCase) {
-        checkNotNull(autoTestCase);
-
-        testCases.add(autoTestCase);
-        return this;
+    AutoTestSuiteImpl(Iterable<AutoTestCase> autoTestCases) {
+        this.autoTestCases = autoTestCases;
     }
 
     /**
-     * Create a new instance of {@link AutoTestSuite}.
+     * Returns an iterator over elements of type {@code T}.
      *
-     * @return a new instance of {@link AutoTestSuite}.
+     * @return an Iterator.
      */
-    public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
+    @Override
+    public Iterator<AutoTestCase> iterator() {
+        return autoTestCases.iterator();
     }
-
 }

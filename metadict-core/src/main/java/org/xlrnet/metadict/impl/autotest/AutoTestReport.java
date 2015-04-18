@@ -22,42 +22,39 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.engine;
+package org.xlrnet.metadict.impl.autotest;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Builder for creating new {@link AutoTestSuite} objects.
+ * The {@link AutoTestReport} serves as the main container for multiple {@link AutoTestResult}. It is used to describe
+ * a full report of multiple test cases and contains
  */
-public class AutoTestSuiteBuilder {
-
-    private List<AutoTestCase> testCases = new ArrayList<>();
+public interface AutoTestReport extends Iterable<AutoTestResult> {
 
     /**
-     * Add a new {@link AutoTestCase} to this builder.
+     * Returns the amount of failed test cases in this report i.e. the number of objects where {@link
+     * AutoTestResult#wasSuccessful()} returns false.
      *
-     * @param autoTestCase
-     *         A new test case which should be executed.
-     * @return the current builder
+     * @return the amount of failed test cases in this report.
      */
-    public AutoTestSuiteBuilder addAutoTestCase(AutoTestCase autoTestCase) {
-        checkNotNull(autoTestCase);
-
-        testCases.add(autoTestCase);
-        return this;
-    }
+    int getFailedTests();
 
     /**
-     * Create a new instance of {@link AutoTestSuite}.
+     * Returns the amount of successfully executed test cases in this report i.e. the number of objects where {@link
+     * AutoTestResult#wasSuccessful()} returns true.
      *
-     * @return a new instance of {@link AutoTestSuite}.
+     * @return the amount of successfully executed test cases in this report.
      */
-    public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
-    }
+    int getSuccessfulTests();
+
+    List<AutoTestResult> getTestResults();
+
+    /**
+     * Returns the amount of total test cases in this report.
+     *
+     * @return the amount of total test cases in this report.
+     */
+    int getTotalTestCount();
 
 }

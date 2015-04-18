@@ -22,42 +22,43 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.engine;
+package org.xlrnet.metadict.impl.autotest;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link AutoTestSuite} objects.
+ * Builder for {@link AutoTestReport} objects.
  */
-public class AutoTestSuiteBuilder {
+public class AutoTestReportBuilder {
 
-    private List<AutoTestCase> testCases = new ArrayList<>();
+    private List<AutoTestResult> testResultList = new ArrayList<>();
 
-    /**
-     * Add a new {@link AutoTestCase} to this builder.
-     *
-     * @param autoTestCase
-     *         A new test case which should be executed.
-     * @return the current builder
-     */
-    public AutoTestSuiteBuilder addAutoTestCase(AutoTestCase autoTestCase) {
-        checkNotNull(autoTestCase);
+    private int failedTests = 0;
 
-        testCases.add(autoTestCase);
+    private int successfulTests = 0;
+
+    private int totalTests = 0;
+
+    AutoTestReportBuilder addAutoTestResult(@NotNull AutoTestResult autoTestResult) {
+        checkNotNull(autoTestResult);
+
+        if (autoTestResult.wasSuccessful())
+            successfulTests++;
+        else
+            failedTests++;
+
+        totalTests++;
+
+        testResultList.add(autoTestResult);
         return this;
     }
 
-    /**
-     * Create a new instance of {@link AutoTestSuite}.
-     *
-     * @return a new instance of {@link AutoTestSuite}.
-     */
-    public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
+    AutoTestReport build() {
+        return new AutoTestReportImpl(testResultList, successfulTests, failedTests, totalTests);
     }
-
 }
