@@ -27,6 +27,7 @@ package org.xlrnet.metadict.impl.core;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.impl.autotest.AutoTestReport;
 import org.xlrnet.metadict.impl.query.QueryManager;
 import org.xlrnet.metadict.impl.query.QueryRequest;
 import org.xlrnet.metadict.impl.query.QueryRequestBuilder;
@@ -60,8 +61,19 @@ public class MetadictCore {
      *
      * @return a new builder for creating query requests.
      */
+    @NotNull
     public QueryRequestBuilder createNewQueryRequestBuilder() {
         return queryManager.createNewQueryRequestBuilder();
+    }
+
+    /**
+     * Execute all auto test cases for all registered engines and return a {@link AutoTestReport}.
+     *
+     * @return an {@link AutoTestReport} for all executed test cases.
+     */
+    @NotNull
+    public AutoTestReport executeAllAutoTests() {
+        return engineRegistry.getAutoTestManager().runAllRegisteredAutoTests();
     }
 
     @NotNull

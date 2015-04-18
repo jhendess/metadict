@@ -22,42 +22,25 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.engine;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+package org.xlrnet.metadict.impl.autotest;
 
 /**
- * Builder for creating new {@link AutoTestSuite} objects.
+ * This exception will be thrown if an {@link org.xlrnet.metadict.api.engine.AutoTestCase} failed because of not
+ * finding an expected object inside the actual result set.
  */
-public class AutoTestSuiteBuilder {
+public class AutoTestAssertionException extends Exception {
 
-    private List<AutoTestCase> testCases = new ArrayList<>();
-
-    /**
-     * Add a new {@link AutoTestCase} to this builder.
-     *
-     * @param autoTestCase
-     *         A new test case which should be executed.
-     * @return the current builder
-     */
-    public AutoTestSuiteBuilder addAutoTestCase(AutoTestCase autoTestCase) {
-        checkNotNull(autoTestCase);
-
-        testCases.add(autoTestCase);
-        return this;
-    }
+    private final Object expectedObject;
 
     /**
-     * Create a new instance of {@link AutoTestSuite}.
-     *
-     * @return a new instance of {@link AutoTestSuite}.
+     * Constructs a new exception with the given expected object that should have been inside the actual result set.
      */
-    public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
+    public AutoTestAssertionException(Object expectedObject) {
+        super("AutoTestCase failed: expected object could not be found in actual result");
+        this.expectedObject = expectedObject;
     }
 
+    public Object getExpectedObject() {
+        return expectedObject;
+    }
 }

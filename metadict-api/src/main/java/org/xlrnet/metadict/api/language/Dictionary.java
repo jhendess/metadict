@@ -131,9 +131,9 @@ public class Dictionary {
      * internal cache.
      */
     @NotNull
-    public static Dictionary fromLanguages(@Nullable Language input, @Nullable Language output, boolean bidirectional) {
+    public static Dictionary fromLanguages(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
         checkNotNull(input, "Input language for dictionary may not be null");
-        checkNotNull(output, "Input language for dictionary may not be null");
+        checkNotNull(output, "Output language for dictionary may not be null");
 
         StringBuilder builder = new StringBuilder();
 

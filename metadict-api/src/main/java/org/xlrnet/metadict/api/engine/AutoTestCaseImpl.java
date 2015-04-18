@@ -27,6 +27,8 @@ package org.xlrnet.metadict.api.engine;
 import org.xlrnet.metadict.api.language.Dictionary;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Immutable implementation for {@link AutoTestCase}.
  */
@@ -39,6 +41,10 @@ public class AutoTestCaseImpl implements AutoTestCase {
     private final String testQueryString;
 
     AutoTestCaseImpl(EngineQueryResult expectedResults, Dictionary targetDictionary, String testQueryString) {
+        checkNotNull(expectedResults, "Expected results may not be null");
+        checkNotNull(targetDictionary, "Target dictionary may not be null");
+        checkNotNull(testQueryString, "Test query may not be null");
+
         this.expectedResults = expectedResults;
         this.targetDictionary = targetDictionary;
         this.testQueryString = testQueryString;
@@ -74,6 +80,6 @@ public class AutoTestCaseImpl implements AutoTestCase {
      */
     @Override
     public String getTestQueryString() {
-        return null;
+        return testQueryString;
     }
 }
