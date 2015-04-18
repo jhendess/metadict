@@ -49,7 +49,7 @@ public class AutoTestReportImpl implements AutoTestReport {
 
     /**
      * Returns the amount of failed test cases in this report i.e. the number of objects where {@link
-     * AutoTestResult#wasSuccessful()} returns false.
+     * AutoTestResult#isSuccessful()} returns false.
      *
      * @return the amount of failed test cases in this report.
      */
@@ -60,7 +60,7 @@ public class AutoTestReportImpl implements AutoTestReport {
 
     /**
      * Returns the amount of successfully executed test cases in this report i.e. the number of objects where {@link
-     * AutoTestResult#wasSuccessful()} returns true.
+     * AutoTestResult#isSuccessful()} returns true.
      *
      * @return the amount of successfully executed test cases in this report.
      */
