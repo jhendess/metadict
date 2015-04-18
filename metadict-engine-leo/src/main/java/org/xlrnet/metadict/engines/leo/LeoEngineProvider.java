@@ -26,6 +26,7 @@ package org.xlrnet.metadict.engines.leo;
 
 import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.GrammaticalNumber;
 import org.xlrnet.metadict.api.language.GrammaticalTense;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
@@ -51,11 +52,12 @@ public class LeoEngineProvider implements SearchProvider {
      */
     @Override
     public AutoTestSuite getAutoTestSuite() {
+        Dictionary deEnDictionary = Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
         return
                 new AutoTestSuiteBuilder()
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("eat")
-                                .setTargetDictionary(Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
+                                .setTargetDictionary(deEnDictionary)
                                 .setExpectedResults(new EngineQueryResultBuilder()
                                         .addEntry(new DictionaryEntryBuilder()
                                                 .setEntryType(EntryType.NOUN)
@@ -74,15 +76,38 @@ public class LeoEngineProvider implements SearchProvider {
                                                 .setEntryType(EntryType.VERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setLanguage(Language.ENGLISH)
-                                                        .setGeneralForm("to eat")
+                                                        .setGeneralForm("to eat (sth.)")
                                                         .setAdditionalForm(GrammaticalTense.PAST_TENSE, "ate")
                                                         .setAdditionalForm(GrammaticalTense.PAST_PERFECT, "eaten")
                                                         .build())
                                                 .setOutputObject(new DictionaryObjectBuilder()
                                                         .setLanguage(Language.GERMAN)
-                                                        .setGeneralForm("essen")
+                                                        .setGeneralForm("(etw.) essen")
                                                         .setAdditionalForm(GrammaticalTense.PAST_TENSE, "aß")
                                                         .setAdditionalForm(GrammaticalTense.PAST_PERFECT, "gegessen")
+                                                        .build())
+                                                .build())
+                                        .addSimilarRecommendation(new DictionaryObjectBuilder()
+                                                .setGeneralForm("lesen")
+                                                .setLanguage(Language.GERMAN)
+                                                .build())
+                                        .build())
+                                .build())
+                        .addAutoTestCase(new AutoTestCaseBuilder()
+                                .setTestQueryString("haus")
+                                .setTargetDictionary(deEnDictionary)
+                                .setExpectedResults(new EngineQueryResultBuilder()
+                                        .addEntry(new DictionaryEntryBuilder()
+                                                .setEntryType(EntryType.NOUN)
+                                                .setInputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("house")
+                                                        .setAdditionalForm(GrammaticalNumber.PLURAL, "houses")
+                                                        .setLanguage(Language.ENGLISH)
+                                                        .build())
+                                                .setOutputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("das Haus")
+                                                        .setAdditionalForm(GrammaticalNumber.PLURAL, "die Häuser")
+                                                        .setLanguage(Language.GERMAN)
                                                         .build())
                                                 .build())
                                         .build())
