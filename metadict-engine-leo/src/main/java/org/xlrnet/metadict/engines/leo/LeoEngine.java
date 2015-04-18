@@ -36,6 +36,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.language.GrammaticalNumber;
 import org.xlrnet.metadict.api.language.GrammaticalTense;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
@@ -62,7 +63,7 @@ public class LeoEngine implements SearchEngine {
             .put("verb", EntryType.VERB)
             .put("phrase", EntryType.PHRASE)
             .put("example", EntryType.EXAMPLE)
-            // TODO: Pronouns?
+                    // TODO: Pronouns?
             .build();
 
     private static final Map<String, String> DEFAULT_QUERY_DATA = ImmutableMap.<String, String>builder()
@@ -77,6 +78,17 @@ public class LeoEngine implements SearchEngine {
             .put("n", "1").build();
 
     private static final String SECTION_NAME_ATTRIBUTE = "sctName";
+
+    /**
+     * Strips various kinds of whitespace at the beginning and at the end of the input string.
+     *
+     * @param str
+     *         The input string.
+     * @return Stripped string.
+     */
+    private static String stripWhitespace(String str) {
+        return StringUtils.strip(str, " \u00A0\n\t\r");
+    }
 
     /**
      * The main method for querying a {@link SearchEngine}. This method will be called by the metadict core on incoming
@@ -121,6 +133,24 @@ public class LeoEngine implements SearchEngine {
         return builder.build();
     }
 
+    /**
+     * Try to extract the plural form if the automatic detection has failed.
+     * <p>
+     * Example:
+     * "house - pl.: houses" should return "houses"
+     *
+     * @param inputString
+     *         The input string.
+     * @return the plural form or null if nothing could be found
+     */
+    private String alternativeExtractPluralString(String inputString) {
+        int pluralIndex = StringUtils.indexOfIgnoreCase(inputString, "pl.:");
+        if (pluralIndex < 0) return null;
+        String pluralSubstring = StringUtils.substring(inputString, pluralIndex + 4);
+        String substringTrim = StringUtils.substringBefore(pluralSubstring, "-");
+        return stripWhitespace(substringTrim);
+    }
+
     private Connection buildTargetConnection(String searchString, Language inputLanguage, Language outputLanguage) {
         String targetDictionary = resolveDictionaryConfig(inputLanguage, outputLanguage);
         if (targetDictionary == null) {
@@ -151,7 +181,7 @@ public class LeoEngine implements SearchEngine {
     private String extractAbbreviationString(String representation) {
         String substring = StringUtils.substringBetween(representation, "[abbr.:", "]");
         if (substring != null)
-            return StringUtils.strip(substring, " \u00A0\n\t\r");
+            return stripWhitespace(substring);
         return null;
     }
 
@@ -173,20 +203,28 @@ public class LeoEngine implements SearchEngine {
         return null;
     }
 
-    private void processAdditionalForms(EntryType entryType, DictionaryObjectBuilder dictionaryObjectBuilder, Language language, String representation) {
-        // Try to extract verb tenses in english  and german dictionary:
-        if (entryType == EntryType.VERB && (Language.ENGLISH.equals(language) || Language.GERMAN.equals(language))) {
-            String tensesString = StringUtils.substringBetween(representation, "|", "|");
-            if (tensesString != null) {
-                String[] tensesArray = StringUtils.split(tensesString, ",");
-                if (tensesArray.length != 2) {
-                    LOGGER.warn("Tenses array {} has unexpected length {} instead of 2", tensesArray, tensesArray.length);
-                }
-                dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, StringUtils.strip(tensesArray[0], " \u00A0\n\t\r"));
-                if (tensesArray.length >= 2)
-                    dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, StringUtils.strip(tensesArray[1], " \u00A0\n\t\r"));
+    /**
+     * Try to extract the best fitting general word form from an Elements object. If there are more than one general
+     * form, the first one that contains parentheses or a dot (".") will be returned. If none contains parentheses, the
+     * first element will be returned.
+     *
+     * @param side
+     *         An Elements object of {@code <word>}-Tags
+     * @return The general form of the word.
+     */
+    private String extractGeneralForm(Element side) {
+        Elements elements = side.getElementsByTag("word");
+
+        // TODO: Try to detect the correct form with "(sth.)" -> code below is not working
+
+        /*if (elements.size() > 1) {
+            for (Element element : elements) {
+                String elementText = element.text();
+                if ((elementText.contains("(") && elementText.contains(")")) || elementText.contains())
+                    return elementText;
             }
-        }
+        }*/
+        return elements.first().text();
     }
 
     private EngineQueryResultBuilder processDocument(Document doc) {
@@ -260,7 +298,7 @@ public class LeoEngine implements SearchEngine {
         DictionaryObjectBuilder dictionaryObjectBuilder = new DictionaryObjectBuilder();
 
         // Extract general form:
-        String generalForm = side.getElementsByTag("word").first().text();
+        String generalForm = extractGeneralForm(side);
 
         // Extract language:
         String languageIdentifier = side.attr("lang");
@@ -268,32 +306,58 @@ public class LeoEngine implements SearchEngine {
             languageIdentifier = "cn";
         Language language = Language.getExistingLanguageById(languageIdentifier);
 
-        // Extract representation value:
+        final String[] pluralForm = new String[1];      // Workaround since objects inside lambda should be final
+
+        // Extract description and plural form:
+        side.getElementsByTag("small")
+                .stream()
+                .filter(e -> !StringUtils.startsWith(e.text(), "|"))        // Filter verb tenses!
+                .forEach(element -> {
+                    String elementText = element.text();
+                    String elementHtml = element.outerHtml();
+                    if (StringUtils.startsWithIgnoreCase(elementText, "pl.:")) {
+                        pluralForm[0] = StringUtils.substringAfter(elementText, ".:");
+                        if (StringUtils.isNotBlank(pluralForm[0]))
+                            dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, stripWhitespace(pluralForm[0]));
+                    } else if (isValidDescriptionHtml(elementHtml)) {
+                        elementText = StringUtils.strip(elementText, "-");
+                        dictionaryObjectBuilder.setDescription(stripWhitespace(elementText));
+                    }
+                });
+
         String fullRepresentation = side.getElementsByTag("repr").text();
-        String trimmedRepresentation = StringUtils.removeStart(fullRepresentation, generalForm).trim();
-        String substringBeforeDomain = StringUtils.substringBefore(trimmedRepresentation, "[");
-        String substringBeforeForms = StringUtils.substringBefore(substringBeforeDomain, "|");
-        if (!StringUtils.equals(generalForm, substringBeforeForms) && StringUtils.isNoneBlank(substringBeforeForms))
-            dictionaryObjectBuilder.setDescription(StringUtils.strip(substringBeforeForms, " \u00A0\n\t\r"));
 
         // Test for domain specific content:
         String domain = extractDomainString(fullRepresentation);
-        if (StringUtils.isNotEmpty(domain))
+        if (StringUtils.isNotBlank(domain))
             dictionaryObjectBuilder.setDomain(domain);
 
         // Test for abbreviation
         String abbreviation = extractAbbreviationString(fullRepresentation);
-        if (StringUtils.isNotEmpty(abbreviation))
+        if (StringUtils.isNotBlank(abbreviation))
             dictionaryObjectBuilder.setAbbreviation(abbreviation);
+
+        // Try to detect alternative plural form:
+        if (pluralForm[0] == null) {
+            pluralForm[0] = alternativeExtractPluralString(fullRepresentation);
+            if (StringUtils.isNotBlank(pluralForm[0]))
+                dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, pluralForm[0]);
+        }
 
         // Process additional forms (e.g. verb tenses):
         String additionalFormText = side.getElementsByTag("repr").get(0).getElementsByTag("small").text();
-        processAdditionalForms(entryType, dictionaryObjectBuilder, language, additionalFormText);
+        processTenses(entryType, dictionaryObjectBuilder, language, additionalFormText);
 
         return dictionaryObjectBuilder
                 .setGeneralForm(generalForm)
                 .setLanguage(language)
                 .build();
+    }
+
+    private boolean isValidDescriptionHtml(String elementHtml) {
+        return StringUtils.startsWithIgnoreCase(elementHtml, "<small><i>") && StringUtils.endsWith(elementHtml, "</i></small>")
+                && !StringUtils.containsIgnoreCase(elementHtml, ".:") && !StringUtils.containsIgnoreCase(elementHtml, ".]")
+                && !StringUtils.containsIgnoreCase(elementHtml, "auch:") && !StringUtils.containsIgnoreCase(elementHtml, "also:");
     }
 
     private void processSimilarities(@Nullable Element similarityNode, @NotNull EngineQueryResultBuilder engineQueryResultBuilder) {
@@ -316,7 +380,22 @@ public class LeoEngine implements SearchEngine {
                                 .build()
                 );
             }
+        }
+    }
 
+    private void processTenses(EntryType entryType, DictionaryObjectBuilder dictionaryObjectBuilder, Language language, String representation) {
+        // Try to extract verb tenses in english  and german dictionary:
+        if (entryType == EntryType.VERB && (Language.ENGLISH.equals(language) || Language.GERMAN.equals(language))) {
+            String tensesString = StringUtils.substringBetween(representation, "|", "|");
+            if (tensesString != null) {
+                String[] tensesArray = StringUtils.split(tensesString, ",");
+                if (tensesArray.length != 2) {
+                    LOGGER.warn("Tenses array {} has unexpected length {} instead of 2", tensesArray, tensesArray.length);
+                }
+                dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, stripWhitespace(tensesArray[0]));
+                if (tensesArray.length >= 2)
+                    dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, stripWhitespace(tensesArray[1]));
+            }
         }
     }
 
