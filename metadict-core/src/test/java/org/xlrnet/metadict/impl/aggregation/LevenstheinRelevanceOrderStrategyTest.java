@@ -108,7 +108,7 @@ public class LevenstheinRelevanceOrderStrategyTest {
         DictionaryObject outputObjectMock = Mockito.mock(DictionaryObject.class);
         when(outputObjectMock.getGeneralForm()).thenReturn(generalFormOutput);
 
-        return new ResultEntryImpl(
+        return ResultEntryImpl.from(
                 new DictionaryEntryBuilder()
                         .setInputObject(inputObjectMock)
                         .setOutputObject(outputObjectMock)

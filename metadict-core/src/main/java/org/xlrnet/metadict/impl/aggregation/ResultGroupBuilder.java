@@ -93,18 +93,4 @@ public class ResultGroupBuilder {
         this.groupIdentifier = groupIdentifier;
         return this;
     }
-
-    /**
-     * Set all result entries.
-     *
-     * @param resultEntries
-     *         The collection of result entries that should be added.
-     * @return The current builder.
-     */
-    public ResultGroupBuilder setResultEntries(List<ResultEntry> resultEntries) {
-        checkNotNull(resultEntries);
-
-        this.resultEntries = resultEntries;
-        return this;
-    }
 }

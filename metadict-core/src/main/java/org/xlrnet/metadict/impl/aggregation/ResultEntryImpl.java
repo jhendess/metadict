@@ -45,7 +45,7 @@ public class ResultEntryImpl implements ResultEntry {
 
     private double entryScore;
 
-    public ResultEntryImpl(DictionaryEntry dictionaryEntry, String sourceEngine, double entryScore) {
+    private ResultEntryImpl(DictionaryEntry dictionaryEntry, String sourceEngine, double entryScore) {
         checkNotNull(dictionaryEntry, "Wrapped DictionaryEntry may not be null");
         checkNotNull(sourceEngine, "Engine name may not be null");
         checkArgument(entryScore >= 0.0 && entryScore <= 1.0, "Entry score must be in range [0.0;1.0]");
@@ -68,6 +68,20 @@ public class ResultEntryImpl implements ResultEntry {
      */
     public static ResultEntry from(DictionaryEntry dictionaryEntry, String sourceEngine, double entryScore) {
         return new ResultEntryImpl(dictionaryEntry, sourceEngine, entryScore);
+    }
+
+    /**
+     * Wrap a new {@link ResultEntry} around an existing {@link DictionaryEntry}. The entry score of this entry will
+     * have the value 1.0.
+     *
+     * @param dictionaryEntry
+     *         The {@link DictionaryEntry} that should be wrapped.
+     * @param sourceEngine
+     *         The name of the engine that provided this result entry.
+     * @return a new {@link ResultEntry} object around the given {@link DictionaryEntry}.
+     */
+    public static ResultEntry from(DictionaryEntry dictionaryEntry, String sourceEngine) {
+        return new ResultEntryImpl(dictionaryEntry, sourceEngine, 1.0);
     }
 
     /**

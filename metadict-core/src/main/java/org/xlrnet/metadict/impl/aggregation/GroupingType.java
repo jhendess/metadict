@@ -40,7 +40,7 @@ public enum GroupingType {
 
     BY_DICTIONARY(null),
 
-    BY_ENTRYTYPE(null);
+    BY_ENTRYTYPE(new EntryTypeGroupingStrategy());
 
     private GroupingStrategy groupingStrategy;
 

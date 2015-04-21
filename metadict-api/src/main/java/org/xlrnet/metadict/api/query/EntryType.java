@@ -7,26 +7,37 @@ package org.xlrnet.metadict.api.query;
  */
 public enum EntryType {
 
-    OTHER_WORD,
+    OTHER_WORD("Other word"),
 
-    UNKNOWN,
+    UNKNOWN("Unknown"),
 
-    PHRASE,
+    PHRASE("Phrase"),
 
-    EXAMPLE,
+    EXAMPLE("Example"),
 
-    NOUN,
+    NOUN("Noun"),
 
-    VERB,
+    VERB("Verb"),
 
-    ADJECTIVE,
+    ADJECTIVE("Adjective"),
 
-    ADVERB,
+    ADVERB("Adverb"),
 
-    PREPOSITION,
+    PREPOSITION("Preposition"),
 
-    PRONOUN,
+    PRONOUN("Pronoun"),
 
-    INTERJECTION, CONJUNCTION
+    INTERJECTION("Interjection"),
 
+    CONJUNCTION("Conjunction");
+
+    EntryType(String displayname) {
+        this.displayname = displayname;
+    }
+
+    private String displayname;
+
+    public String getDisplayname() {
+        return displayname;
+    }
 }
