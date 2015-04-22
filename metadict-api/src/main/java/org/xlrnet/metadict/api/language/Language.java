@@ -181,7 +181,7 @@ public class Language {
      *         The identifier for the dialect.
      * @param dialectDisplayName
      *         The name of the dialect that will be displayed to the client. If the dialect is already cached, the
-     *         registered dialect displayname will be returned.
+     *         registered dialect's displayname will be returned.
      * @return A {@link Language} object with the given identifier.
      */
     public static Language forSimpleLanguage(String identifier, String displayName, String dialectIdentifier, String dialectDisplayName) {
@@ -197,18 +197,45 @@ public class Language {
         return dialectCache.get(key);
     }
 
+    /**
+     * Returns the dialect's identifier of this language.
+     *
+     * @return the dialect's identifier of this language.
+     */
+    @Nullable
     public String getDialect() {
         return dialect;
     }
 
+    /**
+     * Returns the dialect's display name of this language (without main language). This is the value that should be
+     * displayed to a human. To get also the display name of the main you have to call {@link #getDisplayName()}.
+     *
+     * @return the dialect's display name of this language.
+     */
+    @Nullable
     public String getDialectDisplayName() {
         return dialectDisplayName;
     }
 
+    /**
+     * Returns the display name of this language (without the dialect). This is the value that should be displayed to a
+     * human user.
+     *
+     * @return the display name of this language.
+     */
+    @NotNull
     public String getDisplayName() {
         return displayName;
     }
 
+    /**
+     * Returns the identifier of this language (without the dialect). This method has to be unique per runtime and
+     * should only be used internally.
+     *
+     * @return the identifier of this language.
+     */
+    @NotNull
     public String getIdentifier() {
         return identifier;
     }

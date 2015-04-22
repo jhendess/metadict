@@ -218,6 +218,7 @@ public class Dictionary {
      *
      * @return the expected input language of this dictionary.
      */
+    @NotNull
     public Language getInput() {
         return input;
     }
@@ -227,14 +228,17 @@ public class Dictionary {
      *
      * @return the expected output language of this dictionary.
      */
+    @NotNull
     public Language getOutput() {
         return output;
     }
 
+    @NotNull
     public String getQueryString() {
         return queryString;
     }
 
+    @NotNull
     public String getQueryStringWithDialect() {
         return queryStringWithDialect;
     }

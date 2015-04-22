@@ -22,39 +22,37 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.impl.aggregation;
+package org.xlrnet.metadict.impl.util;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
+import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.Language;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Use the {@link GroupingType} to determine how the {@link ResultEntry} should be grouped.
+ * Various test cases for the methods in {@link FormatUtils}.
  */
-public enum GroupingType {
+public class FormatUtilsTest {
 
-    /**
-     * The grouping will create only one group with all results in one group.
-     */
-    NONE(new NoneGroupingStrategy()),
+    @Test
+    public void testFormatDictionary_unidirected_noDialects() throws Exception {
+        Dictionary testDictionary = Dictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, false);
 
-    BY_ENGINE(null),
+        String expected = "German -> English";
+        String actual = FormatUtils.formatDictionaryName(testDictionary);
 
-    BY_DICTIONARY(new DictionaryGroupingStrategy()),
-
-    BY_ENTRYTYPE(new EntryTypeGroupingStrategy());
-
-    private GroupingStrategy groupingStrategy;
-
-    GroupingType(GroupingStrategy groupingStrategy) {
-        this.groupingStrategy = groupingStrategy;
+        assertEquals(expected, actual);
     }
 
-    /**
-     * Returns the strategy that should be used for this type of grouping.
-     *
-     * @return the strategy that should be used for this type of grouping.
-     */
-    @NotNull
-    public GroupingStrategy getGroupingStrategy() {
-        return groupingStrategy;
+    @Test
+    public void testFormatDictionary_bidirected_dialects() throws Exception {
+        Language britishEnglish = Language.forSimpleLanguage("en", "english", "gb", "great britain");
+        Dictionary testDictionary = Dictionary.fromLanguages(Language.NORWEGIAN_NYNORSK, britishEnglish, true);
+
+        String expected = "Norwegian (Nynorsk) <-> English (Great Britain)";
+        String actual = FormatUtils.formatDictionaryName(testDictionary);
+
+        assertEquals(expected, actual);
     }
 }
