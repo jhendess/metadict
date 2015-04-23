@@ -85,6 +85,12 @@
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
         </dependency>
+        <!-- Hamcrest testing -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
+        </dependency>
     </dependencies>
 
     <build>

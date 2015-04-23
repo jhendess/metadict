@@ -241,52 +241,10 @@ function MetadictViewModel() {
     };
 
     this.buildAdditionalDataString = function (data) {
-        var contentArray = [];
-
-        if (data.description != undefined) {
-            contentArray.push(data.description)
-        }
-
-        if (data.additionalForms != undefined) {
-            var additionalForms = data.additionalForms;
-            // Forms for nouns
-            if (additionalForms.PLURAL != undefined)
-                contentArray.push("pl.: " + additionalForms.PLURAL);
-            if (additionalForms.SINGULAR != undefined)
-                contentArray.push("sg.: " + additionalForms.SINGULAR);
-            // Tenses
-            if (additionalForms.PRESENT_TENSE != undefined)
-                contentArray.push("pr.: " + additionalForms.PRESENT_TENSE);
-            if (additionalForms.PAST_TENSE != undefined)
-                contentArray.push("pa.: " + additionalForms.PAST_TENSE);
-            if (additionalForms.PAST_PERFECT != undefined)
-                contentArray.push("par.: " + additionalForms.PAST_PERFECT);
-            if (additionalForms.PERFECT_PARTICIPLE != undefined)
-                contentArray.push("per.: " + additionalForms.PERFECT_PARTICIPLE);
-            // Adjective forms:
-            if (additionalForms.POSITIVE != undefined)
-                contentArray.push("pos.: " + additionalForms.POSITIVE);
-            if (additionalForms.COMPARATIVE != undefined)
-                contentArray.push("comp.: " + additionalForms.COMPARATIVE);
-            if (additionalForms.SUPERLATIVE != undefined)
-                contentArray.push("sup.: " + additionalForms.SUPERLATIVE);
-            if (additionalForms.DEFINITE_FORM != undefined)
-                contentArray.push("def.: " + additionalForms.DEFINITE_FORM);
-        }
-
-        if (data.abbreviation != undefined) {
-            contentArray.push("abbr.: " + data.abbreviation)
-        }
-
-        if (data.domain != undefined) {
-            contentArray.push("dom.: " + data.domain)
-        }
-
-        if (data.grammaticalGender != undefined) {
-            contentArray.push("(" + data.grammaticalGender.toLowerCase() + ")")
-        }
-
-        return contentArray.join(", ")
+        if (data.additionalRepresentation != undefined)
+            return data.additionalRepresentation;
+        else
+            return "";
     };
 
     this.reloadStatus = function () {

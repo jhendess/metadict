@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,6 +45,8 @@ public class JacksonResteasyProducer implements ContextResolver<ObjectMapper> {
     private static final ObjectMapper objectMapper = new ObjectMapper()
             // Find additional modules
             .findAndRegisterModules()
+            // Register custom module for Metadict serializers
+            .registerModule(new MetadictModule())
                     // Don't print null-values
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                     // Don't write timestamps
