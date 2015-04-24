@@ -24,18 +24,19 @@
 
 package org.xlrnet.metadict.engines.heinzelnisse;
 
-import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
-import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.api.language.Language;
+import org.xlrnet.metadict.api.engine.*;
+import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
+import org.xlrnet.metadict.api.query.DictionaryEntryBuilder;
+import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
+import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
+import org.xlrnet.metadict.api.query.EntryType;
 
 /**
- * Created by xolor on 07.04.15.
+ * Provider for Heinzelnisse.info engine.
  */
 public class HeinzelnisseEngineProvider implements SearchProvider {
 
@@ -48,7 +49,56 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      */
     @Override
     public AutoTestSuite getAutoTestSuite() {
-        return null;
+        return new AutoTestSuiteBuilder()
+                .addAutoTestCase(new AutoTestCaseBuilder()
+                        .setTestQueryString("haus")
+                        .setTargetDictionary(Dictionary.fromQueryString("de-no", true))
+                        .setExpectedResults(new EngineQueryResultBuilder()
+                                .addEntry(new DictionaryEntryBuilder()
+                                        .setEntryType(EntryType.NOUN)
+                                        .setInputObject(new DictionaryObjectBuilder()
+                                                .setGeneralForm("Haus")
+                                                .setLanguage(Language.GERMAN)
+                                                .setGrammaticalGender(GrammaticalGender.NEUTER)
+                                                .setAdditionalForm(GrammaticalNumber.PLURAL, "Häuser")
+                                                .build())
+                                        .setOutputObject(new DictionaryObjectBuilder()
+                                                .setGeneralForm("hus")
+                                                .setGrammaticalGender(GrammaticalGender.NEUTER)
+                                                .setLanguage(Language.NORWEGIAN_BOKMÅL)
+                                                .build())
+                                        .build())
+                                .addSimilarRecommendation(new DictionaryObjectBuilder()
+                                        .setLanguage(Language.GERMAN)
+                                        .setGeneralForm("aus")
+                                        .build())
+                                .build())
+                        .build())
+                .addAutoTestCase(new AutoTestCaseBuilder()
+                        .setTestQueryString("essen")
+                        .setTargetDictionary(Dictionary.fromQueryString("de-no", true))
+                        .setExpectedResults(new EngineQueryResultBuilder()
+                                .addEntry(new DictionaryEntryBuilder()
+                                        .setEntryType(EntryType.VERB)
+                                        .setInputObject(new DictionaryObjectBuilder()
+                                                .setGeneralForm("essen")
+                                                .setLanguage(Language.GERMAN)
+                                                .build())
+                                        .setOutputObject(new DictionaryObjectBuilder()
+                                                .setGeneralForm("spise")
+                                                .setLanguage(Language.NORWEGIAN_BOKMÅL)
+                                                .setAdditionalForm(GrammaticalTense.PRESENT_TENSE, "spiser")
+                                                .setAdditionalForm(GrammaticalTense.PAST_TENSE, "spiste")
+                                                .setAdditionalForm(GrammaticalTense.PERFECT_PARTICIPLE, "spist")
+                                                .build())
+                                        .build())
+                                .addSimilarRecommendation(new DictionaryObjectBuilder()
+                                        .setLanguage(Language.GERMAN)
+                                        .setGeneralForm("Esse")
+                                        .build())
+                                .build())
+                        .build())
+                .build();
     }
 
     /**
