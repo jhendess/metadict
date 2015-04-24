@@ -26,7 +26,7 @@ package org.xlrnet.metadict.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.impl.core.MetadictCore;
+import org.xlrnet.metadict.core.core.MetadictCore;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

@@ -22,40 +22,39 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.aggregation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import org.jetbrains.annotations.NotNull;
 
 /**
- * REST application for JAX-RS.
+ * Use the {@link GroupingType} to determine how the {@link ResultEntry} should be grouped.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public enum GroupingType {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * The grouping will create only one group with all results in one group.
+     */
+    NONE(new NoneGroupingStrategy()),
 
-    @Inject
-    MetadictCore metadictCore;
+    BY_ENGINE(null),
 
-    public RestApplication() {
+    BY_DICTIONARY(new DictionaryGroupingStrategy()),
 
+    BY_ENTRYTYPE(new EntryTypeGroupingStrategy());
+
+    private GroupingStrategy groupingStrategy;
+
+    GroupingType(GroupingStrategy groupingStrategy) {
+        this.groupingStrategy = groupingStrategy;
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
+    /**
+     * Returns the strategy that should be used for this type of grouping.
+     *
+     * @return the strategy that should be used for this type of grouping.
+     */
+    @NotNull
+    public GroupingStrategy getGroupingStrategy() {
+        return groupingStrategy;
     }
 }

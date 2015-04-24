@@ -22,40 +22,37 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.junit.Test;
+import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.Language;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import static org.junit.Assert.assertEquals;
 
 /**
- * REST application for JAX-RS.
+ * Various test cases for the methods in {@link FormatUtils}.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public class FormatUtilsTest {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    @Test
+    public void testFormatDictionary_unidirected_noDialects() throws Exception {
+        Dictionary testDictionary = Dictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, false);
 
-    @Inject
-    MetadictCore metadictCore;
+        String expected = "German -> English";
+        String actual = FormatUtils.formatDictionaryName(testDictionary);
 
-    public RestApplication() {
-
+        assertEquals(expected, actual);
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
+    @Test
+    public void testFormatDictionary_bidirected_dialects() throws Exception {
+        Language britishEnglish = Language.forSimpleLanguage("en", "english", "gb", "great britain");
+        Dictionary testDictionary = Dictionary.fromLanguages(Language.NORWEGIAN_NYNORSK, britishEnglish, true);
+
+        String expected = "Norwegian (Nynorsk) <-> English (Great Britain)";
+        String actual = FormatUtils.formatDictionaryName(testDictionary);
+
+        assertEquals(expected, actual);
     }
 }

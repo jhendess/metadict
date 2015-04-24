@@ -22,40 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.strategies;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * REST application for JAX-RS.
+ * Qualifier for annotating and injecting the default execution strategy.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
-
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
-}
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface DefaultExecutionStrategy {}

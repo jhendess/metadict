@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.impl.util.FormatUtils;
+import org.xlrnet.metadict.core.util.FormatUtils;
 
 import java.io.IOException;
 

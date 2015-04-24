@@ -22,40 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import java.util.Collection;
 
 /**
- * REST application for JAX-RS.
+ * The {@link QueryPlanExecutionStrategy} interface is used for implementing query plan executors. A query plan
+ * executor has to execute every step defined in a {@link QueryPlan}. However, the executor can decide how the query
+ * plan gets executed by e.g. implementing multi-threading or smart caching.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface QueryPlanExecutionStrategy {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
+     * QueryStep} have to be aggregated to a {@link Iterable} of {@link QueryStepResult} objects that
+     * contains the results of each single step.
+     *
+     * @param queryPlan
+     *         The query plan that should be executed.
+     * @return a collection with the results of each step
+     */
+    @NotNull
+    Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan);
 
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

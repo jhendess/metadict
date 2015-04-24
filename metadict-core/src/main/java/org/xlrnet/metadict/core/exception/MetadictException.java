@@ -22,40 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+package org.xlrnet.metadict.core.exception;
 
 /**
- * REST application for JAX-RS.
+ * The class {@link MetadictException} represents any kind of exception that may be thrown during a metadict core call.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public class MetadictException extends Exception {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
-
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

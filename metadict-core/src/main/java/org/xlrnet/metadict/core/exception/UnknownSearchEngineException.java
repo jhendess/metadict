@@ -22,40 +22,24 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+package org.xlrnet.metadict.core.exception;
 
 /**
- * REST application for JAX-RS.
+ * The {@link UnknownSearchEngineException} will be thrown, when an unknown {@link
+ * org.xlrnet.metadict.api.engine.SearchEngine} was requested. This should indicate a severe programming error that
+ * should only be noticed during development, therefore this is only a {@link RuntimeException}.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public class UnknownSearchEngineException extends RuntimeException {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
-
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
+    /**
+     * Construct a new {@link UnknownSearchEngineException} with the given String as the name of the failed {@link
+     * org.xlrnet.metadict.api.engine.SearchEngine}.
+     *
+     * @param engineName
+     *         name of the failed search engine
+     */
+    public UnknownSearchEngineException(String engineName) {
+        super("Couldn't find unknown search engine " + engineName);
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

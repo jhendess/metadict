@@ -22,40 +22,43 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.autotest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * REST application for JAX-RS.
+ * Builder for {@link AutoTestReport} objects.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public class AutoTestReportBuilder {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    private List<AutoTestResult> testResultList = new ArrayList<>();
 
-    @Inject
-    MetadictCore metadictCore;
+    private int failedTests = 0;
 
-    public RestApplication() {
+    private int successfulTests = 0;
 
+    private int totalTests = 0;
+
+    AutoTestReportBuilder addAutoTestResult(@NotNull AutoTestResult autoTestResult) {
+        checkNotNull(autoTestResult);
+
+        if (autoTestResult.isSuccessful())
+            successfulTests++;
+        else
+            failedTests++;
+
+        totalTests++;
+
+        testResultList.add(autoTestResult);
+        return this;
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
+    AutoTestReport build() {
+        return new AutoTestReportImpl(testResultList, successfulTests, failedTests, totalTests);
     }
 }

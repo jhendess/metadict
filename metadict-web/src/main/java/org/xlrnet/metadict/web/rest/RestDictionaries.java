@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.impl.core.MetadictCore;
+import org.xlrnet.metadict.core.core.MetadictCore;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
 

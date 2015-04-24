@@ -22,40 +22,39 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.autotest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import java.util.List;
 
 /**
- * REST application for JAX-RS.
+ * The {@link AutoTestReport} serves as the main container for multiple {@link AutoTestResult}. It is used to describe
+ * a full report of multiple test cases and contains
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface AutoTestReport extends Iterable<AutoTestResult> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Returns the amount of failed test cases in this report i.e. the number of objects where {@link
+     * AutoTestResult#isSuccessful()} returns false.
+     *
+     * @return the amount of failed test cases in this report.
+     */
+    int getFailedTests();
 
-    @Inject
-    MetadictCore metadictCore;
+    /**
+     * Returns the amount of successfully executed test cases in this report i.e. the number of objects where {@link
+     * AutoTestResult#isSuccessful()} returns true.
+     *
+     * @return the amount of successfully executed test cases in this report.
+     */
+    int getSuccessfulTests();
 
-    public RestApplication() {
+    List<AutoTestResult> getTestResults();
 
-    }
+    /**
+     * Returns the amount of total test cases in this report.
+     *
+     * @return the amount of total test cases in this report.
+     */
+    int getTotalTestCount();
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

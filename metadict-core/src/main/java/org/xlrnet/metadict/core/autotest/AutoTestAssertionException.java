@@ -22,40 +22,25 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+package org.xlrnet.metadict.core.autotest;
 
 /**
- * REST application for JAX-RS.
+ * This exception will be thrown if an {@link org.xlrnet.metadict.api.engine.AutoTestCase} failed because of not
+ * finding an expected object inside the actual result set.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public class AutoTestAssertionException extends Exception {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    private final Object expectedObject;
 
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
+    /**
+     * Constructs a new exception with the given expected object that should have been inside the actual result set.
+     */
+    public AutoTestAssertionException(Object expectedObject) {
+        super("AutoTestCase failed: expected object could not be found in actual result");
+        this.expectedObject = expectedObject;
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
+    public Object getExpectedObject() {
+        return expectedObject;
     }
 }

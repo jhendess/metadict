@@ -22,40 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.core.core.EngineRegistry;
 
 /**
- * REST application for JAX-RS.
+ * The {@link QueryPlanningStrategy} interface is used to implement various strategies for selecting the engines that
+ * should
+ * be used for executing a {@link QueryRequest}.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface QueryPlanningStrategy {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistry} should be used
+     * for accessing the available implementations of {@link org.xlrnet.metadict.api.engine.SearchEngine}.
+     *
+     * @param queryRequest
+     *         The query request for which a query plan has to be calculated.
+     * @param engineRegistry
+     *         The registry where all available engines are registered.
+     * @return an executable {@link QueryPlan}.
+     */
+    @NotNull
+    QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry);
 
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

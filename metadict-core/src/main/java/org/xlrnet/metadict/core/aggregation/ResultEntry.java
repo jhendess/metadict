@@ -22,40 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.aggregation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import org.xlrnet.metadict.api.query.DictionaryEntry;
 
 /**
- * REST application for JAX-RS.
+ * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
+ * {@link DictionaryEntry} but also provides information about the source of the entry and scoring information.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface ResultEntry extends DictionaryEntry, Comparable<ResultEntry> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
+     * (inclusive) where a value of 1.0 means best possible relevancy.
+     *
+     * @return the calculated relevance score for this entry.
+     */
+    double getEntryScore();
 
-    @Inject
-    MetadictCore metadictCore;
+    /**
+     * Returns the name of the engine that produced this entry.
+     *
+     * @return the name of the engine that produced this entry.
+     */
+    String getSourceEngine();
 
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

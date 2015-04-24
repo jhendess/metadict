@@ -22,40 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.aggregation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import java.util.List;
 
 /**
- * REST application for JAX-RS.
+ * The {@link ResultGroup} is used to group {@link ResultEntry} objects according to a specified method like e.g. the
+ * type of the entry.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface ResultGroup extends Iterable<ResultEntry> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Returns a string representation of the group identifier. For example if the group is based on entry types the
+     * identifier might be "NOUNS" for a group that contains only nouns.
+     *
+     * @return a string representation of the group identifier.
+     */
+    String getGroupIdentifier();
 
-    @Inject
-    MetadictCore metadictCore;
+    /**
+     * Returns the entries of this group.
+     *
+     * @return the entries of this group.
+     */
+    List<ResultEntry> getResultEntries();
 
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

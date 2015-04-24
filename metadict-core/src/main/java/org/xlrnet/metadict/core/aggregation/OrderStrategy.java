@@ -22,40 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.aggregation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.core.query.QueryRequest;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import java.util.Collection;
 
 /**
- * REST application for JAX-RS.
+ * A {@link OrderStrategy} defines how multiple {@link ResultGroup} objects should be sorted.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface OrderStrategy {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Sort the entries in the given result groups with the internal strategy and return a new collection of {@link
+     * ResultGroup} objects in the specified order.
+     *
+     * @param queryRequest
+     *         The query request that was used to create the result groups.
+     * @param unorderedResultGroups
+     *         An unsorted collection of result groups.
+     * @return a sorted collection of groups.
+     */
+    @NotNull
+    Collection<ResultGroup> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> unorderedResultGroups);
 
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }

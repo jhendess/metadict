@@ -22,40 +22,25 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+package org.xlrnet.metadict.core.aggregation;
 
 /**
- * REST application for JAX-RS.
+ * Use the {@link OrderType} to determine how the entries in each {@link ResultGroup} should be ordered.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public enum OrderType {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    RELEVANCE(new LevenstheinRelevanceOrderStrategy()),
 
-    @Inject
-    MetadictCore metadictCore;
+    PASSTHROUGH(new PassthroughOrderStrategy());
 
-    public RestApplication() {
+    private OrderStrategy orderStrategy;
 
+    OrderType(OrderStrategy orderStrategy) {
+        this.orderStrategy = orderStrategy;
     }
 
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
+    public OrderStrategy getOrderStrategy() {
+        return this.orderStrategy;
     }
+
 }

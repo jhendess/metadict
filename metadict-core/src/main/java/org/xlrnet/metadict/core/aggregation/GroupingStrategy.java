@@ -22,40 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.core.aggregation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.core.query.QueryStepResult;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
+import java.util.Collection;
 
 /**
- * REST application for JAX-RS.
+ * A {@link GroupingStrategy} defines how multiple {@link org.xlrnet.metadict.api.query.EngineQueryResult} objects
+ * should be grouped.
  */
-@ApplicationPath("/api")
-public class RestApplication extends Application {
+public interface GroupingStrategy {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
+    /**
+     * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
+     *
+     * @param queryStepResults
+     *         An iterable of the query steps results.
+     * @return a collection of groups.
+     */
+    @NotNull
+    Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults);
 
-    @Inject
-    MetadictCore metadictCore;
-
-    public RestApplication() {
-
-    }
-
-    @PostConstruct
-    public void initialize() {
-        if (metadictCore != null) {
-            metadictCore.getEngineRegistry();
-            LOGGER.info("Metadict web application started successfully");
-        } else {
-            LOGGER.error("Metadict could not be started - check log files");
-        }
-    }
 }
