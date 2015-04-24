@@ -26,6 +26,8 @@ package org.xlrnet.metadict.impl.query;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+
 /**
  * The {@link QueryPlanExecutionStrategy} interface is used for implementing query plan executors. A query plan
  * executor has to execute every step defined in a {@link QueryPlan}. However, the executor can decide how the query
@@ -40,9 +42,9 @@ public interface QueryPlanExecutionStrategy {
      *
      * @param queryPlan
      *         The query plan that should be executed.
-     * @return an iterable with the results of each step
+     * @return a collection with the results of each step
      */
     @NotNull
-    Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan);
+    Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan);
 
 }

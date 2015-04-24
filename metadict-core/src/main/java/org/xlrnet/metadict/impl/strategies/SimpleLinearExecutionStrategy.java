@@ -34,6 +34,7 @@ import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 import org.xlrnet.metadict.impl.query.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -51,11 +52,11 @@ public class SimpleLinearExecutionStrategy implements QueryPlanExecutionStrategy
      * @param queryPlan
      *         The query plan that should be executed. The caller of this method has make sure that the provided query
      *         plan is valid.
-     * @return an iterable with the results of each step
+     * @return a collection with the results of each step
      */
     @NotNull
     @Override
-    public Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
+    public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         List<QueryStepResult> queryResults = new ArrayList<>();      // TODO: Statistics?
 
         for (QueryStep step : queryPlan.getQueryStepList()) {

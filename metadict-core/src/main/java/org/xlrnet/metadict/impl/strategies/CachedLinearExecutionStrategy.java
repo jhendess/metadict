@@ -26,7 +26,7 @@ package org.xlrnet.metadict.impl.strategies;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.util.concurrent.Callables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,20 +37,20 @@ import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 import org.xlrnet.metadict.impl.query.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Execution strategy that executes each query consecutively but uses an internal data structure for caching the
- * results
- * of each query.
+ * results of each query.
  */
 @DefaultExecutionStrategy
 public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
 
-    private static final Cache<QueryStep, QueryStepResult> QUERY_STEP_RESULT_CACHE = CacheBuilder
+    Cache<QueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
             .newBuilder()
             .concurrencyLevel(8)
             .initialCapacity(512)
@@ -65,29 +65,32 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
      * @param queryPlan
      *         The query plan that should be executed. The caller of this method has make sure that the provided query
      *         plan is valid.
-     * @return an iterable with the results of each step
+     * @return a collection with the results of each step
      */
     @NotNull
     @Override
-    public Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
+    public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         List<QueryStepResult> queryResults = new ArrayList<>();
 
         for (QueryStep currentQueryStep : queryPlan.getQueryStepList()) {
-            QueryStepResult queryStepResult = QUERY_STEP_RESULT_CACHE.getIfPresent(currentQueryStep);
+            QueryStepResult queryStepResult = queryStepResultCache.getIfPresent(currentQueryStep);
 
             try {
                 if (queryStepResult == null) {
                     LOGGER.debug("Cache miss on query step {}", currentQueryStep);
-                    queryStepResult = QUERY_STEP_RESULT_CACHE.get(currentQueryStep, Callables.returning(executeQueryStep(currentQueryStep)));
+                    queryStepResult = queryStepResultCache.get(currentQueryStep, () -> executeQueryStep(currentQueryStep));
                 }
-            } catch (ExecutionException e) {
+            } catch (ExecutionException | UncheckedExecutionException e) {
                 LOGGER.error("Query step {} failed", currentQueryStep, e);
                 queryStepResult = new QueryStepResultBuilder()
                         .setFailedStep(true)
+                        .setQueryStep(currentQueryStep)
                         .setErrorMessage(e.getMessage())
                         .setEngineQueryResult(EngineQueryResultBuilder.EMPTY_QUERY_RESULT)
                         .build();
             }
+            if (queryStepResult != null && queryStepResult.isFailedStep())
+                queryStepResultCache.invalidate(currentQueryStep);
             queryResults.add(queryStepResult);
         }
 
@@ -95,7 +98,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
     }
 
     @NotNull
-    private QueryStepResult executeQueryStep(QueryStep step) {
+    QueryStepResult executeQueryStep(QueryStep step) {
         LOGGER.debug("Executing query step {}", step);
 
         QueryStepResultBuilder stepResultBuilder = new QueryStepResultBuilder().setQueryStep(step);
