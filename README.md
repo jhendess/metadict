@@ -1,9 +1,6 @@
 # Metadict
 Metadict is a modular meta search engine for dictionaries written in Java.
 
-Further information will come soon.
-
-
 ### Deployment
 
 Metadict is being developed primarily to run on a Wildfly application server, but could also be modified to run on other servers like Tomcat or Glassfish.

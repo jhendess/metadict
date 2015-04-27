@@ -29,9 +29,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.xlrnet.metadict</groupId>
-    <artifactId>metadict-parent</artifactId>
+    <artifactId>metadict</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <modules>
         <module>metadict-core</module>
         <module>metadict-api</module>
