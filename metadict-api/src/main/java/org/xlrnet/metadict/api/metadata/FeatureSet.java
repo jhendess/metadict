@@ -24,7 +24,10 @@
 
 package org.xlrnet.metadict.api.metadata;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
+
+import java.util.Collection;
 
 /**
  * The {@link FeatureSet} interface is used to describe the features a metadict search engine provides. To build new
@@ -33,10 +36,16 @@ import org.xlrnet.metadict.api.language.Dictionary;
 public interface FeatureSet {
 
     /**
-     * An array of languages the engine supports. This can be e.g. English-English, German-English but also
-     * English-German.
+     * Return a collection of dictionaries that the engine supports for bilingual lookups. This can be e.g.
+     * English-English or German-English but also English-German.
      */
-    Iterable<Dictionary> getSupportedDictionaries();
+    Collection<BilingualDictionary> getSupportedBilingualDictionaries();
+
+    /**
+     * Return a collection of languages that the engine supports for monolingual lookups. This can be a normal language
+     * like English or German.
+     */
+    Collection<Language> getSupportedLexicographicLanguages();
 
     /**
      * True, if the engine provides alternatives to the given query. This can be e.g. a "did-you-mean" recommendation.
@@ -44,10 +53,22 @@ public interface FeatureSet {
     boolean isProvidesAlternatives();
 
     /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    boolean isProvidesBilingualDictionaryEntries();
+
+    /**
      * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
      * content.
      */
     boolean isProvidesExternalContent();
+
+    /**
+     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
+     * dictionary lookup with detailed information about one entry in one language.
+     */
+    boolean isProvidesMonolingualEntries();
 
     /**
      * True, if the engine i.e. the called website supports fuzzy search.

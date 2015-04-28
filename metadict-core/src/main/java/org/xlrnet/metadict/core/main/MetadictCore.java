@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.core;
+package org.xlrnet.metadict.core.main;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

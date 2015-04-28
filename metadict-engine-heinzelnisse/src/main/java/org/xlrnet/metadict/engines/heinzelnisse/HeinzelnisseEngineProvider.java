@@ -30,7 +30,7 @@ import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
-import org.xlrnet.metadict.api.query.DictionaryEntryBuilder;
+import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
 import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 import org.xlrnet.metadict.api.query.EntryType;
@@ -52,9 +52,9 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
         return new AutoTestSuiteBuilder()
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("haus")
-                        .setTargetDictionary(Dictionary.fromQueryString("de-no", true))
+                        .setTargetDictionary(BilingualDictionary.fromQueryString("de-no", true))
                         .setExpectedResults(new EngineQueryResultBuilder()
-                                .addEntry(new DictionaryEntryBuilder()
+                                .addBilingualEntry(new BilingualEntryBuilder()
                                         .setEntryType(EntryType.NOUN)
                                         .setInputObject(new DictionaryObjectBuilder()
                                                 .setGeneralForm("Haus")
@@ -76,9 +76,9 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
                         .build())
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("essen")
-                        .setTargetDictionary(Dictionary.fromQueryString("de-no", true))
+                        .setTargetDictionary(BilingualDictionary.fromQueryString("de-no", true))
                         .setExpectedResults(new EngineQueryResultBuilder()
-                                .addEntry(new DictionaryEntryBuilder()
+                                .addBilingualEntry(new BilingualEntryBuilder()
                                         .setEntryType(EntryType.VERB)
                                         .setInputObject(new DictionaryObjectBuilder()
                                                 .setGeneralForm("essen")
@@ -130,8 +130,8 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
                 .setSupportsAutoTest(true)
                 .setProvidesExternalContent(true)
                 .setSupportsFuzzySearch(true)
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.NORWEGIAN, Language.GERMAN, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.NORWEGIAN_BOKMÅL, Language.GERMAN, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.NORWEGIAN, Language.GERMAN, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.NORWEGIAN_BOKMÅL, Language.GERMAN, true))
                 .build();
     }
 

@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
@@ -33,7 +33,7 @@ import org.xlrnet.metadict.api.query.EngineQueryResult;
  * used to test if the called search backend is still working as expected.
  * <p>
  * The core may query the {@link SearchEngine} that is provided by the {@link SearchProvider} where this test case is
- * attached. Upon doing so, the core will call {@link SearchEngine#executeSearchQuery(String, Language, Language,
+ * attached. Upon doing so, the core will call {@link SearchEngine#executeBilingualQuery(String, Language, Language,
  * boolean)} with derived parameters from {@link #getTestQueryString()} and {@link #getTargetDictionary()}. The
  * returned {@link EngineQueryResult} from this query will then be compared to the returned values from {@link
  * #getExpectedResults()}.
@@ -55,7 +55,7 @@ public interface AutoTestCase {
      *
      * @return the target dictionary which should be queried for this test case.
      */
-    Dictionary getTargetDictionary();
+    BilingualDictionary getTargetDictionary();
 
     /**
      * Return the query string that should be given to the engine for this test case.

@@ -24,7 +24,8 @@
 
 package org.xlrnet.metadict.api.metadata;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,16 @@ import java.util.List;
 public class FeatureSetBuilder {
 
     /**
-     * An array of languages the engine supports. This can be e.g. English-English, German-English but also
-     * English-German.
+     * A collection of dictionaries that the engine supports for bilingual lookups. This can be e.g. English-English or
+     * German-English but also English-German.
      */
-    protected List<Dictionary> supportedDictionaries = new ArrayList<>();
+    protected List<BilingualDictionary> supportedBilingualDictionaries = new ArrayList<>();
+
+    /**
+     * A collection of languages that the engine supports for monolingual lookups. This can be a normal language like
+     * English or German.
+     */
+    protected List<Language> supportedLexicographicLanguages = new ArrayList<>();
 
     /**
      * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
@@ -61,17 +68,41 @@ public class FeatureSetBuilder {
      * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
      * for more information about this.
      */
-    protected boolean supportsSelfTest = false;
+    protected boolean supportsAutoTest = false;
 
     /**
-     * Add a new {@link Dictionary} that is supported by the engine. This can be e.g. English-English, German-English but also
-     * English-German.
+     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
+     * dictionary lookup with detailed information about one entry in one language.
+     */
+    protected boolean providesLexicographicEntries = false;
+
+    /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    protected boolean providesBilingualDictionaryEntries = false;
+
+    /**
+     * Add a new {@link BilingualDictionary} for bilingual lookups that is supported by the engine. This can be e.g.
+     * English-English, German-English but also English-German.
      *
      * @param newSupportedDictionary
      *         A new dictionary that should be added.
      */
-    public FeatureSetBuilder addSupportedDictionary(Dictionary newSupportedDictionary) {
-        this.supportedDictionaries.add(newSupportedDictionary);
+    public FeatureSetBuilder addSupportedBilingualDictionary(BilingualDictionary newSupportedDictionary) {
+        this.supportedBilingualDictionaries.add(newSupportedDictionary);
+        return this;
+    }
+
+    /**
+     * Add a new {@link Language} that is supported by the engine for lexicographic entries (i.e. monolingual lookups).
+     * This can be e.g. English to search only in English dictionaries.
+     *
+     * @param newLexicographicLanguage
+     *         A new language that should be added.
+     */
+    public FeatureSetBuilder addSupportedLexicographicLanguage(Language newLexicographicLanguage) {
+        this.supportedLexicographicLanguages.add(newLexicographicLanguage);
         return this;
     }
 
@@ -81,24 +112,56 @@ public class FeatureSetBuilder {
      * @return a new instance of {@link FeatureSet}.
      */
     public FeatureSet build() {
-        return new FeatureSetImpl(supportedDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives);
+        return new FeatureSetImpl(supportedBilingualDictionaries, supportedLexicographicLanguages, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsAutoTest, providesLexicographicEntries, providesBilingualDictionaryEntries);
     }
 
+    /**
+     * True, if the engine provides alternatives to the given query. This can be e.g. a "did-you-mean" recommendation.
+     */
     public FeatureSetBuilder setProvidesAlternatives(boolean providesAlternatives) {
         this.providesAlternatives = providesAlternatives;
         return this;
     }
 
+    /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    public FeatureSetBuilder setProvidesBilingualDictionaryEntries(boolean providesBilingualDictionaryEntries) {
+        this.providesBilingualDictionaryEntries = providesBilingualDictionaryEntries;
+        return this;
+    }
+
+    /**
+     * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
+     * content.
+     */
     public FeatureSetBuilder setProvidesExternalContent(boolean providesExternalContent) {
         this.providesExternalContent = providesExternalContent;
         return this;
     }
 
-    public FeatureSetBuilder setSupportsAutoTest(boolean supportsSelfTest) {
-        this.supportsSelfTest = supportsSelfTest;
+    /**
+     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
+     * dictionary lookup with detailed information about one entry in one language.
+     */
+    public FeatureSetBuilder setProvidesLexicographicEntries(boolean providesLexicographicEntries) {
+        this.providesLexicographicEntries = providesLexicographicEntries;
         return this;
     }
 
+    /**
+     * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
+     * for more information about this.
+     */
+    public FeatureSetBuilder setSupportsAutoTest(boolean supportsSelfTest) {
+        this.supportsAutoTest = supportsSelfTest;
+        return this;
+    }
+
+    /**
+     * True, if the engine i.e. the called website supports fuzzy search.
+     */
     public FeatureSetBuilder setSupportsFuzzySearch(boolean supportsFuzzySearch) {
         this.supportsFuzzySearch = supportsFuzzySearch;
         return this;

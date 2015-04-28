@@ -26,8 +26,8 @@ package org.xlrnet.metadict.core.strategies;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.core.core.EngineRegistry;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.core.main.EngineRegistry;
 import org.xlrnet.metadict.core.query.QueryPlan;
 import org.xlrnet.metadict.core.query.QueryPlanningStrategy;
 import org.xlrnet.metadict.core.query.QueryRequest;
@@ -38,7 +38,7 @@ import javax.inject.Inject;
 
 /**
  * Simple planning strategy for creating query plans. This strategy creates unoptimized query plans by just passing all
- * requested {@link Dictionary} to the registry. Using this strategy should be
+ * requested {@link BilingualDictionary} to the registry. Using this strategy should be
  * avoided, since it might cause a lot overhead while querying.
  */
 @Default
@@ -62,7 +62,7 @@ public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
     public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry) {
         QueryPlan queryPlan = new QueryPlan();
 
-        for (Dictionary dictionary : queryRequest.getQueryDictionaries()) {
+        for (BilingualDictionary dictionary : queryRequest.getQueryDictionaries()) {
             engineRegistry.getSearchEngineNamesByDictionary(dictionary).forEach(
                     (s) -> queryPlan.addQueryStep(
                             new QueryStep()

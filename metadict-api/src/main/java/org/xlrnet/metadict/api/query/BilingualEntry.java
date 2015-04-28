@@ -25,23 +25,14 @@
 package org.xlrnet.metadict.api.query;
 
 /**
- * The {@link DictionaryEntry} interface represents a single result entry of a query operation. Use the {@link
- * DictionaryEntryBuilder} class to build a new entry. Multiple entries should be grouped together using a {@link
- * EngineQueryResult}.
+ * The {@link BilingualEntry} interface represents a single bilingual result entry of a query operation (i.e. a
+ * translation). Use the {@link BilingualEntryBuilder} class to build a new entry.
  * <p>
- * Each {@link DictionaryEntry} consists of two different values: an input and an output content. Both objects must
+ * Each {@link BilingualEntry} consists of two different values: an input and an output content. Both objects must
  * implement the {@link DictionaryObject} interface. These objects contain the respective source or target translation
  * of a word or phrase and additional information about use cases, grammatical forms, etc.
  */
-public interface DictionaryEntry {
-
-    /**
-     * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also
-     * provide phrases by using {@link EntryType#PHRASE}.
-     *
-     * @return the entry's type (i.e. word class in most cases).
-     */
-    EntryType getEntryType();
+public interface BilingualEntry extends Entry {
 
     /**
      * Get the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't

@@ -26,8 +26,8 @@ package org.xlrnet.metadict.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.core.query.QueryResponse;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
@@ -122,7 +122,7 @@ public class RestQuery {
     }
 
     private Response internalExecuteQuery(String dictionaryString, String queryRequest, boolean bidirectional) {
-        List<Dictionary> dictionaries;
+        List<BilingualDictionary> dictionaries;
         try {
             dictionaries = DictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
         } catch (IllegalArgumentException e) {

@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.engines.dummy;
 
 import org.xlrnet.metadict.api.engine.*;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
@@ -48,7 +48,7 @@ public class DummyEngineProvider implements SearchProvider {
         return new AutoTestSuiteBuilder().addAutoTestCase(
                 new AutoTestCaseBuilder()
                         .setTestQueryString("foobar")
-                        .setTargetDictionary(Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
+                        .setTargetDictionary(BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
                         .build()
         ).build();
     }
@@ -71,7 +71,7 @@ public class DummyEngineProvider implements SearchProvider {
      */
     public FeatureSet getFeatureSet() {
         return new FeatureSetBuilder()
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
                 .setSupportsAutoTest(true)
                 .build();
     }

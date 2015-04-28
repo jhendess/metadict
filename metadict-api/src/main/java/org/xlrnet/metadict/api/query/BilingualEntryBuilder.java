@@ -27,9 +27,9 @@ package org.xlrnet.metadict.api.query;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link DictionaryEntry} objects.
+ * Builder for creating new {@link BilingualEntry} objects.
  */
-public class DictionaryEntryBuilder {
+public class BilingualEntryBuilder {
 
     private DictionaryObject inputObject;
 
@@ -38,12 +38,12 @@ public class DictionaryEntryBuilder {
     private EntryType entryType = EntryType.UNKNOWN;
 
     /**
-     * Build a new instance of {@link DictionaryEntry} with the set properties.
+     * Build a new instance of {@link BilingualEntry} with the set properties.
      *
-     * @return a new instance of {@link DictionaryEntry}.
+     * @return a new instance of {@link BilingualEntry}.
      */
-    public DictionaryEntry build() {
-        return new DictionaryEntryImpl(inputObject, outputObject, entryType);
+    public BilingualEntry build() {
+        return new BilingualEntryImpl(inputObject, outputObject, entryType);
     }
 
     /**
@@ -55,7 +55,7 @@ public class DictionaryEntryBuilder {
      *         the entry's type (i.e. word class in most cases).
      * @return this builder instance.
      */
-    public DictionaryEntryBuilder setEntryType(EntryType entryType) {
+    public BilingualEntryBuilder setEntryType(EntryType entryType) {
         checkNotNull(entryType);
 
         this.entryType = entryType;
@@ -71,7 +71,7 @@ public class DictionaryEntryBuilder {
      *         The {@link DictionaryObject} in input language.
      * @return this builder instance.
      */
-    public DictionaryEntryBuilder setInputObject(DictionaryObject inputObject) {
+    public BilingualEntryBuilder setInputObject(DictionaryObject inputObject) {
         checkNotNull(inputObject);
 
         this.inputObject = inputObject;
@@ -85,7 +85,7 @@ public class DictionaryEntryBuilder {
      * @param outputObject  the {@link DictionaryObject} in output language or null for one-language dictionaries.
      * @return this builder instance.
      */
-    public DictionaryEntryBuilder setOutputObject(DictionaryObject outputObject) {
+    public BilingualEntryBuilder setOutputObject(DictionaryObject outputObject) {
         checkNotNull(outputObject);
 
         this.outputObject = outputObject;

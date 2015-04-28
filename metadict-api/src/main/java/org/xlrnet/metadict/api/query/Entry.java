@@ -22,29 +22,18 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.aggregation;
-
-import org.xlrnet.metadict.api.query.BilingualEntry;
+package org.xlrnet.metadict.api.query;
 
 /**
- * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
- * {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
+ * Base interface for any dictionary entry type.
  */
-public interface ResultEntry extends BilingualEntry, Comparable<ResultEntry> {
+public interface Entry {
 
     /**
-     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
-     * (inclusive) where a value of 1.0 means best possible relevancy.
+     * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also
+     * provide phrases by using {@link EntryType#PHRASE}.
      *
-     * @return the calculated relevance score for this entry.
+     * @return the entry's type (i.e. word class in most cases).
      */
-    double getEntryScore();
-
-    /**
-     * Returns the name of the engine that produced this entry.
-     *
-     * @return the name of the engine that produced this entry.
-     */
-    String getSourceEngine();
-
+    EntryType getEntryType();
 }

@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.engines.leo;
 
 import org.xlrnet.metadict.api.engine.*;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalNumber;
 import org.xlrnet.metadict.api.language.GrammaticalTense;
 import org.xlrnet.metadict.api.language.Language;
@@ -33,7 +33,7 @@ import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
-import org.xlrnet.metadict.api.query.DictionaryEntryBuilder;
+import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
 import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 import org.xlrnet.metadict.api.query.EntryType;
@@ -52,14 +52,14 @@ public class LeoEngineProvider implements SearchProvider {
      */
     @Override
     public AutoTestSuite getAutoTestSuite() {
-        Dictionary deEnDictionary = Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
+        BilingualDictionary deEnDictionary = BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
         return
                 new AutoTestSuiteBuilder()
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("eat")
                                 .setTargetDictionary(deEnDictionary)
                                 .setExpectedResults(new EngineQueryResultBuilder()
-                                        .addEntry(new DictionaryEntryBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.NOUN)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setLanguage(Language.ENGLISH)
@@ -72,7 +72,7 @@ public class LeoEngineProvider implements SearchProvider {
                                                         .setGeneralForm("Verpflegungspaket der US-Streitkräfte")
                                                         .build())
                                                 .build())
-                                        .addEntry(new DictionaryEntryBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.VERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setLanguage(Language.ENGLISH)
@@ -97,7 +97,7 @@ public class LeoEngineProvider implements SearchProvider {
                                 .setTestQueryString("haus")
                                 .setTargetDictionary(deEnDictionary)
                                 .setExpectedResults(new EngineQueryResultBuilder()
-                                        .addEntry(new DictionaryEntryBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.NOUN)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setGeneralForm("house")
@@ -116,7 +116,7 @@ public class LeoEngineProvider implements SearchProvider {
                                 .setTestQueryString("haus")
                                 .setTargetDictionary(deEnDictionary)
                                 .setExpectedResults(new EngineQueryResultBuilder()
-                                        .addEntry(new DictionaryEntryBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.ADVERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setGeneralForm("indoors")
@@ -134,7 +134,7 @@ public class LeoEngineProvider implements SearchProvider {
                                 .setTestQueryString("ein bankkonto haben")
                                 .setTargetDictionary(deEnDictionary)
                                 .setExpectedResults(new EngineQueryResultBuilder()
-                                        .addEntry(new DictionaryEntryBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.VERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setGeneralForm("to bank")
@@ -184,12 +184,12 @@ public class LeoEngineProvider implements SearchProvider {
                 .setSupportsAutoTest(true)
                 .setProvidesExternalContent(true)
                 .setSupportsFuzzySearch(true)
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.FRENCH, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.SPANISH, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.ITALIAN, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.CHINESE, true))
-                .addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.RUSSIAN, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.FRENCH, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.SPANISH, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ITALIAN, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.CHINESE, true))
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.RUSSIAN, true))
                 .build();
     }
 

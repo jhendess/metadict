@@ -27,19 +27,19 @@ package org.xlrnet.metadict.api.query;
 import java.util.List;
 
 /**
- * The interface {@link EngineQueryResult} represents a collection of {@link DictionaryEntry} objects. This interface
+ * The interface {@link EngineQueryResult} represents a collection of {@link BilingualEntry} objects. This interface
  * should always be used as the return type from search engines. To build a new instance, you can use the {@link
  * EngineQueryResultBuilder}.
  */
 public interface EngineQueryResult {
 
     /**
-     * Returns the results of the query that match the input. This should be used for most applications that involve
-     * query results.
+     * Returns the bilingual results of the query that match the input query. This should be used for most applications
+     * that involve query results.
      *
-     * @return the results of the query that match the input.
+     * @return the bilingual results of the query that match the input.
      */
-    List<DictionaryEntry> getEntries();
+    List<BilingualEntry> getBilingualEntries();
 
     /**
      * Returns all collected external content for the query. This can be used to provide links to relevant blog posts

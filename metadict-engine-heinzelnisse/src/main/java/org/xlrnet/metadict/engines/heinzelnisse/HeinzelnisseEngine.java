@@ -86,9 +86,9 @@ public class HeinzelnisseEngine implements SearchEngine {
      * supported dictionaries of this engine.
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
-     * supported {@link Dictionary} as described in the engine's {@link
-     * FeatureSet}. However, an engine may also return results from a different
-     * language. In this case, the core component will decide it the supplied results are useful.
+     * supported {@link BilingualDictionary} as described in the engine's {@link FeatureSet}. However, an engine may
+     * also return results from a different language. In this case, the core component will decide it the supplied
+     * results are useful.
      * <p>
      * Example:
      * If the engine says it supports a one-way german-english dictionary, this method will be called with the language
@@ -112,9 +112,9 @@ public class HeinzelnisseEngine implements SearchEngine {
      * to build this result list.
      */
     @Override
-    public EngineQueryResult executeSearchQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
+    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
         boolean queryGerman = false, queryNorwegian = false;
-        String requestedDictionary = Dictionary.buildQueryString(inputLanguage, outputLanguage);
+        String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
 
         switch (requestedDictionary) {
             case "de-no":
@@ -184,7 +184,7 @@ public class HeinzelnisseEngine implements SearchEngine {
         }
     }
 
-    private void buildDictionaryObjects(@NotNull TranslationEntry entry, @NotNull DictionaryEntryBuilder entryBuilder, boolean isGermanToNorwegian) {
+    private void buildDictionaryObjects(@NotNull TranslationEntry entry, @NotNull BilingualEntryBuilder entryBuilder, boolean isGermanToNorwegian) {
         DictionaryObjectBuilder inBuilder = new DictionaryObjectBuilder();
         DictionaryObjectBuilder outBuilder = new DictionaryObjectBuilder();
 
@@ -377,14 +377,14 @@ public class HeinzelnisseEngine implements SearchEngine {
     }
 
     private void processTranslationEntry(@NotNull TranslationEntry entry, @NotNull EngineQueryResultBuilder resultBuilder, boolean isGermanToNorwegian) {
-        DictionaryEntryBuilder entryBuilder = new DictionaryEntryBuilder();
+        BilingualEntryBuilder entryBuilder = new BilingualEntryBuilder();
         // Resolve entry type
         EntryType entryType = resolveEntryType(entry);
         entryBuilder.setEntryType(entryType);
         // Build dictionary objects for the entry
         buildDictionaryObjects(entry, entryBuilder, isGermanToNorwegian);
         // Save in result builder
-        resultBuilder.addEntry(entryBuilder.build());
+        resultBuilder.addBilingualEntry(entryBuilder.build());
     }
 
     @NotNull

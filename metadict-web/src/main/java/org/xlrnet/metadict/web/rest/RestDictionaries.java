@@ -27,8 +27,8 @@ package org.xlrnet.metadict.web.rest;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
 
@@ -100,25 +100,25 @@ public class RestDictionaries {
     }
 
     @NotNull
-    private Collection<Dictionary> getBidirectedDictionaries() {
-        List<Dictionary> bidirectional = metadictCore
+    private Collection<BilingualDictionary> getBidirectedDictionaries() {
+        List<BilingualDictionary> bidirectional = metadictCore
                 .getEngineRegistry()
                 .getSupportedDictionaries()
                 .stream()
-                .filter(Dictionary::isBidirectional)
+                .filter(BilingualDictionary::isBidirectional)
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<Dictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
-        for (Dictionary dictionary: bidirectional) {
-            if (!distinctBidirectional.contains(Dictionary.inverse(dictionary)))
-                distinctBidirectional.add(dictionary);
+        List<BilingualDictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
+        for (BilingualDictionary BilingualDictionary: bidirectional) {
+            if (!distinctBidirectional.contains(BilingualDictionary.inverse(BilingualDictionary)))
+                distinctBidirectional.add(BilingualDictionary);
         }
         return distinctBidirectional;
     }
 
     @NotNull
-    private Collection<Dictionary> getUnidirectedDictionaries() {
+    private Collection<BilingualDictionary> getUnidirectedDictionaries() {
         return metadictCore
                 .getEngineRegistry()
                 .getSupportedDictionaries()

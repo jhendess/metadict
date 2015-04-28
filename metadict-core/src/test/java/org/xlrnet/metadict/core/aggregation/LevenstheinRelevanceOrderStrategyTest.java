@@ -27,7 +27,7 @@ package org.xlrnet.metadict.core.aggregation;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.xlrnet.metadict.api.query.DictionaryEntryBuilder;
+import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.core.query.QueryRequest;
 
@@ -109,7 +109,7 @@ public class LevenstheinRelevanceOrderStrategyTest {
         when(outputObjectMock.getGeneralForm()).thenReturn(generalFormOutput);
 
         return ResultEntryImpl.from(
-                new DictionaryEntryBuilder()
+                new BilingualEntryBuilder()
                         .setInputObject(inputObjectMock)
                         .setOutputObject(outputObjectMock)
                         .build(),

@@ -28,9 +28,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
- * Immutable implementation for {@link DictionaryEntry}.
+ * Immutable implementation for {@link BilingualEntry}.
  */
-public class DictionaryEntryImpl implements DictionaryEntry {
+public class BilingualEntryImpl implements BilingualEntry {
 
     private final DictionaryObject inputObject;
 
@@ -39,7 +39,7 @@ public class DictionaryEntryImpl implements DictionaryEntry {
     private final EntryType entryType;
 
     /**
-     * Create a new immutable instance. See {@link DictionaryEntry} for more information about the parameters.
+     * Create a new immutable instance. See {@link BilingualEntry} for more information about the parameters.
      *
      * @param inputObject
      *         The dictionary object in input language.
@@ -48,7 +48,7 @@ public class DictionaryEntryImpl implements DictionaryEntry {
      * @param entryType
      *         The type of this entry.
      */
-    DictionaryEntryImpl(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
+    BilingualEntryImpl(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
         this.inputObject = inputObject;
         this.outputObject = outputObject;
         this.entryType = entryType;
@@ -57,8 +57,8 @@ public class DictionaryEntryImpl implements DictionaryEntry {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DictionaryEntryImpl)) return false;
-        DictionaryEntryImpl that = (DictionaryEntryImpl) o;
+        if (!(o instanceof BilingualEntryImpl)) return false;
+        BilingualEntryImpl that = (BilingualEntryImpl) o;
         return Objects.equal(inputObject, that.inputObject) &&
                 Objects.equal(outputObject, that.outputObject) &&
                 Objects.equal(entryType, that.entryType);

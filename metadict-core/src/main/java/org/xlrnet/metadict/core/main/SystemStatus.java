@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.core;
+package org.xlrnet.metadict.core.main;
 
 import org.xlrnet.metadict.core.util.CommonUtils;
 

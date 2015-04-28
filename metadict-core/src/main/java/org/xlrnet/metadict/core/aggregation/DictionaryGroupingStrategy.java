@@ -25,9 +25,9 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 import org.xlrnet.metadict.core.util.FormatUtils;
 
@@ -54,18 +54,18 @@ public class DictionaryGroupingStrategy implements GroupingStrategy {
     @NotNull
     @Override
     public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
-        Map<Dictionary, ResultGroupBuilder> groupBuilderMap = new HashMap<>();
+        Map<BilingualDictionary, ResultGroupBuilder> groupBuilderMap = new HashMap<>();
 
         for (QueryStepResult stepResult : queryStepResults) {
             String searchEngineName = stepResult.getQueryStep().getSearchEngineName();
 
-            Dictionary dictionary = resolveDictionaryFromQueryStep(stepResult);
+            BilingualDictionary dictionary = resolveDictionaryFromQueryStep(stepResult);
             if (groupBuilderMap.get(dictionary) == null)
                 groupBuilderMap.put(dictionary, new ResultGroupBuilder());
 
             ResultGroupBuilder groupBuilder = groupBuilderMap.get(dictionary);
 
-            for (DictionaryEntry entry : stepResult.getEngineQueryResult().getEntries()) {
+            for (BilingualEntry entry : stepResult.getEngineQueryResult().getBilingualEntries()) {
                 groupBuilder.addResultEntry(ResultEntryImpl.from(entry, searchEngineName));
             }
         }
@@ -82,11 +82,11 @@ public class DictionaryGroupingStrategy implements GroupingStrategy {
     }
 
     @NotNull
-    private Dictionary resolveDictionaryFromQueryStep(QueryStepResult stepResult) {
+    private BilingualDictionary resolveDictionaryFromQueryStep(QueryStepResult stepResult) {
         Language inputLanguage = stepResult.getQueryStep().getInputLanguage();
         Language outputLanguage = stepResult.getQueryStep().getOutputLanguage();
         boolean bidirectional = stepResult.getQueryStep().isAllowBothWay();
 
-        return Dictionary.fromLanguages(inputLanguage, outputLanguage, bidirectional);
+        return BilingualDictionary.fromLanguages(inputLanguage, outputLanguage, bidirectional);
     }
 }

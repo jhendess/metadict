@@ -36,9 +36,9 @@ import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.AutoTestSuiteBuilder;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.ExternalContent;
@@ -85,16 +85,16 @@ public class AutoTestManagerTest {
     @Test
     public void testInvokeAndValidate() throws Exception {
         // Prepare mocks
-        Dictionary dictionary = Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
-        when(mockedSearchEngine.executeSearchQuery(any(), any(), any(), anyBoolean())).thenReturn(actualResult);
-        ArrayList<DictionaryEntry> expectedEntriesList = new ArrayList<>();
-        when(expectedResult.getEntries()).thenReturn(expectedEntriesList);
+        BilingualDictionary dictionary = BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
+        when(mockedSearchEngine.executeBilingualQuery(any(), any(), any(), anyBoolean())).thenReturn(actualResult);
+        ArrayList<BilingualEntry> expectedEntriesList = new ArrayList<>();
+        when(expectedResult.getBilingualEntries()).thenReturn(expectedEntriesList);
         ArrayList<ExternalContent> expectedExternalContentsList = new ArrayList<>();
         when(expectedResult.getExternalContents()).thenReturn(expectedExternalContentsList);
         ArrayList<DictionaryObject> expectedRecommendationsList = new ArrayList<>();
         when(expectedResult.getSimilarRecommendations()).thenReturn(expectedRecommendationsList);
-        ArrayList<DictionaryEntry> actualEntriesList = new ArrayList<>();
-        when(actualResult.getEntries()).thenReturn(actualEntriesList);
+        ArrayList<BilingualEntry> actualEntriesList = new ArrayList<>();
+        when(actualResult.getBilingualEntries()).thenReturn(actualEntriesList);
         ArrayList<ExternalContent> actualExternalContentsList = new ArrayList<>();
         when(actualResult.getExternalContents()).thenReturn(actualExternalContentsList);
         ArrayList<DictionaryObject> actualRecommendationsList = new ArrayList<>();
@@ -108,7 +108,7 @@ public class AutoTestManagerTest {
         autoTestManagerSpy.invokeAndValidate(mockedSearchEngine, dictionary, TEST_REQUEST_STRING, expectedResult);
 
         // Verify correct call on search engine:
-        verify(mockedSearchEngine).executeSearchQuery(TEST_REQUEST_STRING, Language.ENGLISH, Language.GERMAN, true);
+        verify(mockedSearchEngine).executeBilingualQuery(TEST_REQUEST_STRING, Language.ENGLISH, Language.GERMAN, true);
 
         // Capture arguments and then assert the correct invocations:
         verify(autoTestManagerSpy, times(3)).validateActualObjects(expectedValueCaptor.capture(), actualValueCaptor.capture());

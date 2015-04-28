@@ -24,24 +24,24 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 
 /**
- * The interface {@link SearchEngine} represents the main part that has to be implemented to search a backend. Each
+ * The interface {@link SearchEngine} represents the main part that has to be implemented to search in a backend. Each
  * search engine has to be provided by a {@link SearchProvider} implementation. The metadict core instantiates the
  * {@link SearchEngine} through the {@link SearchProvider} and queries the engine whenever it is needed.
  * <p>
- * The SearchEngine itself should be implemented as stateless as possible but always threadsafe, since the core may
- * query an engine multiple concurrently. Caching mechanisms should <u>not</u> be implemented by the engine itself.
+ * The SearchEngine itself should be implemented as stateless as possible and always threadsafe, since the core may
+ * query an engine concurrently. Caching mechanisms should <u>not</u> be implemented by the engine itself.
  * For better modularity it is also recommended that each {@link SearchEngine} searches only in one backend at the same
  * time.
  * <p>
  * However, it is allowed and encouraged to provide searches in multiple dictionaries via the same {@link SearchEngine}
  * object. The core will try to split and parallelize queries whenever possible. For more information, see {@link
- * #executeSearchQuery(String, Language, Language, boolean)}.
+ * #executeBilingualQuery(String, Language, Language, boolean)}.
  */
 public interface SearchEngine {
 
@@ -51,7 +51,7 @@ public interface SearchEngine {
      * supported dictionaries of this engine.
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
-     * supported {@link Dictionary} as described in the engine's {@link
+     * supported {@link BilingualDictionary} as described in the engine's {@link
      * org.xlrnet.metadict.api.metadata.FeatureSet}. However, an engine may also return results from a different
      * language. In this case, the core component will decide it the supplied results are useful.
      * <p>
@@ -76,7 +76,7 @@ public interface SearchEngine {
      * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
      * to build this result list.
      */
-    EngineQueryResult executeSearchQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception;
+    EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception;
 
 
 }

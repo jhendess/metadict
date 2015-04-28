@@ -32,7 +32,7 @@ import org.xlrnet.metadict.api.language.Language;
 import java.util.Map;
 
 /**
- * The class {@link DictionaryObject} represents a part of an {@link DictionaryEntry}. It effectively represents the
+ * The class {@link DictionaryObject} represents a part of an {@link BilingualEntry}. It effectively represents the
  * description of an entry in a certain language. This includes the word/phrase itself, but also additional information
  * like the grammatical gender, a description, possible abbreviations and a special domain where the word/phrase is
  * primarily used.

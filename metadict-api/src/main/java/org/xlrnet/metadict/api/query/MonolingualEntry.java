@@ -22,29 +22,16 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.aggregation;
-
-import org.xlrnet.metadict.api.query.BilingualEntry;
+package org.xlrnet.metadict.api.query;
 
 /**
- * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
- * {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
+ * The {@link MonolingualEntry} interface represents a single monolingual result entry of a query operation. Use the {@link
+ * MonolingualEntryBuilder} class to build a new entry.
+ * <p>
+ * Each {@link MonolingualEntry} contains a single {@link AdvancedDictionaryObject} object. These objects contain the
+ * respective source or target translation of a word or phrase and additional information about use cases, grammatical
+ * forms, etc.
  */
-public interface ResultEntry extends BilingualEntry, Comparable<ResultEntry> {
-
-    /**
-     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
-     * (inclusive) where a value of 1.0 means best possible relevancy.
-     *
-     * @return the calculated relevance score for this entry.
-     */
-    double getEntryScore();
-
-    /**
-     * Returns the name of the engine that produced this entry.
-     *
-     * @return the name of the engine that produced this entry.
-     */
-    String getSourceEngine();
+public interface MonolingualEntry extends Entry {
 
 }

@@ -26,7 +26,10 @@ package org.xlrnet.metadict.api.metadata;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
+
+import java.util.Collection;
 
 /**
  * Concrete implementation of a settable {@link FeatureSet}.
@@ -34,10 +37,10 @@ import org.xlrnet.metadict.api.language.Dictionary;
 public class FeatureSetImpl implements FeatureSet {
 
     /**
-     * An array of languages the engine supports. This can be e.g. English-English, German-English but also
-     * English-German.
+     * A collection of dictionaries the engine supports for bilingual lookups. This can be e.g. English-English or
+     * German-English but also English-German.
      */
-    protected final Iterable<Dictionary> supportedDictionaries;
+    protected final Collection<BilingualDictionary> supportedBilingualDictionaries;
 
     /**
      * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
@@ -59,13 +62,35 @@ public class FeatureSetImpl implements FeatureSet {
      * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
      * for more information about this.
      */
-    protected final boolean supportsSelfTest = false;
+    protected final boolean supportsSelfTest;
 
-    FeatureSetImpl(Iterable<Dictionary> supportedDictionaries, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives) {
-        this.supportedDictionaries = supportedDictionaries;
+    /**
+     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
+     * dictionary lookup with detailed information about one entry in one language.
+     */
+    protected final boolean providesMonolingualEntries;
+
+    /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    protected final boolean providesBilingualDictionaryEntries;
+
+    /**
+     * A collection of languages that the engine supports for monolingual lookups. This can be a normal language like
+     * English or German.
+     */
+    private final Collection<Language> supportedLexicographicLanguages;
+
+    FeatureSetImpl(Collection<BilingualDictionary> supportedBilingualDictionaries, Collection<Language> supportedLexicographicLanguages, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives, boolean supportsSelfTest, boolean providesMonolingualEntries, boolean providesBilingualDictionaryEntries) {
+        this.supportedBilingualDictionaries = supportedBilingualDictionaries;
+        this.supportedLexicographicLanguages = supportedLexicographicLanguages;
         this.providesExternalContent = providesExternalContent;
         this.supportsFuzzySearch = supportsFuzzySearch;
         this.providesAlternatives = providesAlternatives;
+        this.supportsSelfTest = supportsSelfTest;
+        this.providesMonolingualEntries = providesMonolingualEntries;
+        this.providesBilingualDictionaryEntries = providesBilingualDictionaryEntries;
     }
 
     @Override
@@ -77,30 +102,80 @@ public class FeatureSetImpl implements FeatureSet {
                 Objects.equal(supportsFuzzySearch, that.supportsFuzzySearch) &&
                 Objects.equal(providesAlternatives, that.providesAlternatives) &&
                 Objects.equal(supportsSelfTest, that.supportsSelfTest) &&
-                Objects.equal(supportedDictionaries, that.supportedDictionaries);
+                Objects.equal(supportedBilingualDictionaries, that.supportedBilingualDictionaries);
     }
 
-    public Iterable<Dictionary> getSupportedDictionaries() {
-        return supportedDictionaries;
+    /**
+     * A collection of dictionaries the engine supports for bilingual lookups. This can be e.g. English-English or
+     * German-English but also English-German.
+     */
+    @Override
+    public Collection<BilingualDictionary> getSupportedBilingualDictionaries() {
+        return supportedBilingualDictionaries;
+    }
+
+    /**
+     * Return a collection of languages that the engine supports for monolingual lookups. This can be a normal language
+     * like English or German.
+     */
+    @Override
+    public Collection<Language> getSupportedLexicographicLanguages() {
+        return this.supportedLexicographicLanguages;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(supportedDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest);
+        return Objects.hashCode(supportedBilingualDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest);
     }
 
+    /**
+     * True, if the engine provides alternatives to the given query. This can be e.g. a "did-you-mean" recommendation.
+     */
+    @Override
     public boolean isProvidesAlternatives() {
         return providesAlternatives;
     }
 
+    /**
+     * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
+     * content.
+     */
+    @Override
     public boolean isProvidesExternalContent() {
         return providesExternalContent;
     }
 
+    /**
+     * True, if the engine i.e. the called website supports fuzzy search.
+     */
+    @Override
     public boolean isSupportsFuzzySearch() {
         return supportsFuzzySearch;
     }
 
+    /**
+     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
+     * dictionary lookup with detailed information about one entry in one language.
+     */
+    @Override
+    public boolean isProvidesMonolingualEntries() {
+        return this.providesMonolingualEntries;
+    }
+
+    /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    @Override
+    public boolean isProvidesBilingualDictionaryEntries() {
+        return this.providesBilingualDictionaryEntries;
+    }
+
+    /**
+     * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
+     * for more information about this.
+     */
+    @Override
     public boolean isSupportsSelfTest() {
         return supportsSelfTest;
     }
@@ -108,11 +183,11 @@ public class FeatureSetImpl implements FeatureSet {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("supportedDictionaries", supportedDictionaries)
+                .add("supportedBilingualDictionaries", supportedBilingualDictionaries)
                 .add("providesExternalContent", providesExternalContent)
                 .add("supportsFuzzySearch", supportsFuzzySearch)
                 .add("providesAlternatives", providesAlternatives)
-                .add("supportsSelfTest", supportsSelfTest)
+                .add("supportsAutoTest", supportsSelfTest)
                 .toString();
     }
 }

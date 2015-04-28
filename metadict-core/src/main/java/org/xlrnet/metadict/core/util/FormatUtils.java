@@ -56,7 +56,7 @@ public class FormatUtils {
      * @return a formatted and human-readable string of a dictionary name.
      */
     @NotNull
-    public static String formatDictionaryName(@NotNull Dictionary dictionary) {
+    public static String formatDictionaryName(@NotNull BilingualDictionary dictionary) {
         checkNotNull(dictionary);
 
         Language input = dictionary.getInput();

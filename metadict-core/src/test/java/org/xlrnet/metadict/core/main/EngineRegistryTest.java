@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.core;
+package org.xlrnet.metadict.core.main;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
@@ -86,7 +86,7 @@ public class EngineRegistryTest {
     @Test
     public void testRegisterSearchProvider_success() throws Exception {
         // Setup mock to return all non-null
-        FeatureSet featureSet = new FeatureSetBuilder().addSupportedDictionary(Dictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true)).build();
+        FeatureSet featureSet = new FeatureSetBuilder().addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true)).build();
         when(searchProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
         when(searchProviderMock.getFeatureSet()).thenReturn(featureSet);
         when(searchProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));

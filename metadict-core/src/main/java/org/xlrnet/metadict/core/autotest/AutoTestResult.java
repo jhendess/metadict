@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.core.core.EngineRegistry;
+import org.xlrnet.metadict.core.main.EngineRegistry;
 
 import java.util.Optional;
 

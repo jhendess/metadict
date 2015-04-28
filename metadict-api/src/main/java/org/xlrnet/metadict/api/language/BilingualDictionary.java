@@ -28,7 +28,6 @@ import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.api.engine.SearchEngine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,17 +36,20 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The class {@link Dictionary} is used to describe the properties of the languages a dictionary supports. Each
- * dictionary has a directed direction, i.e. English-German is not the same as German-English. However, it is possible
- * to declare a bidirectional dictionary. When a dictionary is bidirectional, the implementing {@link
- * SearchEngine} may then provide words in both directions without being called multiple times.
- * Dictionaries with one language can be described as e.g. English-English.
+ * The class {@link BilingualDictionary} is used to describe the properties of the languages a bilingual dictionary
+ * supports. Each dictionary has a direction, i.e. English-German is not the same as German-English. However, it is
+ * possible to declare a bidirectional dictionary. When a dictionary is bidirectional, the implementing {@link
+ * org.xlrnet.metadict.api.engine.SearchEngine} may then provide words in both directions without being called multiple
+ * times.
+ * <p>
+ * A monolingual dictionary can be described with just a plain {@link Language} object. See the according documentation
+ * for {@link org.xlrnet.metadict.api.metadata.FeatureSet} and {@link org.xlrnet.metadict.api.engine.SearchEngine}.
  */
-public class Dictionary {
+public class BilingualDictionary {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)");
 
-    private static final Map<String, Dictionary> instanceMap = new HashMap<>();
+    private static final Map<String, BilingualDictionary> instanceMap = new HashMap<>();
 
     private final Language input;
 
@@ -59,7 +61,7 @@ public class Dictionary {
 
     private final String queryStringWithDialect;
 
-    private Dictionary(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
+    private BilingualDictionary(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
         this.input = input;
         this.output = output;
         this.bidirectional = bidirectional;
@@ -118,7 +120,7 @@ public class Dictionary {
     }
 
     /**
-     * Create a new instance of {@link Dictionary} or lookup if such a configuration already exists in the
+     * Create a new instance of {@link BilingualDictionary} or lookup if such a configuration already exists in the
      * internal cache.
      *
      * @param input
@@ -127,11 +129,11 @@ public class Dictionary {
      *         The input language of the new dictionary.
      * @param bidirectional
      *         If set to true, the dictionary supports looking up entries in both directions.
-     * @return a new instance of {@link Dictionary} or lookup if such a configuration already exists in the
+     * @return a new instance of {@link BilingualDictionary} or lookup if such a configuration already exists in the
      * internal cache.
      */
     @NotNull
-    public static Dictionary fromLanguages(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
+    public static BilingualDictionary fromLanguages(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
         checkNotNull(input, "Input language for dictionary may not be null");
         checkNotNull(output, "Output language for dictionary may not be null");
 
@@ -149,18 +151,18 @@ public class Dictionary {
 
         String query = builder.toString();
 
-        return instanceMap.computeIfAbsent(query, (k) -> new Dictionary(input, output, bidirectional));
+        return instanceMap.computeIfAbsent(query, (k) -> new BilingualDictionary(input, output, bidirectional));
     }
 
     /**
      * Find an existing dictionary from a dictionary query string.  A dictionary query string is a comma-separated list
      * of dictionaries. Each dictionary's language is separated with a minus ("-"). If you need a concrete dialect,
-     * use an underscore ("_") after the language identifiers. Note, that this does not create new {@link Dictionary}
-     * object but find existing ones.
+     * use an underscore ("_") after the language identifiers. Note, that this does not create new {@link
+     * BilingualDictionary} object but find existing ones.
      * <p>
-     * Example: "de-en,de-no_ny" will find a dictionary object between german and english (i.e. the two identifiers
-     * "de" and "en") and also german and norwegian nynorsk (i.e. the identifier "de" and the dialect "ny" of language
-     * "no").
+     * Example: "de-en,de-no_ny" will find a bilingual dictionary between german and english (i.e. the two identifiers
+     * "de" and "en") and also another dictionary with german and norwegian nynorsk (i.e. the identifier "de" and the
+     * dialect "ny" of language "no").
      *
      * @param queryString
      *         The query string - see method description body.
@@ -169,7 +171,7 @@ public class Dictionary {
      *         Will be thrown if the given dictionary query is invalid.
      */
     @NotNull
-    public static Dictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException {
+    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException {
         if (!isValidDictionaryQuery(queryString))
             throw new IllegalArgumentException("Illegal dictionary query string: " + queryString);
 
@@ -186,7 +188,7 @@ public class Dictionary {
     }
 
     /**
-     * Inverses the language direction of the given {@link Dictionary} object.
+     * Inverses the language direction of the given {@link BilingualDictionary} object.
      * <p>
      * Example:
      * If the given dictionary is de-en this method will return a dictionary with en-de. The bidirectional state will
@@ -197,8 +199,8 @@ public class Dictionary {
      * @return
      */
     @NotNull
-    public static Dictionary inverse(@NotNull Dictionary dictionary) {
-        return Dictionary.fromLanguages(dictionary.getOutput(), dictionary.getInput(), dictionary.isBidirectional());
+    public static BilingualDictionary inverse(@NotNull BilingualDictionary dictionary) {
+        return BilingualDictionary.fromLanguages(dictionary.getOutput(), dictionary.getInput(), dictionary.isBidirectional());
     }
 
     /**
@@ -244,9 +246,9 @@ public class Dictionary {
     }
 
     /**
-     * Returns whether the dictionary supports a direct bidirectional search. When a dictionary is bidirectional, the
-     * implementing {@link SearchEngine} may then provide words in both directions without being
-     * called multiple times.
+     * Returns whether the dictionary supports a bidirectional search. When a dictionary is bidirectional, the
+     * implementing {@link org.xlrnet.metadict.api.engine.SearchEngine} may then provide words in both directions
+     * without being called multiple times.
      *
      * @return whether the dictionary supports a direct bidirectional search.
      */

@@ -27,10 +27,10 @@ package org.xlrnet.metadict.core.query;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.xlrnet.metadict.core.main.MetadictCore;
 
 import java.util.List;
 
@@ -43,13 +43,13 @@ public class QueryRequestImpl implements QueryRequest {
 
     private final String queryString;
 
-    private final List<Dictionary> queryDictionaries;
+    private final List<BilingualDictionary> queryDictionaries;
 
     private final GroupingType groupingType;
 
     private final OrderType orderType;
 
-    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<Dictionary> queryDictionaries, GroupingType groupingType, OrderType orderType) {
+    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType) {
         this.metadictCore = metadictCore;
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
@@ -93,7 +93,7 @@ public class QueryRequestImpl implements QueryRequest {
      */
     @Override
     @NotNull
-    public List<Dictionary> getQueryDictionaries() {
+    public List<BilingualDictionary> getQueryDictionaries() {
         return queryDictionaries;
     }
 

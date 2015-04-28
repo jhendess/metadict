@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.core.EngineRegistry;
+import org.xlrnet.metadict.core.main.EngineRegistry;
 
 /**
  * The {@link QueryPlanningStrategy} interface is used to implement various strategies for selecting the engines that

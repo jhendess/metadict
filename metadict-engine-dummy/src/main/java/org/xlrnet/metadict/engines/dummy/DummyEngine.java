@@ -25,10 +25,10 @@
 package org.xlrnet.metadict.engines.dummy;
 
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.query.DictionaryEntryBuilder;
+import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
 import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
@@ -44,7 +44,7 @@ public class DummyEngine implements SearchEngine {
      * supported dictionaries of this engine.
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
-     * supported {@link Dictionary} as described in the engine's {@link
+     * supported {@link BilingualDictionary} as described in the engine's {@link
      * FeatureSet}. However, an engine may also return results from a different
      * language. In this case, the core component will decide it the supplied results are useful.
      * <p>
@@ -69,9 +69,9 @@ public class DummyEngine implements SearchEngine {
      * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
      * to build this result list.
      */
-    public EngineQueryResult executeSearchQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) {
+    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) {
         return new EngineQueryResultBuilder()
-                .addEntry(new DictionaryEntryBuilder()
+                .addBilingualEntry(new BilingualEntryBuilder()
                         .setInputObject(new DictionaryObjectBuilder()
                                 .setGeneralForm("foo")
                                 .setLanguage(Language.ENGLISH)

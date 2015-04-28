@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.exception.MetadictException;
@@ -53,7 +53,7 @@ public interface QueryRequest {
      * @return a list with all dictionaries that should be queried.
      */
     @NotNull
-    List<Dictionary> getQueryDictionaries();
+    List<BilingualDictionary> getQueryDictionaries();
 
     /**
      * Returns how the final query should be grouped.

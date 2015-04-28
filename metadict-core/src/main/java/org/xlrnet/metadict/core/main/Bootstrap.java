@@ -22,24 +22,33 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.language;
+package org.xlrnet.metadict.core.main;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 
 /**
- * Created by xolor on 01.04.15.
+ * Short sample of how a Metadict core could be started in a Java SE environment.
  */
-public class DictionaryTest {
+public class Bootstrap {
 
-    @Test
-    public void testFromLanguages_cachingMechanism() throws Exception {
-        Dictionary d1 = Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
-        Dictionary d2 = Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
+    public static void main(String... args) {
+        Weld weld = new Weld();
 
-        assertEquals("Cached dictionaries should have the same reference", d1, d2);
-        assertTrue("Cached dictionaries should have the same reference", d1 == d2);
+        WeldContainer container = weld.initialize();
+
+        MetadictCore core = container.instance().select(MetadictCore.class).get();
+        final EngineRegistry engineRegistry = core.getEngineRegistry();
+        /*for (String engineName : engineRegistry.getRegisteredEngineNames()) {
+            System.out.println(engineName);
+            System.out.println(engineRegistry.getEngineDescriptionByName(engineName));
+            System.out.println(engineRegistry.getFeatureSetByName(engineName));
+            QueryResponse queryResponse = core.createNewQueryRequestBuilder().setQueryString("foobar").addQueryDictionary(Dictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true)).build().executeRequest();
+            System.out.println(queryResponse);
+        }*/
+
+
+        weld.shutdown();
     }
+
 }

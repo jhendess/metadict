@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class EngineQueryResultImpl implements EngineQueryResult {
 
-    protected final List<DictionaryEntry> entries;
+    protected final List<BilingualEntry> entries;
 
     protected final List<DictionaryObject> similarRecommendations;
 
@@ -49,7 +49,7 @@ public class EngineQueryResultImpl implements EngineQueryResult {
      * @param externalContents
      *         Ta set of external contents.
      */
-    EngineQueryResultImpl(List<DictionaryEntry> entries, List<DictionaryObject> similarRecommendations, List<ExternalContent> externalContents) {
+    EngineQueryResultImpl(List<BilingualEntry> entries, List<DictionaryObject> similarRecommendations, List<ExternalContent> externalContents) {
         this.entries = entries;
         this.similarRecommendations = similarRecommendations;
         this.externalContents = externalContents;
@@ -72,7 +72,7 @@ public class EngineQueryResultImpl implements EngineQueryResult {
      * @return the results of the query that match the input.
      */
     @Override
-    public List<DictionaryEntry> getEntries() {
+    public List<BilingualEntry> getBilingualEntries() {
         return entries;
     }
 

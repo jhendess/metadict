@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.language.Dictionary;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.ExternalContent;
@@ -134,7 +134,7 @@ public class AutoTestManager {
     AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
         EngineQueryResult expectedResults = autoTestCase.getExpectedResults();
-        Dictionary targetDictionary = autoTestCase.getTargetDictionary();
+        BilingualDictionary targetDictionary = autoTestCase.getTargetDictionary();
         String requestString = autoTestCase.getTestQueryString();
         long startTime = System.currentTimeMillis();
 
@@ -155,19 +155,19 @@ public class AutoTestManager {
     }
 
     @NotNull
-    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull Dictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
+    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
         EngineQueryResult queryResult;
         try {
-            queryResult = searchEngine.executeSearchQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
+            queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
         } catch (Exception e) {
             return new ResultData(null, e);
         }
 
-        List<DictionaryEntry> expectedResultEntries = expectedResult.getEntries();
+        List<BilingualEntry> expectedResultEntries = expectedResult.getBilingualEntries();
         List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
         List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
 
-        List<DictionaryEntry> actualResultEntries = queryResult.getEntries();
+        List<BilingualEntry> actualResultEntries = queryResult.getBilingualEntries();
         List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
         List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
 

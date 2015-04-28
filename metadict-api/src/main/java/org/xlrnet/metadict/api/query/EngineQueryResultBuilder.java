@@ -34,11 +34,11 @@ import java.util.Vector;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link DictionaryEntry} objects.
+ * Builder for creating new {@link BilingualEntry} objects.
  */
 public class EngineQueryResultBuilder {
 
-    List<DictionaryEntry> entries = new Vector<>();
+    List<BilingualEntry> bilingualEntries = new Vector<>();
 
     List<DictionaryObject> similarRecommendations = new Vector<>();
 
@@ -47,17 +47,17 @@ public class EngineQueryResultBuilder {
     public static final EngineQueryResult EMPTY_QUERY_RESULT = new EngineQueryResultBuilder().build();
 
     /**
-     * Add a new {@link DictionaryEntry} to the builder. This should be used for all results of the query that match
-     * the input and should be used for most applications that involvequery results.
+     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
+     * match the requests.
      *
-     * @param dictionaryEntry
-     *         The {@link DictionaryEntry} object - not null.
+     * @param bilingualEntry
+     *         The {@link BilingualEntry} object - not null.
      * @return this instance of the {@link EngineQueryResultBuilder}.
      */
-    public EngineQueryResultBuilder addEntry(DictionaryEntry dictionaryEntry) {
-        checkNotNull(dictionaryEntry);
+    public EngineQueryResultBuilder addBilingualEntry(BilingualEntry bilingualEntry) {
+        checkNotNull(bilingualEntry);
 
-        this.entries.add(dictionaryEntry);
+        this.bilingualEntries.add(bilingualEntry);
         return this;
     }
 
@@ -106,7 +106,7 @@ public class EngineQueryResultBuilder {
      * @return a new instance of {@link EngineQueryResult}.
      */
     public EngineQueryResult build() {
-        return new EngineQueryResultImpl(entries, similarRecommendations, externalContents);
+        return new EngineQueryResultImpl(bilingualEntries, similarRecommendations, externalContents);
     }
 
 }

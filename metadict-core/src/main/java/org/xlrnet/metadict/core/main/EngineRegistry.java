@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.core;
+package org.xlrnet.metadict.core.main;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestManager;
@@ -59,7 +59,7 @@ public class EngineRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(EngineRegistry.class);
 
-    Multimap<Dictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
+    Multimap<BilingualDictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
 
     Map<String, EngineDescription> engineDescriptionMap = new HashMap<>();
 
@@ -159,7 +159,7 @@ public class EngineRegistry {
      * @return a collection of engines that support the given dictionary.
      */
     @NotNull
-    public Collection<String> getSearchEngineNamesByDictionary(@NotNull Dictionary dictionary) {
+    public Collection<String> getSearchEngineNamesByDictionary(@NotNull BilingualDictionary dictionary) {
         return Collections.unmodifiableCollection(dictionaryEngineNameMap.get(dictionary));
     }
 
@@ -175,7 +175,7 @@ public class EngineRegistry {
      * @return a collection of all currently registered dictionaries that are supported by at least one search engine.
      */
     @NotNull
-    public Collection<Dictionary> getSupportedDictionaries() {
+    public Collection<BilingualDictionary> getSupportedDictionaries() {
         return Collections.unmodifiableCollection(dictionaryEngineNameMap.keySet());
     }
 
@@ -244,27 +244,27 @@ public class EngineRegistry {
     }
 
     private void registerDictionariesFromFeatureSet(@NotNull String canonicalEngineName, @NotNull FeatureSet featureSet) {
-        for (Dictionary dictionary : featureSet.getSupportedDictionaries()) {
+        for (BilingualDictionary dictionary : featureSet.getSupportedBilingualDictionaries()) {
             registerDictionary(canonicalEngineName, dictionary);
         }
     }
 
-    private void registerDictionary(@NotNull String canonicalEngineName, @NotNull Dictionary dictionary) {
+    private void registerDictionary(@NotNull String canonicalEngineName, @NotNull BilingualDictionary dictionary) {
         if (!dictionaryEngineNameMap.containsEntry(dictionary, canonicalEngineName)) {
             dictionaryEngineNameMap.put(dictionary, canonicalEngineName);
         }
         if (dictionary.isBidirectional()) {
             // Register inverted bidirectional dictionary
-            Dictionary inverseBidirectional = Dictionary.inverse(dictionary);
+            BilingualDictionary inverseBidirectional = BilingualDictionary.inverse(dictionary);
             if (!dictionaryEngineNameMap.containsEntry(inverseBidirectional, canonicalEngineName)) {
                 dictionaryEngineNameMap.put(inverseBidirectional, canonicalEngineName);
             }
             // Register as non-bidirectional to improve lookup speeds
-            Dictionary simpleDictionary = Dictionary.fromLanguages(dictionary.getInput(), dictionary.getOutput(), false);
+            BilingualDictionary simpleDictionary = BilingualDictionary.fromLanguages(dictionary.getInput(), dictionary.getOutput(), false);
             if (!dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
                 dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
             }
-            Dictionary inverseSimpleDictionary = Dictionary.inverse(simpleDictionary);
+            BilingualDictionary inverseSimpleDictionary = BilingualDictionary.inverse(simpleDictionary);
             if (!dictionaryEngineNameMap.containsEntry(inverseSimpleDictionary, canonicalEngineName)) {
                 dictionaryEngineNameMap.put(inverseSimpleDictionary, canonicalEngineName);
             }
@@ -275,9 +275,9 @@ public class EngineRegistry {
         checkNotNull(engineDescription, "Search provider %s returned null description", canonicalName);
         checkNotNull(featureSet, "Search provider %s returned null feature set", canonicalName);
 
-        checkNotNull(featureSet.getSupportedDictionaries(), "Feature set of search provider %s has null on supported dictionaries", canonicalName);
+        checkNotNull(featureSet.getSupportedBilingualDictionaries(), "Feature set of search provider %s has null on supported dictionaries", canonicalName);
 
-        for (Dictionary dictionary : featureSet.getSupportedDictionaries()) {
+        for (BilingualDictionary dictionary : featureSet.getSupportedBilingualDictionaries()) {
             checkNotNull(dictionary, "Dictionary from search provider %s may not be null", canonicalName);
             checkNotNull(dictionary.getInput(), "Input language in dictionary from search provider %s may not be null", canonicalName);
             checkNotNull(dictionary.getOutput(), "Output language in dictionary from search provider %s may not be null", canonicalName);

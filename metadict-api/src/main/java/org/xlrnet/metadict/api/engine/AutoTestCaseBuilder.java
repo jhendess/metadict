@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 /**
@@ -34,7 +34,7 @@ public class AutoTestCaseBuilder {
 
     private EngineQueryResult expectedResults = null;
 
-    private Dictionary targetDictionary = null;
+    private BilingualDictionary targetDictionary = null;
 
     private String testQueryString = null;
 
@@ -70,7 +70,7 @@ public class AutoTestCaseBuilder {
      *         the target dictionary which should be queried for this test case.
      * @return this builder instance.
      */
-    public AutoTestCaseBuilder setTargetDictionary(Dictionary targetDictionary) {
+    public AutoTestCaseBuilder setTargetDictionary(BilingualDictionary targetDictionary) {
         this.targetDictionary = targetDictionary;
         return this;
     }

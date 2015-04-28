@@ -26,7 +26,7 @@ package org.xlrnet.metadict.core.aggregation;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EntryType;
 
@@ -35,18 +35,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation for {@link ResultEntry}. This class uses a decorator to wrap an existing {@link
- * org.xlrnet.metadict.api.query.DictionaryEntry}.
+ * org.xlrnet.metadict.api.query.BilingualEntry}.
  */
 public class ResultEntryImpl implements ResultEntry {
 
-    private final DictionaryEntry dictionaryEntry;
+    private final BilingualEntry dictionaryEntry;
 
     private final String sourceEngine;
 
     private double entryScore;
 
-    private ResultEntryImpl(DictionaryEntry dictionaryEntry, String sourceEngine, double entryScore) {
-        checkNotNull(dictionaryEntry, "Wrapped DictionaryEntry may not be null");
+    private ResultEntryImpl(BilingualEntry dictionaryEntry, String sourceEngine, double entryScore) {
+        checkNotNull(dictionaryEntry, "Wrapped BilingualEntry may not be null");
         checkNotNull(sourceEngine, "Engine name may not be null");
         checkArgument(entryScore >= 0.0 && entryScore <= 1.0, "Entry score must be in range [0.0;1.0]");
 
@@ -56,31 +56,31 @@ public class ResultEntryImpl implements ResultEntry {
     }
 
     /**
-     * Wrap a new {@link ResultEntry} around an existing {@link DictionaryEntry}.
+     * Wrap a new {@link ResultEntry} around an existing {@link BilingualEntry}.
      *
      * @param dictionaryEntry
-     *         The {@link DictionaryEntry} that should be wrapped.
+     *         The {@link BilingualEntry} that should be wrapped.
      * @param sourceEngine
      *         The name of the engine that provided this result entry.
      * @param entryScore
      *         The relevance score for this entry. Must be between 0.0 and 1.0 (inclusive).
-     * @return a new {@link ResultEntry} object around the given {@link DictionaryEntry}.
+     * @return a new {@link ResultEntry} object around the given {@link BilingualEntry}.
      */
-    public static ResultEntry from(DictionaryEntry dictionaryEntry, String sourceEngine, double entryScore) {
+    public static ResultEntry from(BilingualEntry dictionaryEntry, String sourceEngine, double entryScore) {
         return new ResultEntryImpl(dictionaryEntry, sourceEngine, entryScore);
     }
 
     /**
-     * Wrap a new {@link ResultEntry} around an existing {@link DictionaryEntry}. The entry score of this entry will
+     * Wrap a new {@link ResultEntry} around an existing {@link BilingualEntry}. The entry score of this entry will
      * have the value 1.0.
      *
      * @param dictionaryEntry
-     *         The {@link DictionaryEntry} that should be wrapped.
+     *         The {@link BilingualEntry} that should be wrapped.
      * @param sourceEngine
      *         The name of the engine that provided this result entry.
-     * @return a new {@link ResultEntry} object around the given {@link DictionaryEntry}.
+     * @return a new {@link ResultEntry} object around the given {@link BilingualEntry}.
      */
-    public static ResultEntry from(DictionaryEntry dictionaryEntry, String sourceEngine) {
+    public static ResultEntry from(BilingualEntry dictionaryEntry, String sourceEngine) {
         return new ResultEntryImpl(dictionaryEntry, sourceEngine, 1.0);
     }
 

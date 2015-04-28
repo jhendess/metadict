@@ -96,7 +96,7 @@ public class LeoEngine implements SearchEngine {
      * supported dictionaries of this engine.
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
-     * supported {@link Dictionary} as described in the engine's {@link
+     * supported {@link org.xlrnet.metadict.api.language.BilingualDictionary} as described in the engine's {@link
      * FeatureSet}. However, an engine may also return results from a different
      * language. In this case, the core component will decide it the supplied results are useful.
      * <p>
@@ -122,7 +122,7 @@ public class LeoEngine implements SearchEngine {
      * to build this result list.
      */
     @Override
-    public EngineQueryResult executeSearchQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
+    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
         Connection targetConnection = buildTargetConnection(queryInput, inputLanguage, outputLanguage);
         Document doc = targetConnection.get();
 
@@ -279,7 +279,7 @@ public class LeoEngine implements SearchEngine {
         DictionaryObject rightObject = processSideNode(rightSide, entryType);
 
         // Build the final DictionaryEntry
-        resultBuilder.addEntry(new DictionaryEntryBuilder()
+        resultBuilder.addBilingualEntry(new BilingualEntryBuilder()
                 .setEntryType(entryType)
                 .setInputObject(leftObject)
                 .setOutputObject(rightObject).build());

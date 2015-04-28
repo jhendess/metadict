@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,11 +36,11 @@ public class AutoTestCaseImpl implements AutoTestCase {
 
     private final EngineQueryResult expectedResults;
 
-    private final Dictionary targetDictionary;
+    private final BilingualDictionary targetDictionary;
 
     private final String testQueryString;
 
-    AutoTestCaseImpl(EngineQueryResult expectedResults, Dictionary targetDictionary, String testQueryString) {
+    AutoTestCaseImpl(EngineQueryResult expectedResults, BilingualDictionary targetDictionary, String testQueryString) {
         checkNotNull(expectedResults, "Expected results may not be null");
         checkNotNull(targetDictionary, "Target dictionary may not be null");
         checkNotNull(testQueryString, "Test query may not be null");
@@ -69,7 +69,7 @@ public class AutoTestCaseImpl implements AutoTestCase {
      * @return the target dictionary which should be queried for this test case.
      */
     @Override
-    public Dictionary getTargetDictionary() {
+    public BilingualDictionary getTargetDictionary() {
         return targetDictionary;
     }
 

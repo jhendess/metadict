@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class NoneGroupingStrategy implements GroupingStrategy {
         ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All results");
 
         for (QueryStepResult queryStepResult : queryStepResults) {
-            for (DictionaryEntry dictionaryEntry : queryStepResult.getEngineQueryResult().getEntries()) {
+            for (BilingualEntry dictionaryEntry : queryStepResult.getEngineQueryResult().getBilingualEntries()) {
                 groupBuilder.addResultEntry(ResultEntryImpl.from(dictionaryEntry, queryStepResult.getQueryStep().getSearchEngineName(), 1.0));
             }
         }

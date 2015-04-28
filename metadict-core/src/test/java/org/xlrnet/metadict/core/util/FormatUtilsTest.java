@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.util;
 
 import org.junit.Test;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +37,7 @@ public class FormatUtilsTest {
 
     @Test
     public void testFormatDictionary_unidirected_noDialects() throws Exception {
-        Dictionary testDictionary = Dictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, false);
+        BilingualDictionary testDictionary = BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, false);
 
         String expected = "German -> English";
         String actual = FormatUtils.formatDictionaryName(testDictionary);
@@ -48,7 +48,7 @@ public class FormatUtilsTest {
     @Test
     public void testFormatDictionary_bidirected_dialects() throws Exception {
         Language britishEnglish = Language.forSimpleLanguage("en", "english", "gb", "great britain");
-        Dictionary testDictionary = Dictionary.fromLanguages(Language.NORWEGIAN_NYNORSK, britishEnglish, true);
+        BilingualDictionary testDictionary = BilingualDictionary.fromLanguages(Language.NORWEGIAN_NYNORSK, britishEnglish, true);
 
         String expected = "Norwegian (Nynorsk) <-> English (Great Britain)";
         String actual = FormatUtils.formatDictionaryName(testDictionary);

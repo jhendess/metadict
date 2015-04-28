@@ -71,7 +71,7 @@ public class SimpleLinearExecutionStrategy implements QueryPlanExecutionStrategy
                 Language outLanguage = step.getOutputLanguage();
                 boolean allowBothWay = step.isAllowBothWay();
 
-                EngineQueryResult queryResult = step.getSearchEngine().executeSearchQuery(queryString, inputLanguage, outLanguage, allowBothWay);
+                EngineQueryResult queryResult = step.getSearchEngine().executeBilingualQuery(queryString, inputLanguage, outLanguage, allowBothWay);
 
                 if (queryResult == null) {
                     LOGGER.error("Query step {} failed: query result was null", step);

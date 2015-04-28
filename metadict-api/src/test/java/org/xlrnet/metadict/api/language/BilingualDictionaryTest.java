@@ -22,29 +22,24 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.aggregation;
+package org.xlrnet.metadict.api.language;
 
-import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
- * {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
+ * Created by xolor on 01.04.15.
  */
-public interface ResultEntry extends BilingualEntry, Comparable<ResultEntry> {
+public class BilingualDictionaryTest {
 
-    /**
-     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
-     * (inclusive) where a value of 1.0 means best possible relevancy.
-     *
-     * @return the calculated relevance score for this entry.
-     */
-    double getEntryScore();
+    @Test
+    public void testFromLanguages_cachingMechanism() throws Exception {
+        BilingualDictionary d1 = BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
+        BilingualDictionary d2 = BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
 
-    /**
-     * Returns the name of the engine that produced this entry.
-     *
-     * @return the name of the engine that produced this entry.
-     */
-    String getSourceEngine();
-
+        assertEquals("Cached dictionaries should have the same reference", d1, d2);
+        assertTrue("Cached dictionaries should have the same reference", d1 == d2);
+    }
 }

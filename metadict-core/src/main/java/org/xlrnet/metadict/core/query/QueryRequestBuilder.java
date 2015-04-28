@@ -25,10 +25,10 @@
 package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.xlrnet.metadict.core.main.MetadictCore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class QueryRequestBuilder {
 
     private String queryString;
 
-    private List<Dictionary> queryDictionaries = new ArrayList<>();
+    private List<BilingualDictionary> queryDictionaries = new ArrayList<>();
 
     private GroupingType groupingType = GroupingType.NONE;
 
@@ -55,13 +55,13 @@ public class QueryRequestBuilder {
     }
 
     /**
-     * Adds a new {@link Dictionary} to the current query.
+     * Adds a new {@link BilingualDictionary} to the current query.
      *
      * @param newDictionary
      *         The new dictionary to add.
      * @return the current builder
      */
-    public QueryRequestBuilder addQueryDictionary(@NotNull Dictionary newDictionary) {
+    public QueryRequestBuilder addQueryDictionary(@NotNull BilingualDictionary newDictionary) {
         checkNotNull(newDictionary);
 
         this.queryDictionaries.add(newDictionary);
@@ -103,16 +103,16 @@ public class QueryRequestBuilder {
     }
 
     /**
-     * Sets all {@link Dictionary} objects that should be queried.
+     * Sets all {@link BilingualDictionary} objects that should be queried.
      *
      * @param dictionaries
      *         The dictionaries to query.
      * @return the current builder
      */
-    public QueryRequestBuilder setQueryDictionaries(@NotNull List<Dictionary> dictionaries) {
+    public QueryRequestBuilder setQueryDictionaries(@NotNull List<BilingualDictionary> dictionaries) {
         checkNotNull(dictionaries);
 
-        for (Dictionary dictionary : dictionaries)
+        for (BilingualDictionary dictionary : dictionaries)
             checkNotNull(dictionary);
 
         this.queryDictionaries.addAll(dictionaries);

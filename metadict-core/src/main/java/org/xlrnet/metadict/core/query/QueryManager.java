@@ -27,14 +27,14 @@ package org.xlrnet.metadict.core.query;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.language.Dictionary;
+import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
-import org.xlrnet.metadict.core.core.EngineRegistry;
-import org.xlrnet.metadict.core.core.MetadictCore;
+import org.xlrnet.metadict.core.main.EngineRegistry;
+import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.core.strategies.DefaultExecutionStrategy;
 
 import javax.inject.Inject;
@@ -101,7 +101,7 @@ public class QueryManager {
         checkNotNull(queryRequest.getQueryString(), "Request string may not be null");
         checkNotNull(queryRequest.getQueryDictionaries(), "Query dictionary list may not be null");
 
-        for (Dictionary dictionary : queryRequest.getQueryDictionaries())
+        for (BilingualDictionary dictionary : queryRequest.getQueryDictionaries())
             checkNotNull(dictionary, "Query dictionary in query may not be null");
     }
 

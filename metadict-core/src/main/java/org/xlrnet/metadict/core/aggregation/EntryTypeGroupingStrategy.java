@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.query.DictionaryEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.EntryType;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
@@ -55,7 +55,7 @@ public class EntryTypeGroupingStrategy implements GroupingStrategy {
         for (QueryStepResult stepResult : queryStepResults) {
             String searchEngineName = stepResult.getQueryStep().getSearchEngineName();
 
-            for (DictionaryEntry entry : stepResult.getEngineQueryResult().getEntries()) {
+            for (BilingualEntry entry : stepResult.getEngineQueryResult().getBilingualEntries()) {
                 EntryType entryType = entry.getEntryType();
                 if (!entryTypeGroupBuilderMap.containsKey(entryType)) {
                     String groupIdentifier = (entryType != EntryType.UNKNOWN) ? entryType.getDisplayname() + "s" : "Unknown";
