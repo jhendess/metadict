@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The {@link BilingualEntry} interface represents a single bilingual result entry of a query operation (i.e. a
  * translation). Use the {@link BilingualEntryBuilder} class to build a new entry.
@@ -36,20 +38,21 @@ public interface BilingualEntry extends Entry {
 
     /**
      * Get the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't
-     * have to correspond exactly to the original input query, but be should as similar as possible. If the entry
-     * originates from a one-language dictionary, this method has to return the word's meaning. The value may never be
-     * null.
+     * have to correspond exactly to the original input query, but should should be as similar as possible. The value may
+     * never be null.
      *
      * @return the {@link DictionaryObject} in input language.
      */
+    @NotNull
     DictionaryObject getInput();
 
     /**
-     * Get the entry's {@link DictionaryObject} that contains information in the output language. If the entry
-     * originates from a one-language dictionary, the returned value may be null.
+     * Get the entry's {@link DictionaryObject} that contains information in the output language. The value may
+     * never be null.
      *
      * @return the {@link DictionaryObject} in output language or null for one-language dictionaries.
      */
+    @NotNull
     DictionaryObject getOutput();
 
 }

@@ -24,10 +24,13 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
+import org.xlrnet.metadict.api.query.MonolingualQueryResult;
+import org.xlrnet.metadict.api.query.MonolingualQueryResultBuilder;
 
 /**
  * The interface {@link SearchEngine} represents the main part that has to be implemented to search in a backend. Each
@@ -46,14 +49,14 @@ import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 public interface SearchEngine {
 
     /**
-     * The main method for querying a {@link SearchEngine}. This method will be called by the metadict core on incoming
-     * search queries. The core will always try to parallelize the query as much as possible according to the specified
-     * supported dictionaries of this engine.
+     * The main method for querying a {@link SearchEngine} with a <i>bilingual</i> search (i.e. translation).
+     * This method will be called by the metadict core on incoming search queries. The core will always try to
+     * parallelize the query as much as possible according to the specified supported dictionaries of this engine.
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
      * supported {@link BilingualDictionary} as described in the engine's {@link
      * org.xlrnet.metadict.api.metadata.FeatureSet}. However, an engine may also return results from a different
-     * language. In this case, the core component will decide it the supplied results are useful.
+     * language. In this case, the core component will decide if the supplied results are useful.
      * <p>
      * Example:
      * If the engine says it supports a one-way german-english dictionary, this method will be called with the language
@@ -73,10 +76,36 @@ public interface SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
      * to build this result list.
      */
-    EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception;
+    @NotNull
+    default BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+        throw new UnsupportedOperationException();
+    };
 
+
+    /**
+     * The main method for querying a {@link SearchEngine} with a <i>monolingual</i> search (i.e. word lookup).
+     * This method will be called by the metadict core on incoming search queries. The core will always try to
+     * parallelize the query as much as possible according to the specified supported dictionaries of this engine.
+     * <p>
+     * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
+     * supported {@link Language} as described in the engine's {@link
+     * org.xlrnet.metadict.api.metadata.FeatureSet}. However, an engine may also return results from a different
+     * language. In this case, the core component will decide if the supplied results are useful.
+     *
+     * @param queryInput
+     *         The query string i.e. word that should be looked up.
+     * @param queryLanguage
+     *         The input language of the query. This language must be specified as a supported monolingual language of
+     *         the engine.
+     * @return The results from the search query. You can use an instance of {@link MonolingualQueryResultBuilder}
+     * to build this result list.
+     */
+    @NotNull
+    default MonolingualQueryResult executeMonolingualQuery(@NotNull String queryInput, @NotNull Language queryLanguage) throws Exception {
+        throw new UnsupportedOperationException();
+    };
 
 }

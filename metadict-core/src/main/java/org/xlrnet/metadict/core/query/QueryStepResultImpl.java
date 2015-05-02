@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 /**
  * Implementation for {@link QueryStepResult}.
@@ -33,7 +33,7 @@ public class QueryStepResultImpl implements QueryStepResult {
 
     private final QueryStep queryStep;
 
-    private final EngineQueryResult engineQueryResult;
+    private final BilingualQueryResult engineQueryResult;
 
     private final long executionTime;
 
@@ -41,7 +41,7 @@ public class QueryStepResultImpl implements QueryStepResult {
 
     private final String errorMessage;
 
-    QueryStepResultImpl(QueryStep queryStep, EngineQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
+    QueryStepResultImpl(QueryStep queryStep, BilingualQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
         this.queryStep = queryStep;
         this.engineQueryResult = engineQueryResult;
         this.executionTime = executionTime;
@@ -55,7 +55,7 @@ public class QueryStepResultImpl implements QueryStepResult {
      * @return the result of the attached {@link QueryStep}.
      */
     @Override
-    public EngineQueryResult getEngineQueryResult() {
+    public BilingualQueryResult getEngineQueryResult() {
         return engineQueryResult;
     }
 

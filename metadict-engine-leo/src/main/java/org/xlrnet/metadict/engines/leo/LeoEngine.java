@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class LeoEngine implements SearchEngine {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LeoEngine.class);
 
     private static final Map<String, EntryType> ENTRY_TYPE_MAP = ImmutableMap.<String, EntryType>builder()
             .put("subst", EntryType.NOUN)
@@ -118,17 +118,18 @@ public class LeoEngine implements SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
      * to build this result list.
      */
+    @NotNull
     @Override
-    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
         Connection targetConnection = buildTargetConnection(queryInput, inputLanguage, outputLanguage);
         Document doc = targetConnection.get();
 
         LOGGER.debug(doc.html());
 
-        EngineQueryResultBuilder builder = processDocument(doc);
+        BilingualQueryResultBuilder builder = processDocument(doc);
 
         return builder.build();
     }
@@ -227,8 +228,8 @@ public class LeoEngine implements SearchEngine {
         return elements.first().text();
     }
 
-    private EngineQueryResultBuilder processDocument(Document doc) {
-        EngineQueryResultBuilder resultBuilder = new EngineQueryResultBuilder();
+    private BilingualQueryResultBuilder processDocument(Document doc) {
+        BilingualQueryResultBuilder resultBuilder = new BilingualQueryResultBuilder();
 
         // Find sections:
         Elements sections = doc.getElementsByTag("section");
@@ -259,7 +260,7 @@ public class LeoEngine implements SearchEngine {
      * @param resultBuilder
      * @param fallbackEntryType
      */
-    private void processEntryNode(@NotNull Element entryNode, @NotNull EngineQueryResultBuilder resultBuilder, @NotNull EntryType fallbackEntryType) {
+    private void processEntryNode(@NotNull Element entryNode, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull EntryType fallbackEntryType) {
         // Try to determine the entry type again
         EntryType entryType = fallbackEntryType;
         Element category = entryNode.getElementsByTag("category").first();
@@ -285,7 +286,7 @@ public class LeoEngine implements SearchEngine {
                 .setOutputObject(rightObject).build());
     }
 
-    private void processSection(Element sectionNode, EngineQueryResultBuilder resultBuilder) {
+    private void processSection(Element sectionNode, BilingualQueryResultBuilder resultBuilder) {
         String sectionType = sectionNode.attr(SECTION_NAME_ATTRIBUTE);
         EntryType fallbackEntryType = resolveSectionType(sectionType);
 

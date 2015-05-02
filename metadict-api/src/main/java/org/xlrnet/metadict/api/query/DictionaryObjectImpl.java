@@ -27,11 +27,14 @@ package org.xlrnet.metadict.api.query;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Immutable implementation of {@link DictionaryObject},
@@ -44,8 +47,6 @@ public class DictionaryObjectImpl implements DictionaryObject {
 
     private final String description;
 
-    private final String meaning;
-
     private final String abbreviation;
 
     private final String domain;
@@ -53,6 +54,51 @@ public class DictionaryObjectImpl implements DictionaryObject {
     private final GrammaticalGender grammaticalGender;
 
     private final Map<GrammaticalForm, String> additionalForms;
+
+    private final Optional<List<String>> meanings;
+
+    private final Optional<List<String>> syllabification;
+
+    private final Optional<List<String>> synonyms;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DictionaryObjectImpl)) return false;
+        DictionaryObjectImpl that = (DictionaryObjectImpl) o;
+        return Objects.equal(language, that.language) &&
+                Objects.equal(generalForm, that.generalForm) &&
+                Objects.equal(description, that.description) &&
+                Objects.equal(abbreviation, that.abbreviation) &&
+                Objects.equal(domain, that.domain) &&
+                Objects.equal(grammaticalGender, that.grammaticalGender) &&
+                Objects.equal(additionalForms, that.additionalForms) &&
+                Objects.equal(meanings, that.meanings) &&
+                Objects.equal(syllabification, that.syllabification) &&
+                Objects.equal(synonyms, that.synonyms);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(language, generalForm, description, abbreviation, domain, grammaticalGender, additionalForms, meanings, syllabification, synonyms);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("language", language)
+                .add("generalForm", generalForm)
+                .add("description", description)
+                .add("abbreviation", abbreviation)
+                .add("domain", domain)
+                .add("grammaticalGender", grammaticalGender)
+                .add("additionalForms", additionalForms)
+                .add("meanings", meanings)
+                .add("syllabification", syllabification)
+                .add("synonyms", synonyms)
+
+                .toString();
+    }
 
     /**
      * Create a new immutable instance. See {@link DictionaryObject} for more information about the parameters.
@@ -63,8 +109,6 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *         The general form of this object
      * @param description
      *         The description for this object.
-     * @param meaning
-     *         The different meaning for this object.
      * @param abbreviation
      *         The abbreviation for this object.
      * @param domain
@@ -72,32 +116,25 @@ public class DictionaryObjectImpl implements DictionaryObject {
      * @param grammaticalGender
      *         The grammatical gender of this object.
      * @param additionalForms
-     *         Any additional forms of this object.
+     *         A map of additional forms this object may have.
+     * @param meanings
+     *         A list of different meanings for this have.
+     * @param syllabification
+     *         The syllabification of this object, represented with each syllable as a list-element.
+     * @param synonyms
+     *         A list of synonyms for this object.
      */
-    DictionaryObjectImpl(Language language, String generalForm, String description, String meaning, String abbreviation, String domain, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms) {
+    DictionaryObjectImpl(Language language, String generalForm, String description, String abbreviation, String domain, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms) {
         this.language = language;
         this.generalForm = generalForm;
         this.description = description;
-        this.meaning = meaning;
         this.abbreviation = abbreviation;
         this.domain = domain;
         this.grammaticalGender = grammaticalGender;
         this.additionalForms = additionalForms;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DictionaryObjectImpl)) return false;
-        DictionaryObjectImpl that = (DictionaryObjectImpl) o;
-        return Objects.equal(language, that.language) &&
-                Objects.equal(generalForm, that.generalForm) &&
-                Objects.equal(description, that.description) &&
-                Objects.equal(meaning, that.meaning) &&
-                Objects.equal(abbreviation, that.abbreviation) &&
-                Objects.equal(domain, that.domain) &&
-                Objects.equal(grammaticalGender, that.grammaticalGender) &&
-                Objects.equal(additionalForms, that.additionalForms);
+        this.meanings = meanings;
+        this.syllabification = syllabification;
+        this.synonyms = synonyms;
     }
 
     /**
@@ -120,6 +157,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *
      * @return a map of all irregular forms of this object.
      */
+    @NotNull
     @Override
     public Map<GrammaticalForm, String> getAdditionalForms() {
         return additionalForms;
@@ -131,6 +169,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *
      * @return a description for the object.
      */
+    @Nullable
     @Override
     public String getDescription() {
         return description;
@@ -142,6 +181,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *
      * @return the special domain this object is used in.
      */
+    @Nullable
     @Override
     public String getDomain() {
         return domain;
@@ -164,6 +204,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *
      * @return the general form of this object.
      */
+    @NotNull
     @Override
     public String getGeneralForm() {
         return generalForm;
@@ -175,6 +216,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      *
      * @return the grammatical gender of this object.
      */
+    @Nullable
     @Override
     public GrammaticalGender getGrammaticalGender() {
         return grammaticalGender;
@@ -192,34 +234,43 @@ public class DictionaryObjectImpl implements DictionaryObject {
     }
 
     /**
-     * Returns a meaning for the object.
-     * <p>
+     * Returns a list of different meanings this objects may have. Each meaning's description should be a separate
+     * string.
+     *
      * Example:
      * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
-     * @return a list of different meaning for the object.
+     * @return a list of different meanings this objects may have.
      */
+    @NotNull
     @Override
-    public String getMeaning() {
-        return meaning;
+    public Optional<List<String>> getMeanings() {
+        return meanings;
     }
 
+    /**
+     * Returns a list of syllables that this word consists of. Each element of the list represents a single syllable.
+     * <p>
+     * Example:
+     * If a word is divided like <i>dic|tion|ary</i>, the list should look like {"dic", "tion", "ary" }.
+     *
+     * @return a list of syllables that this word consists of.
+     */
+    @NotNull
     @Override
-    public int hashCode() {
-        return Objects.hashCode(language, generalForm, description, meaning, abbreviation, domain, grammaticalGender, additionalForms);
+    public Optional<List<String>> getSyllabification() {
+        return syllabification;
     }
 
+    /**
+     * Returns a list of synonyms for this object. Each element of the list represents a single synonym.
+     *
+     * @return a list of synonyms for this object.
+     */
+    @NotNull
     @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("language", language)
-                .add("generalForm", generalForm)
-                .add("description", description)
-                .add("meaning", meaning)
-                .add("abbreviation", abbreviation)
-                .add("domain", domain)
-                .add("grammaticalGender", grammaticalGender)
-                .add("additionalForms", additionalForms)
-                .toString();
+    public Optional<List<String>> getSynonyms() {
+        return synonyms;
     }
+
 }

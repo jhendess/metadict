@@ -24,22 +24,16 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
- * The interface {@link EngineQueryResult} represents a collection of {@link BilingualEntry} objects. This interface
- * should always be used as the return type from search engines. To build a new instance, you can use the {@link
- * EngineQueryResultBuilder}.
+ * Generic interface for any query result. This interface declares only support for external contents and similar
+ * recommendations. The interface serves only as a base class for the actual specific interfaces like {@link
+ * MonolingualQueryResult} and {@link BilingualQueryResult}.
  */
 public interface EngineQueryResult {
-
-    /**
-     * Returns the bilingual results of the query that match the input query. This should be used for most applications
-     * that involve query results.
-     *
-     * @return the bilingual results of the query that match the input.
-     */
-    List<BilingualEntry> getBilingualEntries();
 
     /**
      * Returns all collected external content for the query. This can be used to provide links to relevant blog posts
@@ -47,6 +41,7 @@ public interface EngineQueryResult {
      *
      * @return all collected external content for the query.
      */
+    @NotNull
     List<ExternalContent> getExternalContents();
 
     /**
@@ -55,6 +50,6 @@ public interface EngineQueryResult {
      *
      * @return additional recommendations for the user.
      */
+    @NotNull
     List<DictionaryObject> getSimilarRecommendations();
-
 }

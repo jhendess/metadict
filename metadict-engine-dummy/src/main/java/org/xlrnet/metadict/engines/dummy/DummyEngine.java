@@ -24,14 +24,15 @@
 
 package org.xlrnet.metadict.engines.dummy;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
 import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
 
 /**
  * A dummy engine implementation that returns always the same result.
@@ -66,11 +67,12 @@ public class DummyEngine implements SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
      * to build this result list.
      */
-    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) {
-        return new EngineQueryResultBuilder()
+    @NotNull
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) {
+        return new BilingualQueryResultBuilder()
                 .addBilingualEntry(new BilingualEntryBuilder()
                         .setInputObject(new DictionaryObjectBuilder()
                                 .setGeneralForm("foo")

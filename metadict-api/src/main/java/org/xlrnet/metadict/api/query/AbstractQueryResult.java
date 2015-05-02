@@ -24,56 +24,23 @@
 
 package org.xlrnet.metadict.api.query;
 
-import com.google.common.base.Objects;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Immutable implementation for {@link EngineQueryResult}.
+ * Abstract class for implementing various query result types.
  */
-public class EngineQueryResultImpl implements EngineQueryResult {
-
-    protected final List<BilingualEntry> entries;
+public class AbstractQueryResult implements EngineQueryResult {
 
     protected final List<DictionaryObject> similarRecommendations;
 
     protected final List<ExternalContent> externalContents;
 
-    /**
-     * Create a new immutable instance. See {@link EngineQueryResult} for more information about the parameters.
-     *
-     * @param entries
-     *         The entries to add.
-     * @param similarRecommendations
-     *         The similarity recommendations.
-     * @param externalContents
-     *         Ta set of external contents.
-     */
-    EngineQueryResultImpl(List<BilingualEntry> entries, List<DictionaryObject> similarRecommendations, List<ExternalContent> externalContents) {
-        this.entries = entries;
+    protected AbstractQueryResult(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents) {
         this.similarRecommendations = similarRecommendations;
         this.externalContents = externalContents;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EngineQueryResultImpl)) return false;
-        EngineQueryResultImpl that = (EngineQueryResultImpl) o;
-        return Objects.equal(entries, that.entries) &&
-                Objects.equal(similarRecommendations, that.similarRecommendations) &&
-                Objects.equal(externalContents, that.externalContents);
-    }
-
-    /**
-     * Returns the results of the query that match the input. This should be used for most applications that involve
-     * query results.
-     *
-     * @return the results of the query that match the input.
-     */
-    @Override
-    public List<BilingualEntry> getBilingualEntries() {
-        return entries;
     }
 
     /**
@@ -82,9 +49,9 @@ public class EngineQueryResultImpl implements EngineQueryResult {
      *
      * @return all collected external content for the query.
      */
-    @Override
+    @NotNull
     public List<ExternalContent> getExternalContents() {
-        return externalContents;
+        return Collections.unmodifiableList(externalContents);
     }
 
     /**
@@ -93,13 +60,8 @@ public class EngineQueryResultImpl implements EngineQueryResult {
      *
      * @return additional recommendations for the user.
      */
-    @Override
+    @NotNull
     public List<DictionaryObject> getSimilarRecommendations() {
-        return similarRecommendations;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(entries, similarRecommendations, externalContents);
+        return Collections.unmodifiableList(similarRecommendations);
     }
 }

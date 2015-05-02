@@ -39,8 +39,8 @@ import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.ExternalContent;
 
 import java.util.ArrayList;
@@ -66,10 +66,10 @@ public class AutoTestManagerTest {
     SearchEngine mockedSearchEngine;
 
     @Mock
-    EngineQueryResult expectedResult;
+    BilingualQueryResult expectedResult;
 
     @Mock
-    EngineQueryResult actualResult;
+    BilingualQueryResult actualResult;
 
     @Before
     public void setup() {

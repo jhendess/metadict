@@ -24,15 +24,16 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 /**
  * Builder for creating new {@link AutoTestCase} objects.
  */
 public class AutoTestCaseBuilder {
 
-    private EngineQueryResult expectedResults = null;
+    private BilingualQueryResult expectedBilingualResults = null;
 
     private BilingualDictionary targetDictionary = null;
 
@@ -43,23 +44,24 @@ public class AutoTestCaseBuilder {
      *
      * @return a new instance of {@link AutoTestCase}.
      */
+    @NotNull
     public AutoTestCase build() {
-        return new AutoTestCaseImpl(expectedResults, targetDictionary, testQueryString);
+        return new AutoTestCaseImpl(expectedBilingualResults, targetDictionary, testQueryString);
     }
 
     /**
-     * Set the expected query results for this test case. The core will only test if all of the elements inside the
-     * returned object are contained inside the actual query result.
+     * Set the expected bilingual query results for this test case. The core will only test if all of the elements
+     * inside the returned object are contained inside the actual query result.
      * The test will fail, if not all elements inside this expected result object can be found by value-based equality
      * inside the actual result.  If there are more elements in the actual result, the test won't fail.
      *
-     * @param expectedResults
+     * @param expectedBilingualResults
      *         the expected query results for this test case.
      * @return this builder instance.
      */
-
-    public AutoTestCaseBuilder setExpectedResults(EngineQueryResult expectedResults) {
-        this.expectedResults = expectedResults;
+    @NotNull
+    public AutoTestCaseBuilder setExpectedBilingualResults(@NotNull BilingualQueryResult expectedBilingualResults) {
+        this.expectedBilingualResults = expectedBilingualResults;
         return this;
     }
 
@@ -70,7 +72,8 @@ public class AutoTestCaseBuilder {
      *         the target dictionary which should be queried for this test case.
      * @return this builder instance.
      */
-    public AutoTestCaseBuilder setTargetDictionary(BilingualDictionary targetDictionary) {
+    @NotNull
+    public AutoTestCaseBuilder setTargetDictionary(@NotNull BilingualDictionary targetDictionary) {
         this.targetDictionary = targetDictionary;
         return this;
     }
@@ -82,7 +85,8 @@ public class AutoTestCaseBuilder {
      *         the query string that should be given to the engine for this test case.
      * @return this builder instance.
      */
-    public AutoTestCaseBuilder setTestQueryString(String testQueryString) {
+    @NotNull
+    public AutoTestCaseBuilder setTestQueryString(@NotNull String testQueryString) {
         this.testQueryString = testQueryString;
         return this;
     }

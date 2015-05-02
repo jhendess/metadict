@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 
 import java.net.URL;
@@ -41,6 +43,7 @@ public interface ExternalContent {
      *
      * @return a description for the external content.
      */
+    @Nullable
     String getDescription();
 
     /**
@@ -48,6 +51,7 @@ public interface ExternalContent {
      *
      * @return a link to the external content.
      */
+    @NotNull
     URL getLink();
 
     /**
@@ -55,6 +59,7 @@ public interface ExternalContent {
      *
      * @return the title of the external content.
      */
+    @NotNull
     String getTitle();
 
 }

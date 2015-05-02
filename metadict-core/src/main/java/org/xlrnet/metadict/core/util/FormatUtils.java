@@ -105,7 +105,6 @@ public class FormatUtils {
         List<String> contentList = new ArrayList<>();
 
         CollectionUtils.addIgnoreNull(contentList, dictionaryObject.getDescription());
-        CollectionUtils.addIgnoreNull(contentList, dictionaryObject.getMeaning());
 
         if (dictionaryObject.getAdditionalForms().size() > 0) {
             Map<GrammaticalForm, String> additionalForms = dictionaryObject.getAdditionalForms();

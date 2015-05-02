@@ -25,12 +25,13 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
 import java.util.Collection;
 
 /**
- * A {@link GroupingStrategy} defines how multiple {@link org.xlrnet.metadict.api.query.EngineQueryResult} objects
+ * A {@link GroupingStrategy} defines how multiple {@link BilingualQueryResult} objects
  * should be grouped.
  */
 public interface GroupingStrategy {

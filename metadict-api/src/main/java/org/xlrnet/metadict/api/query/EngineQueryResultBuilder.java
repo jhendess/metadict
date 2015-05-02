@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
@@ -34,32 +35,13 @@ import java.util.Vector;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link BilingualEntry} objects.
+ * Abstract builder for engine query results.
  */
-public class EngineQueryResultBuilder {
-
-    List<BilingualEntry> bilingualEntries = new Vector<>();
+public abstract class EngineQueryResultBuilder {
 
     List<DictionaryObject> similarRecommendations = new Vector<>();
 
     List<ExternalContent> externalContents = new Vector<>();
-
-    public static final EngineQueryResult EMPTY_QUERY_RESULT = new EngineQueryResultBuilder().build();
-
-    /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
-     *
-     * @param bilingualEntry
-     *         The {@link BilingualEntry} object - not null.
-     * @return this instance of the {@link EngineQueryResultBuilder}.
-     */
-    public EngineQueryResultBuilder addBilingualEntry(BilingualEntry bilingualEntry) {
-        checkNotNull(bilingualEntry);
-
-        this.bilingualEntries.add(bilingualEntry);
-        return this;
-    }
 
     /**
      * Add a new {@link ExternalContent} object to the builder. This is used to describe any content provided by a
@@ -74,7 +56,8 @@ public class EngineQueryResultBuilder {
      *         The {@link ExternalContent} object - not null.
      * @return this instance of the {@link EngineQueryResultBuilder}.
      */
-    public EngineQueryResultBuilder addExternalContent(ExternalContent externalContent) {
+    @NotNull
+    public EngineQueryResultBuilder addExternalContent(@NotNull ExternalContent externalContent) {
         checkNotNull(externalContent);
 
         this.externalContents.add(externalContent);
@@ -85,7 +68,7 @@ public class EngineQueryResultBuilder {
      * Add a new {@link DictionaryObject} as a similar word recommendation to the builder. This should be used whenever
      * the search engine can recommend an alternate term the user might be interested in.
      * <p>
-     * When adding any objects through this method, the provided {@link org.xlrnet.metadict.api.metadata.FeatureSet}
+     * When adding any objects through this method, the provided {@link FeatureSet}
      * from the {@link SearchProvider} should return <i>true</i> on {@link
      * FeatureSet#isProvidesAlternatives()}.
      *
@@ -93,20 +76,14 @@ public class EngineQueryResultBuilder {
      *         The {@link DictionaryObject} object - not null.
      * @return this instance of the {@link EngineQueryResultBuilder}.
      */
-    public EngineQueryResultBuilder addSimilarRecommendation(DictionaryObject dictionaryObject) {
+    @NotNull
+    public EngineQueryResultBuilder addSimilarRecommendation(@NotNull DictionaryObject dictionaryObject) {
         checkNotNull(dictionaryObject);
 
         this.similarRecommendations.add(dictionaryObject);
         return this;
     }
 
-    /**
-     * Build a new instance of {@link EngineQueryResult} with the previously added entries.
-     *
-     * @return a new instance of {@link EngineQueryResult}.
-     */
-    public EngineQueryResult build() {
-        return new EngineQueryResultImpl(bilingualEntries, similarRecommendations, externalContents);
-    }
-
+    @NotNull
+    public abstract EngineQueryResult build();
 }

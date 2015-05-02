@@ -29,13 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link BilingualEntry} objects.
+ * Builder for creating new {@link MonolingualEntry} objects.
  */
-public class BilingualEntryBuilder {
+public class MonolingualEntryBuilder {
 
-    private DictionaryObject inputObject;
-
-    private DictionaryObject outputObject;
+    private DictionaryObject content;
 
     private EntryType entryType = EntryType.UNKNOWN;
 
@@ -44,9 +42,8 @@ public class BilingualEntryBuilder {
      *
      * @return a new instance of {@link BilingualEntry}.
      */
-    @NotNull
-    public BilingualEntry build() {
-        return new BilingualEntryImpl(inputObject, outputObject, entryType);
+    public MonolingualEntry build() {
+        return new MonolingualEntryImpl(entryType, content);
     }
 
     /**
@@ -59,7 +56,7 @@ public class BilingualEntryBuilder {
      * @return this builder instance.
      */
     @NotNull
-    public BilingualEntryBuilder setEntryType(@NotNull EntryType entryType) {
+    public MonolingualEntryBuilder setEntryType(@NotNull EntryType entryType) {
         checkNotNull(entryType);
 
         this.entryType = entryType;
@@ -67,34 +64,18 @@ public class BilingualEntryBuilder {
     }
 
     /**
-     * Set the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't
-     * have to correspond exactly to the original input query, but be should as similar as possible. This value has to
-     * be set always.
+     * Set the entry's main data object. This object doesn't have to correspond exactly to the original input query,
+     * but should should be as similar as possible. The value may never be null.
      *
-     * @param inputObject
+     * @param content
      *         The {@link DictionaryObject} in input language.
      * @return this builder instance.
      */
     @NotNull
-    public BilingualEntryBuilder setInputObject(@NotNull DictionaryObject inputObject) {
-        checkNotNull(inputObject);
+    public MonolingualEntryBuilder setContent(@NotNull DictionaryObject content) {
+        checkNotNull(content);
 
-        this.inputObject = inputObject;
-        return this;
-    }
-
-    /**
-     * Set the entry's {@link DictionaryObject} that contains information in the output language. If the entry
-     * originates from a one-language dictionary, this value can be unset.
-     *
-     * @param outputObject  the {@link DictionaryObject} in output language or null for one-language dictionaries.
-     * @return this builder instance.
-     */
-    @NotNull
-    public BilingualEntryBuilder setOutputObject(@NotNull DictionaryObject outputObject) {
-        checkNotNull(outputObject);
-
-        this.outputObject = outputObject;
+        this.content = content;
         return this;
     }
 }

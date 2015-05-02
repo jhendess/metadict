@@ -32,7 +32,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.core.query.QueryPlan;
 import org.xlrnet.metadict.core.query.QueryStep;
 import org.xlrnet.metadict.core.query.QueryStepResult;
@@ -131,7 +131,7 @@ public class CachedLinearExecutionStrategyTest {
     @Test
     public void testExecuteQueryStep_succesful() throws Exception {
         QueryStep queryStep = getQueryStepMock();
-        EngineQueryResult resultMock = Mockito.mock(EngineQueryResult.class);
+        BilingualQueryResult resultMock = Mockito.mock(BilingualQueryResult.class);
 
         when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(resultMock);
 

@@ -22,25 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.language;
+package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The interface {@link GrammaticalForm} can be used to identify different forms of a certain word. It can e.g. be used
- * to identify plural forms of nouns, different time forms for a verb or gender dependent forms {@link
- * GrammaticalGender}.
+ * Abstract entry implementation.
  */
-public interface GrammaticalForm {
+public abstract class AbstractEntry {
+
+    protected final EntryType entryType;
+
+    public AbstractEntry(EntryType entryType) {
+        this.entryType = entryType;
+    }
 
     /**
-     * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
-     * lowercase letters. When implementing this interface inside an {@link Enum}, this method should return the enum
-     * value in lowercase (i.e. {@link Enum#name()} must be lowercased).
+     * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also
+     * provide phrases by using {@link EntryType#PHRASE}.
      *
-     * @return the identifier for this grammatical form.
+     * @return the entry's type (i.e. word class in most cases).
      */
     @NotNull
-    String getFormIdentifier();
-
+    public EntryType getEntryType() {
+        return this.entryType;
+    }
 }

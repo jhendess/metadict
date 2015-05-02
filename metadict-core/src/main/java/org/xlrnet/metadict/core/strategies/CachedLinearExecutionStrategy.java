@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
 import org.xlrnet.metadict.core.query.*;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     /**
      * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
-     * QueryStep} have to be aggregated to a {@link Iterable< Pair <QueryStep, EngineQueryResult >>} that
+     * QueryStep} have to be aggregated to a {@link Iterable< Pair <QueryStep,  BilingualQueryResult  >>} that
      * contains the results of each single step.
      *
      * @param queryPlan
@@ -86,7 +86,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                         .setFailedStep(true)
                         .setQueryStep(currentQueryStep)
                         .setErrorMessage(e.getMessage())
-                        .setEngineQueryResult(EngineQueryResultBuilder.EMPTY_QUERY_RESULT)
+                        .setEngineQueryResult(BilingualQueryResultBuilder.EMPTY_QUERY_RESULT)
                         .build();
             }
             if (queryStepResult != null && queryStepResult.isFailedStep())
@@ -110,13 +110,13 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             Language outLanguage = step.getOutputLanguage();
             boolean allowBothWay = step.isAllowBothWay();
 
-            EngineQueryResult queryResult = step.getSearchEngine().executeBilingualQuery(queryString, inputLanguage, outLanguage, allowBothWay);
+            BilingualQueryResult queryResult = step.getSearchEngine().executeBilingualQuery(queryString, inputLanguage, outLanguage, allowBothWay);
 
             if (queryResult == null) {
                 LOGGER.error("Query step {} failed: query result was null", step);
                 stepResultBuilder.setFailedStep(true).setErrorMessage("query result was null")
                         .setExecutionTime(System.currentTimeMillis() - startTime);
-                queryResult = EngineQueryResultBuilder.EMPTY_QUERY_RESULT;
+                queryResult = BilingualQueryResultBuilder.EMPTY_QUERY_RESULT;
             }
             stepResultBuilder.setEngineQueryResult(queryResult);
 
@@ -128,7 +128,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         } catch (Exception e) {
             LOGGER.error("Query step {} failed", step, e);
             stepResultBuilder.setFailedStep(true).setErrorMessage(e.getMessage())
-                    .setEngineQueryResult(EngineQueryResultBuilder.EMPTY_QUERY_RESULT)
+                    .setEngineQueryResult(BilingualQueryResultBuilder.EMPTY_QUERY_RESULT)
                     .setExecutionTime(System.currentTimeMillis() - startTime);
         }
         return stepResultBuilder.build();

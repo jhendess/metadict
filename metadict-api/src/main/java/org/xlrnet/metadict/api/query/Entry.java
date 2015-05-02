@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Base interface for any dictionary entry type.
  */
@@ -35,5 +37,6 @@ public interface Entry {
      *
      * @return the entry's type (i.e. word class in most cases).
      */
+    @NotNull
     EntryType getEntryType();
 }

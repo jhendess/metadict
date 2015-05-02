@@ -24,12 +24,13 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -55,14 +56,78 @@ public class DictionaryObjectBuilder {
 
     private Map<GrammaticalForm, String> additionalForms = new HashMap<>();
 
+    private List<String> meanings = new ArrayList<>();
+
+    private List<String> syllabification = new ArrayList<>();
+
+    private List<String> synonyms = new ArrayList<>();
+
+    /**
+     * Add a new meaning to the current object.
+     * <p>
+     * Example:
+     * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
+     *
+     * @param newMeaning
+     *         The new meaning that should be added.
+     */
+    @NotNull
+    public DictionaryObjectBuilder addMeaning(@NotNull String newMeaning) {
+        checkNotNull(newMeaning);
+        this.meanings.add(newMeaning);
+
+        return this;
+    }
+
+    /**
+     * Add a new syllable to this object. The syllable may not be blank (i.e. all whitespace, empty or null).
+     *
+     * @param syllable
+     *         The new syllable to add.
+     */
+    @NotNull
+    public DictionaryObjectBuilder addSyllable(@NotNull String syllable) {
+        checkArgument(StringUtils.isNotBlank(syllable));
+        this.syllabification.add(syllable);
+
+        return this;
+    }
+
+    /**
+     * Add a new synonym to this object.
+     *
+     * @param synonym
+     *         The new synonym to add.
+     */
+    @NotNull
+    public DictionaryObjectBuilder addSynonym(@NotNull String synonym) {
+        checkArgument(StringUtils.isNotBlank(synonym));
+        this.synonyms.add(synonym);
+
+        return this;
+    }
+
     /**
      * Build a new instance of {@link DictionaryObject} with the set properties.
      *
      * @return a new instance of {@link DictionaryObject}.
      */
+    @NotNull
     public DictionaryObject build() {
         checkArgument(language != null, "Language may not be null");
-        return new DictionaryObjectImpl(language, generalForm, description, meaning, abbreviation, domain, grammaticalGender, additionalForms);
+
+        Optional<List<String>> optionalMeanings = Optional.empty();
+        Optional<List<String>> optionalSyllabification = Optional.empty();
+        Optional<List<String>> optionalSynonyms = Optional.empty();
+
+        if (meanings.size() > 0)
+            optionalMeanings = Optional.of(meanings);
+        if (syllabification.size() > 0)
+            optionalSyllabification = Optional.of(syllabification);
+        if (synonyms.size() > 0)
+            optionalSynonyms = Optional.of(synonyms);
+
+        return new DictionaryObjectImpl(language, generalForm, description, abbreviation, domain, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms);
     }
 
     /**
@@ -74,6 +139,7 @@ public class DictionaryObjectBuilder {
      * @param abbreviation
      *         An abbreviation for the new object.
      */
+    @NotNull
     public DictionaryObjectBuilder setAbbreviation(String abbreviation) {
         checkNotNull(abbreviation);
 
@@ -90,6 +156,7 @@ public class DictionaryObjectBuilder {
      * @param value
      *         The value for the grammatical form.
      */
+    @NotNull
     public DictionaryObjectBuilder setAdditionalForm(GrammaticalForm key, String value) {
         checkNotNull(key);
         checkNotNull(value);
@@ -105,6 +172,7 @@ public class DictionaryObjectBuilder {
      *
      * @return The map of all irregular forms of the new object.
      */
+    @NotNull
     public DictionaryObjectBuilder setAdditionalForms(Map<GrammaticalForm, String> additionalForms) {
         checkNotNull(additionalForms);
 
@@ -119,6 +187,7 @@ public class DictionaryObjectBuilder {
      * @param description
      *         A description for the new object.
      */
+    @NotNull
     public DictionaryObjectBuilder setDescription(String description) {
         checkNotNull(description);
 
@@ -133,6 +202,7 @@ public class DictionaryObjectBuilder {
      * @param domain
      *         The special domain the new object is used in.
      */
+    @NotNull
     public DictionaryObjectBuilder setDomain(String domain) {
         checkNotNull(domain);
 
@@ -158,6 +228,7 @@ public class DictionaryObjectBuilder {
      * @param generalForm
      *         The general form of the new object.
      */
+    @NotNull
     public DictionaryObjectBuilder setGeneralForm(String generalForm) {
         checkNotNull(generalForm);
 
@@ -172,6 +243,7 @@ public class DictionaryObjectBuilder {
      * @param grammaticalGender
      *         The grammatical gender of the new object.
      */
+    @NotNull
     public DictionaryObjectBuilder setGrammaticalGender(GrammaticalGender grammaticalGender) {
         checkNotNull(grammaticalGender);
 
@@ -185,26 +257,11 @@ public class DictionaryObjectBuilder {
      * @param language
      *         The language the new object is written in.
      */
+    @NotNull
     public DictionaryObjectBuilder setLanguage(Language language) {
         checkNotNull(language);
 
         this.language = language;
-        return this;
-    }
-
-    /**
-     * Set the meaning for the new object.
-     * <p>
-     * Example:
-     * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
-     *
-     * @param meaning
-     *         A new meaning for the new object.
-     */
-    public DictionaryObjectBuilder setMeaning(String meaning) {
-        checkNotNull(meaning);
-
-        this.meaning = meaning;
         return this;
     }
 

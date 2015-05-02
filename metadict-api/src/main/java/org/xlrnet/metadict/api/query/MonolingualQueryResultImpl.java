@@ -27,81 +27,52 @@ package org.xlrnet.metadict.api.query;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Implementation of {@link ExternalContent} interface.
+ * Immutable implementation of {@link MonolingualQueryResult}.
  */
-public class ExternalContentImpl implements ExternalContent {
+public class MonolingualQueryResultImpl extends AbstractQueryResult implements MonolingualQueryResult {
 
-    private final String title;
+    private final List<MonolingualEntry> entries;
 
-    private final String description;
-
-    private final URL link;
-
-    ExternalContentImpl(String title, String description, URL link) {
-        this.title = title;
-        this.description = description;
-        this.link = link;
+    protected MonolingualQueryResultImpl(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<MonolingualEntry> entries) {
+        super(similarRecommendations, externalContents);
+        this.entries = entries;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ExternalContentImpl)) return false;
-        ExternalContentImpl that = (ExternalContentImpl) o;
-        return Objects.equal(title, that.title) &&
-                Objects.equal(description, that.description) &&
-                Objects.equal(link, that.link);
+        if (!(o instanceof MonolingualQueryResultImpl)) return false;
+        MonolingualQueryResultImpl that = (MonolingualQueryResultImpl) o;
+        return Objects.equal(entries, that.entries);
     }
 
     /**
-     * Returns a description for the external content. This should be longer than the title of the content.
+     * Returns the monolingual results of the query that match the input query. This should be used for most
+     * applications
+     * that involve query results.
      *
-     * @return a description for the external content.
-     */
-    @Nullable
-    @Override
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
-     * Returns a link to the external content.
-     *
-     * @return a link to the external content.
+     * @return the bilingual results of the query that match the input.
      */
     @NotNull
     @Override
-    public URL getLink() {
-        return this.link;
-    }
-
-    /**
-     * Returns the title of the external content. This should be shorter than the content's description.
-     *
-     * @return the title of the external content.
-     */
-    @NotNull
-    @Override
-    public String getTitle() {
-        return this.title;
+    public List<MonolingualEntry> getMonolingualEntries() {
+        return Collections.unmodifiableList(entries);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(title, description, link);
+        return Objects.hashCode(entries);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("title", title)
-                .add("description", description)
-                .add("link", link)
+                .add("entries", entries)
                 .toString();
     }
 }

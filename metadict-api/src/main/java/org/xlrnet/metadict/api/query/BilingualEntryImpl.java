@@ -26,17 +26,16 @@ package org.xlrnet.metadict.api.query;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Immutable implementation for {@link BilingualEntry}.
  */
-public class BilingualEntryImpl implements BilingualEntry {
+public class BilingualEntryImpl extends AbstractEntry implements BilingualEntry {
 
     private final DictionaryObject inputObject;
 
     private final DictionaryObject outputObject;
-
-    private final EntryType entryType;
 
     /**
      * Create a new immutable instance. See {@link BilingualEntry} for more information about the parameters.
@@ -49,9 +48,9 @@ public class BilingualEntryImpl implements BilingualEntry {
      *         The type of this entry.
      */
     BilingualEntryImpl(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
+        super(entryType);
         this.inputObject = inputObject;
         this.outputObject = outputObject;
-        this.entryType = entryType;
     }
 
     @Override
@@ -65,23 +64,13 @@ public class BilingualEntryImpl implements BilingualEntry {
     }
 
     /**
-     * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also
-     * provide phrases by using {@link EntryType#PHRASE}.
-     *
-     * @return the entry's type (i.e. word class in most cases).
-     */
-    @Override
-    public EntryType getEntryType() {
-        return this.entryType;
-    }
-
-    /**
      * Get the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't
      * have to correspond exactly to the original input query, but should be as similar as possible. If the entry
      * originates from a one-language dictionary, this method has to return the word's meaning.
      *
      * @return the {@link DictionaryObject} in input language.
      */
+    @NotNull
     @Override
     public DictionaryObject getInput() {
         return this.inputObject;
@@ -93,6 +82,7 @@ public class BilingualEntryImpl implements BilingualEntry {
      *
      * @return the {@link DictionaryObject} in output language or null for one-language dictionaries.
      */
+    @NotNull
     @Override
     public DictionaryObject getOutput() {
         return this.outputObject;

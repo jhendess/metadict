@@ -22,25 +22,28 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.language;
+package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.language.Language;
+
+import java.util.List;
 
 /**
- * The interface {@link GrammaticalForm} can be used to identify different forms of a certain word. It can e.g. be used
- * to identify plural forms of nouns, different time forms for a verb or gender dependent forms {@link
- * GrammaticalGender}.
+ * The interface {@link MonolingualQueryResult} represents a collection of {@link MonolingualEntry} objects. This
+ * interface should always be used as the return type from the search method {@link
+ * org.xlrnet.metadict.api.engine.SearchEngine#executeMonolingualQuery(String, Language)}. To build a new instance, you
+ * can use the {@link MonolingualQueryResultBuilder}.
  */
-public interface GrammaticalForm {
+public interface MonolingualQueryResult extends EngineQueryResult {
 
     /**
-     * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
-     * lowercase letters. When implementing this interface inside an {@link Enum}, this method should return the enum
-     * value in lowercase (i.e. {@link Enum#name()} must be lowercased).
+     * Returns the monolingual results of the query that match the input query. This should be used for most applications
+     * that involve query results.
      *
-     * @return the identifier for this grammatical form.
+     * @return the bilingual results of the query that match the input.
      */
     @NotNull
-    String getFormIdentifier();
+    List<MonolingualEntry> getMonolingualEntries();
 
 }

@@ -31,10 +31,7 @@ import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.api.query.BilingualEntry;
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Collection;
@@ -133,7 +130,7 @@ public class AutoTestManager {
     @NotNull
     AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
-        EngineQueryResult expectedResults = autoTestCase.getExpectedResults();
+        BilingualQueryResult expectedResults = autoTestCase.getExpectedBilingualResults();
         BilingualDictionary targetDictionary = autoTestCase.getTargetDictionary();
         String requestString = autoTestCase.getTestQueryString();
         long startTime = System.currentTimeMillis();
@@ -155,8 +152,8 @@ public class AutoTestManager {
     }
 
     @NotNull
-    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull EngineQueryResult expectedResult) throws Exception {
-        EngineQueryResult queryResult;
+    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) throws Exception {
+        BilingualQueryResult queryResult;
         try {
             queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
         } catch (Exception e) {
@@ -202,7 +199,7 @@ public class AutoTestManager {
     }
 
     void validateTestCase(@NotNull AutoTestCase testCase) {
-        checkNotNull(testCase.getExpectedResults(), "Expected result set may not be null");
+        checkNotNull(testCase.getExpectedBilingualResults(), "Expected result set may not be null");
         checkNotNull(testCase.getTargetDictionary(), "Target dictionary may not be null");
         checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
     }
@@ -212,7 +209,7 @@ public class AutoTestManager {
 
         private final EngineQueryResult queryResult;
 
-        private final Exception         thrownException;
+        private final Exception thrownException;
 
         public ResultData(EngineQueryResult queryResult, Exception thrownException) {
             this.queryResult = queryResult;

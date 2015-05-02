@@ -22,46 +22,49 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.engine;
+package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link AutoTestSuite} objects.
+ * Builder for creating new {@link BilingualEntry} objects.
  */
-public class AutoTestSuiteBuilder {
+public class BilingualQueryResultBuilder extends EngineQueryResultBuilder {
 
-    private List<AutoTestCase> testCases = new ArrayList<>();
+    List<BilingualEntry> bilingualEntries = new Vector<>();
+
+    public static final BilingualQueryResult EMPTY_QUERY_RESULT = new BilingualQueryResultBuilder().build();
 
     /**
-     * Add a new {@link AutoTestCase} to this builder.
+     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
+     * match the requests.
      *
-     * @param autoTestCase
-     *         A new test case which should be executed.
-     * @return the current builder
+     * @param bilingualEntry
+     *         The {@link BilingualEntry} object - not null.
+     * @return this instance of the {@link BilingualQueryResultBuilder}.
      */
     @NotNull
-    public AutoTestSuiteBuilder addAutoTestCase(@NotNull AutoTestCase autoTestCase) {
-        checkNotNull(autoTestCase);
+    public BilingualQueryResultBuilder addBilingualEntry(@NotNull BilingualEntry bilingualEntry) {
+        checkNotNull(bilingualEntry);
 
-        testCases.add(autoTestCase);
+        this.bilingualEntries.add(bilingualEntry);
         return this;
     }
 
     /**
-     * Create a new instance of {@link AutoTestSuite}.
+     * Build a new instance of {@link BilingualQueryResult} with the previously added entries.
      *
-     * @return a new instance of {@link AutoTestSuite}.
+     * @return a new instance of {@link BilingualQueryResult}.
      */
     @NotNull
-    public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
+    @Override
+    public BilingualQueryResult build() {
+        return new BilingualQueryResultImpl(bilingualEntries, similarRecommendations, externalContents);
     }
 
 }

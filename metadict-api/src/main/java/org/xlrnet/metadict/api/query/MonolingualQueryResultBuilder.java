@@ -22,25 +22,43 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.language;
+package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Vector;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * The interface {@link GrammaticalForm} can be used to identify different forms of a certain word. It can e.g. be used
- * to identify plural forms of nouns, different time forms for a verb or gender dependent forms {@link
- * GrammaticalGender}.
+ * Builder for creating new {@link MonolingualQueryResult} objects.
  */
-public interface GrammaticalForm {
+public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
+
+    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+
+    public static final MonolingualQueryResult EMPTY_QUERY_RESULT = new MonolingualQueryResultBuilder().build();
 
     /**
-     * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
-     * lowercase letters. When implementing this interface inside an {@link Enum}, this method should return the enum
-     * value in lowercase (i.e. {@link Enum#name()} must be lowercased).
+     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
+     * match the requests.
      *
-     * @return the identifier for this grammatical form.
+     * @param monolingualEntry
+     *         The {@link MonolingualEntry} object - not null.
+     * @return this instance of the {@link BilingualQueryResultBuilder}.
      */
     @NotNull
-    String getFormIdentifier();
+    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
+        checkNotNull(monolingualEntry);
 
+        this.monolingualEntries.add(monolingualEntry);
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public MonolingualQueryResult build() {
+        return new MonolingualQueryResultImpl(similarRecommendations, externalContents, monolingualEntries);
+    }
 }

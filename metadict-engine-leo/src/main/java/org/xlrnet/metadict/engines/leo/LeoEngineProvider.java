@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.engines.leo;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalNumber;
@@ -33,10 +35,7 @@ import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
-import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
-import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
-import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
-import org.xlrnet.metadict.api.query.EntryType;
+import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a href="http://leo.org/">leo.org</a>}.
@@ -50,6 +49,7 @@ public class LeoEngineProvider implements SearchProvider {
      *
      * @return a set of user-defined automatic test cases.
      */
+    @Nullable
     @Override
     public AutoTestSuite getAutoTestSuite() {
         BilingualDictionary deEnDictionary = BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true);
@@ -58,7 +58,7 @@ public class LeoEngineProvider implements SearchProvider {
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("eat")
                                 .setTargetDictionary(deEnDictionary)
-                                .setExpectedResults(new EngineQueryResultBuilder()
+                                .setExpectedBilingualResults((BilingualQueryResult) new BilingualQueryResultBuilder()
                                         .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.NOUN)
                                                 .setInputObject(new DictionaryObjectBuilder()
@@ -96,7 +96,7 @@ public class LeoEngineProvider implements SearchProvider {
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("haus")
                                 .setTargetDictionary(deEnDictionary)
-                                .setExpectedResults(new EngineQueryResultBuilder()
+                                .setExpectedBilingualResults(new BilingualQueryResultBuilder()
                                         .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.NOUN)
                                                 .setInputObject(new DictionaryObjectBuilder()
@@ -115,7 +115,7 @@ public class LeoEngineProvider implements SearchProvider {
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("haus")
                                 .setTargetDictionary(deEnDictionary)
-                                .setExpectedResults(new EngineQueryResultBuilder()
+                                .setExpectedBilingualResults(new BilingualQueryResultBuilder()
                                         .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.ADVERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
@@ -133,7 +133,7 @@ public class LeoEngineProvider implements SearchProvider {
                         .addAutoTestCase(new AutoTestCaseBuilder()
                                 .setTestQueryString("ein bankkonto haben")
                                 .setTargetDictionary(deEnDictionary)
-                                .setExpectedResults(new EngineQueryResultBuilder()
+                                .setExpectedBilingualResults(new BilingualQueryResultBuilder()
                                         .addBilingualEntry(new BilingualEntryBuilder()
                                                 .setEntryType(EntryType.VERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
@@ -161,6 +161,7 @@ public class LeoEngineProvider implements SearchProvider {
      *
      * @return an object that contains descriptive i.e. textual information about the underlying engine.
      */
+    @NotNull
     @Override
     public EngineDescription getEngineDescription() {
         return new EngineDescriptionBuilder()
@@ -177,6 +178,7 @@ public class LeoEngineProvider implements SearchProvider {
      *
      * @return an object that contains information about which features the underlying engine supports.
      */
+    @NotNull
     @Override
     public FeatureSet getFeatureSet() {
         return new FeatureSetBuilder()
@@ -199,6 +201,7 @@ public class LeoEngineProvider implements SearchProvider {
      *
      * @return a new instance of the search engine.
      */
+    @NotNull
     @Override
     public SearchEngine newEngineInstance() {
         return new LeoEngine();

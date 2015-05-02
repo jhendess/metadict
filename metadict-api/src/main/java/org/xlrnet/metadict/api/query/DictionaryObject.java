@@ -25,18 +25,20 @@
 package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The class {@link DictionaryObject} represents a part of an {@link BilingualEntry}. It effectively represents the
  * description of an entry in a certain language. This includes the word/phrase itself, but also additional information
  * like the grammatical gender, a description, possible abbreviations and a special domain where the word/phrase is
- * primarily used.
- * It is also possible to define
+ * primarily used. It provides also additional fields like hyphenations, meanings and synonyms.
  */
 public interface DictionaryObject {
 
@@ -48,6 +50,7 @@ public interface DictionaryObject {
      *
      * @return an abbreviation for this object.
      */
+    @Nullable
     String getAbbreviation();
 
     /**
@@ -56,6 +59,7 @@ public interface DictionaryObject {
      *
      * @return a map of all irregular forms of this object.
      */
+    @NotNull
     Map<GrammaticalForm, String> getAdditionalForms();
 
     /**
@@ -64,6 +68,7 @@ public interface DictionaryObject {
      *
      * @return a description for the object.
      */
+    @Nullable
     String getDescription();
 
     /**
@@ -72,6 +77,7 @@ public interface DictionaryObject {
      *
      * @return the special domain this object is used in.
      */
+    @Nullable
     String getDomain();
 
     /**
@@ -91,6 +97,7 @@ public interface DictionaryObject {
      *
      * @return the general form of this object.
      */
+    @NotNull
     String getGeneralForm();
 
     /**
@@ -99,6 +106,7 @@ public interface DictionaryObject {
      *
      * @return the grammatical gender of this object.
      */
+    @Nullable
     GrammaticalGender getGrammaticalGender();
 
     /**
@@ -110,13 +118,37 @@ public interface DictionaryObject {
     Language getLanguage();
 
     /**
-     * Returns the meaning of the object.
+     * Returns a list of different meanings this objects may have. Each meaning's description should be a separate
+     * string.
      * <p>
      * Example:
      * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
-     * @return a list of different meanings for the object.
+     * @return a list of different meanings this objects may have.
      */
-    String getMeaning();
+    @NotNull
+    Optional<List<String>> getMeanings();
+
+    /**
+     * Returns a list of syllables that this word consists of. Each element of the list represents a single syllable.
+     * <p>
+     * Example:
+     * If a word is divided like <i>dic|tion|ary</i>, the list should look like {"dic", "tion", "ary" }.
+     *
+     * @return a list of syllables that this word consists of.
+     */
+    @NotNull
+    Optional<List<String>> getSyllabification();
+
+    /**
+     * Returns a list of synonyms for this object. Each element of the list represents a single synonym.
+     * <p>
+     * Example:
+     * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
+     *
+     * @return a list of synonyms for this object.
+     */
+    @NotNull
+    Optional<List<String>> getSynonyms();
 
 }

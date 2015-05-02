@@ -24,17 +24,29 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The {@link MonolingualEntry} interface represents a single monolingual result entry of a query operation. Use the
- * {@link MonolingualEntryBuilder} class to build a new entry.
- * <p>
- * Each {@link MonolingualEntry} contains a single {@link DictionaryObject} object. These objects contain the
- * respective source or target translation of a word or phrase and additional information about use cases, grammatical
- * forms, etc.
+ * Immutable implementation for {@link MonolingualEntry}.
  */
-public interface MonolingualEntry extends Entry {
+public class MonolingualEntryImpl extends AbstractEntry implements MonolingualEntry {
+
+    private final DictionaryObject content;
+
+    MonolingualEntryImpl(@NotNull EntryType entryType, @NotNull DictionaryObject content) {
+        super(entryType);
+        this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MonolingualEntryImpl)) return false;
+        MonolingualEntryImpl that = (MonolingualEntryImpl) o;
+        return Objects.equal(content, that.content);
+    }
 
     /**
      * Get the entry's main data object. This object doesn't  have to correspond exactly to the original input query,
@@ -43,6 +55,20 @@ public interface MonolingualEntry extends Entry {
      * @return the main data object of this entry.
      */
     @NotNull
-    DictionaryObject getContent();
+    @Override
+    public DictionaryObject getContent() {
+        return content;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(content);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("content", content)
+                .toString();
+    }
 }

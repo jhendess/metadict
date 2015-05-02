@@ -108,11 +108,12 @@ public class HeinzelnisseEngine implements SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link EngineQueryResultBuilder}
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
      * to build this result list.
      */
+    @NotNull
     @Override
-    public EngineQueryResult executeBilingualQuery(String queryInput, Language inputLanguage, Language outputLanguage, boolean allowBothWay) throws Exception {
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
         boolean queryGerman = false, queryNorwegian = false;
         String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
 
@@ -345,7 +346,7 @@ public class HeinzelnisseEngine implements SearchEngine {
         return heinzelReader.readValue(connection.getInputStream());
     }
 
-    private void processResponse(@NotNull HeinzelResponse heinzelResponse, @NotNull EngineQueryResultBuilder resultBuilder, boolean queryGerman, boolean queryNorwegian) {
+    private void processResponse(@NotNull HeinzelResponse heinzelResponse, @NotNull BilingualQueryResultBuilder resultBuilder, boolean queryGerman, boolean queryNorwegian) {
         // Extract german -> norwegian translations
         for (TranslationEntry entry : heinzelResponse.getGermanTranslations()) {
             processTranslationEntry(entry, resultBuilder, true);
@@ -376,7 +377,7 @@ public class HeinzelnisseEngine implements SearchEngine {
         }
     }
 
-    private void processTranslationEntry(@NotNull TranslationEntry entry, @NotNull EngineQueryResultBuilder resultBuilder, boolean isGermanToNorwegian) {
+    private void processTranslationEntry(@NotNull TranslationEntry entry, @NotNull BilingualQueryResultBuilder resultBuilder, boolean isGermanToNorwegian) {
         BilingualEntryBuilder entryBuilder = new BilingualEntryBuilder();
         // Resolve entry type
         EntryType entryType = resolveEntryType(entry);
@@ -392,8 +393,8 @@ public class HeinzelnisseEngine implements SearchEngine {
         return ENTRY_TYPE_MAP.getOrDefault(entry.getArticle(), EntryType.UNKNOWN);
     }
 
-    private EngineQueryResult runQuery(String queryInput, boolean queryGerman, boolean queryNorwegian) throws IOException {
-        EngineQueryResultBuilder resultBuilder = new EngineQueryResultBuilder();
+    private BilingualQueryResult runQuery(String queryInput, boolean queryGerman, boolean queryNorwegian) throws IOException {
+        BilingualQueryResultBuilder resultBuilder = new BilingualQueryResultBuilder();
 
         HeinzelResponse fullResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);
         //HeinzelResponse exactResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);

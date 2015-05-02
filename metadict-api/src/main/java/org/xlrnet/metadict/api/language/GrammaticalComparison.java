@@ -25,7 +25,8 @@
 package org.xlrnet.metadict.api.language;
 
 /**
- * Created by xolor on 08.04.15.
+ * This enumeration represents a grammatical comparison form. Comparisons are usually used for adjectives (i.e.
+ * positive, comparative and superlative).
  */
 public enum GrammaticalComparison implements GrammaticalForm {
 

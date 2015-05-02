@@ -24,11 +24,11 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 /**
  * The {@link QueryStepResult} represents the result of a single {@link org.xlrnet.metadict.core.query.QueryStep}. It
- * contains both the executed query step, the {@link org.xlrnet.metadict.api.query.EngineQueryResult} object with the
+ * contains both the executed query step, the {@link BilingualQueryResult} object with the
  * results from the query step and additional performance metrics.
  */
 public interface QueryStepResult {
@@ -38,7 +38,7 @@ public interface QueryStepResult {
      *
      * @return the result of the attached {@link QueryStep}.
      */
-    EngineQueryResult getEngineQueryResult();
+    BilingualQueryResult getEngineQueryResult();
 
     /**
      * Returns the error message of the exception that cancelled the query execution. This should return a non-null

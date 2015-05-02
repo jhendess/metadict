@@ -26,6 +26,7 @@ package org.xlrnet.metadict.core.aggregation;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EntryType;
@@ -171,6 +172,7 @@ public class ResultEntryImpl implements ResultEntry {
      *
      * @return the entry's type (i.e. word class in most cases).
      */
+    @NotNull
     @Override
     public EntryType getEntryType() {
         return dictionaryEntry.getEntryType();
@@ -184,6 +186,7 @@ public class ResultEntryImpl implements ResultEntry {
      *
      * @return the {@link DictionaryObject} in input language.
      */
+    @NotNull
     @Override
     public DictionaryObject getInput() {
         return dictionaryEntry.getInput();
@@ -195,6 +198,7 @@ public class ResultEntryImpl implements ResultEntry {
      *
      * @return the {@link DictionaryObject} in output language or null for one-language dictionaries.
      */
+    @NotNull
     @Override
     public DictionaryObject getOutput() {
         return dictionaryEntry.getOutput();

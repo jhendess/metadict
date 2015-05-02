@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.api.metadata;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 
@@ -39,12 +40,14 @@ public interface FeatureSet {
      * Return a collection of dictionaries that the engine supports for bilingual lookups. This can be e.g.
      * English-English or German-English but also English-German.
      */
+    @NotNull
     Collection<BilingualDictionary> getSupportedBilingualDictionaries();
 
     /**
      * Return a collection of languages that the engine supports for monolingual lookups. This can be a normal language
      * like English or German.
      */
+    @NotNull
     Collection<Language> getSupportedLexicographicLanguages();
 
     /**

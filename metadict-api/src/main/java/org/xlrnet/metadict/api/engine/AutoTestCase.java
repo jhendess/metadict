@@ -24,9 +24,10 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 /**
  * The interface {@link AutoTestCase} provides a convenient way to model user-defined test cases. A test case may be
@@ -35,26 +36,28 @@ import org.xlrnet.metadict.api.query.EngineQueryResult;
  * The core may query the {@link SearchEngine} that is provided by the {@link SearchProvider} where this test case is
  * attached. Upon doing so, the core will call {@link SearchEngine#executeBilingualQuery(String, Language, Language,
  * boolean)} with derived parameters from {@link #getTestQueryString()} and {@link #getTargetDictionary()}. The
- * returned {@link EngineQueryResult} from this query will then be compared to the returned values from {@link
- * #getExpectedResults()}.
+ * returned {@link BilingualQueryResult} from this query will then be compared to the returned values from {@link
+ * #getExpectedBilingualResults()}.
  */
 public interface AutoTestCase {
 
     /**
-     * Return the expected query results for this test case. The core will only test if all of the elements inside the
-     * returned object are contained inside the actual query result.
+     * Return the expected bilingual query results for this test case. The core will only test if all of the elements
+     * inside the returned object are contained inside the actual query result.
      * The test will fail, if not all elements inside this expected result object can be found by value-based equality
      * inside the actual result.  If there are more elements in the actual result, the test won't fail.
      *
      * @return the expected query results for this test case.
      */
-    EngineQueryResult getExpectedResults();
+    @NotNull
+    BilingualQueryResult getExpectedBilingualResults();
 
     /**
      * Return the target dictionary which should be queried for this test case.
      *
      * @return the target dictionary which should be queried for this test case.
      */
+    @NotNull
     BilingualDictionary getTargetDictionary();
 
     /**
@@ -62,6 +65,7 @@ public interface AutoTestCase {
      *
      * @return the query string that should be given to the engine for this test case.
      */
+    @NotNull
     String getTestQueryString();
 
 }

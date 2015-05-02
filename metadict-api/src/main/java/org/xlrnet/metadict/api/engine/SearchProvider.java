@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 
@@ -41,6 +43,7 @@ public interface SearchProvider {
      *
      * @return a set of user-defined automatic test cases.
      */
+    @Nullable
     AutoTestSuite getAutoTestSuite();
 
     /**
@@ -49,6 +52,7 @@ public interface SearchProvider {
      *
      * @return an object that contains descriptive i.e. textual information about the underlying engine.
      */
+    @NotNull
     EngineDescription getEngineDescription();
 
     /**
@@ -57,6 +61,7 @@ public interface SearchProvider {
      *
      * @return an object that contains information about which features the underlying engine supports.
      */
+    @NotNull
     FeatureSet getFeatureSet();
 
     /**
@@ -65,6 +70,7 @@ public interface SearchProvider {
      *
      * @return a new instance of the search engine.
      */
+    @NotNull
     SearchEngine newEngineInstance();
 
 }

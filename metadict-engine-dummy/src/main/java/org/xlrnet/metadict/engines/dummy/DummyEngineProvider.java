@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.engines.dummy;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -44,6 +46,7 @@ public class DummyEngineProvider implements SearchProvider {
      *
      * @return a set of user-defined automatic test cases.
      */
+    @Nullable
     public AutoTestSuite getAutoTestSuite() {
         return new AutoTestSuiteBuilder().addAutoTestCase(
                 new AutoTestCaseBuilder()
@@ -58,6 +61,7 @@ public class DummyEngineProvider implements SearchProvider {
      * e.g.
      * the name, url, etc. of the engine.
      */
+    @NotNull
     public EngineDescription getEngineDescription() {
         return new EngineDescriptionBuilder()
                 .setEngineName("DummyEngine")
@@ -69,6 +73,7 @@ public class DummyEngineProvider implements SearchProvider {
      * Return an object that contains information about which features the underlying engine supports. This includes
      * e.g. the supported languages of the engine.
      */
+    @NotNull
     public FeatureSet getFeatureSet() {
         return new FeatureSetBuilder()
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
@@ -76,6 +81,7 @@ public class DummyEngineProvider implements SearchProvider {
                 .build();
     }
 
+    @NotNull
     public SearchEngine newEngineInstance() {
         return new DummyEngine();
     }

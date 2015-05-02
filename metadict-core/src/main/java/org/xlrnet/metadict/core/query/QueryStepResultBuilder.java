@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,7 +35,7 @@ public class QueryStepResultBuilder {
 
     private QueryStep queryStep;
 
-    private EngineQueryResult engineQueryResult;
+    private BilingualQueryResult engineQueryResult;
 
     private long executionTime;
 
@@ -45,7 +45,7 @@ public class QueryStepResultBuilder {
 
     /**
      * Returns a new instance of {@link QueryStepResult}. This method will throw a {@link NullPointerException} if
-     * either the {@link QueryStep} or the {@link EngineQueryResult} is not set.
+     * either the {@link QueryStep} or the {@link BilingualQueryResult} is not set.
      *
      * @return a new object of {@link QueryStepResult}
      */
@@ -63,7 +63,7 @@ public class QueryStepResultBuilder {
      *         The result of the attached query step.
      * @return the current builder
      */
-    public QueryStepResultBuilder setEngineQueryResult(EngineQueryResult engineQueryResult) {
+    public QueryStepResultBuilder setEngineQueryResult(BilingualQueryResult engineQueryResult) {
         this.engineQueryResult = engineQueryResult;
         return this;
     }

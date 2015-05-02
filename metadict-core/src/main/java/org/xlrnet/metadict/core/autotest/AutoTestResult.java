@@ -27,6 +27,7 @@ package org.xlrnet.metadict.core.autotest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.core.main.EngineRegistry;
 
@@ -105,7 +106,7 @@ public class AutoTestResult {
     }
 
     /**
-     * Returns an {@link Optional} with the actual {@link EngineQueryResult} object that was returned by the
+     * Returns an {@link Optional} with the actual {@link BilingualQueryResult} object that was returned by the
      * engine. If any exception was thrown during the execution, there won't be any query result and the
      * {@link Optional} won't contain any object. In this case {@link #getThrownException()} should return the thrown
      * exception.

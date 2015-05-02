@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.URL;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,6 +46,7 @@ public class ExternalContentBuilder {
      *
      * @return a new instance of {@link ExternalContent}.
      */
+    @NotNull
     public ExternalContent build() {
         checkNotNull(link, "Link to external content may not be null");
 
@@ -57,7 +60,8 @@ public class ExternalContentBuilder {
      *         a description for the external content.
      * @return the current builder
      */
-    public ExternalContentBuilder setDescription(String description) {
+    @NotNull
+    public ExternalContentBuilder setDescription(@NotNull String description) {
         checkNotNull(description, "ExternalContent description may not be null");
 
         this.description = description;
@@ -71,7 +75,8 @@ public class ExternalContentBuilder {
      *         the link to the external content.
      * @return the current builder
      */
-    public ExternalContentBuilder setLink(URL link) {
+    @NotNull
+    public ExternalContentBuilder setLink(@NotNull URL link) {
         checkNotNull(link, "ExternalContent link may not be null");
 
         this.link = link;
@@ -85,7 +90,8 @@ public class ExternalContentBuilder {
      *         the title of the external content.
      * @return the current builder
      */
-    public ExternalContentBuilder setTitle(String title) {
+    @NotNull
+    public ExternalContentBuilder setTitle(@NotNull String title) {
         checkNotNull(title, "ExternalContent title may not be null");
 
         this.title = title;

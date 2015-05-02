@@ -26,6 +26,7 @@ package org.xlrnet.metadict.api.metadata;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 
@@ -102,13 +103,17 @@ public class FeatureSetImpl implements FeatureSet {
                 Objects.equal(supportsFuzzySearch, that.supportsFuzzySearch) &&
                 Objects.equal(providesAlternatives, that.providesAlternatives) &&
                 Objects.equal(supportsSelfTest, that.supportsSelfTest) &&
-                Objects.equal(supportedBilingualDictionaries, that.supportedBilingualDictionaries);
+                Objects.equal(providesMonolingualEntries, that.providesMonolingualEntries) &&
+                Objects.equal(providesBilingualDictionaryEntries, that.providesBilingualDictionaryEntries) &&
+                Objects.equal(supportedBilingualDictionaries, that.supportedBilingualDictionaries) &&
+                Objects.equal(supportedLexicographicLanguages, that.supportedLexicographicLanguages);
     }
 
     /**
      * A collection of dictionaries the engine supports for bilingual lookups. This can be e.g. English-English or
      * German-English but also English-German.
      */
+    @NotNull
     @Override
     public Collection<BilingualDictionary> getSupportedBilingualDictionaries() {
         return supportedBilingualDictionaries;
@@ -118,6 +123,7 @@ public class FeatureSetImpl implements FeatureSet {
      * Return a collection of languages that the engine supports for monolingual lookups. This can be a normal language
      * like English or German.
      */
+    @NotNull
     @Override
     public Collection<Language> getSupportedLexicographicLanguages() {
         return this.supportedLexicographicLanguages;
@@ -125,7 +131,7 @@ public class FeatureSetImpl implements FeatureSet {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(supportedBilingualDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest);
+        return Objects.hashCode(supportedBilingualDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest, providesMonolingualEntries, providesBilingualDictionaryEntries, supportedLexicographicLanguages);
     }
 
     /**
@@ -134,6 +140,15 @@ public class FeatureSetImpl implements FeatureSet {
     @Override
     public boolean isProvidesAlternatives() {
         return providesAlternatives;
+    }
+
+    /**
+     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
+     * dictionary lookup that provides a translation between two different languages.
+     */
+    @Override
+    public boolean isProvidesBilingualDictionaryEntries() {
+        return this.providesBilingualDictionaryEntries;
     }
 
     /**
@@ -146,14 +161,6 @@ public class FeatureSetImpl implements FeatureSet {
     }
 
     /**
-     * True, if the engine i.e. the called website supports fuzzy search.
-     */
-    @Override
-    public boolean isSupportsFuzzySearch() {
-        return supportsFuzzySearch;
-    }
-
-    /**
      * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
      * dictionary lookup with detailed information about one entry in one language.
      */
@@ -163,12 +170,11 @@ public class FeatureSetImpl implements FeatureSet {
     }
 
     /**
-     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
-     * dictionary lookup that provides a translation between two different languages.
+     * True, if the engine i.e. the called website supports fuzzy search.
      */
     @Override
-    public boolean isProvidesBilingualDictionaryEntries() {
-        return this.providesBilingualDictionaryEntries;
+    public boolean isSupportsFuzzySearch() {
+        return supportsFuzzySearch;
     }
 
     /**
@@ -187,7 +193,11 @@ public class FeatureSetImpl implements FeatureSet {
                 .add("providesExternalContent", providesExternalContent)
                 .add("supportsFuzzySearch", supportsFuzzySearch)
                 .add("providesAlternatives", providesAlternatives)
-                .add("supportsAutoTest", supportsSelfTest)
+                .add("supportsSelfTest", supportsSelfTest)
+                .add("providesMonolingualEntries", providesMonolingualEntries)
+                .add("providesBilingualDictionaryEntries", providesBilingualDictionaryEntries)
+                .add("supportedLexicographicLanguages", supportedLexicographicLanguages)
                 .toString();
     }
+
 }

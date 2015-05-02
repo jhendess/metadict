@@ -24,8 +24,9 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,18 +35,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AutoTestCaseImpl implements AutoTestCase {
 
-    private final EngineQueryResult expectedResults;
+    private final BilingualQueryResult expectedBilingualResults;
 
     private final BilingualDictionary targetDictionary;
 
     private final String testQueryString;
 
-    AutoTestCaseImpl(EngineQueryResult expectedResults, BilingualDictionary targetDictionary, String testQueryString) {
-        checkNotNull(expectedResults, "Expected results may not be null");
+    AutoTestCaseImpl(BilingualQueryResult expectedBilingualResults, BilingualDictionary targetDictionary, String testQueryString) {
+        checkNotNull(expectedBilingualResults, "Expected results may not be null");
         checkNotNull(targetDictionary, "Target dictionary may not be null");
         checkNotNull(testQueryString, "Test query may not be null");
 
-        this.expectedResults = expectedResults;
+        this.expectedBilingualResults = expectedBilingualResults;
         this.targetDictionary = targetDictionary;
         this.testQueryString = testQueryString;
     }
@@ -58,9 +59,10 @@ public class AutoTestCaseImpl implements AutoTestCase {
      *
      * @return the expected query results for this test case.
      */
+    @NotNull
     @Override
-    public EngineQueryResult getExpectedResults() {
-        return expectedResults;
+    public BilingualQueryResult getExpectedBilingualResults() {
+        return expectedBilingualResults;
     }
 
     /**
@@ -68,6 +70,7 @@ public class AutoTestCaseImpl implements AutoTestCase {
      *
      * @return the target dictionary which should be queried for this test case.
      */
+    @NotNull
     @Override
     public BilingualDictionary getTargetDictionary() {
         return targetDictionary;
@@ -78,6 +81,7 @@ public class AutoTestCaseImpl implements AutoTestCase {
      *
      * @return the query string that should be given to the engine for this test case.
      */
+    @NotNull
     @Override
     public String getTestQueryString() {
         return testQueryString;

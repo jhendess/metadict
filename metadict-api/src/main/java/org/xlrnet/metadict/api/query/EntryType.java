@@ -1,5 +1,7 @@
 package org.xlrnet.metadict.api.query;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The {@link EntryType} enum is used to define the concrete (word) type of an entry. In most cases these types are
  * word
@@ -37,6 +39,7 @@ public enum EntryType {
 
     private String displayname;
 
+    @NotNull
     public String getDisplayname() {
         return displayname;
     }

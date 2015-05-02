@@ -24,16 +24,15 @@
 
 package org.xlrnet.metadict.engines.heinzelnisse;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
-import org.xlrnet.metadict.api.query.BilingualEntryBuilder;
-import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
-import org.xlrnet.metadict.api.query.EngineQueryResultBuilder;
-import org.xlrnet.metadict.api.query.EntryType;
+import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider for Heinzelnisse.info engine.
@@ -47,13 +46,14 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      *
      * @return a set of user-defined automatic test cases.
      */
+    @Nullable
     @Override
     public AutoTestSuite getAutoTestSuite() {
         return new AutoTestSuiteBuilder()
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("haus")
                         .setTargetDictionary(BilingualDictionary.fromQueryString("de-no", true))
-                        .setExpectedResults(new EngineQueryResultBuilder()
+                        .setExpectedBilingualResults((BilingualQueryResult) new BilingualQueryResultBuilder()
                                 .addBilingualEntry(new BilingualEntryBuilder()
                                         .setEntryType(EntryType.NOUN)
                                         .setInputObject(new DictionaryObjectBuilder()
@@ -77,7 +77,7 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("essen")
                         .setTargetDictionary(BilingualDictionary.fromQueryString("de-no", true))
-                        .setExpectedResults(new EngineQueryResultBuilder()
+                        .setExpectedBilingualResults((BilingualQueryResult) new BilingualQueryResultBuilder()
                                 .addBilingualEntry(new BilingualEntryBuilder()
                                         .setEntryType(EntryType.VERB)
                                         .setInputObject(new DictionaryObjectBuilder()
@@ -107,6 +107,7 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      *
      * @return an object that contains descriptive i.e. textual information about the underlying engine.
      */
+    @NotNull
     @Override
     public EngineDescription getEngineDescription() {
         return new EngineDescriptionBuilder()
@@ -123,6 +124,7 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      *
      * @return an object that contains information about which features the underlying engine supports.
      */
+    @NotNull
     @Override
     public FeatureSet getFeatureSet() {
         return new FeatureSetBuilder()
@@ -141,6 +143,7 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      *
      * @return a new instance of the search engine.
      */
+    @NotNull
     @Override
     public SearchEngine newEngineInstance() {
         return new HeinzelnisseEngine();

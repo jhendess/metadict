@@ -62,7 +62,6 @@ public class ObjectMappingTests {
                 .setDescription("description")
                 .setDomain("domain")
                 .setGrammaticalGender(GrammaticalGender.FEMININE)
-                .setMeaning("meaning")
                 .setAdditionalForm(GrammaticalCase.DEFINITE_FORM, "definite")
                 .setAdditionalForm(GrammaticalNumber.PLURAL, "plural")
                 .setAdditionalForm(GrammaticalNumber.SINGULAR, "singular")
@@ -78,7 +77,6 @@ public class ObjectMappingTests {
         String expectedString = "\"" + DictionaryObjectSerializer.ADDITIONAL_REPRESENTATION_FIELD_NAME + "\""
                 + " : \""
                 + "description, "
-                + "meaning, "
                 + "sg.: singular, "
                 + "pl.: plural, "
                 + "pr.: present_tense, "
