@@ -100,6 +100,7 @@ public class BilingualQueryStep extends AbstractQueryStep {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("searchEngineName", searchEngineName)
+                .add("queryString", queryString)
                 .add("inputLanguage", inputLanguage)
                 .add("outputLanguage", outputLanguage)
                 .add("allowBothWay", allowBothWay)

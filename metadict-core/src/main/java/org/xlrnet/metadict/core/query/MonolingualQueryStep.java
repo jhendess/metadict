@@ -53,6 +53,7 @@ public class MonolingualQueryStep extends AbstractQueryStep {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("searchEngineName", searchEngineName)
+                .add("queryString", queryString)
                 .add("requestLanguage", requestLanguage)
                 .toString();
     }
