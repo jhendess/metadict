@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
@@ -99,9 +100,9 @@ public class QueryManager {
     protected void validateQueryRequest(@NotNull QueryRequest queryRequest) {
         checkNotNull(queryRequest, "Query request may not be null");
         checkNotNull(queryRequest.getQueryString(), "Request string may not be null");
-        checkNotNull(queryRequest.getQueryDictionaries(), "Query dictionary list may not be null");
+        checkNotNull(queryRequest.getBilingualDictionaries(), "Query dictionary list may not be null");
 
-        for (BilingualDictionary dictionary : queryRequest.getQueryDictionaries())
+        for (BilingualDictionary dictionary : queryRequest.getBilingualDictionaries())
             checkNotNull(dictionary, "Query dictionary in query may not be null");
     }
 
@@ -117,14 +118,15 @@ public class QueryManager {
     }
 
     @NotNull
-    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, QueryPerformanceStatistics performanceStatistics) {
+    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, QueryPerformanceStatistics performanceStatistics, List<MonolingualEntry> monolingualEntries) {
         return new QueryResponseBuilder()
                 .setQueryRequestString(queryRequest.getQueryString())
                 .setQueryPerformanceStatistics(performanceStatistics)
-                .setGroupedResults(resultGroups)
+                .setGroupedBilingualResults(resultGroups)
                 .setGroupingType(queryRequest.getQueryGrouping())
                 .setSimilarRecommendations(similarRecommendations)
                 .setExternalContents(externalContents)
+                .setMonolingualEntries(monolingualEntries)
                 .build();
     }
 
@@ -159,6 +161,7 @@ public class QueryManager {
         long startCollectingTime = System.currentTimeMillis();
         List<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
         List<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
+        List<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
 
         long finishTime = System.currentTimeMillis();
         performanceStatistics.setPlanningPhaseDuration(startQueryTime - startPlanningTime)
@@ -168,7 +171,12 @@ public class QueryManager {
                 .setCollectPhaseDuration(finishTime - startCollectingTime)
                 .setTotalDuration(finishTime - startPlanningTime);
 
-        return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics);
+        return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics, monolingualEntries);
+    }
+
+    @NotNull
+    private List<MonolingualEntry> collectMonolingualEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+        return QueryUtil.collectMonolingualEntries(engineQueryResults);
     }
 
     @NotNull

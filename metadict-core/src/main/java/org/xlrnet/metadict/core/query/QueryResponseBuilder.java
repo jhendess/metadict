@@ -24,8 +24,10 @@
 
 package org.xlrnet.metadict.core.query;
 
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
 
@@ -40,44 +42,57 @@ class QueryResponseBuilder {
 
     private Collection<ExternalContent> externalContents;
 
-    private Collection<ResultGroup> groupedResults;
+    private Collection<ResultGroup> groupedBilingualResults;
+
+    private Collection<DictionaryObject> similarRecommendations;
+
+    private Collection<MonolingualEntry> monolingualEntries;
 
     private GroupingType groupingType;
 
-    private Collection<DictionaryObject> similarRecommendations;
+    public QueryResponseBuilder setMonolingualEntries(Collection<MonolingualEntry> monolingualEntries) {
+        this.monolingualEntries = monolingualEntries;
+        return this;
+    }
 
     private String queryRequestString;
 
     public QueryResponse build() {
-        return new QueryResponseImpl(queryRequestString, queryPerformanceStatistics, externalContents, groupedResults, groupingType, similarRecommendations);
+        return new QueryResponseImpl(queryRequestString, queryPerformanceStatistics, externalContents, groupedBilingualResults, groupingType, similarRecommendations, monolingualEntries);
     }
 
-    public QueryResponseBuilder setExternalContents(Collection<ExternalContent> externalContents) {
+    @NotNull
+    public QueryResponseBuilder setExternalContents(@NotNull Collection<ExternalContent> externalContents) {
         this.externalContents = externalContents;
         return this;
     }
 
-    public QueryResponseBuilder setGroupedResults(Collection<ResultGroup> groupedResults) {
-        this.groupedResults = groupedResults;
+    @NotNull
+    public QueryResponseBuilder setGroupedBilingualResults(@NotNull Collection<ResultGroup> groupedBilingualResults) {
+        this.groupedBilingualResults = groupedBilingualResults;
         return this;
     }
 
-    public QueryResponseBuilder setGroupingType(GroupingType groupingType) {
+    @NotNull
+    public QueryResponseBuilder setGroupingType(@NotNull GroupingType groupingType) {
         this.groupingType = groupingType;
         return this;
     }
 
-    public QueryResponseBuilder setQueryPerformanceStatistics(QueryPerformanceStatistics queryPerformanceStatistics) {
+    @NotNull
+    public QueryResponseBuilder setQueryPerformanceStatistics(@NotNull QueryPerformanceStatistics queryPerformanceStatistics) {
         this.queryPerformanceStatistics = queryPerformanceStatistics;
         return this;
     }
 
-    public QueryResponseBuilder setQueryRequestString(String queryRequestString) {
+    @NotNull
+    public QueryResponseBuilder setQueryRequestString(@NotNull String queryRequestString) {
         this.queryRequestString = queryRequestString;
         return this;
     }
 
-    public QueryResponseBuilder setSimilarRecommendations(Collection<DictionaryObject> similarRecommendations) {
+    @NotNull
+    public QueryResponseBuilder setSimilarRecommendations(@NotNull Collection<DictionaryObject> similarRecommendations) {
         this.similarRecommendations = similarRecommendations;
         return this;
     }

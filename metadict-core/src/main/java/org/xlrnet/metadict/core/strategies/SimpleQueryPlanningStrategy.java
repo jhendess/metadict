@@ -28,13 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.main.EngineRegistry;
-import org.xlrnet.metadict.core.query.QueryPlan;
-import org.xlrnet.metadict.core.query.QueryPlanningStrategy;
-import org.xlrnet.metadict.core.query.QueryRequest;
-import org.xlrnet.metadict.core.query.QueryStep;
+import org.xlrnet.metadict.core.query.*;
 
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 
 /**
  * Simple planning strategy for creating query plans. This strategy creates unoptimized query plans by just passing all
@@ -43,9 +39,6 @@ import javax.inject.Inject;
  */
 @Default
 public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
-
-    @Inject
-    private EngineRegistry engineRegistry;
 
     /**
      * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistry} should be used
@@ -62,18 +55,27 @@ public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
     public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry) {
         QueryPlan queryPlan = new QueryPlan();
 
-        for (BilingualDictionary dictionary : queryRequest.getQueryDictionaries()) {
-            engineRegistry.getSearchEngineNamesByDictionary(dictionary).forEach(
-                    (s) -> queryPlan.addQueryStep(
-                            new QueryStep()
-                                    .setQueryString(queryRequest.getQueryString())
-                                    .setInputLanguage(dictionary.getInput())
-                                    .setOutputLanguage(dictionary.getOutput())
-                                    .setAllowBothWay(dictionary.isBidirectional())
-                                    .setSearchEngineName(s)
-                                    .setSearchEngine(engineRegistry.getEngineByName(s))
-                    ));
-        }
+        queryRequest.getBilingualDictionaries().forEach((d) ->
+                engineRegistry.getSearchEngineNamesByDictionary(d).forEach(
+                        (s) -> queryPlan.addQueryStep(
+                                new BilingualQueryStep()
+                                        .setInputLanguage(d.getInput())
+                                        .setAllowBothWay(d.isBidirectional())
+                                        .setOutputLanguage(d.getOutput())
+                                        .setQueryString(queryRequest.getQueryString())
+                                        .setSearchEngineName(s)
+                                        .setSearchEngine(engineRegistry.getEngineByName(s))
+                        )));
+
+        queryRequest.getMonolingualLanguages()
+                .forEach((l) -> engineRegistry.getSearchEngineNamesByLanguage(l)
+                        .forEach((s) -> queryPlan.addQueryStep(
+                                new MonolingualQueryStep()
+                                        .setRequestLanguage(l)
+                                        .setQueryString(queryRequest.getQueryString())
+                                        .setSearchEngineName(s)
+                                        .setSearchEngine(engineRegistry.getEngineByName(s))
+                        )));
 
         return queryPlan;
     }

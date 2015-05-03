@@ -86,7 +86,10 @@ public class EngineRegistryTest {
     @Test
     public void testRegisterSearchProvider_success() throws Exception {
         // Setup mock to return all non-null
-        FeatureSet featureSet = new FeatureSetBuilder().addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true)).build();
+        FeatureSet featureSet = new FeatureSetBuilder()
+                .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true))
+                .addSupportedLexicographicLanguage(Language.GERMAN)
+                .build();
         when(searchProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
         when(searchProviderMock.getFeatureSet()).thenReturn(featureSet);
         when(searchProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
@@ -94,5 +97,8 @@ public class EngineRegistryTest {
         assertEquals(0, engineRegistry.countRegisteredEngines());
         engineRegistry.registerSearchProvider(searchProviderMock);
         assertEquals(1, engineRegistry.countRegisteredEngines());
+
+        assertEquals("Monolingual language has not been registered", 1, engineRegistry.languageEngineNameMap.size());
+        assertEquals("Bilingual dictionary has not been registered", 4, engineRegistry.dictionaryEngineNameMap.size());
     }
 }

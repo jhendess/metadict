@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.query;
 
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,9 +34,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class QueryStepResultBuilder {
 
-    private QueryStep queryStep;
+    private AbstractQueryStep queryStep;
 
-    private BilingualQueryResult engineQueryResult;
+    private EngineQueryResult engineQueryResult;
 
     private long executionTime;
 
@@ -45,7 +46,7 @@ public class QueryStepResultBuilder {
 
     /**
      * Returns a new instance of {@link QueryStepResult}. This method will throw a {@link NullPointerException} if
-     * either the {@link QueryStep} or the {@link BilingualQueryResult} is not set.
+     * either the {@link BilingualQueryStep} or the {@link BilingualQueryResult} is not set.
      *
      * @return a new object of {@link QueryStepResult}
      */
@@ -63,7 +64,7 @@ public class QueryStepResultBuilder {
      *         The result of the attached query step.
      * @return the current builder
      */
-    public QueryStepResultBuilder setEngineQueryResult(BilingualQueryResult engineQueryResult) {
+    public QueryStepResultBuilder setEngineQueryResult(EngineQueryResult engineQueryResult) {
         this.engineQueryResult = engineQueryResult;
         return this;
     }
@@ -82,10 +83,10 @@ public class QueryStepResultBuilder {
     }
 
     /**
-     * Set the time that the attached {@link QueryStep} took in milliseconds.
+     * Set the time that the attached {@link BilingualQueryStep} took in milliseconds.
      *
      * @param executionTime
-     *         The time that the attached {@link QueryStep} took in milliseconds.
+     *         The time that the attached {@link BilingualQueryStep} took in milliseconds.
      * @return the current builder
      */
     public QueryStepResultBuilder setExecutionTime(long executionTime) {
@@ -94,11 +95,11 @@ public class QueryStepResultBuilder {
     }
 
     /**
-     * Should be set to true, if the attached {@link QueryStep} has failed. If this is set to true, then {@link
+     * Should be set to true, if the attached {@link BilingualQueryStep} has failed. If this is set to true, then {@link
      * #setErrorMessage(String)} should be set with the message of the catched Exception.
      *
      * @param failedStep
-     *         True, if the attached {@link QueryStep} has failed.
+     *         True, if the attached {@link BilingualQueryStep} has failed.
      * @return the current builder
      */
     public QueryStepResultBuilder setFailedStep(boolean failedStep) {
@@ -107,13 +108,13 @@ public class QueryStepResultBuilder {
     }
 
     /**
-     * Set the {@link QueryStep} that was executed.
+     * Set the {@link BilingualQueryStep} that was executed.
      *
      * @param queryStep
-     *         The {@link QueryStep} that was executed.
+     *         The {@link BilingualQueryStep} that was executed.
      * @return the current builder
      */
-    public QueryStepResultBuilder setQueryStep(QueryStep queryStep) {
+    public QueryStepResultBuilder setQueryStep(AbstractQueryStep queryStep) {
         this.queryStep = queryStep;
         return this;
     }

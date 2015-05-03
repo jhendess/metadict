@@ -26,6 +26,7 @@ package org.xlrnet.metadict.core.query;
 
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
@@ -48,13 +49,14 @@ public interface QueryResponse {
     Collection<ExternalContent> getExternalContents();
 
     /**
-     * Returns a view on the underlying result set based on the requested grouping mechanism. Each element of {@link
-     * ResultGroup} in the returned collection contains the {@link ResultEntry} objects that were matched to this
+     * Returns a view on the underlying bilingual result set based on the requested grouping mechanism. Each element of
+     * {@link ResultGroup} in the returned collection contains the {@link ResultEntry} objects that were matched to
+     * this
      * group.
      *
      * @return a view on the underlying result set based on the requested grouping mechanism.
      */
-    Collection<ResultGroup> getGroupedResults();
+    Collection<ResultGroup> getGroupedBilingualResults();
 
     /**
      * Returns the {@link GroupingType} that was used for grouping the resulting set.
@@ -62,6 +64,14 @@ public interface QueryResponse {
      * @return the {@link GroupingType} that was used for grouping the resulting set.
      */
     GroupingType getGroupingType();
+
+    /**
+     * Returns a {@link Collection} of monolingual entries in the result sets. Monolingual entries are currently
+     * <i>not</i> grouped.
+     *
+     * @return a {@link Collection} of monolingual entries in the result sets.
+     */
+    Collection<MonolingualEntry> getMonolingualEntries();
 
     /**
      * Returns internal performance information about the query.
@@ -92,6 +102,6 @@ public interface QueryResponse {
      *
      * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.
      */
-    Iterable<ResultEntry> getUngroupedResults();
+    Iterable<ResultEntry> getUngroupedBilingualResults();
 
 }

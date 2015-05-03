@@ -138,6 +138,7 @@ public class RestQuery {
                     metadictCore.createNewQueryRequestBuilder()
                             .setQueryString(queryRequest)
                             .setQueryDictionaries(dictionaries)
+                            .setAutoDeriveMonolingualLanguages(true)
                             .build()
                             .executeRequest();
         } catch (Exception e) {

@@ -33,8 +33,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.core.query.AbstractQueryStep;
+import org.xlrnet.metadict.core.query.BilingualQueryStep;
 import org.xlrnet.metadict.core.query.QueryPlan;
-import org.xlrnet.metadict.core.query.QueryStep;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
 import java.util.Collection;
@@ -64,7 +65,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryPlan_successful() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
         when(stepResultMock.isFailedStep()).thenReturn(false);
 
@@ -80,7 +81,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryPlan_failedStep() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
         when(stepResultMock.isFailedStep()).thenReturn(true);
 
@@ -96,7 +97,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryPlan_stepThrows() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
 
         doThrow(new RuntimeException("Exception")).when(executionStrategy).executeQueryStep(any());
@@ -115,7 +116,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryStep_returnsNull() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(null);
 
         QueryStepResult queryStepResult = executionStrategy.executeQueryStep(queryStep);
@@ -130,7 +131,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryStep_succesful() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         BilingualQueryResult resultMock = Mockito.mock(BilingualQueryResult.class);
 
         when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(resultMock);
@@ -147,7 +148,7 @@ public class CachedLinearExecutionStrategyTest {
 
     @Test
     public void testExecuteQueryStep_throwsException() throws Exception {
-        QueryStep queryStep = getQueryStepMock();
+        AbstractQueryStep queryStep = getQueryStepMock();
         when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenThrow(new Exception("Exception"));
 
         QueryStepResult queryStepResult = executionStrategy.executeQueryStep(queryStep);
@@ -160,12 +161,12 @@ public class CachedLinearExecutionStrategyTest {
         assertEquals(queryStep, queryStepResult.getQueryStep());
     }
 
-    private QueryStep getQueryStepMock() {
-        return new QueryStep()
-                .setQueryString(QUERY_STRING)
+    private AbstractQueryStep getQueryStepMock() {
+        return new BilingualQueryStep()
                 .setAllowBothWay(true)
                 .setInputLanguage(Language.ENGLISH)
                 .setOutputLanguage(Language.GERMAN)
+                .setQueryString(QUERY_STRING)
                 .setSearchEngine(engineMock)
                 .setSearchEngineName("mockedEngine");
     }

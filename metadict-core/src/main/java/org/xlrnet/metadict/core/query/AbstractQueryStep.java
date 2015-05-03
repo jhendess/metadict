@@ -24,27 +24,57 @@
 
 package org.xlrnet.metadict.core.query;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.engine.SearchEngine;
 
-import java.util.Collection;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@link QueryPlanExecutionStrategy} interface is used for implementing query plan executors. A query plan
- * executor has to execute every step defined in a {@link QueryPlan}. However, the executor can decide how the query
- * plan gets executed by e.g. implementing multi-threading or smart caching.
+ * Abstract base class for query steps.
  */
-public interface QueryPlanExecutionStrategy {
+public class AbstractQueryStep {
 
-    /**
-     * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
-     * BilingualQueryStep} have to be aggregated to a {@link Iterable} of {@link QueryStepResult} objects that
-     * contains the results of each single step.
-     *
-     * @param queryPlan
-     *         The query plan that should be executed.
-     * @return a collection with the results of each step
-     */
+    protected String searchEngineName;
+
+    protected String queryString;
+
+    protected SearchEngine searchEngine;
+
     @NotNull
-    Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan);
+    public String getQueryString() {
+        return queryString;
+    }
 
+    @NotNull
+    public SearchEngine getSearchEngine() {
+        return searchEngine;
+    }
+
+    @NotNull
+    public String getSearchEngineName() {
+        return searchEngineName;
+    }
+
+    public AbstractQueryStep setQueryString(@NotNull String queryString) {
+        checkNotNull(queryString);
+
+        this.queryString = queryString;
+        return this;
+    }
+
+    public AbstractQueryStep setSearchEngine(@NotNull SearchEngine searchEngine) {
+        checkNotNull(searchEngine);
+
+        this.searchEngine = searchEngine;
+        return this;
+    }
+
+    @NotNull
+    public AbstractQueryStep setSearchEngineName(@NotNull String searchEngineName) {
+        Preconditions.checkNotNull(searchEngineName);
+
+        this.searchEngineName = searchEngineName;
+        return this;
+    }
 }

@@ -25,7 +25,10 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EntryType;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
@@ -38,6 +41,8 @@ import java.util.Map;
  * Grouping strategy that creates a group for each used entrytype and groups the entries according to it.
  */
 public class EntryTypeGroupingStrategy implements GroupingStrategy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntryTypeGroupingStrategy.class);
 
     /**
      * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
@@ -53,9 +58,15 @@ public class EntryTypeGroupingStrategy implements GroupingStrategy {
         Collection<ResultGroup> resultGroupCollection = new ArrayList<>();
 
         for (QueryStepResult stepResult : queryStepResults) {
+            if (!(stepResult.getEngineQueryResult() instanceof BilingualQueryResult)) {
+                LOGGER.debug("Skipping query result of type {}", stepResult.getEngineQueryResult().getClass().getCanonicalName());
+                continue;
+            }
+
             String searchEngineName = stepResult.getQueryStep().getSearchEngineName();
 
-            for (BilingualEntry entry : stepResult.getEngineQueryResult().getBilingualEntries()) {
+            BilingualQueryResult engineQueryResult = (BilingualQueryResult) stepResult.getEngineQueryResult();
+            for (BilingualEntry entry : engineQueryResult.getBilingualEntries()) {
                 EntryType entryType = entry.getEntryType();
                 if (!entryTypeGroupBuilderMap.containsKey(entryType)) {
                     String groupIdentifier = (entryType != EntryType.UNKNOWN) ? entryType.getDisplayname() + "s" : "Unknown";

@@ -24,21 +24,24 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 /**
- * The {@link QueryStepResult} represents the result of a single {@link org.xlrnet.metadict.core.query.QueryStep}. It
- * contains both the executed query step, the {@link BilingualQueryResult} object with the
+ * The {@link QueryStepResult} represents the result of a single {@link AbstractQueryStep}. It
+ * contains both the executed query step, the {@link QueryStepResult} object with the
  * results from the query step and additional performance metrics.
+ * <p>
+ * Note, that this interface returns only abstract objects - each has to be casted to the according monolingual or
+ * bilingual implementation!
  */
 public interface QueryStepResult {
 
     /**
-     * Returns the result of the attached {@link QueryStep}.
+     * Returns the result of the attached {@link AbstractQueryStep}.
      *
-     * @return the result of the attached {@link QueryStep}.
+     * @return the result of the attached {@link AbstractQueryStep}.
      */
-    BilingualQueryResult getEngineQueryResult();
+    EngineQueryResult getEngineQueryResult();
 
     /**
      * Returns the error message of the exception that cancelled the query execution. This should return a non-null
@@ -49,24 +52,24 @@ public interface QueryStepResult {
     String getErrorMessage();
 
     /**
-     * Returns the time that the attached {@link QueryStep} took in milliseconds.
+     * Returns the time that the attached {@link AbstractQueryStep} took in milliseconds.
      *
-     * @return the time that the attached {@link QueryStep} took in milliseconds.
+     * @return the time that the attached {@link AbstractQueryStep} took in milliseconds.
      */
     long getExecutionTime();
 
     /**
-     * Returns the {@link QueryStep} that was executed.
+     * Returns the {@link AbstractQueryStep} that was executed. Make sure, to cast the returned object accordingly!
      *
-     * @return the {@link QueryStep} that was executed.
+     * @return the {@link AbstractQueryStep} that was executed.
      */
-    QueryStep getQueryStep();
+    AbstractQueryStep getQueryStep();
 
     /**
-     * Returns true, if the attached {@link QueryStep} has failed. If this message returns true, then {@link
+     * Returns true, if the attached {@link AbstractQueryStep} has failed. If this message returns true, then {@link
      * #getErrorMessage()} should return the message of the thrown exception.
      *
-     * @return true, if the attached {@link QueryStep} has failed.
+     * @return true, if the attached {@link AbstractQueryStep} has failed.
      */
     boolean isFailedStep();
 }

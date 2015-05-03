@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.Iterables;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
@@ -52,13 +53,16 @@ public class QueryResponseImpl implements QueryResponse {
 
     private final String requestString;
 
-    QueryResponseImpl(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations) {
+    private final Collection<MonolingualEntry> monolingualEntries;
+
+    QueryResponseImpl(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries) {
         this.requestString = requestString;
         this.queryPerformanceStatistics = queryPerformanceStatistics;
         this.externalContents = externalContents;
         this.groupedResults = groupedResults;
         this.groupingType = groupingType;
         this.similarRecommendations = similarRecommendations;
+        this.monolingualEntries = monolingualEntries;
     }
 
     /**
@@ -81,7 +85,7 @@ public class QueryResponseImpl implements QueryResponse {
      * @return a view on the underlying result set based on the requested grouping mechanism.
      */
     @Override
-    public Collection<ResultGroup> getGroupedResults() {
+    public Collection<ResultGroup> getGroupedBilingualResults() {
         if (this.groupedResults != null)
             return Collections.unmodifiableCollection(this.groupedResults);
         return Collections.EMPTY_LIST;
@@ -95,6 +99,19 @@ public class QueryResponseImpl implements QueryResponse {
     @Override
     public GroupingType getGroupingType() {
         return this.groupingType;
+    }
+
+    /**
+     * Returns a {@link Collection} of monolingual entries in the result sets. Monolingual entries are currently
+     * <i>not</i> grouped.
+     *
+     * @return a {@link Collection} of monolingual entries in the result sets.
+     */
+    @Override
+    public Collection<MonolingualEntry> getMonolingualEntries() {
+        if (this.monolingualEntries != null)
+            return Collections.unmodifiableCollection(this.monolingualEntries);
+        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -138,8 +155,8 @@ public class QueryResponseImpl implements QueryResponse {
      * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.
      */
     @Override
-    public Iterable<ResultEntry> getUngroupedResults() {
-        return Iterables.concat(getGroupedResults());       // Don't access field directly to avoid NPEs!
+    public Iterable<ResultEntry> getUngroupedBilingualResults() {
+        return Iterables.concat(getGroupedBilingualResults());       // Don't access field directly to avoid NPEs!
     }
 
     @Override

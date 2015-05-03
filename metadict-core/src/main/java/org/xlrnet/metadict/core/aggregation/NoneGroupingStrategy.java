@@ -25,7 +25,10 @@
 package org.xlrnet.metadict.core.aggregation;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.core.query.QueryStepResult;
 
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ import java.util.Collection;
  * The most simple grouping strategy that merges the results of all queries in one group.
  */
 public class NoneGroupingStrategy implements GroupingStrategy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntryTypeGroupingStrategy.class);
 
     /**
      * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
@@ -48,9 +53,15 @@ public class NoneGroupingStrategy implements GroupingStrategy {
     public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
         ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All results");
 
-        for (QueryStepResult queryStepResult : queryStepResults) {
-            for (BilingualEntry dictionaryEntry : queryStepResult.getEngineQueryResult().getBilingualEntries()) {
-                groupBuilder.addResultEntry(ResultEntryImpl.from(dictionaryEntry, queryStepResult.getQueryStep().getSearchEngineName(), 1.0));
+        for (QueryStepResult stepResult : queryStepResults) {
+            if (!(stepResult.getEngineQueryResult() instanceof BilingualQueryResult)) {
+                LOGGER.debug("Skipping query result of type {}", stepResult.getEngineQueryResult().getClass().getCanonicalName());
+                continue;
+            }
+
+            BilingualQueryResult engineQueryResult = (BilingualQueryResult) stepResult.getEngineQueryResult();
+            for (BilingualEntry dictionaryEntry : engineQueryResult.getBilingualEntries()) {
+                groupBuilder.addResultEntry(ResultEntryImpl.from(dictionaryEntry, stepResult.getQueryStep().getSearchEngineName(), 1.0));
             }
         }
 

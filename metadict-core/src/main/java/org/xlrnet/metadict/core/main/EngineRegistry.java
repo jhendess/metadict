@@ -34,6 +34,7 @@ import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestManager;
@@ -61,6 +62,8 @@ public class EngineRegistry {
 
     Multimap<BilingualDictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
 
+    Multimap<Language, String> languageEngineNameMap = ArrayListMultimap.create();
+
     Map<String, EngineDescription> engineDescriptionMap = new HashMap<>();
 
     Map<String, FeatureSet> featureSetMap = new HashMap<>();
@@ -72,6 +75,7 @@ public class EngineRegistry {
 
     @Inject
     private AutoTestManager autoTestManager;
+
 
     /**
      * Returns the amount of currently registered search engines. Search engines are provided by implementations of
@@ -152,7 +156,7 @@ public class EngineRegistry {
     }
 
     /**
-     * Returns the names of all engines that support the given {@link Dictionary}.
+     * Returns the names of all engines that support the given {@link BilingualDictionary} for bilingual look-ups.
      *
      * @param dictionary
      *         The dictionary to look for.
@@ -161,6 +165,18 @@ public class EngineRegistry {
     @NotNull
     public Collection<String> getSearchEngineNamesByDictionary(@NotNull BilingualDictionary dictionary) {
         return Collections.unmodifiableCollection(dictionaryEngineNameMap.get(dictionary));
+    }
+
+    /**
+     * Returns the names of all engines that support the given {@link Language} for monolingual look-ups.
+     *
+     * @param language
+     *         The language to look for.
+     * @return a collection of engines that support the given language.
+     */
+    @NotNull
+    public Collection<String> getSearchEngineNamesByLanguage(@NotNull Language language) {
+        return Collections.unmodifiableCollection(languageEngineNameMap.get(language));
     }
 
     /**
@@ -202,7 +218,7 @@ public class EngineRegistry {
     }
 
     /**
-     * Register the given {@link SearchProvider} in the internal registry. The registration may fail, if any ob the
+     * Register the given {@link SearchProvider} in the internal registry. The registration may fail, if any of the
      * mandatory methods of the {@link SearchProvider} return null or a provider with the same class name is already
      * registered.
      *
@@ -246,6 +262,9 @@ public class EngineRegistry {
     private void registerDictionariesFromFeatureSet(@NotNull String canonicalEngineName, @NotNull FeatureSet featureSet) {
         for (BilingualDictionary dictionary : featureSet.getSupportedBilingualDictionaries()) {
             registerDictionary(canonicalEngineName, dictionary);
+        }
+        for (Language language : featureSet.getSupportedLexicographicLanguages()) {
+            languageEngineNameMap.put(language, canonicalEngineName);
         }
     }
 

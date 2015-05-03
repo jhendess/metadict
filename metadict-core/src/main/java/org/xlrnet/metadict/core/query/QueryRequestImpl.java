@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.main.MetadictCore;
@@ -49,12 +50,15 @@ public class QueryRequestImpl implements QueryRequest {
 
     private final OrderType orderType;
 
-    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType) {
+    private final List<Language> monolingualLanguages;
+
+    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
         this.metadictCore = metadictCore;
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
         this.groupingType = groupingType;
         this.orderType = orderType;
+        this.monolingualLanguages = monolingualLanguages;
     }
 
     @Override
@@ -93,8 +97,19 @@ public class QueryRequestImpl implements QueryRequest {
      */
     @Override
     @NotNull
-    public List<BilingualDictionary> getQueryDictionaries() {
+    public List<BilingualDictionary> getBilingualDictionaries() {
         return queryDictionaries;
+    }
+
+    /**
+     * Return a list of all languages that should be queried for a monolingual lookup (i.e. translations).
+     *
+     * @return a list of all languages that should be queried.
+     */
+    @NotNull
+    @Override
+    public List<Language> getMonolingualLanguages() {
+        return monolingualLanguages;
     }
 
     /**

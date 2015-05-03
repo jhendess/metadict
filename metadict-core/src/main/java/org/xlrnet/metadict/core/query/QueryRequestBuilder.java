@@ -24,14 +24,17 @@
 
 package org.xlrnet.metadict.core.query;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.main.MetadictCore;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,11 +47,15 @@ public class QueryRequestBuilder {
 
     private String queryString;
 
-    private List<BilingualDictionary> queryDictionaries = new ArrayList<>();
+    private Set<BilingualDictionary> queryDictionaries = new HashSet<>();
 
     private GroupingType groupingType = GroupingType.NONE;
 
     private OrderType orderType = OrderType.RELEVANCE;
+
+    private Set<Language> queryLanguages = new HashSet<>();
+
+    private boolean autoDeriveMonolingualLanguages = false;
 
     protected QueryRequestBuilder(@NotNull MetadictCore metadictCore) {
         this.metadictCore = metadictCore;
@@ -68,8 +75,45 @@ public class QueryRequestBuilder {
         return this;
     }
 
+    /**
+     * Adds a new {@link Language} for monolingual lookups to the current query.
+     *
+     * @param newLanguage
+     *         The new language to add.
+     * @return the current builder
+     */
+    public QueryRequestBuilder addQueryLanguage(@NotNull Language newLanguage) {
+        checkNotNull(newLanguage);
+
+        this.queryLanguages.add(newLanguage);
+        return this;
+    }
+
     public QueryRequest build() {
-        return new QueryRequestImpl(metadictCore, queryString, queryDictionaries, groupingType, orderType);
+        if (autoDeriveMonolingualLanguages) {
+            for (BilingualDictionary d : queryDictionaries) {
+                queryLanguages.add(d.getInput());
+                queryLanguages.add(d.getOutput());
+            }
+        }
+
+        return new QueryRequestImpl(metadictCore, queryString, Lists.newArrayList(queryDictionaries), groupingType, orderType, Lists.newArrayList(queryLanguages));
+    }
+
+    /**
+     * If set to true, the builder will create automatically a new monolingual language entry for each added bilingual
+     * dictionary upon calling {@link #build()}. This feature is helpful if you don't want to call always the {@link
+     * #addQueryLanguage(Language)} for bilingual queries.
+     *
+     * @param autoDeriveMonolingualLanguages
+     *         If set to true, the builder will create automatically a new monolingual language entry for each added
+     *         bilingual
+     *         dictionary upon calling build().
+     * @return the current builder
+     */
+    public QueryRequestBuilder setAutoDeriveMonolingualLanguages(boolean autoDeriveMonolingualLanguages) {
+        this.autoDeriveMonolingualLanguages = autoDeriveMonolingualLanguages;
+        return this;
     }
 
     /**

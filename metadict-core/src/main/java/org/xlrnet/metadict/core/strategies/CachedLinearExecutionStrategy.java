@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
+import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.MonolingualQueryResult;
 import org.xlrnet.metadict.core.query.*;
 
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
 
-    Cache<QueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
+    Cache<AbstractQueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
             .newBuilder()
             .concurrencyLevel(8)
             .initialCapacity(512)
@@ -59,7 +61,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     /**
      * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
-     * QueryStep} have to be aggregated to a {@link Iterable< Pair <QueryStep,  BilingualQueryResult  >>} that
+     * BilingualQueryStep} have to be aggregated to a {@link Iterable< Pair < AbstractQueryStep ,  EngineQueryResult  >>} that
      * contains the results of each single step.
      *
      * @param queryPlan
@@ -72,7 +74,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
     public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         List<QueryStepResult> queryResults = new ArrayList<>();
 
-        for (QueryStep currentQueryStep : queryPlan.getQueryStepList()) {
+        for (AbstractQueryStep currentQueryStep : queryPlan.getQueryStepList()) {
             QueryStepResult queryStepResult = queryStepResultCache.getIfPresent(currentQueryStep);
 
             try {
@@ -98,19 +100,22 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
     }
 
     @NotNull
-    QueryStepResult executeQueryStep(QueryStep step) {
+    QueryStepResult executeQueryStep(AbstractQueryStep step) {
         LOGGER.debug("Executing query step {}", step);
 
         QueryStepResultBuilder stepResultBuilder = new QueryStepResultBuilder().setQueryStep(step);
         long startTime = System.currentTimeMillis();
 
         try {
-            String queryString = step.getQueryString();
-            Language inputLanguage = step.getInputLanguage();
-            Language outLanguage = step.getOutputLanguage();
-            boolean allowBothWay = step.isAllowBothWay();
+            EngineQueryResult queryResult;
 
-            BilingualQueryResult queryResult = step.getSearchEngine().executeBilingualQuery(queryString, inputLanguage, outLanguage, allowBothWay);
+            if (step instanceof MonolingualQueryStep) {
+                queryResult = executeMonolingualQueryStep((MonolingualQueryStep) step);
+            } else if (step instanceof BilingualQueryStep) {
+                queryResult = executeBilingualQueryStep((BilingualQueryStep) step);
+            } else {
+                throw new UnsupportedOperationException("Unsupported query step: " + step.getClass().getCanonicalName());
+            }
 
             if (queryResult == null) {
                 LOGGER.error("Query step {} failed: query result was null", step);
@@ -132,5 +137,23 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                     .setExecutionTime(System.currentTimeMillis() - startTime);
         }
         return stepResultBuilder.build();
+    }
+
+    @NotNull
+    private MonolingualQueryResult executeMonolingualQueryStep(@NotNull MonolingualQueryStep step) throws Exception {
+        String queryString = step.getQueryString();
+        Language requestLanguage = step.getRequestLanguage();
+
+        return step.getSearchEngine().executeMonolingualQuery(queryString, requestLanguage);
+    }
+
+    @NotNull
+    private BilingualQueryResult executeBilingualQueryStep(@NotNull BilingualQueryStep step) throws Exception {
+        String queryString = step.getQueryString();
+        Language inputLanguage = step.getInputLanguage();
+        Language outLanguage = step.getOutputLanguage();
+        boolean allowBothWay = step.isAllowBothWay();
+
+        return step.getSearchEngine().executeBilingualQuery(queryString, inputLanguage, outLanguage, allowBothWay);
     }
 }

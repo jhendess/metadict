@@ -26,45 +26,46 @@ package org.xlrnet.metadict.core.query;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.xlrnet.metadict.api.language.Language;
 
 /**
- * The {@link QueryPlan} is used by Metadict to determine which search engines should be used for fulfilling the
- * requested query most efficiently.
+ * Query step for executing a Monolingual query.
  */
-public class QueryPlan {
+public class MonolingualQueryStep extends AbstractQueryStep {
 
-    private List<AbstractQueryStep> queryStepList = new ArrayList<>();
+    private Language requestLanguage;
 
-    public QueryPlan addQueryStep(AbstractQueryStep queryStep) {
-        queryStepList.add(queryStep);
+    public Language getRequestLanguage() {
+        return requestLanguage;
+    }
+
+    public MonolingualQueryStep setRequestLanguage(Language requestLanguage) {
+        this.requestLanguage = requestLanguage;
         return this;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof QueryPlan)) return false;
-        QueryPlan queryPlan = (QueryPlan) o;
-        return Objects.equal(queryStepList, queryPlan.queryStepList);
-    }
-
-    public List<AbstractQueryStep> getQueryStepList() {
-        return Collections.unmodifiableList(queryStepList);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hashCode(queryStepList);
+        return Objects.hashCode(searchEngineName, queryString, searchEngine, requestLanguage);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("queryStepList", queryStepList)
+                .add("searchEngineName", searchEngineName)
+                .add("requestLanguage", requestLanguage)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof MonolingualQueryStep)) return false;
+        MonolingualQueryStep queryStep = (MonolingualQueryStep) o;
+        return Objects.equal(requestLanguage, queryStep.requestLanguage) &&
+                Objects.equal(searchEngineName, queryStep.searchEngineName) &&
+                Objects.equal(queryString, queryStep.queryString) &&
+                Objects.equal(searchEngine, queryStep.searchEngine);
     }
 }

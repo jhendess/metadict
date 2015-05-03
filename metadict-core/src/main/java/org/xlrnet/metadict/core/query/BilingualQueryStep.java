@@ -26,21 +26,15 @@ package org.xlrnet.metadict.core.query;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Language;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by xolor on 01.04.15.
+ * Query step for executing a Bilingual query.
  */
-public class QueryStep {
-
-    private String searchEngineName;
-
-    private String queryString;
-
-    private SearchEngine searchEngine;
+public class BilingualQueryStep extends AbstractQueryStep {
 
     private Language inputLanguage;
 
@@ -51,8 +45,8 @@ public class QueryStep {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof QueryStep)) return false;
-        QueryStep queryStep = (QueryStep) o;
+        if (!(o instanceof BilingualQueryStep)) return false;
+        BilingualQueryStep queryStep = (BilingualQueryStep) o;
         return Objects.equal(allowBothWay, queryStep.allowBothWay) &&
                 Objects.equal(searchEngineName, queryStep.searchEngineName) &&
                 Objects.equal(queryString, queryStep.queryString) &&
@@ -61,58 +55,29 @@ public class QueryStep {
                 Objects.equal(outputLanguage, queryStep.outputLanguage);
     }
 
+    @NotNull
     public Language getInputLanguage() {
         return inputLanguage;
     }
 
-    public QueryStep setInputLanguage(Language inputLanguage) {
+    @NotNull
+    public BilingualQueryStep setInputLanguage(Language inputLanguage) {
         checkNotNull(inputLanguage);
 
         this.inputLanguage = inputLanguage;
         return this;
     }
 
+    @NotNull
     public Language getOutputLanguage() {
         return outputLanguage;
     }
 
-    public QueryStep setOutputLanguage(Language outputLanguage) {
-        checkNotNull(inputLanguage);
+    @NotNull
+    public BilingualQueryStep setOutputLanguage(@NotNull Language outputLanguage) {
+        checkNotNull(outputLanguage);
 
         this.outputLanguage = outputLanguage;
-        return this;
-    }
-
-    public String getQueryString() {
-        return queryString;
-    }
-
-    public QueryStep setQueryString(String queryString) {
-        checkNotNull(queryString);
-
-        this.queryString = queryString;
-        return this;
-    }
-
-    public SearchEngine getSearchEngine() {
-        return searchEngine;
-    }
-
-    public QueryStep setSearchEngine(SearchEngine searchEngine) {
-        checkNotNull(inputLanguage);
-
-        this.searchEngine = searchEngine;
-        return this;
-    }
-
-    public String getSearchEngineName() {
-        return searchEngineName;
-    }
-
-    public QueryStep setSearchEngineName(String searchEngineName) {
-        checkNotNull(inputLanguage);
-
-        this.searchEngineName = searchEngineName;
         return this;
     }
 
@@ -125,7 +90,8 @@ public class QueryStep {
         return allowBothWay;
     }
 
-    public QueryStep setAllowBothWay(boolean allowBothWay) {
+    @NotNull
+    public BilingualQueryStep setAllowBothWay(boolean allowBothWay) {
         this.allowBothWay = allowBothWay;
         return this;
     }

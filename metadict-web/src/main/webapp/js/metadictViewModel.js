@@ -176,14 +176,14 @@ function MetadictViewModel() {
                 self.setError("The last query failed: " + response.status + " - " + (response.message != undefined) ? response.message : "", true);
                 return;
             }
-            if (!(responseData.groupedResults instanceof Array) ||
+            if (!(responseData.groupedBilingualResults instanceof Array) ||
                 !(responseData.similarRecommendations instanceof Array) ||
                 !(responseData.externalContents instanceof Array)
             ) {
                 self.setError("Illegal data structure", true);
                 return;
             }
-            self.entryGroups(responseData.groupedResults);
+            self.entryGroups(responseData.groupedBilingualResults);
             self.similarRecommendations(responseData.similarRecommendations);
             self.externalContents(responseData.externalContents);
             console.log(self.externalContents());

@@ -26,9 +26,9 @@ package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.exception.MetadictException;
 
 import java.util.List;
 
@@ -41,19 +41,25 @@ public interface QueryRequest {
      * Send this request to the Metadict core and execute it.
      *
      * @return the results of the query.
-     * @throws MetadictException
-     *         Will be thrown if the query fails.
      */
     @NotNull
     QueryResponse executeRequest();
 
     /**
-     * Return a list with all dictionaries that should be queried.
+     * Return a list of all dictionaries that should be queried for a bilingual lookup (i.e. translations).
      *
-     * @return a list with all dictionaries that should be queried.
+     * @return a list of all dictionaries that should be queried.
      */
     @NotNull
-    List<BilingualDictionary> getQueryDictionaries();
+    List<BilingualDictionary> getBilingualDictionaries();
+
+    /**
+     * Return a list of all languages that should be queried for a monolingual lookup (i.e. translations).
+     *
+     * @return a list of all languages that should be queried.
+     */
+    @NotNull
+    List<Language> getMonolingualLanguages();
 
     /**
      * Returns how the final query should be grouped.

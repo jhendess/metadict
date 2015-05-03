@@ -24,16 +24,16 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 /**
  * Implementation for {@link QueryStepResult}.
  */
 public class QueryStepResultImpl implements QueryStepResult {
 
-    private final QueryStep queryStep;
+    private final AbstractQueryStep queryStep;
 
-    private final BilingualQueryResult engineQueryResult;
+    private final EngineQueryResult engineQueryResult;
 
     private final long executionTime;
 
@@ -41,7 +41,7 @@ public class QueryStepResultImpl implements QueryStepResult {
 
     private final String errorMessage;
 
-    QueryStepResultImpl(QueryStep queryStep, BilingualQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
+    QueryStepResultImpl(AbstractQueryStep queryStep, EngineQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
         this.queryStep = queryStep;
         this.engineQueryResult = engineQueryResult;
         this.executionTime = executionTime;
@@ -50,12 +50,12 @@ public class QueryStepResultImpl implements QueryStepResult {
     }
 
     /**
-     * Returns the result of the attached {@link QueryStep}.
+     * Returns the result of the attached {@link AbstractQueryStep}.
      *
-     * @return the result of the attached {@link QueryStep}.
+     * @return the result of the attached {@link AbstractQueryStep}.
      */
     @Override
-    public BilingualQueryResult getEngineQueryResult() {
+    public EngineQueryResult getEngineQueryResult() {
         return engineQueryResult;
     }
 
@@ -71,9 +71,9 @@ public class QueryStepResultImpl implements QueryStepResult {
     }
 
     /**
-     * Returns the time that the attached {@link QueryStep} took in milliseconds.
+     * Returns the time that the attached {@link BilingualQueryStep} took in milliseconds.
      *
-     * @return the time that the attached {@link QueryStep} took in milliseconds.
+     * @return the time that the attached {@link BilingualQueryStep} took in milliseconds.
      */
     @Override
     public long getExecutionTime() {
@@ -81,20 +81,20 @@ public class QueryStepResultImpl implements QueryStepResult {
     }
 
     /**
-     * Returns the {@link QueryStep} that was executed.
+     * Returns the {@link BilingualQueryStep} that was executed.
      *
-     * @return the {@link QueryStep} that was executed.
+     * @return the {@link BilingualQueryStep} that was executed.
      */
     @Override
-    public QueryStep getQueryStep() {
+    public AbstractQueryStep getQueryStep() {
         return queryStep;
     }
 
     /**
-     * Returns true, if the attached {@link QueryStep} has failed. If this message returns true, then {@link
+     * Returns true, if the attached {@link BilingualQueryStep} has failed. If this message returns true, then {@link
      * #getErrorMessage()} should return the message of the thrown exception.
      *
-     * @return true, if the attached {@link QueryStep} has failed.
+     * @return true, if the attached {@link BilingualQueryStep} has failed.
      */
     @Override
     public boolean isFailedStep() {
