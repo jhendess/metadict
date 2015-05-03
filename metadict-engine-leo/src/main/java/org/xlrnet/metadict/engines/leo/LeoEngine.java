@@ -238,7 +238,7 @@ public class LeoEngine implements SearchEngine {
         sections.stream().parallel().forEach(s -> processSection(s, resultBuilder));
 
         // Find similarities:
-        Element similarityNode = doc.getElementsByTag("similar").get(0);
+        Element similarityNode = doc.getElementsByTag("similar").first();
 
         // Process similarities:
         processSimilarities(similarityNode, resultBuilder);
