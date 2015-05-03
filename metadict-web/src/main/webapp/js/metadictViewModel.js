@@ -101,8 +101,23 @@ function MetadictViewModel() {
             self.queryString(queryString);
         if (dictionaries != undefined && dictionaries !== "") {
             var dictionaryArray = dictionaries.split(",");
-            if (dictionaryArray instanceof Array)
-                self.selectedDictionaries(dictionaryArray);
+            if (dictionaryArray instanceof Array) {
+                // Select all dictionaries only if they are available
+                _.each(dictionaryArray, function (queryString) {
+                    if (_.findIndex(self.dictionaries(), function (d) {
+                            return d.queryStringWithDialect == queryString
+                        }) >= 0) {
+                        self.selectedDictionaries.push(queryString)
+                    } else {
+                        var reversed = queryString.split("-").reverse().join("-")
+                        if (_.findIndex(self.dictionaries(), function (d) {
+                                return d.queryStringWithDialect == reversed
+                            }) >= 0) {
+                            self.selectedDictionaries.push(reversed)
+                        }
+                    }
+                });
+            }
         }
     };
 
@@ -122,6 +137,7 @@ function MetadictViewModel() {
             self.setError("Internal system error")
         } else {
             self.dictionaries(responseData.data);
+            self.initFromParameters();
             self.isConnected(true);
             $('.tooltipped').tooltip({delay: 50});
             // Submit query based on current get parameters
@@ -176,9 +192,9 @@ function MetadictViewModel() {
                 self.setError("The last query failed: " + response.status + " - " + (response.message != undefined) ? response.message : "", true);
                 return;
             }
-            if (!(responseData.groupedBilingualResults instanceof Array) ||
-                !(responseData.similarRecommendations instanceof Array) ||
-                !(responseData.externalContents instanceof Array)
+            if (!(responseData.groupedBilingualResults instanceof Array)
+                || !(responseData.similarRecommendations instanceof Array)
+                || !(responseData.externalContents instanceof Array)
             ) {
                 self.setError("Illegal data structure", true);
                 return;
@@ -195,9 +211,9 @@ function MetadictViewModel() {
         }
     };
 
-    this.requery = function(queryString) {
+    this.requery = function (queryString) {
         self.queryString(queryString);
-        $("html, body").animate({ scrollTop: "0" });
+        $("html, body").animate({scrollTop: "0"});
         self.submitQuery();
     };
 
@@ -252,7 +268,7 @@ function MetadictViewModel() {
         self.metadictClient.getMainStatus(self.statusDialogSuccessCallback, self.genericErrorCallback)
     };
 
-    this.statusDialogSuccessCallback = function(statusObject) {
+    this.statusDialogSuccessCallback = function (statusObject) {
         console.log(statusObject);
         self.statusObject(statusObject);
         console.log(self.statusObject());
@@ -260,8 +276,6 @@ function MetadictViewModel() {
     };
 
 
-    // Initialize the ViewModel
+    // Initialize the ViewModel (reload dictionaries and init from parameters!)
     this.reloadDictionaries();
-    this.initFromParameters();
-
 }
