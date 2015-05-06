@@ -145,7 +145,7 @@ public class FeatureSetBuilder {
      * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
      * dictionary lookup with detailed information about one entry in one language.
      */
-    public FeatureSetBuilder setProvidesLexicographicEntries(boolean providesLexicographicEntries) {
+    public FeatureSetBuilder setProvidesMonolingualEntries(boolean providesLexicographicEntries) {
         this.providesLexicographicEntries = providesLexicographicEntries;
         return this;
     }

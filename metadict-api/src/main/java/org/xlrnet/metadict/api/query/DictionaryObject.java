@@ -44,7 +44,7 @@ public interface DictionaryObject {
 
     /**
      * Returns an abbreviation for this object.
-     * <p>
+     * <p/>
      * Example:
      * The abbreviation for "for example" is "e.g.".
      *
@@ -86,7 +86,7 @@ public interface DictionaryObject {
      * of a word.
      * That can e.g. be the case if the object represents an irregular word where each grammatical gender has a
      * different form and thus no general form exists.
-     * <p>
+     * <p/>
      * Example use cases:
      * <ul>
      * <li>Singular form of nouns</li>
@@ -118,9 +118,18 @@ public interface DictionaryObject {
     Language getLanguage();
 
     /**
+     * Returns a string with a pronunciation of the general form of this entry. The pronunciation should be written
+     * down using the international phonetic alphabet (IPA).
+     *
+     * @return a string with a pronunciation of the general form of this entry.
+     */
+    @Nullable
+    String getPronunciation();
+
+    /**
      * Returns a list of different meanings this objects may have. Each meaning's description should be a separate
      * string.
-     * <p>
+     * <p/>
      * Example:
      * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
@@ -131,7 +140,7 @@ public interface DictionaryObject {
 
     /**
      * Returns a list of syllables that this word consists of. Each element of the list represents a single syllable.
-     * <p>
+     * <p/>
      * Example:
      * If a word is divided like <i>dic|tion|ary</i>, the list should look like {"dic", "tion", "ary" }.
      *
@@ -142,13 +151,21 @@ public interface DictionaryObject {
 
     /**
      * Returns a list of synonyms for this object. Each element of the list represents a single synonym.
-     * <p>
-     * Example:
-     * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
      * @return a list of synonyms for this object.
      */
     @NotNull
     Optional<List<String>> getSynonyms();
+
+    /**
+     * Returns a list of alternately written forms for this entry.
+     * <p/>
+     * Example:
+     * An alternative way of writing "color" might be "colour".
+     *
+     * @return a list of alternately written forms for this entry.
+     */
+    @NotNull
+    Optional<List<String>> getAlternateForms();
 
 }

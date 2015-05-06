@@ -46,11 +46,11 @@ public class DictionaryObjectBuilder {
 
     private String description;
 
-    private String meaning;
-
     private String abbreviation;
 
     private String domain;
+
+    private String pronunciation;
 
     private GrammaticalGender grammaticalGender;
 
@@ -62,9 +62,11 @@ public class DictionaryObjectBuilder {
 
     private List<String> synonyms = new ArrayList<>();
 
+    private List<String> alternateForms = new ArrayList<>();
+
     /**
      * Add a new meaning to the current object.
-     * <p>
+     * <p/>
      * Example:
      * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
@@ -89,6 +91,23 @@ public class DictionaryObjectBuilder {
     public DictionaryObjectBuilder addSyllable(@NotNull String syllable) {
         checkArgument(StringUtils.isNotBlank(syllable));
         this.syllabification.add(syllable);
+
+        return this;
+    }
+
+    /**
+     * Add a new alternately written form of the general form to this object.
+     * <p/>
+     * Example:
+     * An alternative way of writing "color" might be "colour".
+     *
+     * @param alternateForm
+     *         The new alternate form to add.
+     */
+    @NotNull
+    public DictionaryObjectBuilder addAlternateForm(@NotNull String alternateForm) {
+        checkArgument(StringUtils.isNotBlank(alternateForm));
+        this.alternateForms.add(alternateForm);
 
         return this;
     }
@@ -119,6 +138,7 @@ public class DictionaryObjectBuilder {
         Optional<List<String>> optionalMeanings = Optional.empty();
         Optional<List<String>> optionalSyllabification = Optional.empty();
         Optional<List<String>> optionalSynonyms = Optional.empty();
+        Optional<List<String>> optionalAlternateForms = Optional.empty();
 
         if (meanings.size() > 0)
             optionalMeanings = Optional.of(meanings);
@@ -126,13 +146,15 @@ public class DictionaryObjectBuilder {
             optionalSyllabification = Optional.of(syllabification);
         if (synonyms.size() > 0)
             optionalSynonyms = Optional.of(synonyms);
+        if (alternateForms.size() > 0)
+            optionalAlternateForms = Optional.of(alternateForms);
 
-        return new DictionaryObjectImpl(language, generalForm, description, abbreviation, domain, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms);
+        return new DictionaryObjectImpl(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms, optionalAlternateForms);
     }
 
     /**
      * Sets an abbreviation for the new object.
-     * <p>
+     * <p/>
      * Example:
      * The abbreviation for "for example" is "e.g.".
      *
@@ -148,8 +170,7 @@ public class DictionaryObjectBuilder {
     }
 
     /**
-     * Sets the value for a given irregular form of the new object. See {@link #setAdditionalForm(GrammaticalForm,
-     * String)}.
+     * Sets the value for a given irregular form of the new object. See {@link #setAdditionalForms(Map)}.
      *
      * @param key
      *         The key (i.e. grammatical form) for which a value should be stored.
@@ -167,8 +188,7 @@ public class DictionaryObjectBuilder {
 
     /**
      * Set the map of all irregular forms of the new object. These include e.g. special plural forms or
-     * gender-dependent
-     * forms (in case of nouns) or irregular tenses on verbs.
+     * gender-dependent forms (in case of nouns) or irregular tenses on verbs.
      *
      * @return The map of all irregular forms of the new object.
      */
@@ -216,7 +236,7 @@ public class DictionaryObjectBuilder {
      * of a word.
      * That can e.g. be the case if the object represents an irregular word where each grammatical gender has a
      * different form and thus no general form exists.
-     * <p>
+     * <p/>
      * Example use cases:
      * <ul>
      * <li>Singular form of nouns</li>

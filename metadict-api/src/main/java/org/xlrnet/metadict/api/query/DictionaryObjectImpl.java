@@ -51,6 +51,8 @@ public class DictionaryObjectImpl implements DictionaryObject {
 
     private final String domain;
 
+    private final String pronunciation;
+
     private final GrammaticalGender grammaticalGender;
 
     private final Map<GrammaticalForm, String> additionalForms;
@@ -60,6 +62,51 @@ public class DictionaryObjectImpl implements DictionaryObject {
     private final Optional<List<String>> syllabification;
 
     private final Optional<List<String>> synonyms;
+
+    private final Optional<List<String>> alternateForms;
+
+    /**
+     * Create a new immutable instance. See {@link DictionaryObject} for more information about the parameters.
+     *
+     * @param language
+     *         The language this object is written in.
+     * @param generalForm
+     *         The general form of this object
+     * @param description
+     *         The description for this object.
+     * @param abbreviation
+     *         The abbreviation for this object.
+     * @param domain
+     *         The special domain for this object.
+     * @param pronunciation
+     *         An IPA-like written string that shows how to pronounce the general form of this object.
+     * @param grammaticalGender
+     *         The grammatical gender of this object.
+     * @param additionalForms
+     *         A map of additional forms this object may have.
+     * @param meanings
+     *         A list of different meanings for this have.
+     * @param syllabification
+     *         The syllabification of this object, represented with each syllable as a list-element.
+     * @param synonyms
+     *         A list of synonyms for this object.
+     * @param alternateForms
+     *         Alternate ways of writing this object.
+     */
+    DictionaryObjectImpl(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms, Optional<List<String>> alternateForms) {
+        this.language = language;
+        this.generalForm = generalForm;
+        this.description = description;
+        this.abbreviation = abbreviation;
+        this.domain = domain;
+        this.pronunciation = pronunciation;
+        this.grammaticalGender = grammaticalGender;
+        this.additionalForms = additionalForms;
+        this.meanings = meanings;
+        this.syllabification = syllabification;
+        this.synonyms = synonyms;
+        this.alternateForms = alternateForms;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -101,45 +148,8 @@ public class DictionaryObjectImpl implements DictionaryObject {
     }
 
     /**
-     * Create a new immutable instance. See {@link DictionaryObject} for more information about the parameters.
-     *
-     * @param language
-     *         The language this object is written in.
-     * @param generalForm
-     *         The general form of this object
-     * @param description
-     *         The description for this object.
-     * @param abbreviation
-     *         The abbreviation for this object.
-     * @param domain
-     *         The special domain for this object.
-     * @param grammaticalGender
-     *         The grammatical gender of this object.
-     * @param additionalForms
-     *         A map of additional forms this object may have.
-     * @param meanings
-     *         A list of different meanings for this have.
-     * @param syllabification
-     *         The syllabification of this object, represented with each syllable as a list-element.
-     * @param synonyms
-     *         A list of synonyms for this object.
-     */
-    DictionaryObjectImpl(Language language, String generalForm, String description, String abbreviation, String domain, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms) {
-        this.language = language;
-        this.generalForm = generalForm;
-        this.description = description;
-        this.abbreviation = abbreviation;
-        this.domain = domain;
-        this.grammaticalGender = grammaticalGender;
-        this.additionalForms = additionalForms;
-        this.meanings = meanings;
-        this.syllabification = syllabification;
-        this.synonyms = synonyms;
-    }
-
-    /**
      * Returns an abbreviation for this object.
-     * <p>
+     * <p/>
      * Example:
      * The abbreviation for "for example" is "e.g.".
      *
@@ -193,7 +203,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      * of a word.
      * That can e.g. be the case if the object represents an irregular word where each grammatical gender has a
      * different form and thus no general form exists.
-     * <p>
+     * <p/>
      * Example use cases:
      * <ul>
      * <li>Singular form of nouns</li>
@@ -234,9 +244,21 @@ public class DictionaryObjectImpl implements DictionaryObject {
     }
 
     /**
+     * Returns a string with a pronunciation of the general form of this entry. The pronunciation should be written
+     * down using the international phonetic alphabet (IPA).
+     *
+     * @return a string with a pronunciation of the general form of this entry.
+     */
+    @Nullable
+    @Override
+    public String getPronunciation() {
+        return this.pronunciation;
+    }
+
+    /**
      * Returns a list of different meanings this objects may have. Each meaning's description should be a separate
      * string.
-     *
+     * <p/>
      * Example:
      * If the word is "bench", a meaning might be "A long seat for several people, typically made of wood or stone."
      *
@@ -250,7 +272,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
 
     /**
      * Returns a list of syllables that this word consists of. Each element of the list represents a single syllable.
-     * <p>
+     * <p/>
      * Example:
      * If a word is divided like <i>dic|tion|ary</i>, the list should look like {"dic", "tion", "ary" }.
      *
@@ -271,6 +293,20 @@ public class DictionaryObjectImpl implements DictionaryObject {
     @Override
     public Optional<List<String>> getSynonyms() {
         return synonyms;
+    }
+
+    /**
+     * Returns a list of alternately written forms for this entry.
+     * <p/>
+     * Example:
+     * An alternative way of writing "color" might be "colour".
+     *
+     * @return a list of alternately written forms for this entry.
+     */
+    @NotNull
+    @Override
+    public Optional<List<String>> getAlternateForms() {
+        return this.alternateForms;
     }
 
 }

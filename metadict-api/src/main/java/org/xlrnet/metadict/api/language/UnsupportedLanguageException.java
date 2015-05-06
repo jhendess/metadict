@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hende√ü
+ * Copyright (c) 2015 Jakob Hendeﬂ
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,33 +25,19 @@
 package org.xlrnet.metadict.api.language;
 
 /**
- * The {@link UnsupportedDictionaryException} should always be thrown if an engine is queried with an unsupported type
- * of dictionary.
+ * The {@link UnsupportedLanguageException} should always be thrown if an engine is queried with an unsupported type
+ * of language.
  */
-public class UnsupportedDictionaryException extends Exception {
+public class UnsupportedLanguageException extends Exception{
 
-    private final Language inLanguage;
+    private final Language unsupportedLanguage;
 
-    private final Language outLanguage;
-
-    private final boolean allowBothWay;
-
-    public UnsupportedDictionaryException(Language inLanguage, Language outLanguage, boolean allowBothWay) {
-        super("Unsupported bilingual query configuration: in[" + inLanguage + "], out[" + outLanguage + "]" + ", allowBothWay[" + allowBothWay + "]");
-        this.inLanguage = inLanguage;
-        this.outLanguage = outLanguage;
-        this.allowBothWay = allowBothWay;
+    public UnsupportedLanguageException(Language unsupportedLanguage) {
+        super("Unsupported monolingual query configuration: " + unsupportedLanguage);
+        this.unsupportedLanguage = unsupportedLanguage;
     }
 
-    public Language getInLanguage() {
-        return inLanguage;
-    }
-
-    public Language getOutLanguage() {
-        return outLanguage;
-    }
-
-    public boolean isAllowBothWay() {
-        return allowBothWay;
+    public Language getUnsupportedLanguage() {
+        return unsupportedLanguage;
     }
 }
