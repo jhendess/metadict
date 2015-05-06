@@ -39,6 +39,7 @@
         <module>metadict-engine-dummy</module>
         <module>metadict-engine-leo</module>
         <module>metadict-engine-heinzelnisse</module>
+        <module>metadict-engine-nobordbok</module>
     </modules>
 
     <properties>
@@ -47,6 +48,7 @@
         <wildfly.version>8.1.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
         <jackson.version>2.5.2</jackson.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
@@ -70,12 +72,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.7</version>
         </dependency>
-        <!--<dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
-            <scope>compile</scope>
-        </dependency>-->
         <!-- Google Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
