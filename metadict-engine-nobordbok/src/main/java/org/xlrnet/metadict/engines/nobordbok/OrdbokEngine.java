@@ -97,7 +97,7 @@ public class OrdbokEngine implements SearchEngine {
     @NotNull
     private MonolingualEntry processTableRow(@NotNull Element tableRow, @NotNull Language language) {
         MonolingualEntryBuilder entryBuilder = new MonolingualEntryBuilder();
-        DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder();
+        DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder().setLanguage(language);
 
         // Extract general form
         String generalForm = tableRow.getElementsByClass("oppslagsord").first().text();
@@ -106,6 +106,11 @@ public class OrdbokEngine implements SearchEngine {
         // Extract wordclass and determine entrytype
         String wordClass = tableRow.getElementsByClass("oppsgramordklasse").first().text();
         entryBuilder.setEntryType(resolveEntryTypeWithWordClass(wordClass));
+
+        // Get meanings
+        tableRow.getElementsByClass("tyding").forEach(
+                (element -> objectBuilder.addMeaning(element.text()))
+        );
 
         entryBuilder.setContent(objectBuilder.build());
 
