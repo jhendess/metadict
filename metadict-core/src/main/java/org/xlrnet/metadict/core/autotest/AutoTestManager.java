@@ -31,6 +31,7 @@ import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -118,33 +119,43 @@ public class AutoTestManager {
 
         LOGGER.info("Starting auto tests for engine {} ...", searchEngine.getClass().getCanonicalName());
         for (@NotNull AutoTestCase autoTestCase : engineTestSuite) {
-            LOGGER.info("Running test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
-            AutoTestResult autoTestResult = internalRunAutoTestCase(searchEngine, autoTestCase);
-            reportBuilder.addAutoTestResult(autoTestResult);
-            testCount++;
-        }
 
+            if (autoTestCase.getExpectedBilingualResults().isPresent() && autoTestCase.getBilingualTargetDictionary().isPresent()) {
+                LOGGER.info("Running bilingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
+                AutoTestResult autoTestResult = internalRunBilingualAutoTestCase(searchEngine, autoTestCase);
+                reportBuilder.addAutoTestResult(autoTestResult);
+                testCount++;
+            }
+
+            if (autoTestCase.getExpectedMonolingualResults().isPresent() && autoTestCase.getMonolingualTargetLanguage().isPresent()) {
+                LOGGER.info("Running monolingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
+                AutoTestResult autoTestResult = internalRunMonolingualAutoTestCase(searchEngine, autoTestCase);
+                reportBuilder.addAutoTestResult(autoTestResult);
+                testCount++;
+            }
+
+        }
         return reportBuilder;
     }
 
     @NotNull
-    AutoTestResult internalRunAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+    AutoTestResult internalRunBilingualAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+        BilingualQueryResult expectedResults = autoTestCase.getExpectedBilingualResults().get();
+        BilingualDictionary targetDictionary = autoTestCase.getBilingualTargetDictionary().get();
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
-        BilingualQueryResult expectedResults = autoTestCase.getExpectedBilingualResults();
-        BilingualDictionary targetDictionary = autoTestCase.getTargetDictionary();
         String requestString = autoTestCase.getTestQueryString();
         long startTime = System.currentTimeMillis();
 
         ResultData autoTestResult;
 
         try {
-            autoTestResult = invokeAndValidate(searchEngine, targetDictionary, requestString, expectedResults);
+            autoTestResult = invokeBilingualAndValidate(searchEngine, targetDictionary, requestString, expectedResults);
             if (autoTestResult.thrownException != null) {
-                LOGGER.error("Test case with query \"{}\" in dictionary {} failed", requestString, targetDictionary);
+                LOGGER.error("Bilingual test case with query \"{}\" in dictionary {} failed", requestString, targetDictionary);
                 return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult.thrownException, autoTestResult.queryResult);
             }
         } catch (Exception e) {
-            LOGGER.error("Internal error on test case with query \"{}\" in dictionary {}", requestString, targetDictionary, e);
+            LOGGER.error("Internal error on bilingual test case with query \"{}\" in dictionary {}", requestString, targetDictionary, e);
             return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, e, null);
         }
 
@@ -152,7 +163,31 @@ public class AutoTestManager {
     }
 
     @NotNull
-    ResultData invokeAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) throws Exception {
+    AutoTestResult internalRunMonolingualAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+        MonolingualQueryResult expectedResults = autoTestCase.getExpectedMonolingualResults().get();
+        Language targetLanguage = autoTestCase.getMonolingualTargetLanguage().get();
+        String canonicalEngineName = searchEngine.getClass().getCanonicalName();
+        String requestString = autoTestCase.getTestQueryString();
+        long startTime = System.currentTimeMillis();
+
+        ResultData autoTestResult;
+
+        try {
+            autoTestResult = invokeMonolingualAndValidate(searchEngine, targetLanguage, requestString, expectedResults);
+            if (autoTestResult.thrownException != null) {
+                LOGGER.error("Monolingual test case with query \"{}\" with and {} failed", requestString, targetLanguage);
+                return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult.thrownException, autoTestResult.queryResult);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Internal error on monolingual test case with query \"{}\" and language {}", requestString, targetLanguage, e);
+            return AutoTestResult.failed(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, e, null);
+        }
+
+        return AutoTestResult.succeeded(canonicalEngineName, System.currentTimeMillis() - startTime, autoTestCase, autoTestResult.queryResult);
+    }
+
+    @NotNull
+    ResultData invokeBilingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) throws Exception {
         BilingualQueryResult queryResult;
         try {
             queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
@@ -165,6 +200,34 @@ public class AutoTestManager {
         List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
 
         List<BilingualEntry> actualResultEntries = queryResult.getBilingualEntries();
+        List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
+        List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
+
+        try {
+            validateActualObjects(expectedResultEntries, actualResultEntries);
+            validateActualObjects(expectedExternalContents, actualExternalContents);
+            validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+        } catch (AutoTestAssertionException ae) {
+            return new ResultData(queryResult, ae);
+        }
+
+        return new ResultData(queryResult, null);
+    }
+
+    @NotNull
+    ResultData invokeMonolingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull Language targetLanguage, @NotNull String requestString, @NotNull MonolingualQueryResult expectedResult) throws Exception {
+        MonolingualQueryResult queryResult;
+        try {
+            queryResult = searchEngine.executeMonolingualQuery(requestString, targetLanguage);
+        } catch (Exception e) {
+            return new ResultData(null, e);
+        }
+
+        List<MonolingualEntry> expectedResultEntries = expectedResult.getMonolingualEntries();
+        List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
+        List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
+
+        List<MonolingualEntry> actualResultEntries = queryResult.getMonolingualEntries();
         List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
         List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
 
@@ -200,7 +263,7 @@ public class AutoTestManager {
 
     void validateTestCase(@NotNull AutoTestCase testCase) {
         checkNotNull(testCase.getExpectedBilingualResults(), "Expected result set may not be null");
-        checkNotNull(testCase.getTargetDictionary(), "Target dictionary may not be null");
+        checkNotNull(testCase.getBilingualTargetDictionary(), "Target dictionary may not be null");
         checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
     }
 

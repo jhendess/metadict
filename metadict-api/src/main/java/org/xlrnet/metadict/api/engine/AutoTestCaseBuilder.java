@@ -26,7 +26,9 @@ package org.xlrnet.metadict.api.engine;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.MonolingualQueryResult;
 
 /**
  * Builder for creating new {@link AutoTestCase} objects.
@@ -35,9 +37,13 @@ public class AutoTestCaseBuilder {
 
     private BilingualQueryResult expectedBilingualResults = null;
 
-    private BilingualDictionary targetDictionary = null;
+    private BilingualDictionary bilingualTargetDictionary = null;
 
     private String testQueryString = null;
+
+    private Language monolingualTargetLanguage = null;
+
+    private MonolingualQueryResult expectedMonolingualQueryResult = null;
 
     /**
      * Create a new instance of {@link AutoTestCase}.
@@ -46,14 +52,25 @@ public class AutoTestCaseBuilder {
      */
     @NotNull
     public AutoTestCase build() {
-        return new AutoTestCaseImpl(expectedBilingualResults, targetDictionary, testQueryString);
+        if (expectedBilingualResults == null && bilingualTargetDictionary != null
+                || expectedBilingualResults != null && bilingualTargetDictionary == null)
+            throw new IllegalArgumentException("Bilingual test cases must have both expectation and configuration set");
+
+        if (expectedMonolingualQueryResult == null && monolingualTargetLanguage != null
+                || expectedMonolingualQueryResult != null && monolingualTargetLanguage == null)
+            throw new IllegalArgumentException("Monolingual test cases must have both expectation and configuration set");
+
+        return new AutoTestCaseImpl(monolingualTargetLanguage, expectedMonolingualQueryResult, expectedBilingualResults, bilingualTargetDictionary, testQueryString);
     }
 
     /**
      * Set the expected bilingual query results for this test case. The core will only test if all of the elements
-     * inside the returned object are contained inside the actual query result.
+     * inside the returned object are contained inside the actual query result from {@link
+     * SearchEngine#executeBilingualQuery(String, Language, Language, boolean)}.
      * The test will fail, if not all elements inside this expected result object can be found by value-based equality
      * inside the actual result.  If there are more elements in the actual result, the test won't fail.
+     * <p>
+     * Note that the bilingual test will only be executed if a bilingual target dictionary is also set.
      *
      * @param expectedBilingualResults
      *         the expected query results for this test case.
@@ -66,15 +83,17 @@ public class AutoTestCaseBuilder {
     }
 
     /**
-     * Set the target dictionary which should be queried for this test case.
+     * Set the bilingual target dictionary which should be queried for this test case.
+     * <p>
+     * Note that the bilingual test will only be executed if an expected bilingual query result is also set.
      *
-     * @param targetDictionary
+     * @param bilingualTargetDictionary
      *         the target dictionary which should be queried for this test case.
      * @return this builder instance.
      */
     @NotNull
-    public AutoTestCaseBuilder setTargetDictionary(@NotNull BilingualDictionary targetDictionary) {
-        this.targetDictionary = targetDictionary;
+    public AutoTestCaseBuilder setBilingualTargetDictionary(@NotNull BilingualDictionary bilingualTargetDictionary) {
+        this.bilingualTargetDictionary = bilingualTargetDictionary;
         return this;
     }
 
@@ -88,6 +107,36 @@ public class AutoTestCaseBuilder {
     @NotNull
     public AutoTestCaseBuilder setTestQueryString(@NotNull String testQueryString) {
         this.testQueryString = testQueryString;
+        return this;
+    }
+
+    /**
+     * Set the expected monolingual query results for this test case. The core will only test if all of the elements
+     * inside the returned object are contained inside the actual query result from {@link
+     * SearchEngine#executeMonolingualQuery(String, Language)}.
+     * The test will fail, if not all elements inside this expected result object can be found by value-based equality
+     * inside the actual result.  If there are more elements in the actual result, the test won't fail.
+     * <p>
+     * Note that the monolingual test will only be executed if also a monolingual target language is also set.
+     *
+     * @return this builder instance.
+     */
+    @NotNull
+    AutoTestCaseBuilder setExpectedMonolingualResults(@NotNull MonolingualQueryResult monolingualResults) {
+        this.expectedMonolingualQueryResult  = monolingualResults;
+        return this;
+    }
+
+    /**
+     * Set the monolingual target language which should be queried for this test case.
+     * <p>
+     * Note that the monolingual test will only be executed if an expected monolingual query result is also set.
+     *
+     * @return this builder instance.
+     */
+    @NotNull
+    AutoTestCaseBuilder setMonolingualTargetLanguage(@NotNull Language language) {
+        this.monolingualTargetLanguage = language;
         return this;
     }
 

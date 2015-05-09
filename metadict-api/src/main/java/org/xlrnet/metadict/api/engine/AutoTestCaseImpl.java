@@ -26,7 +26,11 @@ package org.xlrnet.metadict.api.engine;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.query.MonolingualQueryResult;
+
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,19 +39,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AutoTestCaseImpl implements AutoTestCase {
 
-    private final BilingualQueryResult expectedBilingualResults;
+    private final Optional<Language> monolingualTargetLanguage;
 
-    private final BilingualDictionary targetDictionary;
+    private final Optional<MonolingualQueryResult> expectedMonolingualQueryResult;
+
+    private final Optional<BilingualQueryResult> expectedBilingualResults;
+
+    private final Optional<BilingualDictionary> bilingualTargetDictionary;
 
     private final String testQueryString;
 
-    AutoTestCaseImpl(BilingualQueryResult expectedBilingualResults, BilingualDictionary targetDictionary, String testQueryString) {
-        checkNotNull(expectedBilingualResults, "Expected results may not be null");
-        checkNotNull(targetDictionary, "Target dictionary may not be null");
+    AutoTestCaseImpl(Language monolingualTargetLanguage, MonolingualQueryResult expectedMonolingualQueryResult, BilingualQueryResult expectedBilingualResults, BilingualDictionary bilingualTargetDictionary, String testQueryString) {
         checkNotNull(testQueryString, "Test query may not be null");
 
-        this.expectedBilingualResults = expectedBilingualResults;
-        this.targetDictionary = targetDictionary;
+        this.monolingualTargetLanguage = Optional.ofNullable(monolingualTargetLanguage);
+        this.expectedMonolingualQueryResult = Optional.ofNullable(expectedMonolingualQueryResult);
+        this.expectedBilingualResults = Optional.ofNullable(expectedBilingualResults);
+        this.bilingualTargetDictionary = Optional.ofNullable(bilingualTargetDictionary);
+
         this.testQueryString = testQueryString;
     }
 
@@ -61,8 +70,38 @@ public class AutoTestCaseImpl implements AutoTestCase {
      */
     @NotNull
     @Override
-    public BilingualQueryResult getExpectedBilingualResults() {
+    public Optional<BilingualQueryResult> getExpectedBilingualResults() {
         return expectedBilingualResults;
+    }
+
+    /**
+     * Return the expected monolingual query results for this test case. The core will only test if all of the elements
+     * inside the returned object are contained inside the actual query result from {@link
+     * SearchEngine#executeMonolingualQuery(String, Language)}.
+     * The test will fail, if not all elements inside this expected result object can be found by value-based equality
+     * inside the actual result.  If there are more elements in the actual result, the test won't fail.
+     * <p>
+     * Note that the monolingual test will only be executed if also a monolingual target language is also set.
+     *
+     * @return the expected query results for this test case.
+     */
+    @NotNull
+    @Override
+    public Optional<MonolingualQueryResult> getExpectedMonolingualResults() {
+        return expectedMonolingualQueryResult;
+    }
+
+    /**
+     * Return the monolingual target language which should be queried for this test case.
+     * <p>
+     * Note that the monolingual test will only be executed if an expected monolingual query result is also set.
+     *
+     * @return the monolingual target language which should be queried for this test case.
+     */
+    @NotNull
+    @Override
+    public Optional<Language> getMonolingualTargetLanguage() {
+        return monolingualTargetLanguage;
     }
 
     /**
@@ -72,8 +111,8 @@ public class AutoTestCaseImpl implements AutoTestCase {
      */
     @NotNull
     @Override
-    public BilingualDictionary getTargetDictionary() {
-        return targetDictionary;
+    public Optional<BilingualDictionary> getBilingualTargetDictionary() {
+        return bilingualTargetDictionary;
     }
 
     /**

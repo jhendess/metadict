@@ -51,7 +51,7 @@ public class DummyEngineProvider implements SearchProvider {
         return new AutoTestSuiteBuilder().addAutoTestCase(
                 new AutoTestCaseBuilder()
                         .setTestQueryString("foobar")
-                        .setTargetDictionary(BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
+                        .setBilingualTargetDictionary(BilingualDictionary.fromLanguages(Language.ENGLISH, Language.GERMAN, true))
                         .build()
         ).build();
     }
