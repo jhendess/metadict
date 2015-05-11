@@ -25,12 +25,14 @@
 package org.xlrnet.metadict.engines.nobordbok;
 
 import com.google.common.collect.ImmutableMap;
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Engine for nob-ordbok.no backend.
@@ -51,6 +54,14 @@ import java.util.Map;
 public class OrdbokEngine implements SearchEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrdbokEngine.class);
+
+    private static final Map<String, EntryType> ENTRY_TYPE_MAP = ImmutableMap.<String, EntryType>builder()
+            .put("verb", EntryType.VERB)
+            .put("adv.", EntryType.ADVERB)
+            .put("adj.", EntryType.PREPOSITION)
+            .put("prep.", EntryType.PREPOSITION)
+            .put("konj.", EntryType.CONJUNCTION)
+            .build();
 
     @NotNull
     @Override
@@ -62,6 +73,39 @@ public class OrdbokEngine implements SearchEngine {
         Document document = fetchResponse(queryString, queryLanguage);
 
         return processDocument(document);
+    }
+
+    @NotNull
+    private String buildTargetUrl(@NotNull String searchRequest, boolean queryBokmaal, boolean queryNynorsk) throws UnsupportedEncodingException {
+        StringBuilder targetUrlBuilder = new StringBuilder("http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=")
+                .append(URLEncoder.encode(searchRequest, "UTF-8"))
+                .append("&");
+
+        if (queryBokmaal & queryNynorsk) {
+            targetUrlBuilder.append("begge=+&ordbok=begge");
+        } else if (queryBokmaal) {
+            targetUrlBuilder.append("bokmaal=+&ordbok=bokmaal");
+        } else if (queryNynorsk) {
+            targetUrlBuilder.append("nynorsk=+&ordbok=nynorsk");
+        } else {
+            throw new IllegalArgumentException("Either nynorsk or bokmaal must be queried");
+        }
+
+        return targetUrlBuilder.toString();
+    }
+
+    private Document fetchResponse(@NotNull String queryString, @NotNull Language queryLanguage) throws IOException {
+        boolean queryBokmaal = false, queryNynorsk = false;
+
+        if (queryLanguage.equals(Language.NORWEGIAN_BOKMÅL) || queryLanguage.equals(Language.NORWEGIAN))
+            queryBokmaal = true;
+        if (queryLanguage.equals(Language.NORWEGIAN_NYNORSK) || queryLanguage.equals(Language.NORWEGIAN))
+            queryNynorsk = true;
+
+        String targetUrl = buildTargetUrl(queryString, queryBokmaal, queryNynorsk);
+        URL url = new URL(targetUrl);
+
+        return Jsoup.parse(url, 3000);
     }
 
     @NotNull
@@ -108,26 +152,37 @@ public class OrdbokEngine implements SearchEngine {
         entryBuilder.setEntryType(resolveEntryTypeWithWordClass(wordClass));
 
         // Get meanings
-        tableRow.getElementsByClass("tyding").forEach(
-                (element -> objectBuilder.addMeaning(element.text()))
-        );
+        tableRow.select(".artikkelinnhold > .utvidet > .tyding")
+                .forEach(e -> {
+                    String meaning = e.childNodes()
+                            .stream()
+                            .filter(node -> (node instanceof TextNode)
+                                    || (!((Element) node).hasClass("doemeliste")
+                                    && !node.hasAttr("style")
+                                    && !((Element) node).hasClass("utvidet")
+                                    && !((Element) node).hasClass("artikkelinnhold")
+                                    && !((Element) node).hasClass("kompakt")))
+                            .map((Node n) -> {
+                                if (n instanceof Element)
+                                    return ((Element) n).text();
+                                else
+                                    return n.toString();
+                            })
+                            .collect(Collectors.joining());
+                    meaning = StringEscapeUtils.unescapeHtml4(meaning);
+                    meaning = StringUtils.strip(meaning);
+                    if (StringUtils.isNotBlank(meaning))
+                        objectBuilder.addMeaning(meaning);
+                });
 
         entryBuilder.setContent(objectBuilder.build());
 
         return entryBuilder.build();
     }
 
-    private static final Map<String, EntryType> ENTRY_TYPE_MAP = ImmutableMap.<String, EntryType>builder()
-            .put("verb", EntryType.VERB)
-            .put("adv.", EntryType.ADVERB)
-            .put("adj.", EntryType.PREPOSITION)
-            .put("prep.", EntryType.PREPOSITION)
-            .put("konj.", EntryType.CONJUNCTION)
-            .build();
-
     /**
      * Try to resolve the {@link EntryType} with a given "word class" string from the bokmaalordboka.
-     * <p/>
+     * <p>
      * Supported entries:
      * <ul>
      * <li>mX -> male noun (X is any int)</li>
@@ -164,38 +219,5 @@ public class OrdbokEngine implements SearchEngine {
             entryType = EntryType.VERB;
 
         return entryType;
-    }
-
-    @NotNull
-    private String buildTargetUrl(@NotNull String searchRequest, boolean queryBokmaal, boolean queryNynorsk) throws UnsupportedEncodingException {
-        StringBuilder targetUrlBuilder = new StringBuilder("http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=")
-                .append(URLEncoder.encode(searchRequest, "UTF-8"))
-                .append("&");
-
-        if (queryBokmaal & queryNynorsk) {
-            targetUrlBuilder.append("begge=+&ordbok=begge");
-        } else if (queryBokmaal) {
-            targetUrlBuilder.append("bokmaal=+&ordbok=bokmaal");
-        } else if (queryNynorsk) {
-            targetUrlBuilder.append("nynorsk=+&ordbok=nynorsk");
-        } else {
-            throw new IllegalArgumentException("Either nynorsk or bokmaal must be queried");
-        }
-
-        return targetUrlBuilder.toString();
-    }
-
-    private Document fetchResponse(@NotNull String queryString, @NotNull Language queryLanguage) throws IOException {
-        boolean queryBokmaal = false, queryNynorsk = false;
-
-        if (queryLanguage.equals(Language.NORWEGIAN_BOKMÅL) || queryLanguage.equals(Language.NORWEGIAN))
-            queryBokmaal = true;
-        if (queryLanguage.equals(Language.NORWEGIAN_NYNORSK) || queryLanguage.equals(Language.NORWEGIAN))
-            queryNynorsk = true;
-
-        String targetUrl = buildTargetUrl(queryString, queryBokmaal, queryNynorsk);
-        URL url = new URL(targetUrl);
-
-        return Jsoup.parse(url, 3000);
     }
 }
