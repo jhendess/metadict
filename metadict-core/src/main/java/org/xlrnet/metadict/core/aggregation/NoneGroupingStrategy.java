@@ -52,6 +52,7 @@ public class NoneGroupingStrategy implements GroupingStrategy {
     @Override
     public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
         ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All results");
+        boolean hasAnyObject = false;
 
         for (QueryStepResult stepResult : queryStepResults) {
             if (!(stepResult.getEngineQueryResult() instanceof BilingualQueryResult)) {
@@ -61,12 +62,14 @@ public class NoneGroupingStrategy implements GroupingStrategy {
 
             BilingualQueryResult engineQueryResult = (BilingualQueryResult) stepResult.getEngineQueryResult();
             for (BilingualEntry dictionaryEntry : engineQueryResult.getBilingualEntries()) {
+                hasAnyObject = true;
                 groupBuilder.addResultEntry(ResultEntryImpl.from(dictionaryEntry, stepResult.getQueryStep().getSearchEngineName(), 1.0));
             }
         }
 
         Collection<ResultGroup> resultGroups = new ArrayList<>();
-        resultGroups.add(groupBuilder.build());
+        if (hasAnyObject)
+            resultGroups.add(groupBuilder.build());
         return resultGroups;
     }
 }

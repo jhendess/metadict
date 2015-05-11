@@ -46,6 +46,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -133,26 +134,36 @@ public class OrdbokEngine implements SearchEngine {
 
         for (int i = 1; i < tableRows.size(); i++) {
             Element tableRow = tableRows.get(i);
-            MonolingualEntry entry = processTableRow(tableRow, language);
-            resultBuilder.addMonolingualEntry(entry);
+            Optional<MonolingualEntry> entry = processTableRow(tableRow, language);
+            if (entry.isPresent())
+                resultBuilder.addMonolingualEntry(entry.get());
         }
     }
 
     @NotNull
-    private MonolingualEntry processTableRow(@NotNull Element tableRow, @NotNull Language language) {
+    private Optional<MonolingualEntry> processTableRow(@NotNull Element tableRow, @NotNull Language language) {
         MonolingualEntryBuilder entryBuilder = new MonolingualEntryBuilder();
         DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder().setLanguage(language);
 
         // Extract general form
-        String generalForm = tableRow.getElementsByClass("oppslagsord").first().text();
-        objectBuilder.setGeneralForm(generalForm);
+        Element oppslagsord = tableRow.getElementsByClass("oppslagsord").first();
+        if (oppslagsord != null) {
+            String generalForm = oppslagsord.text();
+            objectBuilder.setGeneralForm(generalForm);
+        } else {
+            LOGGER.warn("Unable to find main element - skipping entry.");
+            return Optional.empty();
+        }
 
         // Extract wordclass and determine entrytype
         String wordClass = tableRow.getElementsByClass("oppsgramordklasse").first().text();
         entryBuilder.setEntryType(resolveEntryTypeWithWordClass(wordClass));
 
         // Get meanings
-        tableRow.select(".artikkelinnhold > .utvidet > .tyding")
+        Elements meaningCandidates = tableRow.select(".artikkelinnhold > .utvidet > .tyding");
+        if (meaningCandidates.size() == 0)
+            meaningCandidates = tableRow.select(".artikkelinnhold > .utvidet");
+        meaningCandidates
                 .forEach(e -> {
                     String meaning = e.childNodes()
                             .stream()
@@ -177,7 +188,7 @@ public class OrdbokEngine implements SearchEngine {
 
         entryBuilder.setContent(objectBuilder.build());
 
-        return entryBuilder.build();
+        return Optional.of(entryBuilder.build());
     }
 
     /**
