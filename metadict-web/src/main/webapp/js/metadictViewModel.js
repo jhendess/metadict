@@ -59,8 +59,11 @@ function MetadictViewModel() {
     /** Selected dictionaries for querying */
     this.selectedDictionaries = ko.observableArray([]);
 
-    /** Grouped entry results */
+    /** Grouped bilingual entry results */
     this.entryGroups = ko.observableArray([]);
+
+    /** Monolingual entry results */
+    this.monolingualEntries = ko.observableArray([]);
 
     /** Search recommendations */
     this.similarRecommendations = ko.observableArray([]);
@@ -194,6 +197,7 @@ function MetadictViewModel() {
             }
             if (!(responseData.groupedBilingualResults instanceof Array)
                 || !(responseData.similarRecommendations instanceof Array)
+                || !(responseData.monolingualEntries instanceof Array)
                 || !(responseData.externalContents instanceof Array)
             ) {
                 self.setError("Illegal data structure", true);
@@ -202,6 +206,7 @@ function MetadictViewModel() {
             self.entryGroups(responseData.groupedBilingualResults);
             self.similarRecommendations(responseData.similarRecommendations);
             self.externalContents(responseData.externalContents);
+            self.monolingualEntries(responseData.monolingualEntries);
             console.log(self.externalContents());
             self.enableQueryElements();
             $('.tooltipped').tooltip({delay: 50});

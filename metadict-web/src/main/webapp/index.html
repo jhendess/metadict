@@ -148,6 +148,15 @@
         <!-- Results -->
         <div class="row">
             <div class="col s12 offset-m2 m8 offset-l3 l6">
+                <div data-bind="if: monolingualEntries().length > 0">
+                    <div class="section">
+                        <h5>Monolingual Entries:</h5>
+
+                        <div class="row" data-bind="foreach: monolingualEntries">
+                            <div class="col s12 m6 l4 monolingualEntry" data-bind="template: {name: 'monolingualEntry-template', data: $data}"></div>
+                        </div>
+                    </div>
+                </div>
                 <div data-bind="foreach: entryGroups">
                     <div class="section">
                         <h5 data-bind="text: groupIdentifier + ':'"></h5>
@@ -299,6 +308,17 @@
 </footer>
 
 <!-- Templates -->
+
+<script type="text/html" id="monolingualEntry-template">
+    <span data-bind="template: {name: 'flag-template', data: content.language}"></span>
+    <span class="thin" data-bind="text: $root.buildLanguageString(content.language)"></span>:
+    <a data-bind="text: content.generalForm, click: function(data, event) { $root.requery(content.generalForm) }"
+       class="underlinedLink black-text"></a>
+    <ul data-bind="foreach: content.meanings">
+        <li data-bind="text: $data"></li>
+    </ul>
+    <!--<span class="additionalData" data-bind="text: $root.buildAdditionalDataString($data)"></span>-->
+</script>
 
 <script type="text/html" id="dictionaryObject-template">
     <span data-bind="template: {name: 'flag-template', data: language}"></span>

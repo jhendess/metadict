@@ -71,3 +71,8 @@ a.underlinedLink {
 .dictionaryObjectCell {
     width: 40%;
 }
+
+.monolingualEntry ul > li{
+    list-style: disc;
+    margin-left: 15px;
+}
