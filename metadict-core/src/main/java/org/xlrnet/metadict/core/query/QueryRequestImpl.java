@@ -44,6 +44,17 @@ public class QueryRequestImpl implements QueryRequest {
 
     private final String queryString;
 
+    @Override
+    public String toString() {
+        return "QueryRequestImpl{" +
+                "queryString='" + queryString + '\'' +
+                ", queryDictionaries=" + queryDictionaries +
+                ", groupingType=" + groupingType +
+                ", orderType=" + orderType +
+                ", monolingualLanguages=" + monolingualLanguages +
+                '}';
+    }
+
     private final List<BilingualDictionary> queryDictionaries;
 
     private final GroupingType groupingType;
@@ -151,11 +162,4 @@ public class QueryRequestImpl implements QueryRequest {
         return Objects.hashCode(queryString, queryDictionaries);
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("queryString", queryString)
-                .add("queryDictionaries", queryDictionaries)
-                .toString();
-    }
 }

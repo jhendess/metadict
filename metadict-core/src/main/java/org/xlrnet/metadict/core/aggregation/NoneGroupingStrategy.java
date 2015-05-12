@@ -51,7 +51,7 @@ public class NoneGroupingStrategy implements GroupingStrategy {
     @NotNull
     @Override
     public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
-        ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All results");
+        ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All bilingual entries");
         boolean hasAnyObject = false;
 
         for (QueryStepResult stepResult : queryStepResults) {

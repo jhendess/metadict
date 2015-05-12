@@ -36,11 +36,11 @@ public enum GroupingType {
      */
     NONE(new NoneGroupingStrategy()),
 
-    BY_ENGINE(null),
+    ENGINE(null),
 
-    BY_DICTIONARY(new DictionaryGroupingStrategy()),
+    DICTIONARY(new DictionaryGroupingStrategy()),
 
-    BY_ENTRYTYPE(new EntryTypeGroupingStrategy());
+    ENTRYTYPE(new EntryTypeGroupingStrategy());
 
     private GroupingStrategy groupingStrategy;
 

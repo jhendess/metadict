@@ -78,9 +78,9 @@ query, each query has to be processed in different steps:
   decide how it calls the chosen engines and may decide whether caching or parallelism should be used. 
   
   - Grouping:
-  During the grouping phase, the results from the single engines will be grouped into several groups. Grouping types
-  include e.g. grouping by entry types, by dictionaries or no grouping at all. The type of grouping can be chosen by
-  the user.  
+  During the grouping phase, the results from the single engines will be grouped into several groups. Currently,
+  grouping is only supported for bilingual entries. Grouping types include e.g. grouping by entry types, by
+  dictionaries or no grouping at all. The type of grouping can be chosen by  the user.  
   
   - Sorting:
   After the grouping phase, the results in each group will be sorted according to a selected grouping strategy.
