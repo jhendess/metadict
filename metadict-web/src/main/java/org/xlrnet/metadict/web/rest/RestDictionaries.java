@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  * only.</li>
  * </ul>
  */
-@Path("/dict")
+@Path("/dictionaries")
 public class RestDictionaries {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestQuery.class);
@@ -67,7 +67,7 @@ public class RestDictionaries {
     MetadictCore metadictCore;
 
     @GET
-    @Path("/all")
+    @Path("/bilingual/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listAllRegisteredDictionaries() {
         try {
@@ -78,7 +78,7 @@ public class RestDictionaries {
     }
 
     @GET
-    @Path("/bi")
+    @Path("/bilingual/bidirected")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listBidirectedRegisteredDictionaries() {
         try {
@@ -89,9 +89,20 @@ public class RestDictionaries {
     }
 
     @GET
-    @Path("/uni")
+    @Path("/bilingual/unidirected")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listUnidirectedRegisteredDictionaries() {
+        try {
+            return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
+        } catch (Exception e) {
+            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
+        }
+    }
+
+    @GET
+    @Path("/monolingual/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listMonolingualDictionaries() {
         try {
             return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
         } catch (Exception e) {

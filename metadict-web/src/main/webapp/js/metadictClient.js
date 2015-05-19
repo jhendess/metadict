@@ -65,17 +65,17 @@ function MetadictClient(baseUrl) {
 
     this.getBidirectedDictionaries = function (success, fail) {
         console.log("Querying for bidirected dictionaries...");
-        self._invokeRequest("/dict/bi", success, fail);
+        self._invokeRequest("/dictionaries/bilingual/bidirected", success, fail);
     };
 
     this.getUnidirectedDictionaries = function (success, fail) {
         console.log("Querying for unidirected dictionaries...");
-        self._invokeRequest("/dict/uni", success, fail);
+        self._invokeRequest("/dicionaries/bilingual/unidirect", success, fail);
     };
 
     this.getAllDictionaries = function (success, fail) {
         console.log("Querying for all dictionaries...");
-        self._invokeRequest("/dict/all", success, fail);
+        self._invokeRequest("/dictionaries/bilingual/all", success, fail);
     };
 
     this.getMainStatus = function(success, fail) {
