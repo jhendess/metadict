@@ -171,7 +171,7 @@ public class BilingualDictionary {
      *         Will be thrown if the given dictionary query is invalid.
      */
     @NotNull
-    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException {
+    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException, UnsupportedDictionaryException {
         if (!isValidDictionaryQuery(queryString))
             throw new IllegalArgumentException("Illegal dictionary query string: " + queryString);
 
@@ -181,7 +181,14 @@ public class BilingualDictionary {
             } else {
                 // Inverse the direction and try another lookup
                 String[] languages = StringUtils.split(queryString, "-");
-                return instanceMap.get("<>" + languages[1] + "-" + languages[0]);
+                String inverseQuery = "<>" + languages[1] + "-" + languages[0];
+                if (instanceMap.containsKey(inverseQuery))
+                    return instanceMap.get(inverseQuery);
+                else
+                    throw new UnsupportedDictionaryException(
+                            Language.getExistingLanguageById(languages[0]),
+                            Language.getExistingLanguageById(languages[1]),
+                            true);
             }
         } else
             return instanceMap.get(queryString);

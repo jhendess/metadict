@@ -44,7 +44,7 @@ public interface SearchProvider {
      * @return a set of user-defined automatic test cases.
      */
     @Nullable
-    AutoTestSuite getAutoTestSuite();
+    AutoTestSuite getAutoTestSuite() throws Exception;
 
     /**
      * Return an {@link EngineDescription} object that contains descriptive i.e. textual information about the

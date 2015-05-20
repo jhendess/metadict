@@ -26,6 +26,7 @@ package org.xlrnet.metadict.web.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,15 +41,14 @@ public class DictionaryUtils {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)(,[A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)*");
 
-    public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws IllegalArgumentException {
+    public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws IllegalArgumentException, UnsupportedDictionaryException {
         checkArgument(DICTIONARY_QUERY_PATTERN.matcher(dictionaryQuery).matches(), "Invalid dictionary query");
 
         String[] explodedQuery = StringUtils.split(dictionaryQuery, ",");
         List<BilingualDictionary> dictionaryList = new ArrayList<>(explodedQuery.length);
 
         for (String query : explodedQuery) {
-            BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query, bidirectional);
-            if (dictionary != null)
+                BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query, bidirectional);
                 dictionaryList.add(dictionary);
         }
 

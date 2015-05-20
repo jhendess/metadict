@@ -48,7 +48,7 @@ public class HeinzelnisseEngineProvider implements SearchProvider {
      */
     @Nullable
     @Override
-    public AutoTestSuite getAutoTestSuite() {
+    public AutoTestSuite getAutoTestSuite() throws Exception {
         return new AutoTestSuiteBuilder()
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("haus")

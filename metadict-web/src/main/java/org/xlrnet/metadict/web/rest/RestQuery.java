@@ -25,13 +25,13 @@
 package org.xlrnet.metadict.web.rest;
 
 import com.google.common.base.Enums;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.main.MetadictCore;
@@ -41,7 +41,6 @@ import org.xlrnet.metadict.web.api.ResponseStatus;
 import org.xlrnet.metadict.web.util.DictionaryUtils;
 
 import javax.inject.Inject;
-import javax.persistence.criteria.Order;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -156,6 +155,8 @@ public class RestQuery {
             dictionaries = DictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
         } catch (IllegalArgumentException e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Malformed dictionary query", null)).build();
+        } catch (UnsupportedDictionaryException e) {
+            return Response.ok(new ResponseContainer<>(ResponseStatus.ERROR, "Unsupported dictionary", null)).build();
         }
 
         if (dictionaries.size() == 0)

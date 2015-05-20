@@ -252,11 +252,15 @@ public class EngineRegistry {
     }
 
     private void registerAutoTestSuite(@NotNull SearchProvider searchProvider, @NotNull SearchEngine searchEngine) {
-        AutoTestSuite testSuite = searchProvider.getAutoTestSuite();
-        if (testSuite == null)
-            logger.warn("Provider {} provides no auto test suite", searchProvider.getClass().getCanonicalName());
-        else
-            autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
+        try {
+            AutoTestSuite testSuite = searchProvider.getAutoTestSuite();
+            if (testSuite == null)
+                logger.warn("Provider {} provides no auto test suite", searchProvider.getClass().getCanonicalName());
+            else
+                autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
+        } catch (Exception e) {
+            logger.error("Initializing auto test suite from provider {} failed", searchProvider.getClass().getCanonicalName(), e);
+        }
     }
 
     private void registerDictionariesFromFeatureSet(@NotNull String canonicalEngineName, @NotNull FeatureSet featureSet) {
