@@ -29,19 +29,19 @@
     <parent>
         <artifactId>metadict</artifactId>
         <groupId>org.xlrnet.metadict</groupId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>metadict-engine-leo</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 
     <dependencies>
         <!-- Metadict API -->
         <dependency>
             <groupId>org.xlrnet.metadict</groupId>
             <artifactId>metadict-api</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.2.0</version>
         </dependency>
         <!-- jsoup HTML parser library @ http://jsoup.org/ -->
         <dependency>
