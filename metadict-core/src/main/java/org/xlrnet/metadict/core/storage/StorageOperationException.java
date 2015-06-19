@@ -24,10 +24,35 @@
 
 package org.xlrnet.metadict.core.storage;
 
-/**
- * Created by xolor on 19.06.15.
- */
-public class StorageException extends RuntimeException {
+import org.xlrnet.metadict.core.exception.MetadictRuntimeException;
 
-    // TODO
+/**
+ * Thrown if an access operation encountered an unwanted state that indicates no backend failure. This includes the
+ * following concrete states:
+ * <p>
+ * <ul> <li>Trying to create a new value under an already existing key</li> <li>Trying to update a value under a
+ * non-existing key</li> </ul>
+ */
+public class StorageOperationException extends MetadictRuntimeException {
+
+    private String namespace;
+
+    private String key;
+
+    public StorageOperationException() {
+    }
+
+    public StorageOperationException(String message, String namespace, String key) {
+        super(message);
+        this.namespace = namespace;
+        this.key = key;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getKey() {
+        return key;
+    }
 }
