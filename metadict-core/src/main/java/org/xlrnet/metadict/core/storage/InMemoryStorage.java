@@ -24,28 +24,40 @@
 
 package org.xlrnet.metadict.core.storage;
 
+import com.rits.cloning.Cloner;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Main interface for accessing Metadict storage services. The storage service provides CRUD operations on a simple
- * key-value store with namespaces. Each key can be used exactly one time per namespace. When using CRUD operations, all
- * attributes of the objects will be (de-)serialized. Namespaces can be used for separating different types of data.
+ * In-memory implementation of a {@link StorageService}. All stored data will only be stored in-memory and not on an
+ * external backend. Thus all stored data will be lost upon destroying the service object.
  * <p>
- * When connecting to an external storage service, the stored data will be available globally for each connected client.
- * This may be helpful for implementing persistent data storage across multiple Metadict instances.
+ * The internal implementation is based on a MultiKeyMap.
  */
-public interface StorageService {
+public class InMemoryStorage implements StorageService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(InMemoryStorage.class);
+
+    private final MultiKeyMap backingMap = new MultiKeyMap();
+
+    private Cloner cloner = Cloner.standard();
 
     /**
      * Store a new value of any type in the requested namespace with a given key. This method will throw a {@link
      * StorageBackendException} if there is already an object with the same key in the same namespace.
      * <p>
      * Upon saving, all private attributes will be extracted and stored in the storage backend. It depends on the
-     * concrete backend implementation, whether the given class must be {@link java.io.Serializable}. However, it is
-     * recommended to store only serializable class to avoid problems.
+     * concrete backend implementation, whether the given class must be {@link Serializable}. However, it is recommended
+     * to store only serializable class to avoid problems.
      *
      * @param namespace
      *         The name of the namespace in which the key should be placed. Must be a non-empty and non-null string.
@@ -53,8 +65,6 @@ public interface StorageService {
      *         The key for the new object. Must be a non-empty and non-null string.
      * @param value
      *         The object that should be stored under the given key in the given namespace.
-     * @param <T>
-     *         The class of the value to store - must be serializable.
      * @return The input object if it could be saved - but never null. In case of any error situations, an exception
      * will be thrown.
      * @throws StorageBackendException
@@ -63,7 +73,22 @@ public interface StorageService {
      *         Will be thrown when trying to create a new object with an already used key.
      */
     @NotNull
-    <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException;
+    @Override
+    public <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException {
+        checkArguments(namespace, key);
+        checkNotNull(value);
+
+        if (backingMap.containsKey(namespace, key)) {
+            LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
+            throw new StorageOperationException("Creation failed: key already exists", namespace, key);
+        }
+        else {
+            LOGGER.debug("Created key {} in namespace {}", key, namespace);
+            backingMap.put(namespace, key, cloneValue(value));
+        }
+
+        return value;
+    }
 
     /**
      * Delete the associated value for a given key in the given namespace. After deleting, the associated value will not
@@ -79,7 +104,16 @@ public interface StorageService {
      * @throws StorageBackendException
      *         Will be thrown if any backend errors occurred.
      */
-    boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException;
+    @Override
+    public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
+        checkArguments(namespace, key);
+
+        if (!backingMap.containsKey(namespace, key))
+            return false;
+
+        backingMap.remove(namespace, key);
+        return true;
+    }
 
     /**
      * Return the stored value as an {@link Optional} behind a given key in the given namespace. If no stored value
@@ -95,8 +129,6 @@ public interface StorageService {
      * @param clazz
      *         The target class to which the returned object should be casted. If casting fails, a {@link
      *         ClassCastException} might be thrown.
-     * @param <T>
-     *         The type of the returned object - must be serializable.
      * @return An {@link Optional} that contains the value behind the specified key. If no value could be found, the
      * returned optional object will be empty. If casting the stored object failed, a {@link ClassCastException} might
      * be thrown.
@@ -106,7 +138,17 @@ public interface StorageService {
      *         Will be thrown if the found value cannot be casted to the required class.
      */
     @NotNull
-    <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException;
+    @Override
+    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
+        checkArguments(namespace, key);
+
+        if (!backingMap.containsKey(namespace, key))
+            return Optional.empty();
+
+        T value = clazz.cast(backingMap.get(namespace, key));
+
+        return Optional.of(cloneValue(value));
+    }
 
     /**
      * Update the stored value for a given key in a given namespace. Upon updating, the existing value will be replaced
@@ -118,8 +160,6 @@ public interface StorageService {
      *         The key for the new object. Must be a non-empty and non-null string.
      * @param newValue
      *         The new value that should replace the existing one.
-     * @param <T>
-     *         The class of the value to store - must be serializable.
      * @return The input object if it could be saved - but never null. In case of any error situations, an exception
      * will be thrown.
      * @throws StorageBackendException
@@ -128,6 +168,29 @@ public interface StorageService {
      *         Will be thrown when trying to update a non-existing key.
      */
     @NotNull
-    <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException;
+    @Override
+    public <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException {
+        checkArguments(namespace, key);
+        checkNotNull(newValue);
+
+        if (!backingMap.containsKey(namespace, key))
+            throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
+
+        this.backingMap.put(namespace, key, cloneValue(newValue));
+
+        return newValue;
+    }
+
+    /**
+     * Make sure that both namespace and key are neither null nor blank.
+     */
+    private void checkArguments(@NotNull String namespace, @NotNull String key) {
+        checkArgument(StringUtils.isNotBlank(namespace), "Illegal namespace name");
+        checkArgument(StringUtils.isNotBlank(key), "Illegal key name");
+    }
+
+    private <T extends Serializable> T cloneValue(@NotNull T value) {
+        return cloner.deepClone(value);
+    }
 
 }

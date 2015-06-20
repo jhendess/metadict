@@ -22,11 +22,20 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.exception;
+package org.xlrnet.metadict.core.storage;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The class {@link MetadictException} represents any kind of exception that may be thrown during a metadict core call.
+ * Qualifier for annotating and injecting the default storage service.
  */
-public class MetadictException extends Exception {
-
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface DefaultStorageService {
 }
