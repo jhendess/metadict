@@ -24,12 +24,19 @@
 
 package org.xlrnet.metadict.core.storage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.core.util.CommonUtils;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Factory for accessing and creating new {@link StorageService} instances. This factory can be used in two ways: either
@@ -38,7 +45,7 @@ import javax.enterprise.inject.Produces;
  * <em>storage.properties</em> file. The created instance will be instantiated only one time (thus acting as a
  * singleton) and return the same element in each injection point. Enforcing the creation of a new instance of the
  * default configuration can be done by calling {@link #createNewDefaultStorageService()}.
- * <p>
+ * <p/>
  * To create a new non-persistent dummy storage service, call {@link #createTemporaryStorageService()}.
  */
 @ApplicationScoped
@@ -46,7 +53,45 @@ public class StorageServiceFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageServiceFactory.class);
 
+    private String defaultStorageServiceName;
+
     private StorageService defaultStorageService;
+
+    private Map<String, StorageService> storageServiceMap = new HashMap<>();
+
+    @Inject
+    private Instance<StorageServiceProvider> storageServiceProviders;
+
+    @PostConstruct
+    public void initialize() {
+        LOGGER.info("Registering storage providers...");
+        for (StorageServiceProvider storageServiceProvider : storageServiceProviders) {
+            try {
+                registerStorageService(storageServiceProvider);
+            } catch (Exception e) {
+                LOGGER.warn("Registering storage service from class {} has failed", storageServiceProvider.getClass().getCanonicalName(), e);
+            }
+        }
+        validateConfiguration();
+    }
+
+    private void validateConfiguration() {
+        if (storageServiceMap.size() == 0) {
+            LOGGER.error("No storage service could not be found - make sure that at least one working provider is available on classpath and try again");
+            throw new Error("No storage service could not be found");
+        }
+
+        defaultStorageServiceName = CommonUtils.getProperty("storage.properties", "storage.default");
+
+        if (!storageServiceMap.containsKey(defaultStorageServiceName)) {
+            LOGGER.error("Default storage service {} could not be found", defaultStorageServiceName );
+            throw new Error("No storage service provider could be found");
+        }
+    }
+
+    private void registerStorageService(StorageServiceProvider storageServiceProvider) {
+        // TODO
+    }
 
     /**
      * Get the currently configured default storage service. The returned object acts as a singleton. Accessing the
@@ -66,6 +111,17 @@ public class StorageServiceFactory {
     }
 
     /**
+     * Create a new temporary non-persistent storage service. Each operation on the service will be done in-memory and
+     * thus be lost after shutting down Metadict. Using this service is only recommended for development and testing.
+     *
+     * @return a new temporary non-persistent storage service.
+     */
+    @NotNull
+    public StorageService createTemporaryStorageService() {
+        return new InMemoryStorage();
+    }
+
+    /**
      * Create a new instance of the currently configured default storage service. The default storage service can be
      * configured in <em>storage.properties</em>.
      *
@@ -76,17 +132,6 @@ public class StorageServiceFactory {
         // TODO: Just a temporary implementation - use property based config mechanism once available
         LOGGER.info("Creating new default storage service ...");
         return createTemporaryStorageService();
-    }
-
-    /**
-     * Create a new temporary non-persistent storage service. Each operation on the service will be done in-memory and
-     * thus be lost after shutting down Metadict. Using this service is only recommended for development and testing.
-     *
-     * @return a new temporary non-persistent storage service.
-     */
-    @NotNull
-    public StorageService createTemporaryStorageService() {
-        return new InMemoryStorage();
     }
 
 }
