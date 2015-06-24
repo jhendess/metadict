@@ -22,29 +22,26 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.exception;
+package org.xlrnet.metadict.api.engine;
 
 /**
- * The class {@link MetadictRuntimeException} represents any kind of exception that may be thrown during a metadict core
- * call.
+ * The {@link UnknownSearchEngineException} will be thrown, when an unknown {@link
+ * org.xlrnet.metadict.api.engine.SearchEngine} was requested. This should indicate a severe programming error that
+ * should only be noticed during development, therefore this is only a {@link RuntimeException}.
  */
-public class MetadictRuntimeException extends RuntimeException {
+public class UnknownSearchEngineException extends RuntimeException {
 
-    private static final long serialVersionUID = 5551989583927723250L;
+    private static final long serialVersionUID = -1839797109698881367L;
 
-    public MetadictRuntimeException() {
-    }
-
-    public MetadictRuntimeException(String message) {
-        super(message);
-    }
-
-    public MetadictRuntimeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public MetadictRuntimeException(Throwable cause) {
-        super(cause);
+    /**
+     * Construct a new {@link UnknownSearchEngineException} with the given String as the name of the failed {@link
+     * org.xlrnet.metadict.api.engine.SearchEngine}.
+     *
+     * @param engineName
+     *         name of the failed search engine
+     */
+    public UnknownSearchEngineException(String engineName) {
+        super("Couldn't find unknown search engine " + engineName);
     }
 
 }

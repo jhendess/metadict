@@ -22,24 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.exception;
+package org.xlrnet.metadict.core.storage;
 
 /**
- * The {@link UnknownSearchEngineException} will be thrown, when an unknown {@link
- * org.xlrnet.metadict.api.engine.SearchEngine} was requested. This should indicate a severe programming error that
- * should only be noticed during development, therefore this is only a {@link RuntimeException}.
+ * An error to indicate a fatal error while booting the storage subsystem from Metadict. Whenever an such an error is
+ * thrown, the Metadict core should shut down and not continue any booting attempts.
  */
-public class UnknownSearchEngineException extends RuntimeException {
+public class StorageInitializationError extends Error {
 
-    /**
-     * Construct a new {@link UnknownSearchEngineException} with the given String as the name of the failed {@link
-     * org.xlrnet.metadict.api.engine.SearchEngine}.
-     *
-     * @param engineName
-     *         name of the failed search engine
-     */
-    public UnknownSearchEngineException(String engineName) {
-        super("Couldn't find unknown search engine " + engineName);
+    private static final long serialVersionUID = 7659265473741012032L;
+
+    StorageInitializationError(String message) {
+        super(message);
     }
+
+    StorageInitializationError(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    StorageInitializationError(Throwable cause) {
+        super(cause);
+    }
+
 
 }

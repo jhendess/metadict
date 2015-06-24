@@ -22,14 +22,16 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.storage;
+package org.xlrnet.metadict.api.storage;
 
-import org.xlrnet.metadict.core.exception.MetadictRuntimeException;
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 
 /**
  * Thrown by a storage backend on an internal system error.
  */
 public class StorageBackendException extends MetadictRuntimeException {
+
+    private static final long serialVersionUID = -8879647040748488867L;
 
     public StorageBackendException() {
     }

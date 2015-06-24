@@ -27,6 +27,8 @@ package org.xlrnet.metadict.core.storage;
 import com.google.common.base.Objects;
 import org.junit.Before;
 import org.junit.Test;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageService;
 
 import java.io.Serializable;
 import java.util.Optional;

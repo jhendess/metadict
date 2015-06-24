@@ -22,37 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.storage;
-
-import org.xlrnet.metadict.core.exception.MetadictRuntimeException;
+package org.xlrnet.metadict.api.exception;
 
 /**
- * Thrown if an access operation encountered an unwanted state that indicates no backend failure. This includes the
- * following concrete states:
- * <p>
- * <ul> <li>Trying to create a new value under an already existing key</li> <li>Trying to update a value under a
- * non-existing key</li> </ul>
+ * The class {@link MetadictRuntimeException} represents any kind of exception that may be thrown during a metadict core
+ * call.
  */
-public class StorageOperationException extends MetadictRuntimeException {
+public class MetadictRuntimeException extends RuntimeException {
 
-    private String namespace;
+    private static final long serialVersionUID = 5551989583927723250L;
 
-    private String key;
-
-    public StorageOperationException() {
+    public MetadictRuntimeException() {
     }
 
-    public StorageOperationException(String message, String namespace, String key) {
+    public MetadictRuntimeException(String message) {
         super(message);
-        this.namespace = namespace;
-        this.key = key;
     }
 
-    public String getNamespace() {
-        return namespace;
+    public MetadictRuntimeException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public String getKey() {
-        return key;
+    public MetadictRuntimeException(Throwable cause) {
+        super(cause);
     }
+
 }

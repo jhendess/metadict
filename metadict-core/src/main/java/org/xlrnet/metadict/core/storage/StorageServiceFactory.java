@@ -28,6 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
+import org.xlrnet.metadict.api.storage.StorageService;
+import org.xlrnet.metadict.api.storage.StorageServiceProvider;
 import org.xlrnet.metadict.core.util.CommonUtils;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +48,7 @@ import java.util.Map;
  * <em>storage.properties</em> file. The created instance will be instantiated only one time (thus acting as a
  * singleton) and return the same element in each injection point. Enforcing the creation of a new instance of the
  * default configuration can be done by calling {@link #createNewDefaultStorageService()}.
- * <p/>
+ * <p>
  * To create a new non-persistent dummy storage service, call {@link #createTemporaryStorageService()}.
  */
 @ApplicationScoped
@@ -53,44 +56,31 @@ public class StorageServiceFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageServiceFactory.class);
 
+    private static final String STORAGE_CONFIG_FILE = "storage.properties";
+
     private String defaultStorageServiceName;
 
     private StorageService defaultStorageService;
 
-    private Map<String, StorageService> storageServiceMap = new HashMap<>();
+    private Map<String, StorageServiceProvider> storageServiceMap = new HashMap<>();
+
+    private Map<String, String> defaultStorageConfigMap = new HashMap<>();
 
     @Inject
     private Instance<StorageServiceProvider> storageServiceProviders;
 
     @PostConstruct
     public void initialize() {
-        LOGGER.info("Registering storage providers...");
+        LOGGER.info("Registering storage service providers...");
         for (StorageServiceProvider storageServiceProvider : storageServiceProviders) {
             try {
                 registerStorageService(storageServiceProvider);
             } catch (Exception e) {
-                LOGGER.warn("Registering storage service from class {} has failed", storageServiceProvider.getClass().getCanonicalName(), e);
+                LOGGER.warn("Registering storage service provider from class {} has failed", storageServiceProvider.getClass().getCanonicalName(), e);
             }
         }
-        validateConfiguration();
-    }
-
-    private void validateConfiguration() {
-        if (storageServiceMap.size() == 0) {
-            LOGGER.error("No storage service could not be found - make sure that at least one working provider is available on classpath and try again");
-            throw new Error("No storage service could not be found");
-        }
-
-        defaultStorageServiceName = CommonUtils.getProperty("storage.properties", "storage.default");
-
-        if (!storageServiceMap.containsKey(defaultStorageServiceName)) {
-            LOGGER.error("Default storage service {} could not be found", defaultStorageServiceName );
-            throw new Error("No storage service provider could be found");
-        }
-    }
-
-    private void registerStorageService(StorageServiceProvider storageServiceProvider) {
-        // TODO
+        validateStorageProviders();
+        initializeDefaultConfiguration();
     }
 
     /**
@@ -121,6 +111,47 @@ public class StorageServiceFactory {
         return new InMemoryStorage();
     }
 
+    private void validateStorageProviders() {
+        if (storageServiceMap.size() == 0) {
+            LOGGER.error("No storage service provider could be found - make sure that at least one working provider is available on classpath and try again");
+            throw new StorageInitializationError("No storage service provider could be found");
+        }
+
+        defaultStorageServiceName = CommonUtils.getProperty(STORAGE_CONFIG_FILE, "storage.default");
+
+        if (!storageServiceMap.containsKey(defaultStorageServiceName)) {
+            LOGGER.error("Default storage service provider {} could not be found", defaultStorageServiceName);
+            throw new Error("Default storage service provider could not be found");
+        }
+    }
+
+    private void initializeDefaultConfiguration() {
+        Map<String, String> properties = CommonUtils.getProperties(STORAGE_CONFIG_FILE);
+
+        for (String key : properties.keySet()) {
+            if (StringUtils.startsWith(key, "storage." + defaultStorageServiceName + ".")) {
+                String configKey = StringUtils.removeStart(key, "storage." + defaultStorageServiceName + ".");
+                defaultStorageConfigMap.put(configKey, properties.get(configKey));
+                LOGGER.debug("Detected configuration value {}", configKey);
+            }
+        }
+    }
+
+    private void registerStorageService(@NotNull StorageServiceProvider storageServiceProvider) {
+        String identifier = storageServiceProvider.getStorageBackendIdentifier();
+        if (identifier == null || !CommonUtils.isValidStorageServiceName(identifier)) {
+            throw new MetadictRuntimeException("Illegal storage provider identifier: " + identifier);
+        }
+
+        if (storageServiceMap.containsKey(identifier)) {
+            LOGGER.error("Duplicated storage service identifier {} encountered - check provider classes {} and {}",
+                    identifier, storageServiceProvider.getClass().getCanonicalName(), storageServiceMap.get(identifier).getClass().getCanonicalName());
+        }
+
+        storageServiceMap.put(identifier, storageServiceProvider);
+        LOGGER.info("Registered storage provider service {}", identifier);
+    }
+
     /**
      * Create a new instance of the currently configured default storage service. The default storage service can be
      * configured in <em>storage.properties</em>.
@@ -129,9 +160,22 @@ public class StorageServiceFactory {
      */
     @NotNull
     private StorageService createNewDefaultStorageService() {
-        // TODO: Just a temporary implementation - use property based config mechanism once available
-        LOGGER.info("Creating new default storage service ...");
-        return createTemporaryStorageService();
+        LOGGER.info("Creating new default storage service for {} ...", defaultStorageServiceName);
+        StorageServiceProvider provider = storageServiceMap.get(defaultStorageServiceName);
+        StorageService storageService = internalInstantiateStorageService(provider, defaultStorageConfigMap);
+        LOGGER.info("Created new default storage service");
+        return storageService;
+    }
+
+    private StorageService internalInstantiateStorageService(StorageServiceProvider provider, Map<String, String> storageConfigurationMap) {
+        try {
+            StorageService newStorageService = provider.createNewStorageService(storageConfigurationMap);
+            LOGGER.debug("Successfully instantiated new storage service with class {} and configuration {}", newStorageService.getClass().getCanonicalName(), storageConfigurationMap);
+            return newStorageService;
+        } catch (Exception e) {
+            LOGGER.error("Fatal error during storage service instantiation", e);
+            throw e;
+        }
     }
 
 }

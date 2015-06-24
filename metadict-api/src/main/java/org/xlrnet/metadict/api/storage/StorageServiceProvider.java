@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.storage;
+package org.xlrnet.metadict.api.storage;
 
 import java.util.Map;
 

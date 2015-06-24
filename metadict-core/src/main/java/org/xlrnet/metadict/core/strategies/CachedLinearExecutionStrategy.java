@@ -36,11 +36,11 @@ import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.MonolingualQueryResult;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.query.*;
 import org.xlrnet.metadict.core.storage.DefaultStorageService;
-import org.xlrnet.metadict.core.storage.StorageBackendException;
-import org.xlrnet.metadict.core.storage.StorageOperationException;
-import org.xlrnet.metadict.core.storage.StorageService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

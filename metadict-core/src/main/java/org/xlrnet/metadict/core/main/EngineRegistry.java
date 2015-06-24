@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchProvider;
+import org.xlrnet.metadict.api.engine.UnknownSearchEngineException;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestManager;
-import org.xlrnet.metadict.core.exception.UnknownSearchEngineException;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
