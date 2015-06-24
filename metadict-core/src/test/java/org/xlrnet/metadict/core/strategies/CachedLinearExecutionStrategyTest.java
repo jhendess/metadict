@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.strategies;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,6 +38,7 @@ import org.xlrnet.metadict.core.query.AbstractQueryStep;
 import org.xlrnet.metadict.core.query.BilingualQueryStep;
 import org.xlrnet.metadict.core.query.QueryPlan;
 import org.xlrnet.metadict.core.query.QueryStepResult;
+import org.xlrnet.metadict.core.storage.StorageServiceFactory;
 
 import java.util.Collection;
 
@@ -62,6 +64,11 @@ public class CachedLinearExecutionStrategyTest {
 
     @Mock
     QueryStepResult stepResultMock;
+
+    @Before
+    public void setup() {
+        executionStrategy.storageService = new StorageServiceFactory().createTemporaryStorageService();
+    }
 
     @Test
     public void testExecuteQueryPlan_successful() throws Exception {

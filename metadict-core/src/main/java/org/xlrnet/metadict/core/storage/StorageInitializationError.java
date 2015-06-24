@@ -22,11 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.exception;
+package org.xlrnet.metadict.core.storage;
 
 /**
- * The class {@link MetadictException} represents any kind of exception that may be thrown during a metadict core call.
+ * An error to indicate a fatal error while booting the storage subsystem from Metadict. Whenever an such an error is
+ * thrown, the Metadict core should shut down and not continue any booting attempts.
  */
-public class MetadictException extends Exception {
+public class StorageInitializationError extends Error {
+
+    private static final long serialVersionUID = 7659265473741012032L;
+
+    StorageInitializationError(String message) {
+        super(message);
+    }
+
+    StorageInitializationError(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    StorageInitializationError(Throwable cause) {
+        super(cause);
+    }
+
 
 }

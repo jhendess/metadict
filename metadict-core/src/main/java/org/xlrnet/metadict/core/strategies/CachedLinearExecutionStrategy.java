@@ -36,11 +36,17 @@ import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.api.query.MonolingualQueryResult;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.query.*;
+import org.xlrnet.metadict.core.storage.DefaultStorageService;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -51,6 +57,10 @@ import java.util.concurrent.ExecutionException;
 public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
+
+    @Inject
+    @DefaultStorageService
+    StorageService storageService;
 
     Cache<AbstractQueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
             .newBuilder()
@@ -80,7 +90,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             try {
                 if (queryStepResult == null) {
                     LOGGER.debug("Cache miss on query step {}", currentQueryStep);
-                    queryStepResult = queryStepResultCache.get(currentQueryStep, () -> executeQueryStep(currentQueryStep));
+                    queryStepResult = queryStepResultCache.get(currentQueryStep, () -> accessStorageService(currentQueryStep));
                 }
             } catch (ExecutionException | UncheckedExecutionException e) {
                 LOGGER.error("Query step {} failed", currentQueryStep, e);
@@ -97,6 +107,26 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         }
 
         return queryResults;
+    }
+
+    private QueryStepResult accessStorageService(AbstractQueryStep currentQueryStep) {
+        String queryStepKey = currentQueryStep.toString();
+        Optional<QueryStepResult> storedStepResult = storageService.read("QueryCache", queryStepKey, QueryStepResult.class);
+
+        if (storedStepResult.isPresent())
+            return storedStepResult.get();
+
+        QueryStepResult queryStepResult = executeQueryStep(currentQueryStep);
+
+        try {
+            storageService.create("QueryCache", queryStepKey, queryStepResult);
+        } catch (StorageBackendException b) {
+            LOGGER.error("Internal storage backend error", b);
+        } catch (StorageOperationException o) {
+            LOGGER.warn("Storage backend was updated before results could be created - using own result");
+        }
+
+        return queryStepResult;
     }
 
     @NotNull

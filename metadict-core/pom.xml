@@ -43,6 +43,12 @@
             <artifactId>metadict-api</artifactId>
             <version>0.3.0-SNAPSHOT</version>
         </dependency>
+        <!-- Deep cloning library -->
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.2</version>
+        </dependency>
         <!-- CDI Unit -->
         <dependency>
             <groupId>org.jglue.cdi-unit</groupId>

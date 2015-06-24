@@ -22,24 +22,20 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.exception;
+package org.xlrnet.metadict.core.storage;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The {@link UnknownSearchEngineException} will be thrown, when an unknown {@link
- * org.xlrnet.metadict.api.engine.SearchEngine} was requested. This should indicate a severe programming error that
- * should only be noticed during development, therefore this is only a {@link RuntimeException}.
+ * Qualifier for annotating and injecting the default storage service.
  */
-public class UnknownSearchEngineException extends RuntimeException {
-
-    /**
-     * Construct a new {@link UnknownSearchEngineException} with the given String as the name of the failed {@link
-     * org.xlrnet.metadict.api.engine.SearchEngine}.
-     *
-     * @param engineName
-     *         name of the failed search engine
-     */
-    public UnknownSearchEngineException(String engineName) {
-        super("Couldn't find unknown search engine " + engineName);
-    }
-
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface DefaultStorageService {
 }

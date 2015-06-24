@@ -24,12 +24,16 @@
 
 package org.xlrnet.metadict.core.query;
 
+import com.rits.cloning.Immutable;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
 /**
  * Implementation for {@link QueryStepResult}.
  */
+@Immutable
 public class QueryStepResultImpl implements QueryStepResult {
+
+    private static final long serialVersionUID = 176250471774717465L;
 
     private final AbstractQueryStep queryStep;
 

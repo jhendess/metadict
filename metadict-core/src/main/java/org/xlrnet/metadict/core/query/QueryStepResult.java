@@ -26,15 +26,17 @@ package org.xlrnet.metadict.core.query;
 
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 
+import java.io.Serializable;
+
 /**
- * The {@link QueryStepResult} represents the result of a single {@link AbstractQueryStep}. It
- * contains both the executed query step, the {@link QueryStepResult} object with the
- * results from the query step and additional performance metrics.
+ * The {@link QueryStepResult} represents the result of a single {@link AbstractQueryStep}. It contains both the
+ * executed query step, the {@link QueryStepResult} object with the results from the query step and additional
+ * performance metrics.
  * <p>
  * Note, that this interface returns only abstract objects - each has to be casted to the according monolingual or
  * bilingual implementation!
  */
-public interface QueryStepResult {
+public interface QueryStepResult extends Serializable {
 
     /**
      * Returns the result of the attached {@link AbstractQueryStep}.
