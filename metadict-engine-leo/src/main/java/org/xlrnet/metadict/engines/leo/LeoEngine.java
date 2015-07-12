@@ -42,8 +42,11 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.query.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -97,20 +100,19 @@ public class LeoEngine implements SearchEngine {
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
      * supported {@link org.xlrnet.metadict.api.language.BilingualDictionary} as described in the engine's {@link
-     * FeatureSet}. However, an engine may also return results from a different
-     * language. In this case, the core component will decide it the supplied results are useful.
+     * FeatureSet}. However, an engine may also return results from a different language. In this case, the core
+     * component will decide it the supplied results are useful.
      * <p>
-     * Example:
-     * If the engine says it supports a one-way german-english dictionary, this method will be called with the language
-     * parameters inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=false.
-     * However, it the engine supports a bidirectional german-english dictionary, this method will be called with the
-     * language parameters inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=true.
+     * Example: If the engine says it supports a one-way german-english dictionary, this method will be called with the
+     * language parameters inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=false. However, it the engine
+     * supports a bidirectional german-english dictionary, this method will be called with the language parameters
+     * inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=true.
      *
      * @param queryInput
      *         The query string i.e. word that should be looked up.
      * @param inputLanguage
-     *         The input language of the query. This language must be specified as a dictionary's input language of
-     *         this engine.
+     *         The input language of the query. This language must be specified as a dictionary's input language of this
+     *         engine.
      * @param outputLanguage
      *         The expected output language of the query. This language must be specified as the output language of the
      *         same dictionary to which the given inputLanguage belongs.
@@ -118,8 +120,8 @@ public class LeoEngine implements SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
-     * to build this result list.
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder} to
+     * build this result list.
      */
     @NotNull
     @Override
@@ -137,8 +139,7 @@ public class LeoEngine implements SearchEngine {
     /**
      * Try to extract the plural form if the automatic detection has failed.
      * <p>
-     * Example:
-     * "house - pl.: houses" should return "houses"
+     * Example: "house - pl.: houses" should return "houses"
      *
      * @param inputString
      *         The input string.
@@ -171,8 +172,7 @@ public class LeoEngine implements SearchEngine {
     /**
      * Extracts the domain information from a given representation string.
      * <p>
-     * Example:
-     * If the input is "drive-in restaurant [cook.]", then the domain is "cook."
+     * Example: If the input is "drive-in restaurant [cook.]", then the domain is "cook."
      *
      * @param representation
      *         The input string.
@@ -189,8 +189,7 @@ public class LeoEngine implements SearchEngine {
     /**
      * Extracts the domain information from a given representation string.
      * <p>
-     * Example:
-     * If the input is "drive-in restaurant [cook.]", then the domain is "cook."
+     * Example: If the input is "drive-in restaurant [cook.]", then the domain is "cook."
      *
      * @param representation
      *         The input string.
@@ -244,12 +243,71 @@ public class LeoEngine implements SearchEngine {
         processSimilarities(similarityNode, resultBuilder);
 
         // Find external contents:
-
+        Element forumLinkNode = doc.getElementsByTag("forumRef").first();
 
         // Process external contents:
-
+        processForumLinks(forumLinkNode, resultBuilder);
 
         return resultBuilder;
+    }
+
+    /**
+     * Process the all links to the leo.org forums and provide them as external content.
+     *
+     * @param forumLinkNode
+     * @param resultBuilder
+     */
+    private void processForumLinks(@Nullable Element forumLinkNode, @NotNull BilingualQueryResultBuilder resultBuilder) {
+        if (forumLinkNode == null) {
+            LOGGER.warn("Couldn't find forum link node");
+            return;
+        }
+
+        ExternalContentBuilder builder = new ExternalContentBuilder();
+
+
+        for (Iterator<Element> iterator = forumLinkNode.getAllElements().iterator(); iterator.hasNext(); ) {
+            Element linkNode = iterator.next();
+
+            if (StringUtils.equals(linkNode.tag().getName(), "link")) {
+                builder = new ExternalContentBuilder();
+                String link = linkNode.attr("href");
+
+                if (StringUtils.isNotBlank(link)) {
+                    try {
+                        builder.setLink(new URL("https://dict.leo.org/" + link));
+                        linkNode = iterator.next();
+                    } catch (MalformedURLException e) {
+                        LOGGER.warn("Illegal URL for forum entry", e);
+                    }
+                } else {
+                    LOGGER.warn("Skipping link node with empty href attribute");
+                    continue;
+                }
+            }
+
+            if (StringUtils.equals(linkNode.tag().getName(), "subject")) {
+                String subject = linkNode.text();
+                linkNode = iterator.next();
+                if (StringUtils.isNotBlank(subject)) {
+                    builder.setTitle("leo.org forum: " + subject);
+                } else {
+                    LOGGER.warn("Skipping blank subject node");
+                    continue;
+                }
+            }
+
+            if (StringUtils.equals(linkNode.tag().getName(), "teaser")) {
+                String teaser = linkNode.text();
+                if (StringUtils.isNotBlank(teaser)) {
+                    builder.setDescription(teaser);
+                    resultBuilder.addExternalContent(builder.build());
+                } else {
+                    LOGGER.warn("Skipping blank teaser node");
+                }
+            }
+
+        }
     }
 
     /**
@@ -401,16 +459,9 @@ public class LeoEngine implements SearchEngine {
     }
 
     /**
-     * Resolve the internal query configuration for the leo.org backend.
-     * Currently supported:
-     * <ul>
-     * <li>German - English</li>
-     * <li>German - French</li>
-     * <li>German - Spanish</li>
-     * <li>German - Italian</li>
-     * <li>German - Chinese</li>
-     * <li>German - Russian</li>
-     * </ul>
+     * Resolve the internal query configuration for the leo.org backend. Currently supported: <ul> <li>German -
+     * English</li> <li>German - French</li> <li>German - Spanish</li> <li>German - Italian</li> <li>German -
+     * Chinese</li> <li>German - Russian</li> </ul>
      *
      * @param inputLanguage
      * @param outputLanguage
