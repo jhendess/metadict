@@ -11,7 +11,6 @@ To deploy the application directly from maven on a running Wildfly instance, you
 mvn clean package wildfly:deploy \
             -Dwildfly.username=[USERNAME] \
             -Dwildfly.password=[PASSWORD] \
-            -Dmetadict-web.warName=metadict \
-            -Dwildfly.deployment.filename=metadict.war
+            -Dmetadict-assembly.finalName=metadict-demo
 ```
 Where `[USERNAME]` is the name of the deployment user on the target server and `[PASSWORD]` is the password of the deployment user.

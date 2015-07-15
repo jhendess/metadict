@@ -27,20 +27,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>metadict</artifactId>
-        <groupId>org.xlrnet.metadict</groupId>
+        <artifactId>engine-parent</artifactId>
+        <groupId>org.xlrnet.metadict.engines</groupId>
         <version>0.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>metadict-engine-nobordbok</artifactId>
+    <artifactId>nobordbok-engine</artifactId>
+    <name>Metadict NobOrdbok Engine</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.xlrnet.metadict</groupId>
-            <artifactId>metadict-api</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
-        </dependency>
         <!-- jsoup HTML parser library @ http://jsoup.org/ -->
         <dependency>
             <groupId>org.jsoup</groupId>

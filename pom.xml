@@ -28,24 +28,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
     <groupId>org.xlrnet.metadict</groupId>
     <artifactId>metadict</artifactId>
-    <packaging>pom</packaging>
     <version>0.3.0-SNAPSHOT</version>
+    <name>Metadict Parent</name>
+
+    <packaging>pom</packaging>
+
     <modules>
         <module>metadict-core</module>
         <module>metadict-api</module>
         <module>metadict-web</module>
-        <module>metadict-engine-dummy</module>
-        <module>metadict-engine-leo</module>
-        <module>metadict-engine-heinzelnisse</module>
-        <module>metadict-engine-nobordbok</module>
+        <module>metadict-engines</module>
+        <module>metadict-assembly</module>
     </modules>
 
     <properties>
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        <wildfly.version>8.1.0.Final</wildfly.version>
+        <wildfly.version>8.2.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
         <jackson.version>2.5.2</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -125,7 +127,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
@@ -137,36 +138,14 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!-- Wildfly deployment -->
+            <!-- Skip Wildfly deployment in parent pom-->
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.0.1.Final</version>
                 <configuration>
                     <skip>true</skip>
-                    <!-- Skip deployment in parent pom -->
                 </configuration>
-            </plugin>
-            <!-- Code coverage with jacoco -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.2.201409121644</version>
-                <executions>
-                    <execution>
-                        <id>prepare-unit-tests</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>coverage-package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
