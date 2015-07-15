@@ -207,13 +207,20 @@ public class EngineRegistry {
     @PostConstruct
     void initialize() {
         logger.info("Registering search providers...");
+        int failedProviders = 0;
+
         for (SearchProvider searchProvider : searchProviderInstances) {
 
             try {
                 registerSearchProvider(searchProvider);
             } catch (Exception e) {
                 logger.error("Registering search provider {} failed", searchProvider.getClass().getCanonicalName(), e);
+                failedProviders++;
             }
+        }
+
+        if (failedProviders > 0) {
+            logger.warn("Registration failed on {} {}", failedProviders, failedProviders > 1 ? "providers" : "provider");
         }
     }
 
