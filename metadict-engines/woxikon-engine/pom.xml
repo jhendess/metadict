@@ -27,32 +27,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>metadict</artifactId>
-        <groupId>org.xlrnet.metadict</groupId>
+        <artifactId>engine-parent</artifactId>
+        <groupId>org.xlrnet.metadict.engines</groupId>
         <version>0.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.xlrnet.metadict.engines</groupId>
-    <artifactId>engine-parent</artifactId>
-    <name>Metadict Engines Parent</name>
-
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>leo-engine</module>
-        <module>heinzelnisse-engine</module>
-        <module>nobordbok-engine</module>
-        <module>woxikon-engine</module>
-    </modules>
+    <artifactId>woxikon-engine</artifactId>
+    <name>Metadict Woxikon Engine</name>
 
     <dependencies>
-        <!-- Metadict API -->
+        <!-- jsoup HTML parser library @ http://jsoup.org/ -->
         <dependency>
-            <groupId>org.xlrnet.metadict</groupId>
-            <artifactId>metadict-api</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.1</version>
         </dependency>
     </dependencies>
+
 
 </project>
