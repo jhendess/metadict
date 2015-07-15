@@ -38,8 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * The enum {@link Language} is used to describe the language of a word. Each language must have at least an identifier
  * and a human-readable displayName. Although it is not necessary, it is recommended to use an ISO 639-1-compliant
- * string as identifier. <br/>
- * A language can also contain an optional dialect String.
+ * string as identifier. <br/> A language can also contain an optional dialect String.
  */
 public class Language {
 
@@ -48,56 +47,86 @@ public class Language {
     private static final ConcurrentMap<String, Language> languageCache = new ConcurrentHashMap<>();
 
     /**
-     * Preconfigured language for english.
+     * Preconfigured language for English.
      */
-    public static final Language ENGLISH = forSimpleLanguage("en", "english");
+    public static final Language ENGLISH = forSimpleLanguage("en", "English");
 
     /**
-     * Preconfigured language for german.
+     * Preconfigured language for German.
      */
-    public static final Language GERMAN = forSimpleLanguage("de", "german");
+    public static final Language GERMAN = forSimpleLanguage("de", "German");
 
     /**
      * Preconfigured language for french.
      */
-    public static final Language FRENCH = forSimpleLanguage("fr", "french");
+    public static final Language FRENCH = forSimpleLanguage("fr", "French");
 
     /**
-     * Preconfigured language for spanish.
+     * Preconfigured language for Spanish.
      */
-    public static final Language SPANISH = forSimpleLanguage("es", "spanish");
+    public static final Language SPANISH = forSimpleLanguage("es", "Spanish");
 
     /**
-     * Preconfigured language for italian.
+     * Preconfigured language for Italian.
      */
-    public static final Language ITALIAN = forSimpleLanguage("it", "italian");
+    public static final Language ITALIAN = forSimpleLanguage("it", "Italian");
 
     /**
-     * Preconfigured language for chinese.
+     * Preconfigured language for Chinese.
      */
-    public static final Language CHINESE = forSimpleLanguage("cn", "chinese");
+    public static final Language CHINESE = forSimpleLanguage("cn", "Chinese");
 
     /**
-     * Preconfigured language for russian.
+     * Preconfigured language for Russian.
      */
-    public static final Language RUSSIAN = forSimpleLanguage("ru", "russian");
+    public static final Language RUSSIAN = forSimpleLanguage("ru", "Russian");
 
     /**
-     * Preconfigured language for norwegian (either bokmål or nynorsk).
+     * Preconfigured language for Norwegian (either bokmål or nynorsk).
      */
-    public static final Language NORWEGIAN = forSimpleLanguage("no", "norwegian");
+    public static final Language NORWEGIAN = forSimpleLanguage("no", "Norwegian");
+
+    /**
+     * Preconfigured language for Swedish.
+     */
+    public static final Language SWEDISH = forSimpleLanguage("se", "Swedish");
+
+    /**
+     * Preconfigured language for Finnish.
+     */
+    public static final Language FINNISH = forSimpleLanguage("fi", "Finnish");
+
+    /**
+     * Preconfigured language for Turkish.
+     */
+    public static final Language TURKISH = forSimpleLanguage("tr", "Turkish");
+
+    /**
+     * Preconfigured language for Dutch.
+     */
+    public static final Language DUTCH = forSimpleLanguage("nl", "Dutch");
+
+    /**
+     * Preconfigured language for Portuguese.
+     */
+    public static final Language PORTUGUESE = forSimpleLanguage("pt", "Portuguese");
+
+    /**
+     * Preconfigured language for Polish.
+     */
+    public static final Language POLISH = forSimpleLanguage("pl", "Polish");
 
     private static final ConcurrentMap<String, Language> dialectCache = new ConcurrentHashMap<>();
 
     /**
-     * Preconfigured language for norwegian bokmål.
+     * Preconfigured language for Norwegian bokmål.
      */
-    public static final Language NORWEGIAN_BOKMÅL = forSimpleLanguage("no", "norwegian", "bo", "bokmål");
+    public static final Language NORWEGIAN_BOKMÅL = forSimpleLanguage("no", "Norwegian", "bo", "Bokmål");
 
     /**
-     * Preconfigured language for norwegian nynorsk.
+     * Preconfigured language for Norwegian nynorsk.
      */
-    public static final Language NORWEGIAN_NYNORSK = forSimpleLanguage("no", "norwegian", "ny", "nynorsk");
+    public static final Language NORWEGIAN_NYNORSK = forSimpleLanguage("no", "Norwegian", "ny", "Nynorsk");
 
     private final String identifier;
 
@@ -115,9 +144,9 @@ public class Language {
     }
 
     /**
-     * Either creates a new language with the given identifier or returns the already registered language object for
-     * the given identifier. The identifier will always be converted to lower-case and is therefore case-insensitive.
-     * Valid identifiers consist of only characters (a to z) and must be at least one character long.
+     * Either creates a new language with the given identifier or returns the already registered language object for the
+     * given identifier. The identifier will always be converted to lower-case and is therefore case-insensitive. Valid
+     * identifiers consist of only characters (a to z) and must be at least one character long.
      *
      * @param identifier
      *         The identifier for the language. It is recommended to use an ISO 639-1-compliant string. See format
@@ -168,8 +197,8 @@ public class Language {
     /**
      * Either creates a new language with the given identifier and given dialect identifier or returns the already
      * registered language object for the given identifiers. The identifiers will always be converted to lower-case and
-     * are therefore case-insensitive.
-     * Valid identifiers consist of only characters (a to z) and must be at least one character long.
+     * are therefore case-insensitive. Valid identifiers consist of only characters (a to z) and must be at least one
+     * character long.
      *
      * @param identifier
      *         The identifier for the language. It is recommended to use an ISO 639-1-compliant string. See format
