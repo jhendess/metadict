@@ -129,8 +129,6 @@ public class LeoEngine implements SearchEngine {
         Connection targetConnection = buildTargetConnection(queryInput, inputLanguage, outputLanguage);
         Document doc = targetConnection.get();
 
-        LOGGER.debug(doc.html());
-
         BilingualQueryResultBuilder builder = processDocument(doc);
 
         return builder.build();

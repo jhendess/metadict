@@ -173,7 +173,7 @@ public class Language {
      *
      * @param identifier
      *         the language object that is currently associated with the given identifier.
-     * @return
+     * @return Either the resulting language or null if nothing found.
      */
     @Nullable
     public static Language getExistingLanguageById(String identifier) {

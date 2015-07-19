@@ -91,6 +91,8 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                 if (queryStepResult == null) {
                     LOGGER.debug("Cache miss on query step {}", currentQueryStep);
                     queryStepResult = queryStepResultCache.get(currentQueryStep, () -> accessStorageService(currentQueryStep));
+                } else {
+                    LOGGER.debug("Cache hit on query step {}", currentQueryStep);
                 }
             } catch (ExecutionException | UncheckedExecutionException e) {
                 LOGGER.error("Query step {} failed", currentQueryStep, e);
