@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import com.google.common.base.MoreObjects;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -124,5 +125,17 @@ public class AutoTestCaseImpl implements AutoTestCase {
     @Override
     public String getTestQueryString() {
         return testQueryString;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("testQueryString", testQueryString)
+                .add("monolingualTargetLanguage", monolingualTargetLanguage)
+                .add("expectedMonolingualQueryResult", expectedMonolingualQueryResult)
+                .add("expectedBilingualResults", expectedBilingualResults)
+                .add("bilingualTargetDictionary", bilingualTargetDictionary)
+                .toString();
     }
 }

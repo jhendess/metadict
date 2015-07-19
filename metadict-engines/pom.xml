@@ -53,6 +53,37 @@
             <artifactId>metadict-api</artifactId>
             <version>0.3.0-SNAPSHOT</version>
         </dependency>
+        <!-- Metadict Core test dependency (for integration tests) -->
+        <dependency>
+            <groupId>org.xlrnet.metadict</groupId>
+            <artifactId>metadict-core</artifactId>
+            <version>0.3.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
+import org.xlrnet.metadict.api.engine.AutoTestSuiteBuilder;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -52,6 +53,29 @@ public class AutoTestManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoTestManager.class);
 
     final Map<SearchEngine, AutoTestSuite> engineAutoTestSuiteMap = new HashMap<>();
+
+    /**
+     * Run a specific {@link AutoTestCase} for an external {@link SearchEngine}. By calling this method, you can
+     * explicitly execute a single auto test case without having to start a full Metadict instance. This may be handy
+     * when you want to execute unit tests on your engine. The result will be a complete {@link AutoTestReport}. Note,
+     * that you auto test case may contain both a monolingual and bilingual test case.
+     *
+     * @param searchEngine
+     *         The engine to test. The supplied auto test case will be called with this engine.
+     * @param autoTestCase
+     *         The auto test case to execute.
+     * @return The report with all results from this test.
+     */
+    public AutoTestReport runExternalAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+        validateTestCase(autoTestCase);
+
+        AutoTestSuite autoTestSuiteWrapper = new AutoTestSuiteBuilder().addAutoTestCase(autoTestCase).build();
+        AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
+
+        internalRunAutoTestSuite(searchEngine, reportBuilder, autoTestSuiteWrapper);
+
+        return reportBuilder.build();
+    }
 
     /**
      * Register the given {@link AutoTestSuite} as a test suite for the given {@link SearchEngine}. This will validate
@@ -86,8 +110,8 @@ public class AutoTestManager {
     }
 
     /**
-     * Run the registered test cases for a given engine. This will create a new {@link AutoTestReportBuilder} and
-     * return it after completion.
+     * Run the registered test cases for a given engine. This will create a new {@link AutoTestReportBuilder} and return
+     * it after completion.
      *
      * @param searchEngine
      *         The search engine to test.
@@ -114,7 +138,12 @@ public class AutoTestManager {
         }
 
         AutoTestSuite engineTestSuite = engineAutoTestSuiteMap.get(searchEngine);
+        internalRunAutoTestSuite(searchEngine, reportBuilder, engineTestSuite);
 
+        return reportBuilder;
+    }
+
+    private void internalRunAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestReportBuilder reportBuilder, @NotNull AutoTestSuite engineTestSuite) {
         int testCount = 1;
 
         LOGGER.info("Starting auto tests for engine {} ...", searchEngine.getClass().getCanonicalName());
@@ -135,7 +164,6 @@ public class AutoTestManager {
             }
 
         }
-        return reportBuilder;
     }
 
     @NotNull
@@ -266,7 +294,6 @@ public class AutoTestManager {
         checkNotNull(testCase.getBilingualTargetDictionary(), "Target dictionary may not be null");
         checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
     }
-
 
     private class ResultData {
 

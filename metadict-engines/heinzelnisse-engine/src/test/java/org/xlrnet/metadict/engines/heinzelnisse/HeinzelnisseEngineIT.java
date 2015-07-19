@@ -22,25 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.autotest;
+package org.xlrnet.metadict.engines.heinzelnisse;
+
+import org.junit.runners.Parameterized;
+import org.xlrnet.metadict.core.autotest.AutoSearchEngineIntegrationTest;
 
 /**
- * This exception will be thrown if an {@link org.xlrnet.metadict.api.engine.AutoTestCase} failed because of not
- * finding an expected object inside the actual result set.
+ * Integration tests for {@link HeinzelnisseEngine}.
  */
-public class AutoTestAssertionException extends Exception {
+public class HeinzelnisseEngineIT extends AutoSearchEngineIntegrationTest {
 
-    private final Object expectedObject;
-
-    /**
-     * Constructs a new exception with the given expected object that should have been inside the actual result set.
-     */
-    public AutoTestAssertionException(Object expectedObject) {
-        super("AutoTestCase failed: expected object could not be found in actual result - expected object: " + expectedObject.toString());
-        this.expectedObject = expectedObject;
+    @Parameterized.Parameters
+    public static Iterable<Object[]> data() throws Exception {
+        return prepareProvider(new HeinzelnisseEngineProvider());
     }
 
-    public Object getExpectedObject() {
-        return expectedObject;
-    }
 }

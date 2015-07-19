@@ -83,13 +83,15 @@ public class LeoEngine implements SearchEngine {
     private static final String SECTION_NAME_ATTRIBUTE = "sctName";
 
     /**
-     * Strips various kinds of whitespace at the beginning and at the end of the input string.
+     * Strips various kinds of whitespace at the beginning and at the end of the input string and none-blank characters
+     * from the middle of the string.
      *
      * @param str
      *         The input string.
      * @return Stripped string.
      */
-    private static String stripWhitespace(String str) {
+    private static String cleanWhitespace(String str) {
+        StringUtils.replaceChars(str, "\u00A0\n\t\r", "");
         return StringUtils.strip(str, " \u00A0\n\t\r");
     }
 
@@ -148,7 +150,7 @@ public class LeoEngine implements SearchEngine {
         if (pluralIndex < 0) return null;
         String pluralSubstring = StringUtils.substring(inputString, pluralIndex + 4);
         String substringTrim = StringUtils.substringBefore(pluralSubstring, "-");
-        return stripWhitespace(substringTrim);
+        return cleanWhitespace(substringTrim);
     }
 
     private Connection buildTargetConnection(String searchString, Language inputLanguage, Language outputLanguage) {
@@ -180,7 +182,7 @@ public class LeoEngine implements SearchEngine {
     private String extractAbbreviationString(String representation) {
         String substring = StringUtils.substringBetween(representation, "[abbr.:", "]");
         if (substring != null)
-            return stripWhitespace(substring);
+            return cleanWhitespace(substring);
         return null;
     }
 
@@ -213,12 +215,12 @@ public class LeoEngine implements SearchEngine {
     private String extractGeneralForm(Element side) {
         Elements elements = side.getElementsByTag("word");
 
-        // TODO: Try to detect the correct form with "(sth.)" -> code below is not working
+        // TODO: Try to detect the correct form with "(sth.)" -> code below is not completely working (!)
 
         /*if (elements.size() > 1) {
             for (Element element : elements) {
                 String elementText = element.text();
-                if ((elementText.contains("(") && elementText.contains(")")) || elementText.contains())
+                if (elementText.length() > elements.first().text().length())
                     return elementText;
             }
         }*/
@@ -355,7 +357,7 @@ public class LeoEngine implements SearchEngine {
         DictionaryObjectBuilder dictionaryObjectBuilder = new DictionaryObjectBuilder();
 
         // Extract general form:
-        String generalForm = extractGeneralForm(side);
+        String generalForm = cleanWhitespace(extractGeneralForm(side));
 
         // Extract language:
         String languageIdentifier = side.attr("lang");
@@ -375,10 +377,10 @@ public class LeoEngine implements SearchEngine {
                     if (StringUtils.startsWithIgnoreCase(elementText, "pl.:")) {
                         pluralForm[0] = StringUtils.substringAfter(elementText, ".:");
                         if (StringUtils.isNotBlank(pluralForm[0]))
-                            dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, stripWhitespace(pluralForm[0]));
+                            dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, cleanWhitespace(pluralForm[0]));
                     } else if (isValidDescriptionHtml(elementHtml)) {
                         elementText = StringUtils.strip(elementText, "-");
-                        dictionaryObjectBuilder.setDescription(stripWhitespace(elementText));
+                        dictionaryObjectBuilder.setDescription(cleanWhitespace(elementText));
                     }
                 });
 
@@ -429,7 +431,7 @@ public class LeoEngine implements SearchEngine {
             Language sideLanguage = Language.getExistingLanguageById(side.attr("lang"));
 
             for (Element word : side.getElementsByTag("word")) {
-                String wordText = word.text();
+                String wordText = cleanWhitespace(word.text());
                 engineQueryResultBuilder.addSimilarRecommendation(
                         new DictionaryObjectBuilder()
                                 .setLanguage(sideLanguage)
@@ -449,9 +451,9 @@ public class LeoEngine implements SearchEngine {
                 if (tensesArray.length != 2) {
                     LOGGER.warn("Tenses array {} has unexpected length {} instead of 2", tensesArray, tensesArray.length);
                 }
-                dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, stripWhitespace(tensesArray[0]));
+                dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, cleanWhitespace(tensesArray[0]));
                 if (tensesArray.length >= 2)
-                    dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, stripWhitespace(tensesArray[1]));
+                    dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, cleanWhitespace(tensesArray[1]));
             }
         }
     }

@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,5 +77,14 @@ public class BilingualQueryResultImpl extends AbstractQueryResult implements Bil
     @Override
     public int hashCode() {
         return Objects.hashCode(entries, similarRecommendations, externalContents);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("entries", entries)
+                .add("similarRecommendations", super.getSimilarRecommendations())
+                .add("externalContents", super.getExternalContents())
+                .toString();
     }
 }

@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Iterator;
 
 /**
@@ -45,5 +47,12 @@ public class AutoTestSuiteImpl implements AutoTestSuite{
     @Override
     public Iterator<AutoTestCase> iterator() {
         return autoTestCases.iterator();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("autoTestCases", autoTestCases)
+                .toString();
     }
 }
