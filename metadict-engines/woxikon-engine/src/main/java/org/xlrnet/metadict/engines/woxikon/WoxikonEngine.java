@@ -181,7 +181,7 @@ public class WoxikonEngine implements SearchEngine {
                     .filter(e -> e.hasClass("default") || e.hasClass("alt"))
                     .forEach(e -> processEntry(queryString, e, resultBuilder, sourceLanguage, targetLanguage));
         } else {
-            LOGGER.debug("Translation table for {} -> {} with query \"{}\" is null", sourceLanguage.getIdentifier(), targetLanguage.getIdentifier(), queryString);
+            LOGGER.debug("Translation table for {} -> {} with query \"{}\" is null", languageIdentifier, targetLanguage.getIdentifier(), queryString);
         }
     }
 
@@ -212,7 +212,8 @@ public class WoxikonEngine implements SearchEngine {
         objectBuilder.setLanguage(language);
 
         // Extract entry text:
-        String generalForm = element.ownText() + element.getElementsByTag("a").first().text();
+        String context = StringUtils.substringBefore(element.text(), element.getElementsByTag("a").first().text());
+        String generalForm = context + element.getElementsByTag("a").first().text();
         objectBuilder.setGeneralForm(StringUtils.strip(generalForm));
 
         // Extract description:
@@ -293,11 +294,5 @@ public class WoxikonEngine implements SearchEngine {
         String encodedQueryString = URLEncoder.encode(queryString, "UTF-8");
         return new URL(BASE_URL + BASE_URL_PER_LANGUAGE.get(language) + "/" + encodedQueryString + ".php");
     }
-
-
-    // TODO: Implement generic bilingual query
-
-
-    // TODO: Implement german monolingual query
 
 }

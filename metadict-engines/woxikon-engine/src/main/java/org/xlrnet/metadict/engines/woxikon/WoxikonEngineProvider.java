@@ -26,15 +26,15 @@ package org.xlrnet.metadict.engines.woxikon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
+import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.metadata.EngineDescription;
 import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
 import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
+import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a
@@ -52,7 +52,55 @@ public class WoxikonEngineProvider implements SearchProvider {
     @Nullable
     @Override
     public AutoTestSuite getAutoTestSuite() throws Exception {
-        return null;
+        return new AutoTestSuiteBuilder()
+                .addAutoTestCase(new AutoTestCaseBuilder()
+                        .setTestQueryString("essen")
+                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-en", true))
+                        .setExpectedBilingualResults(
+                                (BilingualQueryResult) new BilingualQueryResultBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
+                                                .setEntryType(EntryType.VERB)
+                                                .setInputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("essen")
+                                                        .setDescription("bestimmt")
+                                                        .setLanguage(Language.GERMAN)
+                                                        .build())
+                                                .setOutputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("to eat")
+                                                        .setDescription("bestimmt")
+                                                        .setLanguage(Language.ENGLISH)
+                                                        .build())
+                                                .build())
+                                        .addSimilarRecommendation(new DictionaryObjectBuilder()
+                                                .setGeneralForm("Rasen")
+                                                .setLanguage(Language.GERMAN).build())
+                                        .addSimilarRecommendation(new DictionaryObjectBuilder()
+                                                .setGeneralForm("vessel")
+                                                .setLanguage(Language.ENGLISH).build())
+                                        .build())
+                        .build())
+                .addAutoTestCase(new AutoTestCaseBuilder()
+                        .setTestQueryString("Tier")
+                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("se-de", true))
+                        .setExpectedBilingualResults(
+                                new BilingualQueryResultBuilder()
+                                        .addBilingualEntry(new BilingualEntryBuilder()
+                                                .setEntryType(EntryType.NOUN)
+                                                .setInputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("reinrassiges Tier")
+                                                        .setDescription("Tiere")
+                                                        .setLanguage(Language.GERMAN)
+                                                        .build())
+                                                .setOutputObject(new DictionaryObjectBuilder()
+                                                        .setGeneralForm("rasdjur")
+                                                        .setDescription("Tiere")
+                                                        .setGrammaticalGender(GrammaticalGender.NEUTER)
+                                                        .setLanguage(Language.SWEDISH)
+                                                        .build())
+                                                .build())
+                                        .build())
+                        .build())
+                .build();
     }
 
     /**
@@ -86,7 +134,7 @@ public class WoxikonEngineProvider implements SearchProvider {
                 .setProvidesMonolingualEntries(true)
                 .setProvidesAlternatives(true)
                 .setProvidesExternalContent(false)
-                .setSupportsAutoTest(false)
+                .setSupportsAutoTest(true)
                 .setSupportsFuzzySearch(true)
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.FRENCH, true))
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.SPANISH, true))
@@ -100,7 +148,6 @@ public class WoxikonEngineProvider implements SearchProvider {
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.PORTUGUESE, true))
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.POLISH, true))
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.NORWEGIAN, true))
-                .addSupportedLexicographicLanguage(Language.GERMAN)
                 .build();
     }
 
