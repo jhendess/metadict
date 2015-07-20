@@ -81,7 +81,7 @@ public class WoxikonEngineProvider implements SearchProvider {
                         .build())
                 .addAutoTestCase(new AutoTestCaseBuilder()
                         .setTestQueryString("Tier")
-                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-se", true))
+                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-sv", true))
                         .setExpectedBilingualResults(
                                 new BilingualQueryResultBuilder()
                                         .addBilingualEntry(new BilingualEntryBuilder()

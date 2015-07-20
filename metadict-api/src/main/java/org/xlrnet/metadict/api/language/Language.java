@@ -89,7 +89,7 @@ public class Language {
     /**
      * Preconfigured language for Swedish.
      */
-    public static final Language SWEDISH = forSimpleLanguage("se", "Swedish");
+    public static final Language SWEDISH = forSimpleLanguage("sv", "Swedish");
 
     /**
      * Preconfigured language for Finnish.

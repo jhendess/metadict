@@ -168,8 +168,6 @@ public class WoxikonEngine implements SearchEngine {
     private void processTranslationTable(@NotNull String queryString, @NotNull Document document, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage, @NotNull Language targetLanguage) {
         // Find main table (german to X)
         String languageIdentifier = sourceLanguage.getIdentifier().toLowerCase();
-        if (sourceLanguage.equals(Language.SWEDISH))
-            languageIdentifier = "sv";
 
         Element translationTable = document.getElementById("gridTranslations-" + languageIdentifier);
 
