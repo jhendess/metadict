@@ -36,12 +36,17 @@ import java.util.Objects;
  */
 public class SimilarityUtils {
 
+    private static final SimilarityStatistics ONE = new SimilarityStatistics(1, 1);
+
+    private static final SimilarityStatistics ZERO = new SimilarityStatistics(0, 0);
+
     /**
      * Calculate the similarity between two objects by counting how many fields with the same name in both objects have
-     * the same value. For each field that exists in both objects, {@link java.util.Objects#equals(Object, Object)} will
+     * the same value. For each field that exists in both objects, {@link java.util.Objects#equals(Object, Object)}
+     * will
      * be called. The returned similarity is the number of equal fields divided by the number of fields the two objects
      * have in common.
-     *
+     * <p>
      * Special behaviour:
      * <ul>
      * <li>If both objects are of type {@link CharSequence}, then {@link java.util.Objects#equals(Object,
@@ -60,35 +65,58 @@ public class SimilarityUtils {
      * returned.
      */
     public static double fieldSimilarity(@Nullable Object object1, @Nullable Object object2) throws IllegalAccessException {
+        SimilarityStatistics similarityStatistics = calculateFieldSimilarity(object1, object2, false);
+        return similarityStatistics.getRatio();
+    }
+
+    public static double deepFieldSimilarity(@Nullable Object object1, @Nullable Object object2) throws IllegalAccessException {
+        SimilarityStatistics similarityStatistics = calculateFieldSimilarity(object1, object2, true);
+        return similarityStatistics.getRatio();
+    }
+
+    private static SimilarityStatistics calculateFieldSimilarity(@Nullable Object object1, @Nullable Object object2, boolean invokeRecursively) throws IllegalAccessException {
         if (object1 == null && object2 == null)
-            return 1;
+            return ONE;
 
         if (object1 == null || object2 == null)
-            return 0;
+            return ZERO;
 
         if (object1 instanceof Object[] || object2 instanceof Object[])
             throw new IllegalArgumentException("Arrays cannot be compared");
 
+        if (object1 instanceof Number || object2 instanceof Number)
+            return Objects.equals(object1, object2) ? ONE : ZERO;
+
         if (object1 instanceof String && object2 instanceof String)
-            return Objects.equals(object1, object2) ? 1.0 : 0.0;
+            return Objects.equals(object1, object2) ? ONE : ZERO;
 
         Map<String, Object> fieldValueMap1 = getFieldNamesAndValues(object1);
         Map<String, Object> fieldValueMap2 = getFieldNamesAndValues(object2);
 
-        double equal = 0, sameFieldNames = 0;
+        double equalFieldValues = 0, sameFieldNames = 0;
 
         for (Map.Entry<String, Object> entry : fieldValueMap1.entrySet()) {
             String key = entry.getKey();
+            Object value1 = entry.getValue();
+            Object value2 = fieldValueMap2.get(key);
 
             if (fieldValueMap2.containsKey(key)) {
                 sameFieldNames++;
-                if (Objects.equals(entry.getValue(), fieldValueMap2.get(key))) {
-                    equal++;
+
+                if (invokeRecursively) {
+                    SimilarityStatistics similarityStatistics = calculateFieldSimilarity(value1, value2, true);
+
+                    sameFieldNames += similarityStatistics.equalFieldValues;
+                    equalFieldValues += similarityStatistics.equalFieldValues;
+
+                } else if (Objects.equals(value1, value2)) {
+                    equalFieldValues++;
                 }
+
             }
         }
 
-        return (sameFieldNames > 0) ? (equal / sameFieldNames) : 0;
+        return new SimilarityStatistics(sameFieldNames, equalFieldValues);
     }
 
     private static Map<String, Object> getFieldNamesAndValues(final Object valueObj) throws IllegalArgumentException, IllegalAccessException {
@@ -103,6 +131,23 @@ public class SimilarityUtils {
             fieldMap.put(fieldName, fieldObject);
         }
         return fieldMap;
+    }
+
+    private static class SimilarityStatistics {
+
+        final double sameFieldNames;
+
+        final double equalFieldValues;
+
+        public SimilarityStatistics(double sameFieldNames, double equalFieldValues) {
+            this.sameFieldNames = sameFieldNames;
+            this.equalFieldValues = equalFieldValues;
+        }
+
+        public double getRatio() {
+            return (sameFieldNames > 0) ? (equalFieldValues / sameFieldNames) : 0;
+        }
+
     }
 
 }
