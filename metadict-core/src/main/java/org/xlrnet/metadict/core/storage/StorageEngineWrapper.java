@@ -24,33 +24,35 @@
 
 package org.xlrnet.metadict.core.storage;
 
-import com.rits.cloning.Cloner;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.storage.*;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
+import org.xlrnet.metadict.api.storage.StorageEngine;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageShutdownException;
 
 import java.io.Serializable;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * In-memory implementation of a {@link StorageService}. All stored data will only be stored in-memory and not on an
- * external backend. Thus all stored data will be lost upon destroying the service object.
- * <p>
- * The internal implementation is based on a MultiKeyMap.
+ * Wrapper class for controlling storage engine behaviour from {@link StorageServiceFactory}.
  */
-public class InMemoryStorage implements StorageEngine {
+class StorageEngineWrapper implements StorageEngine {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(InMemoryStorage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageEngineWrapper.class);
 
-    private final MultiKeyMap backingMap = new MultiKeyMap();
+    protected final StorageEngine wrappedEngine;
 
-    private Cloner cloner = Cloner.standard();
+    private boolean shutdown = false;
+
+    protected boolean isShutdown() {
+        return shutdown;
+    }
+
+    protected StorageEngineWrapper(@NotNull StorageEngine storageEngine) {
+        this.wrappedEngine = storageEngine;
+    }
 
     /**
      * Store a new value of any type in the requested namespace with a given key. This method will throw a {@link
@@ -76,19 +78,8 @@ public class InMemoryStorage implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException {
-        checkArguments(namespace, key);
-        checkNotNull(value);
-
-        if (backingMap.containsKey(namespace, key)) {
-            LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
-            throw new StorageOperationException("Creation failed: key already exists", namespace, key);
-        }
-        else {
-            LOGGER.debug("Created key {} in namespace {}", key, namespace);
-            backingMap.put(namespace, key, cloneValue(value));
-        }
-
-        return value;
+        checkInternalState();
+        return wrappedEngine.create(namespace, key, value);
     }
 
     /**
@@ -107,13 +98,8 @@ public class InMemoryStorage implements StorageEngine {
      */
     @Override
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
-        checkArguments(namespace, key);
-
-        if (!backingMap.containsKey(namespace, key))
-            return false;
-
-        backingMap.remove(namespace, key);
-        return true;
+        checkInternalState();
+        return wrappedEngine.delete(namespace, key);
     }
 
     /**
@@ -141,14 +127,8 @@ public class InMemoryStorage implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
-        checkArguments(namespace, key);
-
-        if (!backingMap.containsKey(namespace, key))
-            return Optional.empty();
-
-        T value = clazz.cast(backingMap.get(namespace, key));
-
-        return Optional.of(cloneValue(value));
+        checkInternalState();
+        return wrappedEngine.read(namespace, key, clazz);
     }
 
     /**
@@ -171,15 +151,8 @@ public class InMemoryStorage implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException {
-        checkArguments(namespace, key);
-        checkNotNull(newValue);
-
-        if (!backingMap.containsKey(namespace, key))
-            throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
-
-        this.backingMap.put(namespace, key, cloneValue(newValue));
-
-        return newValue;
+        checkInternalState();
+        return wrappedEngine.update(namespace, key, newValue);
     }
 
     /**
@@ -192,19 +165,15 @@ public class InMemoryStorage implements StorageEngine {
      */
     @Override
     public void shutdown() {
-        // Do nothing
+        checkInternalState();
+        LOGGER.info("Shutting down storage engine {} ...", wrappedEngine.getClass().getCanonicalName());
+        wrappedEngine.shutdown();
+        shutdown = true;
+        LOGGER.info("Storage engine {} has been shut down", wrappedEngine.getClass().getCanonicalName());
     }
 
-    /**
-     * Make sure that both namespace and key are neither null nor blank.
-     */
-    private void checkArguments(@NotNull String namespace, @NotNull String key) {
-        checkArgument(StringUtils.isNotBlank(namespace), "Illegal namespace name");
-        checkArgument(StringUtils.isNotBlank(key), "Illegal key name");
+    private void checkInternalState() {
+        if (shutdown)
+            throw new StorageShutdownException();
     }
-
-    private <T extends Serializable> T cloneValue(@NotNull T value) {
-        return cloner.deepClone(value);
-    }
-
 }

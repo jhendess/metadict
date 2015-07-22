@@ -62,6 +62,6 @@ public interface StorageServiceProvider {
      * @return A new instance of the internal {@link StorageService} that must be configured according to the supplied
      * map.
      */
-    StorageService createNewStorageService(Map<String, String> configuration);
+    StorageEngine createNewStorageService(Map<String, String> configuration);
 
 }

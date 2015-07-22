@@ -36,6 +36,9 @@ import java.util.Optional;
  * <p>
  * When connecting to an external storage service, the stored data will be available globally for each connected client.
  * This may be helpful for implementing persistent data storage across multiple Metadict instances.
+ * <p>
+ * Note, that this interface is only for accessing the storage. You have to implement {@link StorageEngine} interface,
+ * which extends this interface.
  */
 public interface StorageService {
 

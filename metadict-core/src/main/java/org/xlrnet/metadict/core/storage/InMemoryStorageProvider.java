@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.storage;
 
+import org.xlrnet.metadict.api.storage.StorageEngine;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
 
@@ -66,7 +67,7 @@ public class InMemoryStorageProvider implements StorageServiceProvider {
      * map.
      */
     @Override
-    public StorageService createNewStorageService(Map<String, String> configuration) {
+    public StorageEngine createNewStorageService(Map<String, String> configuration) {
         return new InMemoryStorage();
     }
 }
