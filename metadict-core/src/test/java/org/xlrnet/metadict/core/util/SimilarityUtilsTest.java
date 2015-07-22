@@ -26,6 +26,8 @@ package org.xlrnet.metadict.core.util;
 
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -107,6 +109,21 @@ public class SimilarityUtilsTest {
     public void testDeepFieldSimilarity_String_Object() throws Exception {
         TestClass testObject1 = new TestClass("TEST", 1, null);
         assertEquals(0, SimilarityUtils.deepFieldSimilarity(testObject1, "TEST"), 0.0);
+    }
+
+    @Test
+    public void testDeepFieldSimilarity_Boolean_different() throws Exception {
+        assertEquals(0, SimilarityUtils.deepFieldSimilarity(Boolean.TRUE, Boolean.FALSE), 0.0);
+    }
+
+    @Test
+    public void testDeepFieldSimilarity_Boolean_same() throws Exception {
+        assertEquals(0, SimilarityUtils.deepFieldSimilarity(Boolean.TRUE, Boolean.FALSE), 0.0);
+    }
+
+    @Test
+    public void testDeepFieldSimilarity_nested() throws Exception {
+        assertEquals(1, SimilarityUtils.deepFieldSimilarity(Optional.empty(), Optional.empty()), 0.0);
     }
 
     @Test

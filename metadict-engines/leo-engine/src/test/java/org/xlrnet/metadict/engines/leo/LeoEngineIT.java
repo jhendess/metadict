@@ -25,12 +25,12 @@
 package org.xlrnet.metadict.engines.leo;
 
 import org.junit.runners.Parameterized;
-import org.xlrnet.metadict.core.autotest.AutoSearchEngineIntegrationTest;
+import org.xlrnet.metadict.core.autotest.AbstractAutoSearchEngineIntegrationTest;
 
 /**
  * Integration tests for {@link LeoEngine}.
  */
-public class LeoEngineIT extends AutoSearchEngineIntegrationTest {
+public class LeoEngineIT extends AbstractAutoSearchEngineIntegrationTest {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data() throws Exception {

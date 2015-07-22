@@ -34,6 +34,7 @@ import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.core.util.SimilarityUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Collection;
@@ -143,29 +144,6 @@ public class AutoTestManager {
         return reportBuilder;
     }
 
-    private void internalRunAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestReportBuilder reportBuilder, @NotNull AutoTestSuite engineTestSuite) {
-        int testCount = 1;
-
-        LOGGER.info("Starting auto tests for engine {} ...", searchEngine.getClass().getCanonicalName());
-        for (@NotNull AutoTestCase autoTestCase : engineTestSuite) {
-
-            if (autoTestCase.getExpectedBilingualResults().isPresent() && autoTestCase.getBilingualTargetDictionary().isPresent()) {
-                LOGGER.info("Running bilingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
-                AutoTestResult autoTestResult = internalRunBilingualAutoTestCase(searchEngine, autoTestCase);
-                reportBuilder.addAutoTestResult(autoTestResult);
-                testCount++;
-            }
-
-            if (autoTestCase.getExpectedMonolingualResults().isPresent() && autoTestCase.getMonolingualTargetLanguage().isPresent()) {
-                LOGGER.info("Running monolingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
-                AutoTestResult autoTestResult = internalRunMonolingualAutoTestCase(searchEngine, autoTestCase);
-                reportBuilder.addAutoTestResult(autoTestResult);
-                testCount++;
-            }
-
-        }
-    }
-
     @NotNull
     AutoTestResult internalRunBilingualAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         BilingualQueryResult expectedResults = autoTestCase.getExpectedBilingualResults().get();
@@ -272,8 +250,8 @@ public class AutoTestManager {
 
     /**
      * Check if the given collection of actual result objects contains all specified expected objects. If any expected
-     * object is not inside the actual collection, a {@link AutoTestAssertionException} will be thrown. The validation
-     * was successful if no exception was thrown.
+     * object is not inside the actual collection, a {@link AutoTestAssertionException} will be thrown containing the
+     * object that is most similar to the expected. The validation was successful if no exception was thrown.
      *
      * @param expectedObjects
      *         Collection of expected objects.
@@ -284,8 +262,24 @@ public class AutoTestManager {
      */
     void validateActualObjects(Collection<?> expectedObjects, Collection<?> actualObjects) throws AutoTestAssertionException {
         for (Object expectedEntry : expectedObjects) {
-            if (!actualObjects.contains(expectedEntry))
-                throw new AutoTestAssertionException(expectedEntry);
+
+            boolean containsEntry = false;
+            double bestSimilarity = 0.0;
+            Object mostSimilar = null;
+
+            for (Object actualObject : actualObjects) {
+                double similarity = SimilarityUtils.deepFieldSimilarity(expectedEntry, actualObject);
+
+                if (similarity == 1.0) {
+                    containsEntry = true;
+                    break;
+                } else if (similarity > bestSimilarity) {
+                    mostSimilar = actualObject;
+                }
+            }
+
+            if (!containsEntry)
+                throw new AutoTestAssertionException(expectedEntry, mostSimilar);
         }
     }
 
@@ -293,6 +287,29 @@ public class AutoTestManager {
         checkNotNull(testCase.getExpectedBilingualResults(), "Expected result set may not be null");
         checkNotNull(testCase.getBilingualTargetDictionary(), "Target dictionary may not be null");
         checkNotNull(testCase.getTestQueryString(), "Test query string may not be null");
+    }
+
+    private void internalRunAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestReportBuilder reportBuilder, @NotNull AutoTestSuite engineTestSuite) {
+        int testCount = 1;
+
+        LOGGER.info("Starting auto tests for engine {} ...", searchEngine.getClass().getCanonicalName());
+        for (@NotNull AutoTestCase autoTestCase : engineTestSuite) {
+
+            if (autoTestCase.getExpectedBilingualResults().isPresent() && autoTestCase.getBilingualTargetDictionary().isPresent()) {
+                LOGGER.info("Running bilingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
+                AutoTestResult autoTestResult = internalRunBilingualAutoTestCase(searchEngine, autoTestCase);
+                reportBuilder.addAutoTestResult(autoTestResult);
+                testCount++;
+            }
+
+            if (autoTestCase.getExpectedMonolingualResults().isPresent() && autoTestCase.getMonolingualTargetLanguage().isPresent()) {
+                LOGGER.info("Running monolingual test {} for engine {}...", testCount, searchEngine.getClass().getCanonicalName());
+                AutoTestResult autoTestResult = internalRunMonolingualAutoTestCase(searchEngine, autoTestCase);
+                reportBuilder.addAutoTestResult(autoTestResult);
+                testCount++;
+            }
+
+        }
     }
 
     private class ResultData {

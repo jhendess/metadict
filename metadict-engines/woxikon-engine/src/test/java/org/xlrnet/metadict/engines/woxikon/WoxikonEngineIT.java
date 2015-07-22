@@ -25,12 +25,12 @@
 package org.xlrnet.metadict.engines.woxikon;
 
 import org.junit.runners.Parameterized;
-import org.xlrnet.metadict.core.autotest.AutoSearchEngineIntegrationTest;
+import org.xlrnet.metadict.core.autotest.AbstractAutoSearchEngineIntegrationTest;
 
 /**
  * Integration tests for {@link WoxikonEngine}.
  */
-public class WoxikonEngineIT extends AutoSearchEngineIntegrationTest {
+public class WoxikonEngineIT extends AbstractAutoSearchEngineIntegrationTest {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data() throws Exception {

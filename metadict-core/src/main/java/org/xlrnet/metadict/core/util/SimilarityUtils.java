@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Stack;
 
 /**
  * Helper class with static methods for calculating the similarity between two objects.
@@ -46,9 +47,9 @@ public class SimilarityUtils {
      * be called. The returned similarity is the number of equal fields divided by the number of fields the two objects
      * have in common.
      * <p>
-     * Special behaviour: <ul> <li>If both objects are of type {@link CharSequence}, then {@link
-     * java.util.Objects#equals(Object, Object)} will be called with the two parameters directly.</li> <li>If any of the
-     * two objects is an array, an {@link IllegalArgumentException} will be thrown.</li> </ul>
+     * Special behaviour: <ul> <li>If both objects are of type {@link CharSequence}, then {@link Objects#equals(Object,
+     * Object)} will be called with the two parameters directly.</li> <li>If any of the two objects is an array, an
+     * {@link IllegalArgumentException} will be thrown.</li> </ul>
      * <p>
      * This method does <i>not</i> compare the two objects recursively!
      *
@@ -61,7 +62,7 @@ public class SimilarityUtils {
      * returned.
      */
     public static double fieldSimilarity(@Nullable Object object1, @Nullable Object object2) {
-        return calculateFieldSimilarity(object1, object2, false).getRatio();
+        return calculateFieldSimilarity(object1, object2, false, null).getRatio();
     }
 
     /**
@@ -72,9 +73,11 @@ public class SimilarityUtils {
      * have in common. An atomic field is a field that is either null or a subclass of either {@link Number} or {@link
      * CharSequence}.
      * <p>
-     * Special behaviour: <ul> <li>If both objects are of type {@link CharSequence}, then {@link
-     * java.util.Objects#equals(Object, Object)} will be called with the two parameters directly.</li> <li>If any of the
-     * two objects is an array, an {@link IllegalArgumentException} will be thrown.</li> </ul>
+     * Special behaviour: <ul> <li>If both objects are of type {@link CharSequence}, then {@link Objects#equals(Object,
+     * Object)} will be called with the two parameters directly.</li> <li>If any of the two objects is an array, an
+     * {@link IllegalArgumentException} will be thrown.</li> <li>Whenever an object loop has been detected, {@link
+     * Objects#equals(Object, Object)} will be called on the current field to prevent a {@link StackOverflowError}</li>
+     * </ul>
      * <p>
      *
      * @param object1
@@ -86,10 +89,10 @@ public class SimilarityUtils {
      * returned.
      */
     public static double deepFieldSimilarity(@Nullable Object object1, @Nullable Object object2) {
-        return calculateFieldSimilarity(object1, object2, true).getRatio();
+        return calculateFieldSimilarity(object1, object2, true, new Stack<>()).getRatio();
     }
 
-    private static SimilarityStatistics calculateFieldSimilarity(@Nullable Object object1, @Nullable Object object2, boolean invokeRecursively) {
+    private static SimilarityStatistics calculateFieldSimilarity(@Nullable Object object1, @Nullable Object object2, boolean invokeRecursively, @Nullable Stack<Object> recursiveStack) {
         if (object1 == null && object2 == null)
             return ONE;
 
@@ -100,6 +103,9 @@ public class SimilarityUtils {
             throw new IllegalArgumentException("Arrays cannot be compared");
 
         if (object1 instanceof Number || object2 instanceof Number)
+            return Objects.equals(object1, object2) ? ONE : ZERO;
+
+        if (object1 instanceof Boolean || object2 instanceof Boolean)
             return Objects.equals(object1, object2) ? ONE : ZERO;
 
         if (object1 instanceof CharSequence || object2 instanceof CharSequence)
@@ -120,7 +126,19 @@ public class SimilarityUtils {
                     sameFieldNames++;
 
                 if (invokeRecursively) {
-                    SimilarityStatistics similarityStatistics = calculateFieldSimilarity(value1, value2, true);
+                    SimilarityStatistics similarityStatistics;
+
+                    assert recursiveStack != null;
+                    recursiveStack.push(value1);
+
+                    // Try to detect potential stack overflow
+                    if (recursiveStack.contains(value1)) {
+                        similarityStatistics = calculateFieldSimilarity(value1, value2, false, recursiveStack);
+                    } else {
+                        similarityStatistics = calculateFieldSimilarity(value1, value2, true, recursiveStack);
+                    }
+
+                    recursiveStack.pop();
 
                     sameFieldNames += similarityStatistics.sameFieldNames;
                     equalFieldValues += similarityStatistics.equalFieldValues;

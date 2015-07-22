@@ -45,7 +45,7 @@ import java.util.List;
  * Naming the test class like <i>*IT</i> makes sure that it is recognized as an integration test and runs only when
  * invoking the Maven build with the <code>verify</code> goal.
  * <p>
- * To write your own test suite, inherit from {@link AutoSearchEngineIntegrationTest} and implement a static method that
+ * To write your own test suite, inherit from {@link AbstractAutoSearchEngineIntegrationTest} and implement a static method that
  * returns an {@link Iterable} of {@link Object} arrays. This method must then be annotated with JUnit's {@link
  * org.junit.runners.Parameterized.Parameters} annotation and return the value of {@link
  * #prepareProvider(SearchProvider)}. Give a new instance of {@link SearchProvider} as the parameter of this method and
@@ -62,7 +62,7 @@ import java.util.List;
  * </pre>
  */
 @RunWith(Parameterized.class)
-public abstract class AutoSearchEngineIntegrationTest {
+public abstract class AbstractAutoSearchEngineIntegrationTest {
 
     @Parameterized.Parameter(value = 0)
     public SearchEngine searchEngine;
@@ -103,6 +103,13 @@ public abstract class AutoSearchEngineIntegrationTest {
             if (!autoTestResult.isSuccessful()) {
                 System.err.println("Failure during test case execution: " + testCase);
                 System.err.println("Actual result: " + autoTestResult.getActualEngineQueryResult().get());
+
+                if (autoTestResult.getThrownException().get() instanceof AutoTestAssertionException) {
+                    AutoTestAssertionException testAssertionException = (AutoTestAssertionException) autoTestResult.getThrownException().get();
+                    System.err.println("Expected object:     " + testAssertionException.getExpectedObject());
+                    System.err.println("Most similar object: " + testAssertionException.getMostSimilarObject());
+                }
+
                 throw autoTestResult.getThrownException().get();
             }
         }

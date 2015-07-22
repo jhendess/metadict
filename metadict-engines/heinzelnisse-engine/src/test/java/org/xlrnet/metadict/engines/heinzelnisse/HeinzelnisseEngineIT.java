@@ -25,12 +25,12 @@
 package org.xlrnet.metadict.engines.heinzelnisse;
 
 import org.junit.runners.Parameterized;
-import org.xlrnet.metadict.core.autotest.AutoSearchEngineIntegrationTest;
+import org.xlrnet.metadict.core.autotest.AbstractAutoSearchEngineIntegrationTest;
 
 /**
  * Integration tests for {@link HeinzelnisseEngine}.
  */
-public class HeinzelnisseEngineIT extends AutoSearchEngineIntegrationTest {
+public class HeinzelnisseEngineIT extends AbstractAutoSearchEngineIntegrationTest {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data() throws Exception {

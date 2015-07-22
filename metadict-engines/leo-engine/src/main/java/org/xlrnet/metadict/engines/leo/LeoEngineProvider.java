@@ -120,6 +120,7 @@ public class LeoEngineProvider implements SearchProvider {
                                                 .setEntryType(EntryType.ADVERB)
                                                 .setInputObject(new DictionaryObjectBuilder()
                                                         .setGeneralForm("indoors")
+                                                        .setDescription("adv.")
                                                         .setLanguage(Language.ENGLISH)
                                                         .build())
                                                 .setOutputObject(new DictionaryObjectBuilder()
@@ -173,8 +174,8 @@ public class LeoEngineProvider implements SearchProvider {
     }
 
     /**
-     * Return a {@link FeatureSet} object that contains information about which features the underlying engine
-     * supports. This includes e.g. the supported languages of the engine.
+     * Return a {@link FeatureSet} object that contains information about which features the underlying engine supports.
+     * This includes e.g. the supported languages of the engine.
      *
      * @return an object that contains information about which features the underlying engine supports.
      */

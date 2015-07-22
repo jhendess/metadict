@@ -30,17 +30,26 @@ package org.xlrnet.metadict.core.autotest;
  */
 public class AutoTestAssertionException extends Exception {
 
+    private static final long serialVersionUID = 7185096601320559944L;
+
     private final Object expectedObject;
+
+    private final Object mostSimilar;
 
     /**
      * Constructs a new exception with the given expected object that should have been inside the actual result set.
      */
-    public AutoTestAssertionException(Object expectedObject) {
-        super("AutoTestCase failed: expected object could not be found in actual result - expected object: " + expectedObject.toString());
+    public AutoTestAssertionException(Object expectedObject, Object mostSimilarObject) {
+        super("AutoTestCase failed: expected object could not be found in actual result - most similar: " + mostSimilarObject + " - expected: " + expectedObject);
         this.expectedObject = expectedObject;
+        this.mostSimilar = mostSimilarObject;
     }
 
     public Object getExpectedObject() {
         return expectedObject;
+    }
+
+    public Object getMostSimilarObject() {
+        return mostSimilar;
     }
 }
