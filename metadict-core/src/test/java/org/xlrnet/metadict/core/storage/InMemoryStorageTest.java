@@ -131,6 +131,36 @@ public class InMemoryStorageTest implements Serializable {
     }
 
     @Test
+    public void testContains_existing() throws Exception {
+        storageService.put("namespace", "key", this.dummyStorageObject);
+        assertEquals(true, storageService.containsKey("namespace", "key"));
+    }
+
+    @Test
+    public void testContains_deleted() throws Exception {
+        storageService.put("namespace", "key", this.dummyStorageObject);
+        storageService.delete("namespace", "key");
+        assertEquals(false, storageService.containsKey("namespace", "key"));
+    }
+
+    @Test
+    public void testPut_existing() throws Exception {
+        storageService.create("namespace", "key", this.dummyStorageObject);
+        storageService.update("namespace", "key", this.dummyStorageObject2);
+        Optional<DummyStorageObject> read = storageService.read("namespace", "key", DummyStorageObject.class);
+        assertTrue(read.isPresent());
+        assertEquals(read.get(), this.dummyStorageObject2);
+    }
+
+    @Test
+    public void testPut_notExisting() throws Exception {
+        storageService.put("namespace", "key", this.dummyStorageObject);
+        Optional<DummyStorageObject> read = storageService.read("namespace", "key", DummyStorageObject.class);
+        assertTrue(read.isPresent());
+        assertNotSame("Object should have been clone, but wasn't", read.get(), this.dummyStorageObject);
+    }
+
+    @Test
     public void testUpdate_existing() throws Exception {
         storageService.create("namespace", "key", this.dummyStorageObject);
         storageService.update("namespace", "key", this.dummyStorageObject2);

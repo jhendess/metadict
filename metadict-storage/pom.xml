@@ -23,8 +23,8 @@
   ~ THE SOFTWARE.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>metadict</artifactId>
@@ -32,59 +32,32 @@
         <version>0.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>war</packaging>
 
-    <artifactId>metadict-web</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
-    <name>Metadict Webapp</name>
+    <artifactId>storage-parent</artifactId>
+    <groupId>org.xlrnet.metadict.storage</groupId>
+    <name>Metadict Storage Parent</name>
+
+    <packaging>pom</packaging>
+
+    <modules>
+
+        <module>mapdb-storage</module>
+    </modules>
 
     <dependencies>
-        <!-- Metadict dependencies -->
+        <!-- Metadict API -->
         <dependency>
             <groupId>org.xlrnet.metadict</groupId>
             <artifactId>metadict-api</artifactId>
             <version>${metadict.version}</version>
         </dependency>
+        <!-- Metadict Core test dependency (for integration tests) -->
         <dependency>
             <groupId>org.xlrnet.metadict</groupId>
             <artifactId>metadict-core</artifactId>
             <version>${metadict.version}</version>
-        </dependency>
-        <!-- Weld dependencies -->
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-api</artifactId>
-            <version>2.2.SP4</version>
-        </dependency>
-        <!-- JAX-RS RESTEasy -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <version>${resteasy.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>${resteasy.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Jackson for JAX RS -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-        </dependency>
-        <!-- Hamcrest testing -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

@@ -69,6 +69,46 @@ public interface StorageService {
     <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException;
 
     /**
+     * Put a new value of any type in the requested namespace with a given key. This method does not need a previously
+     * created key in the specified namespace, thus calling {@link #create(String, String, Serializable)} doesn't need
+     * to be called before. Use {@link #create(String, String, Serializable)} if you want to make sure, that the new key
+     * does not exist.
+     * <p>
+     * Upon saving, all private attributes will be extracted and stored in the storage backend. It depends on the
+     * concrete backend implementation, whether the given class must be {@link java.io.Serializable}. However, it is
+     * recommended to store only serializable class to avoid problems.
+     *
+     * @param namespace
+     *         The name of the namespace in which the key should be placed. Must be a non-empty and non-null string.
+     * @param key
+     *         The key for the new object. Must be a non-empty and non-null string.
+     * @param value
+     *         The object that should be stored under the given key in the given namespace.
+     * @param <T>
+     *         The class of the value to store - must be serializable.
+     * @return The input object if it could be saved - but never null. In case of any error situations, an exception
+     * will be thrown.
+     * @throws StorageBackendException
+     *         Will be thrown if any backend errors occurred.
+     */
+    @NotNull
+    <T extends Serializable> T put(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException;
+
+    /**
+     * Checks if a value is associated with the specified key in the specified namespace. A key is defined as specified
+     * if a value under the given key was either previously created with {@link #create(String, String, Serializable)}
+     * or {@link #put(String, String, Serializable)} and has not been deleted with {@link #delete(String, String)}.
+     *
+     * @param namespace
+     *         The name of the namespace in which the key should be placed. Must be a non-empty and non-null string.
+     * @param key
+     *         The key for the new object. Must be a non-empty and non-null string.
+     * @return True if a value with the specified key exists, otherwise false.
+     * @throws StorageBackendException
+     */
+    boolean containsKey(@NotNull String namespace, @NotNull String key) throws StorageBackendException;
+
+    /**
      * Delete the associated value for a given key in the given namespace. After deleting, the associated value will not
      * be accessible anymore by read or update operations.
      *
@@ -132,5 +172,6 @@ public interface StorageService {
      */
     @NotNull
     <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException;
+
 
 }

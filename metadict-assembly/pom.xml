@@ -43,7 +43,6 @@
         <metadict-assembly.finalName>${project.build.finalName}</metadict-assembly.finalName>
     </properties>
 
-
     <build>
         <plugins>
             <plugin>

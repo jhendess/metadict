@@ -42,6 +42,7 @@
         <module>metadict-web</module>
         <module>metadict-engines</module>
         <module>metadict-assembly</module>
+        <module>metadict-storage</module>
     </modules>
 
     <properties>
@@ -51,6 +52,7 @@
         <resteasy.version>3.0.9.Final</resteasy.version>
         <jackson.version>2.5.2</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <metadict.version>${project.version}</metadict.version>
     </properties>
 
 

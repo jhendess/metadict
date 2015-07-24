@@ -82,7 +82,7 @@ public class StorageServiceFactory {
             try {
                 registerStorageService(storageServiceProvider);
             } catch (Exception e) {
-                LOGGER.warn("Registering storage service provider from class {} has failed", storageServiceProvider.getClass().getCanonicalName(), e);
+                LOGGER.warn("Registering storage service provider from class '{}' has failed", storageServiceProvider.getClass().getCanonicalName(), e);
             }
         }
         validateStorageProviders();
@@ -91,7 +91,7 @@ public class StorageServiceFactory {
 
     @PreDestroy
     public void shutdown() {
-        LOGGER.info("Shutting down {} storage engine instances ...", instantiatedStorageEngines.size());
+        LOGGER.info("Shutting down '{}' storage engine instances ...", instantiatedStorageEngines.size());
 
         int successfulShutdowns = 0;
 
@@ -101,7 +101,7 @@ public class StorageServiceFactory {
                     storageEngine.shutdown();
                 successfulShutdowns++;
             } catch (Exception e) {
-                LOGGER.error("Shutting down storage engine {} failed", storageEngine.wrappedEngine.getClass().getCanonicalName(), e);
+                LOGGER.error("Shutting down storage engine '{}' failed", storageEngine.wrappedEngine.getClass().getCanonicalName(), e);
             }
         }
 
@@ -150,7 +150,7 @@ public class StorageServiceFactory {
         defaultStorageServiceName = CommonUtils.getProperty(STORAGE_CONFIG_FILE, "storage.default");
 
         if (!storageServiceMap.containsKey(defaultStorageServiceName)) {
-            LOGGER.error("Default storage service provider {} could not be found", defaultStorageServiceName);
+            LOGGER.error("Default storage service provider '{}' could not be found", defaultStorageServiceName);
             throw new Error("Default storage service provider could not be found");
         }
     }
@@ -161,9 +161,9 @@ public class StorageServiceFactory {
         for (String key : properties.keySet()) {
             if (StringUtils.startsWith(key, "storage." + defaultStorageServiceName + ".")) {
                 String configKey = StringUtils.removeStart(key, "storage." + defaultStorageServiceName + ".");
-                String configValue = properties.get(configKey);
+                String configValue = properties.get(key);
                 defaultStorageConfigMap.put(configKey, configValue);
-                LOGGER.debug("Detected configuration key {} with value {}", configKey, configValue);
+                LOGGER.debug("Detected configuration key '{}' with value '{}'", configKey, configValue);
             }
         }
     }
@@ -175,12 +175,12 @@ public class StorageServiceFactory {
         }
 
         if (storageServiceMap.containsKey(identifier)) {
-            LOGGER.error("Duplicated storage service identifier {} encountered - check provider classes {} and {}",
+            LOGGER.error("Duplicated storage service identifier '{}' encountered - check provider classes '{}' and '{}'",
                     identifier, storageServiceProvider.getClass().getCanonicalName(), storageServiceMap.get(identifier).getClass().getCanonicalName());
         }
 
         storageServiceMap.put(identifier, storageServiceProvider);
-        LOGGER.info("Registered storage provider service {}", identifier);
+        LOGGER.info("Registered storage provider service '{}'", identifier);
     }
 
     /**
@@ -191,7 +191,7 @@ public class StorageServiceFactory {
      */
     @NotNull
     private StorageEngineWrapper createNewDefaultStorageService() {
-        LOGGER.info("Creating new default storage service for {} ...", defaultStorageServiceName);
+        LOGGER.info("Creating new default storage service for '{}' ...", defaultStorageServiceName);
         StorageServiceProvider provider = storageServiceMap.get(defaultStorageServiceName);
         StorageEngineWrapper storageService = internalInstantiateStorageService(provider, defaultStorageConfigMap);
         LOGGER.info("Created new default storage service");
@@ -203,7 +203,7 @@ public class StorageServiceFactory {
             StorageEngine newStorageService = provider.createNewStorageService(storageConfigurationMap);
             StorageEngineWrapper storageEngineWrapper = new StorageEngineWrapper(newStorageService);
             this.instantiatedStorageEngines.add(storageEngineWrapper);
-            LOGGER.debug("Successfully instantiated new storage service with class {} and configuration {}", newStorageService.getClass().getCanonicalName(), storageConfigurationMap);
+            LOGGER.debug("Successfully instantiated new storage service with class '{}' and configuration '{}'", newStorageService.getClass().getCanonicalName(), storageConfigurationMap);
             return storageEngineWrapper;
         } catch (Exception e) {
             LOGGER.error("Fatal error during storage service instantiation", e);
