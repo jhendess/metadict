@@ -53,6 +53,36 @@ public class InMemoryStorage implements StorageEngine {
     private Cloner cloner = Cloner.standard();
 
     /**
+     * Count how many keys are currently registered in the specified namespace and return the result.
+     * A key must be listed in the returned value after it was created and may not be shown anymore after it had been
+     * deleted.
+     *
+     * @param namespace
+     *         The name of the namespace in which the keys lie. Must be a non-empty and non-null string.
+     * @return The number of how many keys are currently registered in the given namespace.
+     * @throws StorageOperationException
+     *         Will be thrown when trying to create a new object with an already used key.
+     */
+    @Override
+    public long countKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
+        return 0;
+    }
+
+    /**
+     * Count how many namespaces are currently registered in the store and return the result. The definition of  "in
+     * the store" may differ between different implementations. In general, a namespace should be listed once there is
+     * at least one key stored inside it.
+     *
+     * @return The number of how many namespaces are currently registered in the store.
+     * @throws StorageOperationException
+     *         Will be thrown when trying to create a new object with an already used key.
+     */
+    @Override
+    public long countNamespaces() throws StorageBackendException {
+        return 0;
+    }
+
+    /**
      * Store a new value of any type in the requested namespace with a given key. This method will throw a {@link
      * StorageBackendException} if there is already an object with the same key in the same namespace.
      * <p>
@@ -164,6 +194,35 @@ public class InMemoryStorage implements StorageEngine {
 
         backingMap.remove(namespace, key);
         return true;
+    }
+
+    /**
+     * Return an {@link Iterable} of Strings with all currently registered keys in a specified namespace. A key must be
+     * listed in the returned value after it was created and may not be shown anymore after it had been deleted.
+     *
+     * @param namespace
+     *         The name of the namespace in which the keys lie. Must be a non-empty and non-null string.
+     * @return An {@link Iterable} of Strings with all currently registered keys in the specified namespace.
+     * @throws StorageBackendException
+     *         Will be thrown if any backend errors occurred.
+     */
+    @Override
+    public Iterable<String> listKeysInNamespace(@NotNull String namespace) {
+        return null;
+    }
+
+    /**
+     * Return an {@link Iterable} of Strings with all currently registered namespaces in the store. The definition of
+     * "in the store" may differ between different implementations. In general, a namespace should be listed  once
+     * there is at least one key stored inside it.
+     *
+     * @return An {@link Iterable} of Strings with all currently registered namespaces in the store.
+     * @throws StorageBackendException
+     *         Will be thrown if any backend errors occurred.
+     */
+    @Override
+    public Iterable<String> listNamespaces() throws StorageBackendException {
+        return null;
     }
 
     /**
