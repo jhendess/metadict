@@ -54,8 +54,7 @@ public class MapdbStorageEngineFactory {
 
     private static final String PROPERTY_KEY_ASYNC_WRITE = "enableAsyncWrite";
 
-
-    public static StorageEngine fromConfiguration(Map<String, String> configuration) {
+    public StorageEngine fromConfiguration(Map<String, String> configuration) {
         DBMaker dbMaker = createDBMakerInstance(configuration);
 
         String enableMmapFileProperty = configuration.get(PROPERTY_KEY_MMAP);
@@ -76,10 +75,11 @@ public class MapdbStorageEngineFactory {
             LOGGER.info("Enabling asynchronous write operations");
             dbMaker.asyncWriteEnable();
         }
+
         return new MapdbStorageEngine(dbMaker);
     }
 
-    public static DBMaker createDBMakerInstance(Map<String, String> configuration) {
+    private DBMaker createDBMakerInstance(Map<String, String> configuration) {
         String modeProperty = configuration.get(PROPERTY_KEY_OPERATION_MODE);
         String filepathProperty = configuration.get(PROPERTY_KEY_DB_FILE);
 
@@ -92,7 +92,7 @@ public class MapdbStorageEngineFactory {
         switch (operationMode) {
             case FILE:
                 Path path = Paths.get(filepathProperty);
-                LOGGER.info("Using MapDB database file: {}", path.getFileName());
+                LOGGER.info("Using MapDB database file '{}'", path.toAbsolutePath().toString());
                 return DBMaker.newFileDB(path.toFile());
             case TEMPORARY:
                 return DBMaker.newMemoryDB();

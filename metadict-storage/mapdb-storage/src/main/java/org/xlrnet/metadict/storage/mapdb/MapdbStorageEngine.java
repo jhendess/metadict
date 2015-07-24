@@ -29,11 +29,13 @@ import org.jetbrains.annotations.NotNull;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageEngine;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageShutdownException;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -53,10 +55,13 @@ public class MapdbStorageEngine implements StorageEngine {
 
     private final DBMaker dbMaker;
 
+    private final Serializer[] serializers;
+
     private final DB db;
 
-    protected MapdbStorageEngine(DBMaker dbMaker) {
+    protected MapdbStorageEngine(DBMaker dbMaker, Serializer... serializers) {
         this.dbMaker = dbMaker;
+        this.serializers = serializers;
         this.db = dbMaker.make();
     }
 
@@ -74,6 +79,35 @@ public class MapdbStorageEngine implements StorageEngine {
         db.commit();
         LOGGER.info("Closing database ...");
         db.close();
+    }
+
+    /**
+     * Count how many keys are currently registered in the specified namespace and return the result. A key must be
+     * listed in the returned value after it was created and may not be shown anymore after it had been deleted.
+     *
+     * @param namespace
+     *         The name of the namespace in which the keys lie. Must be a non-empty and non-null string.
+     * @return The number of how many keys are currently registered in the given namespace.
+     * @throws StorageOperationException
+     *         Will be thrown when trying to create a new object with an already used key.
+     */
+    @Override
+    public long countKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
+        return internalOpenNamespace(namespace).sizeLong();
+    }
+
+    /**
+     * Count how many namespaces are currently registered in the store and return the result. The definition of  "in the
+     * store" may differ between different implementations. In general, a namespace should be listed once there is at
+     * least one key stored inside it.
+     *
+     * @return The number of how many namespaces are currently registered in the store.
+     * @throws StorageOperationException
+     *         Will be thrown when trying to create a new object with an already used key.
+     */
+    @Override
+    public long countNamespaces() throws StorageBackendException {
+        return db.getAll().size();
     }
 
     /**
@@ -100,11 +134,20 @@ public class MapdbStorageEngine implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException {
-        HTreeMap<Object, Object> namespaceMap = internalOpenNamespace(namespace);
+        checkArguments(namespace, key, value);
 
+        HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
 
+        if (namespaceMap.containsKey(key)) {
+            LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
+            throw new StorageOperationException("Creation failed: key already exists", namespace, key);
+        }
+        else {
+            LOGGER.debug("Created key {} in namespace {}", key, namespace);
+            namespaceMap.put(key, value);
+        }
 
-        return null;
+        return value;
     }
 
     /**
@@ -131,7 +174,12 @@ public class MapdbStorageEngine implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> T put(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException {
-        return null;
+        checkArguments(namespace, key, value);
+
+        internalOpenNamespace(namespace).put(key, value);
+        LOGGER.debug("Put new value to key {} in namespace {}", key, namespace);
+
+        return value;
     }
 
     /**
@@ -148,7 +196,9 @@ public class MapdbStorageEngine implements StorageEngine {
      */
     @Override
     public boolean containsKey(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
-        return false;
+        checkArguments(namespace, key);
+
+        return internalOpenNamespace(namespace).containsKey(key);
     }
 
     /**
@@ -167,7 +217,40 @@ public class MapdbStorageEngine implements StorageEngine {
      */
     @Override
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
-        return false;
+        checkArguments(namespace, key);
+
+        return internalOpenNamespace(namespace).remove(namespace, key);
+    }
+
+    /**
+     * Return an {@link Iterable} of Strings with all currently registered keys in a specified namespace. A key must be
+     * listed in the returned value after it was created and may not be shown anymore after it had been deleted.
+     *
+     * @param namespace
+     *         The name of the namespace in which the keys lie. Must be a non-empty and non-null string.
+     * @return An {@link Iterable} of Strings with all currently registered keys in the specified namespace.
+     * @throws StorageBackendException
+     *         Will be thrown if any backend errors occurred.
+     */
+    @Override
+    public Iterable<String> listKeysInNamespace(@NotNull String namespace) {
+        checkArgument(StringUtils.isNotBlank(namespace), "Illegal namespace name");
+
+        return internalOpenNamespace(namespace).keySet();
+    }
+
+    /**
+     * Return an {@link Iterable} of Strings with all currently registered namespaces in the store. The definition of
+     * "in the store" may differ between different implementations. In general, a namespace should be listed  once there
+     * is at least one key stored inside it.
+     *
+     * @return An {@link Iterable} of Strings with all currently registered namespaces in the store.
+     * @throws StorageBackendException
+     *         Will be thrown if any backend errors occurred.
+     */
+    @Override
+    public Iterable<String> listNamespaces() throws StorageBackendException {
+        return db.getAll().keySet();
     }
 
     /**
@@ -195,7 +278,12 @@ public class MapdbStorageEngine implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
-        return null;
+        checkArguments(namespace, key);
+
+        HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
+
+        T readValue = clazz.cast(namespaceMap.get(key));
+        return Optional.ofNullable(readValue);
     }
 
     /**
@@ -218,7 +306,16 @@ public class MapdbStorageEngine implements StorageEngine {
     @NotNull
     @Override
     public <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException {
-        return null;
+        checkArguments(namespace, key, newValue);
+
+        HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
+
+        if (!namespaceMap.containsKey(key))
+            throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
+
+        namespaceMap.put(key, newValue);
+
+        return newValue;
     }
 
     /**
@@ -228,16 +325,31 @@ public class MapdbStorageEngine implements StorageEngine {
      *         The name of the namespace.
      * @return The internal map for accessing the namespace.
      */
-    private HTreeMap<Object, Object> internalOpenNamespace(@NotNull String namespace) {
-        return db.getHashMap(namespace);
+    private HTreeMap<String, Object> internalOpenNamespace(@NotNull String namespace) {
+        if (db.exists(namespace))
+            return db.getHashMap(namespace);
+        LOGGER.debug("Opening namespace '{}'", namespace);
+        DB.HTreeMapMaker mapMaker = db.createHashMap(namespace);
+
+        for (Serializer serializer : serializers)
+            mapMaker.valueSerializer(serializer);
+
+        return mapMaker.make();
+    }
+
+    /**
+     * Make sure that both namespace and key are neither null nor blank and the value is not null.
+     */
+    private void checkArguments(@NotNull String namespace, @NotNull String key, @NotNull Object value) {
+        checkArguments(namespace, key);
+        checkNotNull(value, "Value may not be null");
     }
 
     /**
      * Make sure that both namespace and key are neither null nor blank.
      */
-    private void checkArguments(@NotNull String namespace, @NotNull String key, @NotNull String value) {
+    private void checkArguments(@NotNull String namespace, @NotNull String key) {
         checkArgument(StringUtils.isNotBlank(namespace), "Illegal namespace name");
         checkArgument(StringUtils.isNotBlank(key), "Illegal key name");
-        checkNotNull(value, "Value may not be null");
     }
 }

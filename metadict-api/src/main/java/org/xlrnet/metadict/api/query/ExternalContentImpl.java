@@ -36,6 +36,8 @@ import java.net.URL;
  */
 public class ExternalContentImpl implements ExternalContent {
 
+    private static final long serialVersionUID = -3405350644385979888L;
+
     private final String title;
 
     private final String description;

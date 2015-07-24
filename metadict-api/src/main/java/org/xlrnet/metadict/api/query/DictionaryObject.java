@@ -24,15 +24,16 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * The class {@link DictionaryObject} represents a part of an {@link BilingualEntry}. It effectively represents the
@@ -40,7 +41,7 @@ import java.util.Optional;
  * like the grammatical gender, a description, possible abbreviations and a special domain where the word/phrase is
  * primarily used. It provides also additional fields like hyphenations, meanings and synonyms.
  */
-public interface DictionaryObject {
+public interface DictionaryObject extends Serializable {
 
     /**
      * Returns an abbreviation for this object.

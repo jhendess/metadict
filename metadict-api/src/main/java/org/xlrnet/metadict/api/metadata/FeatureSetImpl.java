@@ -37,6 +37,8 @@ import java.util.Collection;
  */
 public class FeatureSetImpl implements FeatureSet {
 
+    private static final long serialVersionUID = 4593476472125853031L;
+
     /**
      * A collection of dictionaries the engine supports for bilingual lookups. This can be e.g. English-English or
      * German-English but also English-German.

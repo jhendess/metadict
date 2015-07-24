@@ -24,12 +24,14 @@
 
 package org.xlrnet.metadict.api.metadata;
 
+import java.io.Serializable;
+
 /**
  * The interface {@link EngineDescription} is used to describe a search engine in a human readable format. Therefore the
  * description contains information like e.g. the name of the engine, the called website and copyright information.
  * New instances can be created by using the {@link EngineDescriptionBuilder}.
  */
-public interface EngineDescription {
+public interface EngineDescription extends Serializable {
 
     /**
      * Returns the url to the website of the author.

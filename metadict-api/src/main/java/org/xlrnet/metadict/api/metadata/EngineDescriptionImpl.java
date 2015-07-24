@@ -32,6 +32,8 @@ import com.google.common.base.Objects;
  */
 public class EngineDescriptionImpl implements EngineDescription {
 
+    private static final long serialVersionUID = -7529741892355637801L;
+
     protected final String authorName;
 
     protected final String authorUrl;

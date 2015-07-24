@@ -29,12 +29,16 @@ import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.io.Serializable;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Query step for executing a Bilingual query.
  */
-public class BilingualQueryStep extends AbstractQueryStep {
+public class BilingualQueryStep extends AbstractQueryStep implements Serializable {
+
+    private static final long serialVersionUID = 4661450465611605622L;
 
     private Language inputLanguage;
 

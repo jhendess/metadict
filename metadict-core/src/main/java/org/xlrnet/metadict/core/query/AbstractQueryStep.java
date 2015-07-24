@@ -28,18 +28,22 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 
+import java.io.Serializable;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Abstract base class for query steps.
  */
-public class AbstractQueryStep {
+public abstract class AbstractQueryStep implements Serializable{
+
+    private static final long serialVersionUID = 617623912043539555L;
 
     protected String searchEngineName;
 
     protected String queryString;
 
-    protected SearchEngine searchEngine;
+    protected transient SearchEngine searchEngine;
 
     @NotNull
     public String getQueryString() {

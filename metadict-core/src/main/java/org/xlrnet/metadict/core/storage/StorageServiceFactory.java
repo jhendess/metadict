@@ -91,7 +91,7 @@ public class StorageServiceFactory {
 
     @PreDestroy
     public void shutdown() {
-        LOGGER.info("Shutting down '{}' storage engine instances ...", instantiatedStorageEngines.size());
+        LOGGER.info("Shutting down {} storage engine instances ...", instantiatedStorageEngines.size());
 
         int successfulShutdowns = 0;
 

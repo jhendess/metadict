@@ -25,14 +25,19 @@
 package org.xlrnet.metadict.storage.mapdb;
 
 import org.xlrnet.metadict.api.storage.StorageEngine;
+import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
  * Storage provider for a Map DB storage engine in metadict.
  */
 public class MapdbStorageProvider implements StorageServiceProvider {
+
+    @Inject
+    MapdbStorageEngineFactory engineFactory;
 
     /**
      * Return the identifier of the supplied backend. An identifier may contain only lower- and uppercase letters,
@@ -65,6 +70,6 @@ public class MapdbStorageProvider implements StorageServiceProvider {
      */
     @Override
     public StorageEngine createNewStorageService(Map<String, String> configuration) {
-        return MapdbStorageEngineFactory.fromConfiguration(configuration);
+        return engineFactory.fromConfiguration(configuration);
     }
 }

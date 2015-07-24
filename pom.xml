@@ -41,8 +41,8 @@
         <module>metadict-api</module>
         <module>metadict-web</module>
         <module>metadict-engines</module>
-        <module>metadict-assembly</module>
         <module>metadict-storage</module>
+        <module>metadict-assembly</module>
     </modules>
 
     <properties>
@@ -50,7 +50,7 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <wildfly.version>8.2.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
-        <jackson.version>2.5.2</jackson.version>
+        <jackson.version>2.5.4</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <metadict.version>${project.version}</metadict.version>
     </properties>
@@ -117,6 +117,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-guava</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <!-- JUnit -->

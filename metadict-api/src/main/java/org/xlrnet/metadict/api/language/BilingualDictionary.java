@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -45,11 +46,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A monolingual dictionary can be described with just a plain {@link Language} object. See the according documentation
  * for {@link org.xlrnet.metadict.api.metadata.FeatureSet} and {@link org.xlrnet.metadict.api.engine.SearchEngine}.
  */
-public class BilingualDictionary {
+public class BilingualDictionary implements Serializable {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)");
 
     private static final Map<String, BilingualDictionary> instanceMap = new HashMap<>();
+
+    private static final long serialVersionUID = -1851855085963129942L;
 
     private final Language input;
 
@@ -203,7 +206,7 @@ public class BilingualDictionary {
      *
      * @param dictionary
      *         The dictionary object to invert.
-     * @return
+     * @return A dictionary with inversed in- and output languages.
      */
     @NotNull
     public static BilingualDictionary inverse(@NotNull BilingualDictionary dictionary) {

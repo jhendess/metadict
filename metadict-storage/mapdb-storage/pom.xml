@@ -34,12 +34,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mapdb-storage</artifactId>
+    <name>Metadict MapDB Storage</name>
 
     <dependencies>
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>
             <version>1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict</groupId>
+            <artifactId>metadict-core</artifactId>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

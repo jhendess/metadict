@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BilingualEntryImpl extends AbstractEntry implements BilingualEntry {
 
+    private static final long serialVersionUID = -1482979366776782055L;
+
     private final DictionaryObject inputObject;
 
     private final DictionaryObject outputObject;

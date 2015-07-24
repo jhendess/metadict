@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MonolingualEntryImpl extends AbstractEntry implements MonolingualEntry {
 
+    private static final long serialVersionUID = 6815019855431152791L;
+
     private final DictionaryObject content;
 
     MonolingualEntryImpl(@NotNull EntryType entryType, @NotNull DictionaryObject content) {

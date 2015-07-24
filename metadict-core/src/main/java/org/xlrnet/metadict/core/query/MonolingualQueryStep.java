@@ -28,10 +28,14 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.io.Serializable;
+
 /**
  * Query step for executing a Monolingual query.
  */
-public class MonolingualQueryStep extends AbstractQueryStep {
+public class MonolingualQueryStep extends AbstractQueryStep implements Serializable {
+
+    private static final long serialVersionUID = -9136988588523162829L;
 
     private Language requestLanguage;
 

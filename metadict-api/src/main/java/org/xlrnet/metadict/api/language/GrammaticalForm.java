@@ -26,12 +26,14 @@ package org.xlrnet.metadict.api.language;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * The interface {@link GrammaticalForm} can be used to identify different forms of a certain word. It can e.g. be used
  * to identify plural forms of nouns, different time forms for a verb or gender dependent forms {@link
  * GrammaticalGender}.
  */
-public interface GrammaticalForm {
+public interface GrammaticalForm extends Serializable {
 
     /**
      * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -36,7 +37,7 @@ import java.net.URL;
  * links to forums or other useful resources.
  * To build a new instance, you can use the {@link ExternalContentBuilder}.
  */
-public interface ExternalContent {
+public interface ExternalContent extends Serializable {
 
     /**
      * Returns a description for the external content. This should be longer than the title of the content.

@@ -26,11 +26,15 @@ package org.xlrnet.metadict.core.query;
 
 import com.google.common.base.MoreObjects;
 
+import java.io.Serializable;
+
 /**
  * The class {@link QueryPerformanceStatistics} provides information about how long the internal processing of a query
  * took. All durations are given in milliseconds.
  */
-public class QueryPerformanceStatistics {
+public class QueryPerformanceStatistics implements Serializable {
+
+    private static final long serialVersionUID = -7408606610412828097L;
 
     long totalDuration;
 

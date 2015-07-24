@@ -24,13 +24,17 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -135,10 +139,10 @@ public class DictionaryObjectBuilder {
     public DictionaryObject build() {
         checkArgument(language != null, "Language may not be null");
 
-        Optional<List<String>> optionalMeanings = Optional.empty();
-        Optional<List<String>> optionalSyllabification = Optional.empty();
-        Optional<List<String>> optionalSynonyms = Optional.empty();
-        Optional<List<String>> optionalAlternateForms = Optional.empty();
+        Optional<List<String>> optionalMeanings = Optional.absent();
+        Optional<List<String>> optionalSyllabification = Optional.absent();
+        Optional<List<String>> optionalSynonyms = Optional.absent();
+        Optional<List<String>> optionalAlternateForms = Optional.absent();
 
         if (meanings.size() > 0)
             optionalMeanings = Optional.of(meanings);

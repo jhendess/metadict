@@ -36,6 +36,8 @@ import java.util.List;
  */
 public class MonolingualQueryResultImpl extends AbstractQueryResult implements MonolingualQueryResult {
 
+    private static final long serialVersionUID = -5563926572835515371L;
+
     private final List<MonolingualEntry> entries;
 
     protected MonolingualQueryResultImpl(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<MonolingualEntry> entries) {

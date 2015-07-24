@@ -26,6 +26,7 @@ package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ import java.util.List;
  * recommendations. The interface serves only as a base class for the actual specific interfaces like {@link
  * MonolingualQueryResult} and {@link BilingualQueryResult}.
  */
-public interface EngineQueryResult {
+public interface EngineQueryResult extends Serializable {
 
     /**
      * Returns all collected external content for the query. This can be used to provide links to relevant blog posts

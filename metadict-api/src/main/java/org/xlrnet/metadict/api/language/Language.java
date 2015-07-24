@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -40,7 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * and a human-readable displayName. Although it is not necessary, it is recommended to use an ISO 639-1-compliant
  * string as identifier. <br/> A language can also contain an optional dialect String.
  */
-public class Language {
+public class Language implements Serializable {
 
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[A-Za-z]+");
 
@@ -127,6 +128,8 @@ public class Language {
      * Preconfigured language for Norwegian nynorsk.
      */
     public static final Language NORWEGIAN_NYNORSK = forSimpleLanguage("no", "Norwegian", "ny", "Nynorsk");
+
+    private static final long serialVersionUID = 8370338805084250120L;
 
     private final String identifier;
 

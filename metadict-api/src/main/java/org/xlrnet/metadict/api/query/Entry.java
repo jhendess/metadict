@@ -26,10 +26,12 @@ package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * Base interface for any dictionary entry type.
  */
-public interface Entry {
+public interface Entry extends Serializable {
 
     /**
      * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also

@@ -26,12 +26,20 @@ package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * Abstract entry implementation.
  */
-public abstract class AbstractEntry {
+public abstract class AbstractEntry implements Serializable {
+
+    private static final long serialVersionUID = 1081814399702638748L;
 
     protected final EntryType entryType;
+
+    protected AbstractEntry() {
+        entryType = null;
+    }
 
     public AbstractEntry(EntryType entryType) {
         this.entryType = entryType;

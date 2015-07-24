@@ -25,7 +25,6 @@
 package org.xlrnet.metadict.web.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.impl.BeanAsArraySerializer;
 import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
@@ -45,6 +44,8 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
 
     protected static final String ADDITIONAL_REPRESENTATION_FIELD_NAME = "additionalRepresentation";
 
+    private static final long serialVersionUID = -6223143085371045487L;
+
     public DictionaryObjectSerializer(BeanSerializerBase src, ObjectIdWriter objectIdWriter) {
         super(src, objectIdWriter);
     }
@@ -58,7 +59,7 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
     }
 
     @Override
-    public void serialize(Object bean, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+    public void serialize(Object bean, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         serializeFields(bean, jsonGenerator, serializerProvider);
         if (bean instanceof DictionaryObject) {
@@ -89,7 +90,7 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
     }
 
     @Override
-    protected BeanSerializerBase withFilterId(Object filterId) {
+    public BeanSerializerBase withFilterId(Object filterId) {
         throw new NotImplementedException(getClass().getCanonicalName() + ".withFilterId() is not implemented - avoid using @JsonFilter annotations");
     }
 

@@ -28,13 +28,14 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
  * The {@link FeatureSet} interface is used to describe the features a metadict search engine provides. To build new
  * instances and configure your available features, use the {@link FeatureSetBuilder} class.
  */
-public interface FeatureSet {
+public interface FeatureSet extends Serializable {
 
     /**
      * Return a collection of dictionaries that the engine supports for bilingual lookups. This can be e.g.

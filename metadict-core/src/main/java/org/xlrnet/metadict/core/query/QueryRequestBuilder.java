@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.query;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -173,7 +174,7 @@ public class QueryRequestBuilder {
     public QueryRequestBuilder setQueryString(@NotNull String queryString) {
         checkNotNull(queryString);
 
-        this.queryString = queryString;
+        this.queryString = StringUtils.lowerCase(queryString);
         return this;
     }
 }

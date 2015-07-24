@@ -26,6 +26,7 @@ package org.xlrnet.metadict.api.query;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
@@ -34,12 +35,13 @@ import org.xlrnet.metadict.api.language.Language;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Immutable implementation of {@link DictionaryObject},
  */
 public class DictionaryObjectImpl implements DictionaryObject {
+
+    private static final long serialVersionUID = -3150737898629567872L;
 
     private final Language language;
 
