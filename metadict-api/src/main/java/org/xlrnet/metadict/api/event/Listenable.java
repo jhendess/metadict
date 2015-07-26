@@ -22,24 +22,23 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.storage;
+package org.xlrnet.metadict.api.event;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
- * Storage engine is an extended interface of {@link StorageService} with additional management methods that may only be
- * called by the Metadict core. This includes e.g. a shutdown-function that will be called before stopping the core.
- * <p>
- * Do <i>never</i> inject objects of this interface - always use {@link StorageService}!
+ * Indicates that an object can transport various listeners for specific events.
  */
-public interface StorageEngine extends StorageService {
+public interface Listenable<T extends MetadictEventType, L extends MetadictEventListener> {
 
     /**
-     * Management method that will be called by the Metadict core when the storage should be disconnected. This may
-     * happen e.g. when the core is being stopped or when a storage engine is being unloaded from the core.
-     * <p>
-     * After this method has been invoked, all successive method calls to the original engine will throw an {@link
-     * StorageShutdownException}. Note, that this method <i>must not</i> be called by the storage itself but will be
-     * from the core.
+     * Return a list of attached listeners. The order of which listeners will be called depends only on the order of
+     * elements in the list.
+     *
+     * @return a list of attached listeners.
      */
-    void shutdown();
-
+    @NotNull
+    List<ListenerConfiguration<T, L>> getListeners();
 }

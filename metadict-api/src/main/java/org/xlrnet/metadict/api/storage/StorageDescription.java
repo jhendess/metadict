@@ -22,13 +22,20 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.metadata;
+package org.xlrnet.metadict.api.storage;
+
+import org.xlrnet.metadict.api.event.Listenable;
+import org.xlrnet.metadict.api.metadata.BackendDescription;
 
 /**
- * The interface {@link EngineDescription} is used to describe a search engine in a human readable format. Therefore the
- * description contains information like e.g. the name of the engine, the called website and copyright information.
- * New instances can be created by using the {@link EngineDescriptionBuilder}.
+ * The interface {@link StorageDescription} is used to describe storage engine in a human readable format. Therefore the
+ * description contains information like e.g. the name of the engine, the author and copyright information.
+ * <p>
+ * A {@link StorageDescription} can also provide a set of different listeners that can be registered on the core and
+ * will be called on certain events.
+ * <p>
+ * New instances can be created by using the {@link StorageDescriptionBuilder}.
  */
-public interface EngineDescription extends BackendDescription {
+public interface StorageDescription extends BackendDescription, Listenable<StorageEventType, StorageEventListener> {
 
 }

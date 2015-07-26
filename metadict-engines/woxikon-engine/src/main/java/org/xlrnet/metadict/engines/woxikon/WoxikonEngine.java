@@ -33,11 +33,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.engine.FeatureSet;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.api.query.*;
 
 import java.io.UnsupportedEncodingException;

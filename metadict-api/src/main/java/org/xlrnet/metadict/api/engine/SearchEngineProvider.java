@@ -26,15 +26,13 @@ package org.xlrnet.metadict.api.engine;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
 
 /**
  * The generic interface for search providers. Implement this interface to make your provider available to the Metadict
  * core.
  * A search provider must provider a {@link SearchEngine} implementation to the Metadict core.
  */
-public interface SearchProvider {
+public interface SearchEngineProvider {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

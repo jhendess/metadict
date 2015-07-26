@@ -31,16 +31,12 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalNumber;
 import org.xlrnet.metadict.api.language.GrammaticalTense;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
 import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a href="http://leo.org/">leo.org</a>}.
  */
-public class LeoEngineProvider implements SearchProvider {
+public class LeoEngineProvider implements SearchEngineProvider {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

@@ -28,16 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.*;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
 import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider for Heinzelnisse.info engine.
  */
-public class HeinzelnisseEngineProvider implements SearchProvider {
+public class HeinzelnisseEngineProvider implements SearchEngineProvider {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

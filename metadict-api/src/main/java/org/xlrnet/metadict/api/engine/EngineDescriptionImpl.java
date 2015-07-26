@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.metadata;
+package org.xlrnet.metadict.api.engine;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;

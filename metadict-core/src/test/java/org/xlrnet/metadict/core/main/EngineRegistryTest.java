@@ -27,13 +27,9 @@ package org.xlrnet.metadict.core.main;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
+import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.RETURNS_SMART_NULLS;
@@ -46,41 +42,41 @@ public class EngineRegistryTest {
 
     private EngineRegistry engineRegistry;
 
-    private SearchProvider searchProviderMock;
+    private SearchEngineProvider searchEngineProviderMock;
 
     @Before
     public void setUp() throws Exception {
         engineRegistry = new EngineRegistry();
-        searchProviderMock = Mockito.mock(SearchProvider.class);
+        searchEngineProviderMock = Mockito.mock(SearchEngineProvider.class);
     }
 
     @Test(expected = Exception.class)
     public void testRegisterSearchProvider_fail_null_all() throws Exception {
-        engineRegistry.registerSearchProvider(searchProviderMock);
+        engineRegistry.registerSearchProvider(searchEngineProviderMock);
     }
 
     @Test(expected = Exception.class)
     public void testRegisterSearchProvider_fail_null_engineDescription() throws Exception {
-        when(searchProviderMock.getFeatureSet()).thenReturn(Mockito.mock(FeatureSet.class, RETURNS_SMART_NULLS));
-        when(searchProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getFeatureSet()).thenReturn(Mockito.mock(FeatureSet.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
 
-        engineRegistry.registerSearchProvider(searchProviderMock);
+        engineRegistry.registerSearchProvider(searchEngineProviderMock);
     }
 
     @Test(expected = Exception.class)
     public void testRegisterSearchProvider_fail_null_engineInstance() throws Exception {
-        when(searchProviderMock.getFeatureSet()).thenReturn(Mockito.mock(FeatureSet.class, RETURNS_SMART_NULLS));
-        when(searchProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getFeatureSet()).thenReturn(Mockito.mock(FeatureSet.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
 
-        engineRegistry.registerSearchProvider(searchProviderMock);
+        engineRegistry.registerSearchProvider(searchEngineProviderMock);
     }
 
     @Test(expected = Exception.class)
     public void testRegisterSearchProvider_fail_null_featureSet() throws Exception {
-        when(searchProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
-        when(searchProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
 
-        engineRegistry.registerSearchProvider(searchProviderMock);
+        engineRegistry.registerSearchProvider(searchEngineProviderMock);
     }
 
     @Test
@@ -90,12 +86,12 @@ public class EngineRegistryTest {
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true))
                 .addSupportedLexicographicLanguage(Language.GERMAN)
                 .build();
-        when(searchProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
-        when(searchProviderMock.getFeatureSet()).thenReturn(featureSet);
-        when(searchProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getEngineDescription()).thenReturn(Mockito.mock(EngineDescription.class, RETURNS_SMART_NULLS));
+        when(searchEngineProviderMock.getFeatureSet()).thenReturn(featureSet);
+        when(searchEngineProviderMock.newEngineInstance()).thenReturn(Mockito.mock(SearchEngine.class, RETURNS_SMART_NULLS));
 
         assertEquals(0, engineRegistry.countRegisteredEngines());
-        engineRegistry.registerSearchProvider(searchProviderMock);
+        engineRegistry.registerSearchProvider(searchEngineProviderMock);
         assertEquals(1, engineRegistry.countRegisteredEngines());
 
         assertEquals("Monolingual language has not been registered", 1, engineRegistry.languageEngineNameMap.size());

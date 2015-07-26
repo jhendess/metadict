@@ -24,9 +24,8 @@
 
 package org.xlrnet.metadict.core.storage;
 
-import org.xlrnet.metadict.api.storage.StorageEngine;
-import org.xlrnet.metadict.api.storage.StorageService;
-import org.xlrnet.metadict.api.storage.StorageServiceProvider;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.storage.*;
 
 import java.util.Map;
 
@@ -49,6 +48,19 @@ public class InMemoryStorageProvider implements StorageServiceProvider {
     @Override
     public String getStorageBackendIdentifier() {
         return STORAGE_NAME;
+    }
+
+    /**
+     * Return a {@link StorageDescription} object that contains descriptive i.e. textual information about and listeners
+     * for the underlying engine. Textual information can be e.g.the name, url, etc. of the engine.
+     *
+     * @return an object that contains descriptive i.e. textual information about the underlying engine.
+     */
+    @NotNull
+    @Override
+    public StorageDescription getStorageDescription() {
+        return new StorageDescriptionBuilder()
+                .build();
     }
 
     /**

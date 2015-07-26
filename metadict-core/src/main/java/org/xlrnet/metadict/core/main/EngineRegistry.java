@@ -30,14 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
-import org.xlrnet.metadict.api.engine.UnknownSearchEngineException;
+import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestManager;
 
 import javax.annotation.PostConstruct;
@@ -50,7 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Class for loading and managing all available {@link SearchProvider}.
+ * Class for loading and managing all available {@link SearchEngineProvider}.
  * <p>
  * Since this object is {@link javax.enterprise.context.ApplicationScoped}, only one instance will be running at the
  * same time.
@@ -71,7 +66,7 @@ public class EngineRegistry {
     Map<String, SearchEngine> searchEngineMap = new HashMap<>();
 
     @Inject
-    private Instance<SearchProvider> searchProviderInstances;
+    private Instance<SearchEngineProvider> searchProviderInstances;
 
     @Inject
     private AutoTestManager autoTestManager;
@@ -79,7 +74,7 @@ public class EngineRegistry {
 
     /**
      * Returns the amount of currently registered search engines. Search engines are provided by implementations of
-     * {@link SearchProvider} and can be registered using {@link #registerSearchProvider(SearchProvider)}.
+     * {@link SearchEngineProvider} and can be registered using {@link #registerSearchProvider(SearchEngineProvider)}.
      *
      * @return the amount of currently registered search engines.
      */
@@ -209,12 +204,12 @@ public class EngineRegistry {
         logger.info("Registering search providers...");
         int failedProviders = 0;
 
-        for (SearchProvider searchProvider : searchProviderInstances) {
+        for (SearchEngineProvider searchEngineProvider : searchProviderInstances) {
 
             try {
-                registerSearchProvider(searchProvider);
+                registerSearchProvider(searchEngineProvider);
             } catch (Exception e) {
-                logger.error("Registering search provider {} failed", searchProvider.getClass().getCanonicalName(), e);
+                logger.error("Registering search provider {} failed", searchEngineProvider.getClass().getCanonicalName(), e);
                 failedProviders++;
             }
         }
@@ -225,28 +220,28 @@ public class EngineRegistry {
     }
 
     /**
-     * Register the given {@link SearchProvider} in the internal registry. The registration may fail, if any of the
-     * mandatory methods of the {@link SearchProvider} return null or a provider with the same class name is already
+     * Register the given {@link SearchEngineProvider} in the internal registry. The registration may fail, if any of the
+     * mandatory methods of the {@link SearchEngineProvider} return null or a provider with the same class name is already
      * registered.
      *
-     * @param searchProvider
-     *         The {@link SearchProvider} that should be registered.
+     * @param searchEngineProvider
+     *         The {@link SearchEngineProvider} that should be registered.
      * @throws Exception
      *         may be thrown at any time
      */
-    void registerSearchProvider(@NotNull SearchProvider searchProvider) throws Exception {
-        String canonicalProviderName = searchProvider.getClass().getCanonicalName();
+    void registerSearchProvider(@NotNull SearchEngineProvider searchEngineProvider) throws Exception {
+        String canonicalProviderName = searchEngineProvider.getClass().getCanonicalName();
 
         checkState(!searchEngineMap.containsKey(canonicalProviderName), "Provider %s is already registered", canonicalProviderName);
 
-        EngineDescription engineDescription = searchProvider.getEngineDescription();
-        FeatureSet featureSet = searchProvider.getFeatureSet();
+        EngineDescription engineDescription = searchEngineProvider.getEngineDescription();
+        FeatureSet featureSet = searchEngineProvider.getFeatureSet();
         validateSearchProvider(canonicalProviderName, engineDescription, featureSet);
 
-        SearchEngine searchEngine = searchProvider.newEngineInstance();
+        SearchEngine searchEngine = searchEngineProvider.newEngineInstance();
         checkNotNull(searchEngine, "Search provider returned null engine", canonicalProviderName);
 
-        registerAutoTestSuite(searchProvider, searchEngine);
+        registerAutoTestSuite(searchEngineProvider, searchEngine);
 
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
 
@@ -258,15 +253,15 @@ public class EngineRegistry {
         logger.info("Registered engine {} from provider {}", canonicalEngineName, canonicalProviderName);
     }
 
-    private void registerAutoTestSuite(@NotNull SearchProvider searchProvider, @NotNull SearchEngine searchEngine) {
+    private void registerAutoTestSuite(@NotNull SearchEngineProvider searchEngineProvider, @NotNull SearchEngine searchEngine) {
         try {
-            AutoTestSuite testSuite = searchProvider.getAutoTestSuite();
+            AutoTestSuite testSuite = searchEngineProvider.getAutoTestSuite();
             if (testSuite == null)
-                logger.warn("Provider {} provides no auto test suite", searchProvider.getClass().getCanonicalName());
+                logger.warn("Provider {} provides no auto test suite", searchEngineProvider.getClass().getCanonicalName());
             else
                 autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
         } catch (Exception e) {
-            logger.error("Initializing auto test suite from provider {} failed", searchProvider.getClass().getCanonicalName(), e);
+            logger.error("Initializing auto test suite from provider {} failed", searchEngineProvider.getClass().getCanonicalName(), e);
         }
     }
 

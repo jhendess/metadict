@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.xlrnet.metadict.api.engine.FeatureSet;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * times.
  * <p>
  * A monolingual dictionary can be described with just a plain {@link Language} object. See the according documentation
- * for {@link org.xlrnet.metadict.api.metadata.FeatureSet} and {@link org.xlrnet.metadict.api.engine.SearchEngine}.
+ * for {@link FeatureSet} and {@link org.xlrnet.metadict.api.engine.SearchEngine}.
  */
 public class BilingualDictionary implements Serializable {
 

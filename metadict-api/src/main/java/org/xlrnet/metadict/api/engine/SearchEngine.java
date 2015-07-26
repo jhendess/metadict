@@ -34,8 +34,8 @@ import org.xlrnet.metadict.api.query.MonolingualQueryResultBuilder;
 
 /**
  * The interface {@link SearchEngine} represents the main part that has to be implemented to search in a backend. Each
- * search engine has to be provided by a {@link SearchProvider} implementation. The metadict core instantiates the
- * {@link SearchEngine} through the {@link SearchProvider} and queries the engine whenever it is needed.
+ * search engine has to be provided by a {@link SearchEngineProvider} implementation. The metadict core instantiates the
+ * {@link SearchEngine} through the {@link SearchEngineProvider} and queries the engine whenever it is needed.
  * <p>
  * The SearchEngine itself should be implemented as stateless as possible and always threadsafe, since the core may
  * query an engine concurrently. Caching mechanisms should <u>not</u> be implemented by the engine itself.
@@ -55,7 +55,7 @@ public interface SearchEngine {
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
      * supported {@link BilingualDictionary} as described in the engine's {@link
-     * org.xlrnet.metadict.api.metadata.FeatureSet}. However, an engine may also return results from a different
+     * FeatureSet}. However, an engine may also return results from a different
      * language. In this case, the core component will decide if the supplied results are useful.
      * <p>
      * Example:
@@ -82,7 +82,7 @@ public interface SearchEngine {
     @NotNull
     default BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
         throw new UnsupportedOperationException();
-    };
+    }
 
 
     /**
@@ -92,7 +92,7 @@ public interface SearchEngine {
      * <p>
      * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
      * supported {@link Language} as described in the engine's {@link
-     * org.xlrnet.metadict.api.metadata.FeatureSet}. However, an engine may also return results from a different
+     * FeatureSet}. However, an engine may also return results from a different
      * language. In this case, the core component will decide if the supplied results are useful.
      *
      * @param queryInput
@@ -106,6 +106,6 @@ public interface SearchEngine {
     @NotNull
     default MonolingualQueryResult executeMonolingualQuery(@NotNull String queryInput, @NotNull Language queryLanguage) throws Exception {
         throw new UnsupportedOperationException();
-    };
+    }
 
 }

@@ -30,17 +30,13 @@ import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
 import org.xlrnet.metadict.api.query.*;
 
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a
  * href="http://www.woxikon.de/">woxikon.de</a>}.
  */
-public class WoxikonEngineProvider implements SearchProvider {
+public class WoxikonEngineProvider implements SearchEngineProvider {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

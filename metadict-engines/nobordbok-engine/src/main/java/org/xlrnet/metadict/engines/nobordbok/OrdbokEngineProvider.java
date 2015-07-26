@@ -26,19 +26,13 @@ package org.xlrnet.metadict.engines.nobordbok;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
+import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.metadata.EngineDescription;
-import org.xlrnet.metadict.api.metadata.EngineDescriptionBuilder;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
-import org.xlrnet.metadict.api.metadata.FeatureSetBuilder;
 
 /**
  * Provider for Bokmålordbok and Nynorskordbok search engine.
  */
-public class OrdbokEngineProvider implements SearchProvider {
+public class OrdbokEngineProvider implements SearchEngineProvider {
 
     @Nullable
     @Override

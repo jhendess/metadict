@@ -31,16 +31,16 @@ import org.junit.runners.Parameterized;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
+import org.xlrnet.metadict.api.engine.SearchEngineProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract base class for executing the {@link AutoTestSuite} of a custom {@link SearchProvider}.
+ * Abstract base class for executing the {@link AutoTestSuite} of a custom {@link SearchEngineProvider}.
  * <p>
  * You can use this class to run integration tests against external backends with this class. To register and execute
- * all tests of your own {@link SearchProvider} create a new test class named like <i>MySearchEngineIT</i> where
+ * all tests of your own {@link SearchEngineProvider} create a new test class named like <i>MySearchEngineIT</i> where
  * <i>MySearchEngine</i> is the name of the search engine and <i>IT</i> designates the test case as an integration test.
  * Naming the test class like <i>*IT</i> makes sure that it is recognized as an integration test and runs only when
  * invoking the Maven build with the <code>verify</code> goal.
@@ -48,7 +48,7 @@ import java.util.List;
  * To write your own test suite, inherit from {@link AbstractAutoSearchEngineIntegrationTest} and implement a static method that
  * returns an {@link Iterable} of {@link Object} arrays. This method must then be annotated with JUnit's {@link
  * org.junit.runners.Parameterized.Parameters} annotation and return the value of {@link
- * #prepareProvider(SearchProvider)}. Give a new instance of {@link SearchProvider} as the parameter of this method and
+ * #prepareProvider(SearchEngineProvider)}. Give a new instance of {@link SearchEngineProvider} as the parameter of this method and
  * your test case should be runnable.
  * <p>
  * Example of how to implement a custom test:
@@ -72,7 +72,7 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
 
     private AutoTestManager autoTestManager;
 
-    public static Iterable<Object[]> prepareProvider(SearchProvider searchEngineProvider) throws Exception {
+    public static Iterable<Object[]> prepareProvider(SearchEngineProvider searchEngineProvider) throws Exception {
         List<Object[]> testCases = new ArrayList<>();
 
         // Initialize internal dictionary configuration:

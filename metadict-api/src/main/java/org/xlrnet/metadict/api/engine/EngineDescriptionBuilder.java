@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.metadata;
+package org.xlrnet.metadict.api.engine;
 
 /**
  * Builder for creating new {@link EngineDescription} objects.

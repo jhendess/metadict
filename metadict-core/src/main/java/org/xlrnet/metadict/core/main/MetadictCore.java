@@ -27,6 +27,8 @@ package org.xlrnet.metadict.core.main;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.engine.EngineDescription;
+import org.xlrnet.metadict.api.engine.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestReport;
 import org.xlrnet.metadict.core.query.QueryManager;
 import org.xlrnet.metadict.core.query.QueryRequest;
@@ -83,9 +85,9 @@ public class MetadictCore {
 
     /**
      * Return a reference to the internal {@link EngineRegistry} of this instance. You can use it for viewing the
-     * currently registered engines and their implemented {@link org.xlrnet.metadict.api.metadata.FeatureSet} and
+     * currently registered engines and their implemented {@link FeatureSet} and
      * {@link
-     * org.xlrnet.metadict.api.metadata.EngineDescription}.
+     * EngineDescription}.
      * <p>
      * However, you should <i>never</i> query the engines directly.
      *

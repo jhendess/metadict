@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.metadata;
+package org.xlrnet.metadict.api.engine;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;

@@ -25,9 +25,9 @@
 package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.engine.FeatureSet;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.engine.SearchProvider;
-import org.xlrnet.metadict.api.metadata.FeatureSet;
+import org.xlrnet.metadict.api.engine.SearchEngineProvider;
 
 import java.util.List;
 import java.util.Vector;
@@ -48,8 +48,8 @@ public abstract class EngineQueryResultBuilder {
      * {@link SearchEngine} that does not represent a lexicographic element. This may e.g. be
      * external links to forums or other useful resources.
      * <p>
-     * When adding any objects through this method, the provided {@link org.xlrnet.metadict.api.metadata.FeatureSet}
-     * from the {@link SearchProvider} should return <i>true</i> on {@link
+     * When adding any objects through this method, the provided {@link FeatureSet}
+     * from the {@link SearchEngineProvider} should return <i>true</i> on {@link
      * FeatureSet#isProvidesExternalContent()}.
      *
      * @param externalContent
@@ -69,7 +69,7 @@ public abstract class EngineQueryResultBuilder {
      * the search engine can recommend an alternate term the user might be interested in.
      * <p>
      * When adding any objects through this method, the provided {@link FeatureSet}
-     * from the {@link SearchProvider} should return <i>true</i> on {@link
+     * from the {@link SearchEngineProvider} should return <i>true</i> on {@link
      * FeatureSet#isProvidesAlternatives()}.
      *
      * @param dictionaryObject

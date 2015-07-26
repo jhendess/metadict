@@ -22,24 +22,15 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.storage;
+package org.xlrnet.metadict.api.engine;
+
+import org.xlrnet.metadict.api.metadata.BackendDescription;
 
 /**
- * Storage engine is an extended interface of {@link StorageService} with additional management methods that may only be
- * called by the Metadict core. This includes e.g. a shutdown-function that will be called before stopping the core.
- * <p>
- * Do <i>never</i> inject objects of this interface - always use {@link StorageService}!
+ * The interface {@link EngineDescription} is used to describe a search engine in a human readable format. Therefore the
+ * description contains information like e.g. the name of the engine, the called website and copyright information.
+ * New instances can be created by using the {@link EngineDescriptionBuilder}.
  */
-public interface StorageEngine extends StorageService {
-
-    /**
-     * Management method that will be called by the Metadict core when the storage should be disconnected. This may
-     * happen e.g. when the core is being stopped or when a storage engine is being unloaded from the core.
-     * <p>
-     * After this method has been invoked, all successive method calls to the original engine will throw an {@link
-     * StorageShutdownException}. Note, that this method <i>must not</i> be called by the storage itself but will be
-     * from the core.
-     */
-    void shutdown();
+public interface EngineDescription extends BackendDescription {
 
 }

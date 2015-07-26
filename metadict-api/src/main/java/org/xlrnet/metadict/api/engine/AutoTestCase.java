@@ -42,7 +42,7 @@ import java.util.Optional;
  * bilingual query should be executed {@link
  * #getBilingualTargetDictionary()} and {@link #getExpectedBilingualResults()} ()} may not return empty Optionals.
  * <p>
- * The core may query the {@link SearchEngine} that is provided by the {@link SearchProvider} where this test case is
+ * The core may query the {@link SearchEngine} that is provided by the {@link SearchEngineProvider} where this test case is
  * attached. Upon doing so, the core will call {@link SearchEngine#executeMonolingualQuery(String, Language)} if
  * monolingual test case data is available and {@link SearchEngine#executeBilingualQuery(String, Language, Language,
  * boolean)} if bilingual test case data is available. The execute-methods will be called with derived parameters from
