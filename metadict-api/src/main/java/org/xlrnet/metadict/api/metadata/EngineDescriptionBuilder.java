@@ -31,7 +31,7 @@ public class EngineDescriptionBuilder {
 
     protected String authorName;
 
-    protected String authorUrl;
+    protected String authorLink;
 
     protected String copyright;
 
@@ -53,7 +53,7 @@ public class EngineDescriptionBuilder {
      * @return a new instance of {@link EngineDescription}.
      */
     public EngineDescription build() {
-        return new EngineDescriptionImpl(authorName, authorUrl, copyright, license, engineName, engineUrl, searchBackendName, searchBackendLink, searchBackendCopyright);
+        return new EngineDescriptionImpl(authorName, authorLink, copyright, license, engineName, engineUrl, searchBackendName, searchBackendLink, searchBackendCopyright);
     }
 
     public EngineDescriptionBuilder setAuthorName(String authorName) {
@@ -61,8 +61,8 @@ public class EngineDescriptionBuilder {
         return this;
     }
 
-    public EngineDescriptionBuilder setAuthorUrl(String authorUrl) {
-        this.authorUrl = authorUrl;
+    public EngineDescriptionBuilder setAuthorLink(String authorLink) {
+        this.authorLink = authorLink;
         return this;
     }
 

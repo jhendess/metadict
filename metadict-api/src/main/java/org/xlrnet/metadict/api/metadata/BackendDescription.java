@@ -25,10 +25,28 @@
 package org.xlrnet.metadict.api.metadata;
 
 /**
- * The interface {@link EngineDescription} is used to describe a search engine in a human readable format. Therefore the
- * description contains information like e.g. the name of the engine, the called website and copyright information.
- * New instances can be created by using the {@link EngineDescriptionBuilder}.
+ * Interface for describing an engine that accesses also a backend.
  */
-public interface EngineDescription extends BackendDescription {
+public interface BackendDescription extends BaseDescription {
 
+    /**
+     * Returns copyright information about the underlying search backend.
+     *
+     * @return copyright information about the underlying search backend.
+     */
+    String getBackendCopyright();
+
+    /**
+     * Returns a link to the backend. This is usually the url of the underlying engine that is being called.
+     *
+     * @return a link to the backend.
+     */
+    String getBackendLink();
+
+    /**
+     * Returns the name of the backend. This is usually the name of the underlying engine that is being called.
+     *
+     * @return the name of the backend.
+     */
+    String getBackendName();
 }

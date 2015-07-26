@@ -36,7 +36,7 @@ public class EngineDescriptionImpl implements EngineDescription {
 
     protected final String authorName;
 
-    protected final String authorUrl;
+    protected final String authorLink;
 
     protected final String copyright;
 
@@ -44,7 +44,7 @@ public class EngineDescriptionImpl implements EngineDescription {
 
     protected final String engineName;
 
-    protected final String engineUrl;
+    protected final String engineLink;
 
     protected final String searchBackendName;
 
@@ -57,7 +57,7 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @param authorName
      *         Tame of the author.
-     * @param authorUrl
+     * @param authorLink
      *         Website of the author.
      * @param copyright
      *         Copyright for the engine.
@@ -65,7 +65,7 @@ public class EngineDescriptionImpl implements EngineDescription {
      *         License for the engine.
      * @param engineName
      *         Name of the engine.
-     * @param engineUrl
+     * @param engineLink
      *         Website of the engine
      * @param searchBackendName
      *         Name of the search backend.
@@ -74,13 +74,13 @@ public class EngineDescriptionImpl implements EngineDescription {
      * @param searchBackendCopyright
      *         Copyright for the search backend.
      */
-    EngineDescriptionImpl(String authorName, String authorUrl, String copyright, String license, String engineName, String engineUrl, String searchBackendName, String searchBackendLink, String searchBackendCopyright) {
+    EngineDescriptionImpl(String authorName, String authorLink, String copyright, String license, String engineName, String engineLink, String searchBackendName, String searchBackendLink, String searchBackendCopyright) {
         this.authorName = authorName;
-        this.authorUrl = authorUrl;
+        this.authorLink = authorLink;
         this.copyright = copyright;
         this.license = license;
         this.engineName = engineName;
-        this.engineUrl = engineUrl;
+        this.engineLink = engineLink;
         this.searchBackendName = searchBackendName;
         this.searchBackendLink = searchBackendLink;
         this.searchBackendCopyright = searchBackendCopyright;
@@ -92,11 +92,11 @@ public class EngineDescriptionImpl implements EngineDescription {
         if (!(o instanceof EngineDescriptionImpl)) return false;
         EngineDescriptionImpl that = (EngineDescriptionImpl) o;
         return Objects.equal(authorName, that.authorName) &&
-                Objects.equal(authorUrl, that.authorUrl) &&
+                Objects.equal(authorLink, that.authorLink) &&
                 Objects.equal(copyright, that.copyright) &&
                 Objects.equal(license, that.license) &&
                 Objects.equal(engineName, that.engineName) &&
-                Objects.equal(engineUrl, that.engineUrl) &&
+                Objects.equal(engineLink, that.engineLink) &&
                 Objects.equal(searchBackendName, that.searchBackendName) &&
                 Objects.equal(searchBackendLink, that.searchBackendLink) &&
                 Objects.equal(searchBackendCopyright, that.searchBackendCopyright);
@@ -116,8 +116,8 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @return the url to the website of the author.
      */
-    public String getAuthorUrl() {
-        return authorUrl;
+    public String getAuthorLink() {
+        return authorLink;
     }
 
     /**
@@ -144,8 +144,8 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @return a link to the engine's website.
      */
-    public String getEngineUrl() {
-        return engineUrl;
+    public String getEngineLink() {
+        return engineLink;
     }
 
     /**
@@ -162,7 +162,7 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @return copyright information about the underlying search backend.
      */
-    public String getSearchBackendCopyright() {
+    public String getBackendCopyright() {
         return searchBackendCopyright;
     }
 
@@ -171,7 +171,7 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @return a link to the search backend.
      */
-    public String getSearchBackendLink() {
+    public String getBackendLink() {
         return searchBackendLink;
     }
 
@@ -180,24 +180,24 @@ public class EngineDescriptionImpl implements EngineDescription {
      *
      * @return the name of the search backend.
      */
-    public String getSearchBackendName() {
+    public String getBackendName() {
         return searchBackendName;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(authorName, authorUrl, copyright, license, engineName, engineUrl, searchBackendName, searchBackendLink, searchBackendCopyright);
+        return Objects.hashCode(authorName, authorLink, copyright, license, engineName, engineLink, searchBackendName, searchBackendLink, searchBackendCopyright);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("authorName", authorName)
-                .add("authorUrl", authorUrl)
+                .add("authorLink", authorLink)
                 .add("copyright", copyright)
                 .add("license", license)
                 .add("engineName", engineName)
-                .add("engineUrl", engineUrl)
+                .add("engineLink", engineLink)
                 .add("searchBackendName", searchBackendName)
                 .add("searchBackendLink", searchBackendLink)
                 .add("searchBackendCopyright", searchBackendCopyright)
