@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.storage.mapdb;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.event.ListenerConfiguration;
 import org.xlrnet.metadict.api.storage.*;
 
 import javax.inject.Inject;
@@ -34,6 +35,11 @@ import java.util.Map;
  * Storage provider for a Map DB storage engine in metadict.
  */
 public class MapdbStorageProvider implements StorageServiceProvider {
+
+    /**
+     * Interval in seconds where database changes should be committed. Default is five minutes.
+     */
+    private static final int COMMIT_INTERVAL_SECONDS = 300;
 
     @Inject
     MapdbStorageEngineFactory engineFactory;
@@ -65,6 +71,8 @@ public class MapdbStorageProvider implements StorageServiceProvider {
                 .setAuthorName("xolor")
                 .setBackendName("MapDB")
                 .setBackendLink("http://www.mapdb.org/")
+                .addListenerConfiguration(ListenerConfiguration.newConfiguration(StorageEventType.SHUTDOWN, new ShutdownListener()))
+                .addListenerConfiguration(ListenerConfiguration.newPeriodicConfiguration(StorageEventType.MAINTENANCE, new CommitMaintenanceListener(), COMMIT_INTERVAL_SECONDS))
                 .build();
     }
 
@@ -84,7 +92,8 @@ public class MapdbStorageProvider implements StorageServiceProvider {
      * map.
      */
     @Override
-    public StorageEngine createNewStorageService(Map<String, String> configuration) {
+    public StorageService createNewStorageService(Map<String, String> configuration) {
         return engineFactory.fromConfiguration(configuration);
     }
+
 }

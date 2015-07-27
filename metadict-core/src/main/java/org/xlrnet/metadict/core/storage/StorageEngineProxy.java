@@ -27,31 +27,61 @@ package org.xlrnet.metadict.core.storage;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageEngine;
-import org.xlrnet.metadict.api.storage.StorageOperationException;
-import org.xlrnet.metadict.api.storage.StorageShutdownException;
+import org.xlrnet.metadict.api.event.ListenerConfiguration;
+import org.xlrnet.metadict.api.storage.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Wrapper class for controlling storage engine behaviour from {@link StorageServiceFactory}.
  */
-class StorageEngineWrapper implements StorageEngine {
+class StorageEngineProxy implements StorageService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageEngineWrapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageEngineProxy.class);
 
-    protected final StorageEngine wrappedEngine;
+    @NotNull
+    protected final StorageService proxiedEngine;
+
+    @NotNull
+    protected final List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners;
 
     private boolean shutdown = false;
+
+    private final List<Timer> timers = new ArrayList<>();
 
     protected boolean isShutdown() {
         return shutdown;
     }
 
-    protected StorageEngineWrapper(@NotNull StorageEngine storageEngine) {
-        this.wrappedEngine = storageEngine;
+    protected StorageEngineProxy(@NotNull StorageService storageEngine, @NotNull List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners) {
+        checkNotNull(storageEngine, "Storage engine may not be null");
+        checkNotNull(listeners, "Listeners may not be null");
+
+        this.listeners = listeners;
+        this.proxiedEngine = storageEngine;
+
+        installMaintenanceListeners();
+    }
+
+    private void installMaintenanceListeners() {
+        // TODO: Move to MessageBus
+        for (ListenerConfiguration<StorageEventType, StorageEventListener> listener : listeners) {
+            if (StorageEventType.MAINTENANCE.equals(listener.getEventType())) {
+                long intervalMilliseconds = listener.getIntervalSeconds() * 1000;
+                final StorageEventListener eventListener = listener.getEventListener();
+                Timer timer = new Timer();
+                EventTimerTask<StorageService> timerTask = new EventTimerTask<>(StorageEventType.MAINTENANCE, eventListener, proxiedEngine);
+                timer.scheduleAtFixedRate(timerTask, intervalMilliseconds, intervalMilliseconds);
+                timers.add(timer);
+                LOGGER.debug("Installed timer in {} milliseconds interval on engine '{}'", intervalMilliseconds, proxiedEngine.getClass().getCanonicalName());
+            }
+        }
     }
 
     /**
@@ -68,7 +98,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public long countKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.countKeysInNamespace(namespace);
+        return proxiedEngine.countKeysInNamespace(namespace);
     }
 
     /**
@@ -83,7 +113,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public long countNamespaces() throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.countNamespaces();
+        return proxiedEngine.countNamespaces();
     }
 
     /**
@@ -111,7 +141,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException {
         checkInternalState();
-        return wrappedEngine.create(namespace, key, value);
+        return proxiedEngine.create(namespace, key, value);
     }
 
     /**
@@ -139,7 +169,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public <T extends Serializable> T put(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.put(namespace, key, value);
+        return proxiedEngine.put(namespace, key, value);
     }
 
     /**
@@ -157,7 +187,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public boolean containsKey(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.containsKey(namespace, key);
+        return proxiedEngine.containsKey(namespace, key);
     }
 
     /**
@@ -177,7 +207,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.delete(namespace, key);
+        return proxiedEngine.delete(namespace, key);
     }
 
     /**
@@ -193,7 +223,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public Iterable<String> listKeysInNamespace(@NotNull String namespace) {
         checkInternalState();
-        return wrappedEngine.listKeysInNamespace(namespace);
+        return proxiedEngine.listKeysInNamespace(namespace);
     }
 
     /**
@@ -208,7 +238,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public Iterable<String> listNamespaces() throws StorageBackendException {
         checkInternalState();
-        return wrappedEngine.listNamespaces();
+        return proxiedEngine.listNamespaces();
     }
 
     /**
@@ -237,7 +267,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
         checkInternalState();
-        return wrappedEngine.read(namespace, key, clazz);
+        return proxiedEngine.read(namespace, key, clazz);
     }
 
     /**
@@ -261,7 +291,7 @@ class StorageEngineWrapper implements StorageEngine {
     @Override
     public <T extends Serializable> T update(@NotNull String namespace, @NotNull String key, @NotNull T newValue) throws StorageBackendException, StorageOperationException {
         checkInternalState();
-        return wrappedEngine.update(namespace, key, newValue);
+        return proxiedEngine.update(namespace, key, newValue);
     }
 
     /**
@@ -272,13 +302,36 @@ class StorageEngineWrapper implements StorageEngine {
      * StorageShutdownException}. Note, that this behaviour <i>must not</i> be implemented by the storage itself but is
      * provided through the core.
      */
-    @Override
     public void shutdown() {
         checkInternalState();
-        LOGGER.info("Shutting down storage engine {} ...", wrappedEngine.getClass().getCanonicalName());
-        wrappedEngine.shutdown();
+        LOGGER.info("Shutting down storage engine {} ...", proxiedEngine.getClass().getCanonicalName());
+        stopTimers();
+
+        notifyListeners(StorageEventType.SHUTDOWN);
         shutdown = true;
-        LOGGER.info("Storage engine {} has been shut down", wrappedEngine.getClass().getCanonicalName());
+        LOGGER.info("Storage engine {} has been shut down", proxiedEngine.getClass().getCanonicalName());
+    }
+
+    private void stopTimers() {
+        // TODO: Move to MessageBus
+        LOGGER.debug("Stopping attached timers ...");
+        for (Timer timer : timers) {
+            timer.cancel();
+        }
+    }
+
+    protected void notifyListeners(StorageEventType eventType) {
+        // TODO: Move to MessageBus
+        LOGGER.debug("Firing '{}' event to listeners", eventType);
+        for (ListenerConfiguration<StorageEventType, StorageEventListener> listenerConfiguration : listeners) {
+            try {
+                if (eventType.equals(listenerConfiguration.getEventType())) {
+                    listenerConfiguration.getEventListener().handleEvent(proxiedEngine);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Event handler threw an exception", e);
+            }
+        }
     }
 
     private void checkInternalState() {

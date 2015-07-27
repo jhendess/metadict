@@ -22,14 +22,15 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.storage;
+package org.xlrnet.metadict.storage.mapdb;
 
-import org.xlrnet.metadict.api.event.MetadictEventListener;
+import org.xlrnet.metadict.api.storage.StorageEventListener;
+import org.xlrnet.metadict.api.storage.StorageService;
 
 /**
- * Event listener for handling events on a storage engine.
+ * Maintenance listener for invoking commit actions on the database.
  */
-public interface StorageEventListener extends MetadictEventListener<StorageService> {
+public class CommitMaintenanceListener implements StorageEventListener {
 
     /**
      * Handler method for the thrown event.
@@ -38,6 +39,7 @@ public interface StorageEventListener extends MetadictEventListener<StorageServi
      *         The unwrapped {@link StorageService} that caused the event to occur.
      */
     @Override
-    void handleEvent(StorageService source);
-
+    public void handleEvent(StorageService source) {
+        ((MapdbStorageEngine) source).commit();
+    }
 }

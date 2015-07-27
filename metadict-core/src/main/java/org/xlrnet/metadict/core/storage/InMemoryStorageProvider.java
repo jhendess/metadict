@@ -25,7 +25,10 @@
 package org.xlrnet.metadict.core.storage;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.storage.*;
+import org.xlrnet.metadict.api.storage.StorageDescription;
+import org.xlrnet.metadict.api.storage.StorageDescriptionBuilder;
+import org.xlrnet.metadict.api.storage.StorageService;
+import org.xlrnet.metadict.api.storage.StorageServiceProvider;
 
 import java.util.Map;
 
@@ -79,7 +82,7 @@ public class InMemoryStorageProvider implements StorageServiceProvider {
      * map.
      */
     @Override
-    public StorageEngine createNewStorageService(Map<String, String> configuration) {
+    public StorageService createNewStorageService(Map<String, String> configuration) {
         return new InMemoryStorage();
     }
 }

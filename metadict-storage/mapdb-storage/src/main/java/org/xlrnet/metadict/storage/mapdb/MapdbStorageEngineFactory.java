@@ -29,7 +29,7 @@ import org.mapdb.DBMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageEngine;
+import org.xlrnet.metadict.api.storage.StorageService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +54,7 @@ public class MapdbStorageEngineFactory {
 
     private static final String PROPERTY_KEY_ASYNC_WRITE = "enableAsyncWrite";
 
-    public StorageEngine fromConfiguration(Map<String, String> configuration) {
+    public StorageService fromConfiguration(Map<String, String> configuration) {
         DBMaker dbMaker = createDBMakerInstance(configuration);
 
         String enableMmapFileProperty = configuration.get(PROPERTY_KEY_MMAP);

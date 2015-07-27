@@ -34,7 +34,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class ListenerConfiguration<T extends MetadictEventType, L extends MetadictEventListener> {
 
-    final long periodicalCall;
+    final long intervalSeconds;
 
     final private T eventType;
 
@@ -43,7 +43,7 @@ public class ListenerConfiguration<T extends MetadictEventType, L extends Metadi
     protected ListenerConfiguration(T eventType, L eventListener, long period) {
         this.eventType = eventType;
         this.eventListener = eventListener;
-        this.periodicalCall = period;
+        this.intervalSeconds = period;
     }
 
     /**
@@ -57,7 +57,7 @@ public class ListenerConfiguration<T extends MetadictEventType, L extends Metadi
      * @return A new listener configuration.
      */
     @NotNull
-    static <T extends MetadictEventType, L extends MetadictEventListener> ListenerConfiguration<T, L> newConfiguration(@NotNull T eventType, @NotNull L eventListener) {
+    public static <T extends MetadictEventType, L extends MetadictEventListener> ListenerConfiguration<T, L> newConfiguration(@NotNull T eventType, @NotNull L eventListener) {
         return new ListenerConfiguration<>(eventType, eventListener, 0);
     }
 
@@ -72,15 +72,15 @@ public class ListenerConfiguration<T extends MetadictEventType, L extends Metadi
      *         The type of event that should be listened to.
      * @param eventListener
      *         The listener that will be invoked upon entry of the event.
-     * @param intervalMinutes
-     *         The interval in which the listener will be called.
+     * @param intervalSeconds
+     *         The interval in seconds where the listener will be called. Must be at least 30.
      * @return A new listener configuration.
      */
     @NotNull
-    static <T extends MetadictEventType, L extends MetadictEventListener> ListenerConfiguration<T, L> newPeriodicConfiguration(@NotNull T eventType, @NotNull L eventListener, long intervalMinutes) {
+    public static <T extends MetadictEventType, L extends MetadictEventListener> ListenerConfiguration<T, L> newPeriodicConfiguration(@NotNull T eventType, @NotNull L eventListener, long intervalSeconds) {
         checkArgument(eventType.isPeriodic(), "Supplied event type must be periodic");
-        checkArgument(intervalMinutes > 0, "Interval must be greater than zero");
-        return new ListenerConfiguration<>(eventType, eventListener, intervalMinutes);
+        checkArgument(intervalSeconds >= 30, "Interval must be greater or equal to 30");
+        return new ListenerConfiguration<>(eventType, eventListener, intervalSeconds);
     }
 
     public T getEventType() {
@@ -89,5 +89,9 @@ public class ListenerConfiguration<T extends MetadictEventType, L extends Metadi
 
     public L getEventListener() {
         return eventListener;
+    }
+
+    public long getIntervalSeconds() {
+        return intervalSeconds;
     }
 }

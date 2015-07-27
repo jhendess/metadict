@@ -34,29 +34,27 @@ import java.util.Map;
 public enum StorageEventType implements MetadictEventType {
 
     /**
-     * Event that will be fired after the storage engine was created. All listeners will be notified after {@link
+     * Event that will be fired after the storage engine was instantiated. All listeners will be notified after {@link
      * StorageServiceProvider#createNewStorageService(Map)} has been called but before the storage has been injected.
      */
     POST_CREATE(false),
 
     /**
-     * Event that will be fired after the storage engine was injected into a new consumer. All listeners will be
-     * notified after the {@link #POST_CREATE} event has occurred but before the storage has been injected into the new
-     * consumer.
+     * Event that will be fired when the storage engine is about to be injected into a new consumer. All listeners will
+     * be notified after the {@link #POST_CREATE} event has occurred but before the storage has been injected into the
+     * new consumer.
      */
-    POST_INJECT(false),
+    ON_INJECT(false),
 
     /**
-     * Event that will be fired just before the storage engine is about to be shut down. All listeners will be notified
-     * before {@link StorageEngine#shutdown()} has been called.
+     * Event that will be fired when the storage engine should be shut down. This may happen e.g. when the core is being
+     * stopped or when a storage engine is being unloaded from the core.
+     * <p>
+     * After this event has been fired and all listeners have reacted, all successive method calls to the original
+     * engine will throw a {@link StorageShutdownException}. All listeners will be notified before further access to
+     * storage methods will be restricted.
      */
-    PRE_SHUTDOWN(false),
-
-    /**
-     * Event that will be fired after the storage engine has been shut down. All listeners will be notified after {@link
-     * StorageEngine#shutdown()} has been called.
-     */
-    POST_SHUTDOWN(false),
+    SHUTDOWN(false),
 
     /**
      * Periodic event that will be fired by the core in the defined interval after the engine has been created and

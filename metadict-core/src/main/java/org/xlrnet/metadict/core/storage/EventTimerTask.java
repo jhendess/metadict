@@ -22,22 +22,42 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.storage;
+package org.xlrnet.metadict.core.storage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.event.MetadictEventListener;
+import org.xlrnet.metadict.api.event.MetadictEventType;
+
+import java.util.TimerTask;
 
 /**
- * Event listener for handling events on a storage engine.
+ * Simple {@link TimerTask} implementation for firing events to a defined listener.
  */
-public interface StorageEventListener extends MetadictEventListener<StorageService> {
+public class EventTimerTask<T> extends TimerTask {
 
-    /**
-     * Handler method for the thrown event.
-     *
-     * @param source
-     *         The unwrapped {@link StorageService} that caused the event to occur.
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventTimerTask.class);
+
+    private final MetadictEventType eventType;
+
+    private final MetadictEventListener<T> eventListener;
+
+    private final T eventObject;
+
+    public EventTimerTask(MetadictEventType eventType, MetadictEventListener<T> eventListener, T eventObject) {
+        this.eventType = eventType;
+        this.eventListener = eventListener;
+        this.eventObject = eventObject;
+    }
+
     @Override
-    void handleEvent(StorageService source);
+    public void run() {
+        LOGGER.debug("Firing '{}' event to '{}'", eventType, eventListener.getClass().getCanonicalName());
+        try {
+            eventListener.handleEvent(eventObject);
+        } catch (Exception e) {
+            LOGGER.error("Event handler threw an exception", e);
+        }
+    }
 
 }

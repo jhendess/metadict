@@ -28,10 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.event.ListenerConfiguration;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
-import org.xlrnet.metadict.api.storage.StorageEngine;
-import org.xlrnet.metadict.api.storage.StorageService;
-import org.xlrnet.metadict.api.storage.StorageServiceProvider;
+import org.xlrnet.metadict.api.storage.*;
 import org.xlrnet.metadict.core.util.CommonUtils;
 
 import javax.annotation.PostConstruct;
@@ -44,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Factory for accessing and creating new {@link StorageService} instances. This factory can be used in two ways: either
@@ -64,13 +65,15 @@ public class StorageServiceFactory {
 
     private String defaultStorageServiceName;
 
-    private StorageEngineWrapper defaultStorageService;
+    private StorageEngineProxy defaultStorageService;
 
     private Map<String, StorageServiceProvider> storageServiceMap = new HashMap<>();
 
     private Map<String, String> defaultStorageConfigMap = new HashMap<>();
 
-    private List<StorageEngineWrapper> instantiatedStorageEngines = new ArrayList<>();
+    private Map<String, StorageDescription> storageDescriptionMap = new HashMap<>();
+
+    private List<StorageEngineProxy> instantiatedStorageEngines = new ArrayList<>();
 
     @Inject
     private Instance<StorageServiceProvider> storageServiceProviders;
@@ -95,13 +98,13 @@ public class StorageServiceFactory {
 
         int successfulShutdowns = 0;
 
-        for (StorageEngineWrapper storageEngine : instantiatedStorageEngines) {
+        for (StorageEngineProxy storageEngine : instantiatedStorageEngines) {
             try {
                 if (!storageEngine.isShutdown())
                     storageEngine.shutdown();
                 successfulShutdowns++;
             } catch (Exception e) {
-                LOGGER.error("Shutting down storage engine '{}' failed", storageEngine.wrappedEngine.getClass().getCanonicalName(), e);
+                LOGGER.error("Shutting down storage engine '{}' failed", storageEngine.proxiedEngine.getClass().getCanonicalName(), e);
             }
         }
 
@@ -116,6 +119,8 @@ public class StorageServiceFactory {
      * Get the currently configured default storage service. The returned object acts as a singleton. Accessing the
      * default service instance should be done by simply injecting a {@link StorageService}. Calling this method
      * manually is not needed in general.
+     * <p>
+     * All listeners will be notified with an {@link StorageEventType#ON_INJECT} event.
      *
      * @return the currently configured default storage service. After calling this method one time, the same instance
      * will be returned on each call.
@@ -126,6 +131,7 @@ public class StorageServiceFactory {
     public StorageService getDefaultStorageServiceInstance() {
         if (defaultStorageService == null)
             defaultStorageService = createNewDefaultStorageService();
+        defaultStorageService.notifyListeners(StorageEventType.ON_INJECT);
         return defaultStorageService;
     }
 
@@ -137,7 +143,7 @@ public class StorageServiceFactory {
      */
     @NotNull
     public StorageService createTemporaryStorageService() {
-        // TODO: Include this in storage lifecycle management and don't instantiate directly via new-Statement
+        // TODO: Include this in storage lifecycle management and don't instantiate directly via new-Statement - also include event management!
         return new InMemoryStorage();
     }
 
@@ -179,7 +185,12 @@ public class StorageServiceFactory {
                     identifier, storageServiceProvider.getClass().getCanonicalName(), storageServiceMap.get(identifier).getClass().getCanonicalName());
         }
 
+        StorageDescription storageDescription = storageServiceProvider.getStorageDescription();
+        checkNotNull(storageDescription, "Storage description may not be null");
+
         storageServiceMap.put(identifier, storageServiceProvider);
+        storageDescriptionMap.put(identifier, storageDescription);
+
         LOGGER.info("Registered storage provider service '{}'", identifier);
     }
 
@@ -190,25 +201,46 @@ public class StorageServiceFactory {
      * @return a new instance of the currently configured default storage service.
      */
     @NotNull
-    private StorageEngineWrapper createNewDefaultStorageService() {
+    private StorageEngineProxy createNewDefaultStorageService() {
         LOGGER.info("Creating new default storage service for '{}' ...", defaultStorageServiceName);
         StorageServiceProvider provider = storageServiceMap.get(defaultStorageServiceName);
-        StorageEngineWrapper storageService = internalInstantiateStorageService(provider, defaultStorageConfigMap);
+        StorageEngineProxy storageService = internalInstantiateStorageService(provider, defaultStorageConfigMap);
         LOGGER.info("Created new default storage service");
         return storageService;
     }
 
-    private StorageEngineWrapper internalInstantiateStorageService(StorageServiceProvider provider, Map<String, String> storageConfigurationMap) {
+    /**
+     * Create a new instance of a storage service and wrap it with a generic {@link StorageEngineProxy}. After
+     * instantiation, all listeners will be notified with a {@link StorageEventType#POST_CREATE} event.
+     *
+     * @param provider
+     *         The provider from which to instantiate.
+     * @param storageConfigurationMap
+     *         Configuration parameters.
+     * @return A new proxied storage service.
+     */
+    @NotNull
+    private StorageEngineProxy internalInstantiateStorageService(@NotNull StorageServiceProvider provider, @NotNull Map<String, String> storageConfigurationMap) {
         try {
-            StorageEngine newStorageService = provider.createNewStorageService(storageConfigurationMap);
-            StorageEngineWrapper storageEngineWrapper = new StorageEngineWrapper(newStorageService);
-            this.instantiatedStorageEngines.add(storageEngineWrapper);
-            LOGGER.debug("Successfully instantiated new storage service with class '{}' and configuration '{}'", newStorageService.getClass().getCanonicalName(), storageConfigurationMap);
-            return storageEngineWrapper;
+            StorageEngineProxy storageEngineProxy = internalInstantiateProxy(provider, storageConfigurationMap);
+            this.instantiatedStorageEngines.add(storageEngineProxy);
+            LOGGER.debug("Successfully instantiated new storage service with class '{}' and configuration '{}'", storageEngineProxy.proxiedEngine.getClass().getCanonicalName(), storageConfigurationMap);
+            storageEngineProxy.notifyListeners(StorageEventType.POST_CREATE);
+            return storageEngineProxy;
         } catch (Exception e) {
             LOGGER.error("Fatal error during storage service instantiation", e);
             throw e;
         }
+    }
+
+    @NotNull
+    private StorageEngineProxy internalInstantiateProxy(@NotNull StorageServiceProvider provider, @NotNull Map<String, String> storageConfigurationMap) {
+        StorageService newStorageService = provider.createNewStorageService(storageConfigurationMap);
+        checkNotNull(newStorageService, "Instantiated storage engine may not be null");
+
+        StorageDescription storageDescription = storageDescriptionMap.get(provider.getStorageBackendIdentifier());
+        List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners = storageDescription.getListeners();
+        return new StorageEngineProxy(newStorageService, listeners);
     }
 
 }

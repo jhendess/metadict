@@ -30,7 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.storage.*;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageService;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -44,7 +46,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>
  * The internal implementation is based on a MultiKeyMap.
  */
-public class InMemoryStorage implements StorageEngine {
+public class InMemoryStorage implements StorageService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(InMemoryStorage.class);
 
@@ -289,19 +291,6 @@ public class InMemoryStorage implements StorageEngine {
         this.backingMap.put(namespace, key, cloneValue(newValue));
 
         return newValue;
-    }
-
-    /**
-     * Management method that will be called by the Metadict core when the storage should be disconnected. This may
-     * happen e.g. when the core is being stopped or when a storage engine is being unloaded from the core.
-     * <p>
-     * After this method has been invoked, all successive method calls to the original engine will throw an {@link
-     * StorageShutdownException}. Note, that this behaviour <i>must not</i> be implemented by the storage itself but is
-     * provided through the core.
-     */
-    @Override
-    public void shutdown() {
-        // Do nothing
     }
 
     /**

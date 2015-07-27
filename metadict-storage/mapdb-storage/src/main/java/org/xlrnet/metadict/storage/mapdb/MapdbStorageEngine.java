@@ -33,8 +33,8 @@ import org.mapdb.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageEngine;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
+import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageShutdownException;
 
 import java.io.Serializable;
@@ -46,10 +46,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Storage engine for accessing a MapDB backend. MapDB is a simple key-value store that can operate both in-memory and
  * on file-basis.
- *
+ * <p>
  * Be aware that the current implementation does not use atomic transactions for creating and updating!
  */
-public class MapdbStorageEngine implements StorageEngine {
+public class MapdbStorageEngine implements StorageService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(MapdbStorageEngine.class);
 
@@ -63,22 +63,6 @@ public class MapdbStorageEngine implements StorageEngine {
         this.dbMaker = dbMaker;
         this.serializers = serializers;
         this.db = dbMaker.make();
-    }
-
-    /**
-     * Management method that will be called by the Metadict core when the storage should be disconnected. This may
-     * happen e.g. when the core is being stopped or when a storage engine is being unloaded from the core.
-     * <p>
-     * After this method has been invoked, all successive method calls to the original engine will throw an {@link
-     * StorageShutdownException}. Note, that this behaviour <i>must not</i> be implemented by the storage itself but is
-     * provided through the core.
-     */
-    @Override
-    public void shutdown() {
-        LOGGER.info("Committing database changes ...");
-        db.commit();
-        LOGGER.info("Closing database ...");
-        db.close();
     }
 
     /**
@@ -141,8 +125,7 @@ public class MapdbStorageEngine implements StorageEngine {
         if (namespaceMap.containsKey(key)) {
             LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
             throw new StorageOperationException("Creation failed: key already exists", namespace, key);
-        }
-        else {
+        } else {
             LOGGER.debug("Created key {} in namespace {}", key, namespace);
             namespaceMap.put(key, value);
         }
@@ -316,6 +299,25 @@ public class MapdbStorageEngine implements StorageEngine {
         namespaceMap.put(key, newValue);
 
         return newValue;
+    }
+
+    /**
+     * Management method that will be called by the Metadict core when the storage should be disconnected. This may
+     * happen e.g. when the core is being stopped or when a storage engine is being unloaded from the core.
+     * <p>
+     * After this method has been invoked, all successive method calls to the original engine will throw an {@link
+     * StorageShutdownException}. Note, that this behaviour <i>must not</i> be implemented by the storage itself but is
+     * provided through the core.
+     */
+    protected void shutdown() {
+        commit();
+        LOGGER.info("Closing database ...");
+        db.close();
+    }
+
+    protected void commit() {
+        LOGGER.info("Committing database changes ...");
+        db.commit();
     }
 
     /**
