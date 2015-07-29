@@ -25,8 +25,8 @@
 package org.xlrnet.metadict.core.storage;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.storage.ImmutableStorageDescription;
 import org.xlrnet.metadict.api.storage.StorageDescription;
-import org.xlrnet.metadict.api.storage.StorageDescriptionBuilder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
 
@@ -62,7 +62,7 @@ public class InMemoryStorageProvider implements StorageServiceProvider {
     @NotNull
     @Override
     public StorageDescription getStorageDescription() {
-        return new StorageDescriptionBuilder()
+        return ImmutableStorageDescription.builder()
                 .build();
     }
 

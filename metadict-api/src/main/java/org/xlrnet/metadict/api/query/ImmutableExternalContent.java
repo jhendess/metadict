@@ -34,7 +34,7 @@ import java.net.URL;
 /**
  * Implementation of {@link ExternalContent} interface.
  */
-public class ExternalContentImpl implements ExternalContent {
+public class ImmutableExternalContent implements ExternalContent {
 
     private static final long serialVersionUID = -3405350644385979888L;
 
@@ -44,17 +44,26 @@ public class ExternalContentImpl implements ExternalContent {
 
     private final URL link;
 
-    ExternalContentImpl(String title, String description, URL link) {
+    ImmutableExternalContent(String title, String description, URL link) {
         this.title = title;
         this.description = description;
         this.link = link;
     }
 
+    /**
+     * Return a new builder instance for creating new {@link ExternalContent} objects.
+     *
+     * @return a new builder.
+     */
+    public static ExternalContentBuilder builder() {
+        return new ExternalContentBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ExternalContentImpl)) return false;
-        ExternalContentImpl that = (ExternalContentImpl) o;
+        if (!(o instanceof ImmutableExternalContent)) return false;
+        ImmutableExternalContent that = (ImmutableExternalContent) o;
         return Objects.equal(title, that.title) &&
                 Objects.equal(description, that.description) &&
                 Objects.equal(link, that.link);

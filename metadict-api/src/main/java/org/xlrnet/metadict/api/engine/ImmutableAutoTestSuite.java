@@ -31,12 +31,21 @@ import java.util.Iterator;
 /**
  * Immutable implementation for {@link AutoTestSuite}.
  */
-public class AutoTestSuiteImpl implements AutoTestSuite{
+public class ImmutableAutoTestSuite implements AutoTestSuite{
 
     private final Iterable<AutoTestCase> autoTestCases;
 
-    AutoTestSuiteImpl(Iterable<AutoTestCase> autoTestCases) {
+    ImmutableAutoTestSuite(Iterable<AutoTestCase> autoTestCases) {
         this.autoTestCases = autoTestCases;
+    }
+
+    /**
+     * Return a new builder instance for creating new {@link AutoTestSuite} objects.
+     *
+     * @return a new builder.
+     */
+    public static AutoTestSuiteBuilder builder() {
+        return new AutoTestSuiteBuilder();
     }
 
     /**

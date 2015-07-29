@@ -39,6 +39,10 @@ public class BilingualEntryBuilder {
 
     private EntryType entryType = EntryType.UNKNOWN;
 
+    BilingualEntryBuilder() {
+
+    }
+
     /**
      * Build a new instance of {@link BilingualEntry} with the set properties.
      *
@@ -46,7 +50,7 @@ public class BilingualEntryBuilder {
      */
     @NotNull
     public BilingualEntry build() {
-        return new BilingualEntryImpl(inputObject, outputObject, entryType);
+        return new ImmutableBilingualEntry(inputObject, outputObject, entryType);
     }
 
     /**

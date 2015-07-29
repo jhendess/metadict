@@ -82,7 +82,7 @@ public class EngineRegistryTest {
     @Test
     public void testRegisterSearchProvider_success() throws Exception {
         // Setup mock to return all non-null
-        FeatureSet featureSet = new FeatureSetBuilder()
+        FeatureSet featureSet = ImmutableFeatureSet.builder()
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.ENGLISH, true))
                 .addSupportedLexicographicLanguage(Language.GERMAN)
                 .build();

@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * Immutable implementation of {@link DictionaryObject},
  */
-public class DictionaryObjectImpl implements DictionaryObject {
+public class ImmutableDictionaryObject implements DictionaryObject {
 
     private static final long serialVersionUID = -3150737898629567872L;
 
@@ -95,7 +95,7 @@ public class DictionaryObjectImpl implements DictionaryObject {
      * @param alternateForms
      *         Alternate ways of writing this object.
      */
-    DictionaryObjectImpl(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms, Optional<List<String>> alternateForms) {
+    ImmutableDictionaryObject(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms, Optional<List<String>> alternateForms) {
         this.language = language;
         this.generalForm = generalForm;
         this.description = description;
@@ -110,11 +110,20 @@ public class DictionaryObjectImpl implements DictionaryObject {
         this.alternateForms = alternateForms;
     }
 
+    /**
+     * Return a new builder instance for creating new {@link DictionaryObject} objects.
+     *
+     * @return a new builder.
+     */
+    public static DictionaryObjectBuilder builder() {
+        return new DictionaryObjectBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DictionaryObjectImpl)) return false;
-        DictionaryObjectImpl that = (DictionaryObjectImpl) o;
+        if (!(o instanceof ImmutableDictionaryObject)) return false;
+        ImmutableDictionaryObject that = (ImmutableDictionaryObject) o;
         return Objects.equal(language, that.language) &&
                 Objects.equal(generalForm, that.generalForm) &&
                 Objects.equal(description, that.description) &&

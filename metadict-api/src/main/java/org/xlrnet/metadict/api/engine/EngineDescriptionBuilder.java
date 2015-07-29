@@ -29,31 +29,35 @@ package org.xlrnet.metadict.api.engine;
  */
 public class EngineDescriptionBuilder {
 
-    protected String authorName;
+    private String authorName;
 
-    protected String authorLink;
+    private String authorLink;
 
-    protected String copyright;
+    private String copyright;
 
-    protected String license;
+    private String license;
 
-    protected String engineName;
+    private String engineName;
 
-    protected String engineUrl;
+    private String engineUrl;
 
-    protected String searchBackendName;
+    private String searchBackendName;
 
-    protected String searchBackendLink;
+    private String searchBackendLink;
 
-    protected String searchBackendCopyright;
+    private String searchBackendCopyright;
 
+    EngineDescriptionBuilder() {
+        
+    }
+    
     /**
      * Create a new instance of {@link EngineDescription}.
      *
      * @return a new instance of {@link EngineDescription}.
      */
     public EngineDescription build() {
-        return new EngineDescriptionImpl(authorName, authorLink, copyright, license, engineName, engineUrl, searchBackendName, searchBackendLink, searchBackendCopyright);
+        return new ImmutableEngineDescription(authorName, authorLink, copyright, license, engineName, engineUrl, searchBackendName, searchBackendLink, searchBackendCopyright);
     }
 
     public EngineDescriptionBuilder setAuthorName(String authorName) {

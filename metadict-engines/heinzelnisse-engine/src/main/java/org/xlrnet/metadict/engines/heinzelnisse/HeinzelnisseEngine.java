@@ -186,8 +186,8 @@ public class HeinzelnisseEngine implements SearchEngine {
     }
 
     private void buildDictionaryObjects(@NotNull TranslationEntry entry, @NotNull BilingualEntryBuilder entryBuilder, boolean isGermanToNorwegian) {
-        DictionaryObjectBuilder inBuilder = new DictionaryObjectBuilder();
-        DictionaryObjectBuilder outBuilder = new DictionaryObjectBuilder();
+        DictionaryObjectBuilder inBuilder = ImmutableDictionaryObject.builder();
+        DictionaryObjectBuilder outBuilder = ImmutableDictionaryObject.builder();
 
         setBuilderLanguages(isGermanToNorwegian, inBuilder, outBuilder);
 
@@ -314,7 +314,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     private void extractWikiLinks(@NotNull List<String> wikiPageNames, @NotNull EngineQueryResultBuilder resultBuilder) {
         for (String wikiPage : wikiPageNames) {
             try {
-                resultBuilder.addExternalContent(new ExternalContentBuilder()
+                resultBuilder.addExternalContent(ImmutableExternalContent.builder()
                         .setTitle(wikiPage)
                         .setLink(new URL(WIKI_BASE_URL + wikiPage))
                         .build());
@@ -369,7 +369,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     private void processSimilarRecomendations(List<String> wordList, Language similarityLanguage, EngineQueryResultBuilder resultBuilder) {
         for (String word : wordList) {
             resultBuilder.addSimilarRecommendation(
-                    new DictionaryObjectBuilder()
+                    ImmutableDictionaryObject.builder()
                             .setLanguage(similarityLanguage)
                             .setGeneralForm(word)
                             .build()
@@ -378,7 +378,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     }
 
     private void processTranslationEntry(@NotNull TranslationEntry entry, @NotNull BilingualQueryResultBuilder resultBuilder, boolean isGermanToNorwegian) {
-        BilingualEntryBuilder entryBuilder = new BilingualEntryBuilder();
+        BilingualEntryBuilder entryBuilder = ImmutableBilingualEntry.builder();
         // Resolve entry type
         EntryType entryType = resolveEntryType(entry);
         entryBuilder.setEntryType(entryType);
@@ -394,7 +394,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     }
 
     private BilingualQueryResult runQuery(String queryInput, boolean queryGerman, boolean queryNorwegian) throws IOException {
-        BilingualQueryResultBuilder resultBuilder = new BilingualQueryResultBuilder();
+        BilingualQueryResultBuilder resultBuilder = ImmutableBilingualQueryResult.builder();
 
         HeinzelResponse fullResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);
         //HeinzelResponse exactResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);

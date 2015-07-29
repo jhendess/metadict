@@ -45,6 +45,10 @@ public class AutoTestCaseBuilder {
 
     private MonolingualQueryResult expectedMonolingualQueryResult = null;
 
+    AutoTestCaseBuilder() {
+
+    }
+
     /**
      * Create a new instance of {@link AutoTestCase}.
      *
@@ -60,7 +64,22 @@ public class AutoTestCaseBuilder {
                 || expectedMonolingualQueryResult != null && monolingualTargetLanguage == null)
             throw new IllegalArgumentException("Monolingual test cases must have both expectation and configuration set");
 
-        return new AutoTestCaseImpl(monolingualTargetLanguage, expectedMonolingualQueryResult, expectedBilingualResults, bilingualTargetDictionary, testQueryString);
+        return new ImmutableAutoTestCase(monolingualTargetLanguage, expectedMonolingualQueryResult, expectedBilingualResults, bilingualTargetDictionary, testQueryString);
+    }
+
+    /**
+     * Set the bilingual target dictionary which should be queried for this test case.
+     * <p>
+     * Note that the bilingual test will only be executed if an expected bilingual query result is also set.
+     *
+     * @param bilingualTargetDictionary
+     *         the target dictionary which should be queried for this test case.
+     * @return this builder instance.
+     */
+    @NotNull
+    public AutoTestCaseBuilder setBilingualTargetDictionary(@NotNull BilingualDictionary bilingualTargetDictionary) {
+        this.bilingualTargetDictionary = bilingualTargetDictionary;
+        return this;
     }
 
     /**
@@ -79,21 +98,6 @@ public class AutoTestCaseBuilder {
     @NotNull
     public AutoTestCaseBuilder setExpectedBilingualResults(@NotNull BilingualQueryResult expectedBilingualResults) {
         this.expectedBilingualResults = expectedBilingualResults;
-        return this;
-    }
-
-    /**
-     * Set the bilingual target dictionary which should be queried for this test case.
-     * <p>
-     * Note that the bilingual test will only be executed if an expected bilingual query result is also set.
-     *
-     * @param bilingualTargetDictionary
-     *         the target dictionary which should be queried for this test case.
-     * @return this builder instance.
-     */
-    @NotNull
-    public AutoTestCaseBuilder setBilingualTargetDictionary(@NotNull BilingualDictionary bilingualTargetDictionary) {
-        this.bilingualTargetDictionary = bilingualTargetDictionary;
         return this;
     }
 
@@ -123,7 +127,7 @@ public class AutoTestCaseBuilder {
      */
     @NotNull
     AutoTestCaseBuilder setExpectedMonolingualResults(@NotNull MonolingualQueryResult monolingualResults) {
-        this.expectedMonolingualQueryResult  = monolingualResults;
+        this.expectedMonolingualQueryResult = monolingualResults;
         return this;
     }
 

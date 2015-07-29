@@ -67,7 +67,7 @@ public class MapdbStorageProvider implements StorageServiceProvider {
     @NotNull
     @Override
     public StorageDescription getStorageDescription() {
-        return new StorageDescriptionBuilder()
+        return ImmutableStorageDescription.builder()
                 .setAuthorName("xolor")
                 .setBackendName("MapDB")
                 .setBackendLink("http://www.mapdb.org/")

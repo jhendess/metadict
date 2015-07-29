@@ -41,6 +41,10 @@ public class ExternalContentBuilder {
 
     private URL link;
 
+    ExternalContentBuilder() {
+
+    }
+
     /**
      * Build a new instance of {@link ExternalContent} with the set properties.
      *
@@ -50,7 +54,7 @@ public class ExternalContentBuilder {
     public ExternalContent build() {
         checkNotNull(link, "Link to external content may not be null");
 
-        return new ExternalContentImpl(title, description, link);
+        return new ImmutableExternalContent(title, description, link);
     }
 
     /**

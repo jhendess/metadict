@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Immutable implementation for {@link StorageDescription}.
  */
-public class StorageDescriptionImpl implements StorageDescription {
+public class ImmutableStorageDescription implements StorageDescription {
 
     private static final long serialVersionUID = 2358208204021337882L;
 
@@ -58,7 +58,7 @@ public class StorageDescriptionImpl implements StorageDescription {
 
     private final List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners;
 
-    public StorageDescriptionImpl(String authorName, String authorLink, String copyright, String storageEngineName, String storageEngineLink, String license, String backendCopyright, String backendLink, String backendName, List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners) {
+    ImmutableStorageDescription(String authorName, String authorLink, String copyright, String storageEngineName, String storageEngineLink, String license, String backendCopyright, String backendLink, String backendName, List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners) {
         this.authorName = authorName;
         this.authorLink = authorLink;
         this.copyright = copyright;
@@ -69,6 +69,15 @@ public class StorageDescriptionImpl implements StorageDescription {
         this.backendLink = backendLink;
         this.backendName = backendName;
         this.listeners = listeners;
+    }
+
+    /**
+     * Return a new builder instance for creating new {@link StorageDescription} objects.
+     *
+     * @return a new builder.
+     */
+    public static StorageDescriptionBuilder builder() {
+        return new StorageDescriptionBuilder();
     }
 
     /**
@@ -177,8 +186,8 @@ public class StorageDescriptionImpl implements StorageDescription {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StorageDescriptionImpl)) return false;
-        StorageDescriptionImpl that = (StorageDescriptionImpl) o;
+        if (!(o instanceof ImmutableStorageDescription)) return false;
+        ImmutableStorageDescription that = (ImmutableStorageDescription) o;
         return Objects.equal(authorLink, that.authorLink) &&
                 Objects.equal(copyright, that.copyright) &&
                 Objects.equal(storageEngineName, that.storageEngineName) &&

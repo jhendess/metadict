@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.DictionaryObjectBuilder;
+import org.xlrnet.metadict.api.query.ImmutableDictionaryObject;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -96,7 +97,7 @@ public class ObjectMappingTests {
     }
 
     private DictionaryObjectBuilder prepareDictionaryObjectBuilder() {
-        return new DictionaryObjectBuilder()
+        return ImmutableDictionaryObject.builder()
                 .setGeneralForm("someGeneralForm")
                 .setLanguage(Language.GERMAN);
     }

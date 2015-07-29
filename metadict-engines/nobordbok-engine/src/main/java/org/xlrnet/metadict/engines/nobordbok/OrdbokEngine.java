@@ -111,7 +111,7 @@ public class OrdbokEngine implements SearchEngine {
 
     @NotNull
     private MonolingualQueryResult processDocument(@NotNull Document document) {
-        MonolingualQueryResultBuilder resultBuilder = new MonolingualQueryResultBuilder();
+        MonolingualQueryResultBuilder resultBuilder = ImmutableMonolingualQueryResult.builder();
 
         Element bokmaalTable = document.getElementById("byttutBM");
         Element nynorskTable = document.getElementById("byttutNN");
@@ -142,8 +142,8 @@ public class OrdbokEngine implements SearchEngine {
 
     @NotNull
     private Optional<MonolingualEntry> processTableRow(@NotNull Element tableRow, @NotNull Language language) {
-        MonolingualEntryBuilder entryBuilder = new MonolingualEntryBuilder();
-        DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder().setLanguage(language);
+        MonolingualEntryBuilder entryBuilder = ImmutableMonolingualEntry.builder();
+        DictionaryObjectBuilder objectBuilder = ImmutableDictionaryObject.builder().setLanguage(language);
 
         // Extract general form
         Element oppslagsord = tableRow.getElementsByClass("oppslagsord").first();

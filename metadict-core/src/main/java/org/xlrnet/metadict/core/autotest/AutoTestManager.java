@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.AutoTestSuiteBuilder;
+import org.xlrnet.metadict.api.engine.ImmutableAutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -70,7 +70,7 @@ public class AutoTestManager {
     public AutoTestReport runExternalAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
         validateTestCase(autoTestCase);
 
-        AutoTestSuite autoTestSuiteWrapper = new AutoTestSuiteBuilder().addAutoTestCase(autoTestCase).build();
+        AutoTestSuite autoTestSuiteWrapper = ImmutableAutoTestSuite.builder().addAutoTestCase(autoTestCase).build();
         AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
 
         internalRunAutoTestSuite(searchEngine, reportBuilder, autoTestSuiteWrapper);

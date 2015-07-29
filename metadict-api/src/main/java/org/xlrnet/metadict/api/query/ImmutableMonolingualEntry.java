@@ -28,53 +28,58 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Immutable implementation of {@link MonolingualQueryResult}.
+ * Immutable implementation for {@link MonolingualEntry}.
  */
-public class MonolingualQueryResultImpl extends AbstractQueryResult implements MonolingualQueryResult {
+public class ImmutableMonolingualEntry extends AbstractEntry implements MonolingualEntry {
 
-    private static final long serialVersionUID = -5563926572835515371L;
+    private static final long serialVersionUID = 6815019855431152791L;
 
-    private final List<MonolingualEntry> entries;
+    private final DictionaryObject content;
 
-    protected MonolingualQueryResultImpl(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<MonolingualEntry> entries) {
-        super(similarRecommendations, externalContents);
-        this.entries = entries;
+    /**
+     * Return a new builder instance for creating new {@link MonolingualEntry} objects.
+     *
+     * @return a new builder.
+     */
+    public static MonolingualEntryBuilder builder() {
+        return new MonolingualEntryBuilder();
+    }
+
+    ImmutableMonolingualEntry(@NotNull EntryType entryType, @NotNull DictionaryObject content) {
+        super(entryType);
+        this.content = content;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MonolingualQueryResultImpl)) return false;
-        MonolingualQueryResultImpl that = (MonolingualQueryResultImpl) o;
-        return Objects.equal(entries, that.entries);
+        if (!(o instanceof ImmutableMonolingualEntry)) return false;
+        ImmutableMonolingualEntry that = (ImmutableMonolingualEntry) o;
+        return Objects.equal(content, that.content);
     }
 
     /**
-     * Returns the monolingual results of the query that match the input query. This should be used for most
-     * applications
-     * that involve query results.
+     * Get the entry's main data object. This object doesn't  have to correspond exactly to the original input query,
+     * but should should be as similar as possible. The value may never be null.
      *
-     * @return the bilingual results of the query that match the input.
+     * @return the main data object of this entry.
      */
     @NotNull
     @Override
-    public List<MonolingualEntry> getMonolingualEntries() {
-        return Collections.unmodifiableList(entries);
+    public DictionaryObject getContent() {
+        return content;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(entries);
+        return Objects.hashCode(content);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("entries", entries)
+                .add("content", content)
                 .toString();
     }
 }

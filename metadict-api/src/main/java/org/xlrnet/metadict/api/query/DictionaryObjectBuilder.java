@@ -68,6 +68,10 @@ public class DictionaryObjectBuilder {
 
     private List<String> alternateForms = new ArrayList<>();
 
+    DictionaryObjectBuilder() {
+
+    }
+
     /**
      * Add a new meaning to the current object.
      * <p/>
@@ -153,7 +157,7 @@ public class DictionaryObjectBuilder {
         if (alternateForms.size() > 0)
             optionalAlternateForms = Optional.of(alternateForms);
 
-        return new DictionaryObjectImpl(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms, optionalAlternateForms);
+        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms, optionalAlternateForms);
     }
 
     /**

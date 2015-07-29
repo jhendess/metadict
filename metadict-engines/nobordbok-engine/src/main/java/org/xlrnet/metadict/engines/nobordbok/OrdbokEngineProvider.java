@@ -43,7 +43,7 @@ public class OrdbokEngineProvider implements SearchEngineProvider {
     @NotNull
     @Override
     public EngineDescription getEngineDescription() {
-        return new EngineDescriptionBuilder()
+        return ImmutableEngineDescription.builder()
                 .setEngineName("Norwegian dictionary (Bokmåls-/Nynorskordboka)")
                 .setAuthorName("xolor")
                 .setSearchBackendName("Bokmålsordboka | Nynorskordboka")
@@ -54,7 +54,7 @@ public class OrdbokEngineProvider implements SearchEngineProvider {
     @NotNull
     @Override
     public FeatureSet getFeatureSet() {
-        return new FeatureSetBuilder()
+        return ImmutableFeatureSet.builder()
                 .setSupportsAutoTest(false)
                 .setSupportsFuzzySearch(false)
                 .setProvidesAlternatives(false)

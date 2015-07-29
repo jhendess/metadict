@@ -37,13 +37,17 @@ public class MonolingualEntryBuilder {
 
     private EntryType entryType = EntryType.UNKNOWN;
 
+    MonolingualEntryBuilder() {
+
+    }
+
     /**
      * Build a new instance of {@link BilingualEntry} with the set properties.
      *
      * @return a new instance of {@link BilingualEntry}.
      */
     public MonolingualEntry build() {
-        return new MonolingualEntryImpl(entryType, content);
+        return new ImmutableMonolingualEntry(entryType, content);
     }
 
     /**

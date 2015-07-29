@@ -35,7 +35,7 @@ import java.util.Collection;
 /**
  * Concrete implementation of a settable {@link FeatureSet}.
  */
-public class FeatureSetImpl implements FeatureSet {
+public class ImmutableFeatureSet implements FeatureSet {
 
     private static final long serialVersionUID = 4593476472125853031L;
 
@@ -85,7 +85,7 @@ public class FeatureSetImpl implements FeatureSet {
      */
     private final Collection<Language> supportedLexicographicLanguages;
 
-    FeatureSetImpl(Collection<BilingualDictionary> supportedBilingualDictionaries, Collection<Language> supportedLexicographicLanguages, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives, boolean supportsSelfTest, boolean providesMonolingualEntries, boolean providesBilingualDictionaryEntries) {
+    ImmutableFeatureSet(Collection<BilingualDictionary> supportedBilingualDictionaries, Collection<Language> supportedLexicographicLanguages, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives, boolean supportsSelfTest, boolean providesMonolingualEntries, boolean providesBilingualDictionaryEntries) {
         this.supportedBilingualDictionaries = supportedBilingualDictionaries;
         this.supportedLexicographicLanguages = supportedLexicographicLanguages;
         this.providesExternalContent = providesExternalContent;
@@ -96,11 +96,20 @@ public class FeatureSetImpl implements FeatureSet {
         this.providesBilingualDictionaryEntries = providesBilingualDictionaryEntries;
     }
 
+    /**
+     * Return a new builder instance for creating new {@link FeatureSet} objects.
+     *
+     * @return a new builder.
+     */
+    public static FeatureSetBuilder builder() {
+        return new FeatureSetBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FeatureSetImpl)) return false;
-        FeatureSetImpl that = (FeatureSetImpl) o;
+        if (!(o instanceof ImmutableFeatureSet)) return false;
+        ImmutableFeatureSet that = (ImmutableFeatureSet) o;
         return Objects.equal(providesExternalContent, that.providesExternalContent) &&
                 Objects.equal(supportsFuzzySearch, that.supportsFuzzySearch) &&
                 Objects.equal(providesAlternatives, that.providesAlternatives) &&

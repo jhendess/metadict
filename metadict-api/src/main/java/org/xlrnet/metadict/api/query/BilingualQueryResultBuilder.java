@@ -36,9 +36,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BilingualQueryResultBuilder extends EngineQueryResultBuilder {
 
-    List<BilingualEntry> bilingualEntries = new Vector<>();
+    private List<BilingualEntry> bilingualEntries = new Vector<>();
 
-    public static final BilingualQueryResult EMPTY_QUERY_RESULT = new BilingualQueryResultBuilder().build();
+    BilingualQueryResultBuilder() {
+
+    }
 
     /**
      * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
@@ -64,7 +66,7 @@ public class BilingualQueryResultBuilder extends EngineQueryResultBuilder {
     @NotNull
     @Override
     public BilingualQueryResult build() {
-        return new BilingualQueryResultImpl(bilingualEntries, similarRecommendations, externalContents);
+        return new ImmutableBilingualQueryResult(bilingualEntries, similarRecommendations, externalContents);
     }
 
 }

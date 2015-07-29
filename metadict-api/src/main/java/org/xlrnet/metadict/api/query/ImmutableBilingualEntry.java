@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Immutable implementation for {@link BilingualEntry}.
  */
-public class BilingualEntryImpl extends AbstractEntry implements BilingualEntry {
+public class ImmutableBilingualEntry extends AbstractEntry implements BilingualEntry {
 
     private static final long serialVersionUID = -1482979366776782055L;
 
@@ -49,17 +49,26 @@ public class BilingualEntryImpl extends AbstractEntry implements BilingualEntry 
      * @param entryType
      *         The type of this entry.
      */
-    BilingualEntryImpl(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
+    ImmutableBilingualEntry(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
         super(entryType);
         this.inputObject = inputObject;
         this.outputObject = outputObject;
     }
 
+    /**
+     * Return a new builder instance for creating new {@link BilingualEntry} objects.
+     *
+     * @return a new builder.
+     */
+    public static BilingualEntryBuilder builder() {
+        return new BilingualEntryBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BilingualEntryImpl)) return false;
-        BilingualEntryImpl that = (BilingualEntryImpl) o;
+        if (!(o instanceof ImmutableBilingualEntry)) return false;
+        ImmutableBilingualEntry that = (ImmutableBilingualEntry) o;
         return Objects.equal(inputObject, that.inputObject) &&
                 Objects.equal(outputObject, that.outputObject) &&
                 Objects.equal(entryType, that.entryType);

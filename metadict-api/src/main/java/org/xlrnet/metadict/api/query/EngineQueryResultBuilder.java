@@ -39,9 +39,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class EngineQueryResultBuilder {
 
-    List<DictionaryObject> similarRecommendations = new Vector<>();
+    protected List<DictionaryObject> similarRecommendations = new Vector<>();
 
-    List<ExternalContent> externalContents = new Vector<>();
+    protected List<ExternalContent> externalContents = new Vector<>();
 
     /**
      * Add a new {@link ExternalContent} object to the builder. This is used to describe any content provided by a

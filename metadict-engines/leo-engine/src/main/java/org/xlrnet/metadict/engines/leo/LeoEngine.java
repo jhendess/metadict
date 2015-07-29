@@ -228,7 +228,7 @@ public class LeoEngine implements SearchEngine {
     }
 
     private BilingualQueryResultBuilder processDocument(Document doc) {
-        BilingualQueryResultBuilder resultBuilder = new BilingualQueryResultBuilder();
+        BilingualQueryResultBuilder resultBuilder = ImmutableBilingualQueryResult.builder();
 
         // Find sections:
         Elements sections = doc.getElementsByTag("section");
@@ -263,14 +263,14 @@ public class LeoEngine implements SearchEngine {
             return;
         }
 
-        ExternalContentBuilder builder = new ExternalContentBuilder();
+        ExternalContentBuilder builder = ImmutableExternalContent.builder();
 
 
         for (Iterator<Element> iterator = forumLinkNode.getAllElements().iterator(); iterator.hasNext(); ) {
             Element linkNode = iterator.next();
 
             if (StringUtils.equals(linkNode.tag().getName(), "link")) {
-                builder = new ExternalContentBuilder();
+                builder = ImmutableExternalContent.builder();
                 String link = linkNode.attr("href");
 
                 if (StringUtils.isNotBlank(link)) {
@@ -338,7 +338,7 @@ public class LeoEngine implements SearchEngine {
         DictionaryObject rightObject = processSideNode(rightSide, entryType);
 
         // Build the final DictionaryEntry
-        resultBuilder.addBilingualEntry(new BilingualEntryBuilder()
+        resultBuilder.addBilingualEntry(ImmutableBilingualEntry.builder()
                 .setEntryType(entryType)
                 .setInputObject(leftObject)
                 .setOutputObject(rightObject).build());
@@ -354,7 +354,7 @@ public class LeoEngine implements SearchEngine {
     }
 
     private DictionaryObject processSideNode(Element side, EntryType entryType) {
-        DictionaryObjectBuilder dictionaryObjectBuilder = new DictionaryObjectBuilder();
+        DictionaryObjectBuilder dictionaryObjectBuilder = ImmutableDictionaryObject.builder();
 
         // Extract general form:
         String generalForm = cleanWhitespace(extractGeneralForm(side));
@@ -433,7 +433,7 @@ public class LeoEngine implements SearchEngine {
             for (Element word : side.getElementsByTag("word")) {
                 String wordText = cleanWhitespace(word.text());
                 engineQueryResultBuilder.addSimilarRecommendation(
-                        new DictionaryObjectBuilder()
+                        ImmutableDictionaryObject.builder()
                                 .setLanguage(sideLanguage)
                                 .setGeneralForm(wordText)
                                 .build()

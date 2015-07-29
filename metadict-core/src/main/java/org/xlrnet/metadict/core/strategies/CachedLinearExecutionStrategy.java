@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
-import org.xlrnet.metadict.api.query.BilingualQueryResultBuilder;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
+import org.xlrnet.metadict.api.query.ImmutableBilingualQueryResult;
 import org.xlrnet.metadict.api.query.MonolingualQueryResult;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
@@ -100,7 +100,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                         .setFailedStep(true)
                         .setQueryStep(currentQueryStep)
                         .setErrorMessage(e.getMessage())
-                        .setEngineQueryResult(BilingualQueryResultBuilder.EMPTY_QUERY_RESULT)
+                        .setEngineQueryResult(ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT)
                         .build();
             }
             if (queryStepResult != null && queryStepResult.isFailedStep())
@@ -157,7 +157,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                 LOGGER.error("Query step {} failed: query result was null", step);
                 stepResultBuilder.setFailedStep(true).setErrorMessage("query result was null")
                         .setExecutionTime(System.currentTimeMillis() - startTime);
-                queryResult = BilingualQueryResultBuilder.EMPTY_QUERY_RESULT;
+                queryResult = ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT;
             }
             stepResultBuilder.setEngineQueryResult(queryResult);
 
@@ -169,7 +169,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         } catch (Exception e) {
             LOGGER.error("Query step {} failed", step, e);
             stepResultBuilder.setFailedStep(true).setErrorMessage(e.getMessage())
-                    .setEngineQueryResult(BilingualQueryResultBuilder.EMPTY_QUERY_RESULT)
+                    .setEngineQueryResult(ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT)
                     .setExecutionTime(System.currentTimeMillis() - startTime);
         }
         return stepResultBuilder.build();

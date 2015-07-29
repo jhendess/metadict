@@ -30,7 +30,7 @@ import com.google.common.base.Objects;
 /**
  * Immutable implementation for {@link EngineDescription}.
  */
-public class EngineDescriptionImpl implements EngineDescription {
+public class ImmutableEngineDescription implements EngineDescription {
 
     private static final long serialVersionUID = -7529741892355637801L;
 
@@ -74,7 +74,7 @@ public class EngineDescriptionImpl implements EngineDescription {
      * @param searchBackendCopyright
      *         Copyright for the search backend.
      */
-    EngineDescriptionImpl(String authorName, String authorLink, String copyright, String license, String engineName, String engineLink, String searchBackendName, String searchBackendLink, String searchBackendCopyright) {
+    ImmutableEngineDescription(String authorName, String authorLink, String copyright, String license, String engineName, String engineLink, String searchBackendName, String searchBackendLink, String searchBackendCopyright) {
         this.authorName = authorName;
         this.authorLink = authorLink;
         this.copyright = copyright;
@@ -86,11 +86,20 @@ public class EngineDescriptionImpl implements EngineDescription {
         this.searchBackendCopyright = searchBackendCopyright;
     }
 
+    /**
+     * Return a new builder instance for creating new {@link EngineDescription} objects.
+     *
+     * @return a new builder.
+     */
+    public static EngineDescriptionBuilder builder() {
+        return new EngineDescriptionBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EngineDescriptionImpl)) return false;
-        EngineDescriptionImpl that = (EngineDescriptionImpl) o;
+        if (!(o instanceof ImmutableEngineDescription)) return false;
+        ImmutableEngineDescription that = (ImmutableEngineDescription) o;
         return Objects.equal(authorName, that.authorName) &&
                 Objects.equal(authorLink, that.authorLink) &&
                 Objects.equal(copyright, that.copyright) &&
@@ -103,15 +112,6 @@ public class EngineDescriptionImpl implements EngineDescription {
     }
 
     /**
-     * Returns the name of the author who developed the engine.
-     *
-     * @return the name of the author who developed the engine.
-     */
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    /**
      * Returns the url to the website of the author.
      *
      * @return the url to the website of the author.
@@ -121,40 +121,12 @@ public class EngineDescriptionImpl implements EngineDescription {
     }
 
     /**
-     * Returns copyright information about the engine.
+     * Returns the name of the author who developed the engine.
      *
-     * @return copyright information about the engine.
+     * @return the name of the author who developed the engine.
      */
-    public String getCopyright() {
-        return copyright;
-    }
-
-    /**
-     * Returns the name of the engine. This parameter has to be set always or the core might not load the engine.
-     *
-     * @return the name of the engine.
-     */
-    public String getEngineName() {
-        return engineName;
-    }
-
-    /**
-     * Returns a link to the engine's website. This link should contain either general information about the engine or
-     * the full source code.
-     *
-     * @return a link to the engine's website.
-     */
-    public String getEngineLink() {
-        return engineLink;
-    }
-
-    /**
-     * Returns license information of the engine.
-     *
-     * @return license information of the engine.
-     */
-    public String getLicense() {
-        return license;
+    public String getAuthorName() {
+        return authorName;
     }
 
     /**
@@ -182,6 +154,43 @@ public class EngineDescriptionImpl implements EngineDescription {
      */
     public String getBackendName() {
         return searchBackendName;
+    }
+
+    /**
+     * Returns copyright information about the engine.
+     *
+     * @return copyright information about the engine.
+     */
+    public String getCopyright() {
+        return copyright;
+    }
+
+    /**
+     * Returns a link to the engine's website. This link should contain either general information about the engine or
+     * the full source code.
+     *
+     * @return a link to the engine's website.
+     */
+    public String getEngineLink() {
+        return engineLink;
+    }
+
+    /**
+     * Returns the name of the engine. This parameter has to be set always or the core might not load the engine.
+     *
+     * @return the name of the engine.
+     */
+    public String getEngineName() {
+        return engineName;
+    }
+
+    /**
+     * Returns license information of the engine.
+     *
+     * @return license information of the engine.
+     */
+    public String getLicense() {
+        return license;
     }
 
     @Override

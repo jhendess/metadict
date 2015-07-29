@@ -39,6 +39,10 @@ public class AutoTestSuiteBuilder {
 
     private List<AutoTestCase> testCases = new ArrayList<>();
 
+    AutoTestSuiteBuilder() {
+
+    }
+
     /**
      * Add a new {@link AutoTestCase} to this builder.
      *
@@ -61,7 +65,7 @@ public class AutoTestSuiteBuilder {
      */
     @NotNull
     public AutoTestSuite build() {
-        return new AutoTestSuiteImpl(Collections.unmodifiableList(testCases));
+        return new ImmutableAutoTestSuite(Collections.unmodifiableList(testCases));
     }
 
 }

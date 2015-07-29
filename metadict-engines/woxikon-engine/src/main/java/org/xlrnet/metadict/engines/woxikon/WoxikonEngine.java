@@ -126,7 +126,7 @@ public class WoxikonEngine implements SearchEngine {
     }
 
     private BilingualQueryResult processBilingualDocument(String queryInput, Document doc, Language targetLanguage) {
-        BilingualQueryResultBuilder resultBuilder = new BilingualQueryResultBuilder();
+        BilingualQueryResultBuilder resultBuilder = ImmutableBilingualQueryResult.builder();
 
         processTranslationTable(queryInput, doc, resultBuilder, Language.GERMAN, targetLanguage);
         processTranslationTable(queryInput, doc, resultBuilder, targetLanguage, Language.GERMAN);
@@ -157,7 +157,7 @@ public class WoxikonEngine implements SearchEngine {
             } else if (node.tagName().equals("a")) {
                 String recommendationText = node.text();
 
-                DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder();
+                DictionaryObjectBuilder objectBuilder = ImmutableDictionaryObject.builder();
                 objectBuilder.setLanguage(currentLanguage).setGeneralForm(recommendationText);
 
                 resultBuilder.addSimilarRecommendation(objectBuilder.build());
@@ -195,7 +195,7 @@ public class WoxikonEngine implements SearchEngine {
             return;
         }
 
-        BilingualEntryBuilder entryBuilder = new BilingualEntryBuilder();
+        BilingualEntryBuilder entryBuilder = ImmutableBilingualEntry.builder();
 
         entryBuilder.setEntryType(detectEntryType(words.get(0)));
         entryBuilder.setInputObject(processSingleNode(words.get(0), sourceLanguage, queryString));
@@ -206,7 +206,7 @@ public class WoxikonEngine implements SearchEngine {
 
     @NotNull
     private DictionaryObject processSingleNode(@NotNull Element element, @NotNull Language language, String queryString) {
-        DictionaryObjectBuilder objectBuilder = new DictionaryObjectBuilder();
+        DictionaryObjectBuilder objectBuilder = ImmutableDictionaryObject.builder();
         objectBuilder.setLanguage(language);
 
         // Extract entry text:

@@ -38,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Immutable implementation for {@link AutoTestCase}.
  */
-public class AutoTestCaseImpl implements AutoTestCase {
+public class ImmutableAutoTestCase implements AutoTestCase {
 
     private final Optional<Language> monolingualTargetLanguage;
 
@@ -50,7 +50,7 @@ public class AutoTestCaseImpl implements AutoTestCase {
 
     private final String testQueryString;
 
-    AutoTestCaseImpl(Language monolingualTargetLanguage, MonolingualQueryResult expectedMonolingualQueryResult, BilingualQueryResult expectedBilingualResults, BilingualDictionary bilingualTargetDictionary, String testQueryString) {
+    ImmutableAutoTestCase(Language monolingualTargetLanguage, MonolingualQueryResult expectedMonolingualQueryResult, BilingualQueryResult expectedBilingualResults, BilingualDictionary bilingualTargetDictionary, String testQueryString) {
         checkNotNull(testQueryString, "Test query may not be null");
 
         this.monolingualTargetLanguage = Optional.ofNullable(monolingualTargetLanguage);
@@ -59,6 +59,15 @@ public class AutoTestCaseImpl implements AutoTestCase {
         this.bilingualTargetDictionary = Optional.ofNullable(bilingualTargetDictionary);
 
         this.testQueryString = testQueryString;
+    }
+
+    /**
+     * Return a new builder instance for creating new {@link AutoTestCase} objects.
+     *
+     * @return a new builder.
+     */
+    public static AutoTestCaseBuilder builder() {
+        return new AutoTestCaseBuilder();
     }
 
     /**

@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
-import org.xlrnet.metadict.api.engine.AutoTestSuiteBuilder;
+import org.xlrnet.metadict.api.engine.ImmutableAutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
@@ -132,7 +132,7 @@ public class AutoTestManagerTest {
 
     @Test
     public void testRegisterAutoTestSuite() throws Exception {
-        AutoTestSuite mockedTestSuite = new AutoTestSuiteBuilder()
+        AutoTestSuite mockedTestSuite = ImmutableAutoTestSuite.builder()
                 .addAutoTestCase(mock(AutoTestCase.class))
                 .addAutoTestCase(mock(AutoTestCase.class))
                 .build();
@@ -152,7 +152,7 @@ public class AutoTestManagerTest {
         // Prepare mocks
         Exception mockedException = new Exception();
         AutoTestCase mockedTestCase = mock(AutoTestCase.class);
-        AutoTestSuite mockedTestSuite = new AutoTestSuiteBuilder().addAutoTestCase(mockedTestCase).build();
+        AutoTestSuite mockedTestSuite = ImmutableAutoTestSuite.builder().addAutoTestCase(mockedTestCase).build();
         AutoTestResult testResult = AutoTestResult.failed("canonicalName", 1, mockedTestCase, mockedException, null);
         autoTestManagerSpy.engineAutoTestSuiteMap.put(mockedSearchEngine, mockedTestSuite);
         doReturn(testResult)

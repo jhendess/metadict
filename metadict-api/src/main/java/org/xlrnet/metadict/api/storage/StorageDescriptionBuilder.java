@@ -40,16 +40,6 @@ public class StorageDescriptionBuilder {
 
     private String authorName;
 
-    /**
-     * Set the name of the author who developed the engine.
-     *
-     * @return the name of the author who developed the engine.
-     */
-    public StorageDescriptionBuilder setAuthorName(String authorName) {
-        this.authorName = authorName;
-        return this;
-    }
-
     private String authorLink;
 
     private String copyright;
@@ -68,10 +58,32 @@ public class StorageDescriptionBuilder {
 
     private List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners = new ArrayList<>();
 
+    StorageDescriptionBuilder() {
+
+    }
+
+    /**
+     * Add a new Listener to the storage description.
+     *
+     * @param listenerConfiguration
+     *         Listener configuration which listens to {@link StorageEventType} and comes with an attached {@link
+     *         StorageEventListener}.
+     * @return this builder.
+     */
     public StorageDescriptionBuilder addListenerConfiguration(ListenerConfiguration<StorageEventType, StorageEventListener> listenerConfiguration) {
         checkNotNull(listenerConfiguration);
         listeners.add(listenerConfiguration);
         return this;
+    }
+
+    /**
+     * Create a new instance of {@link StorageDescription}.
+     *
+     * @return this builder.
+     */
+    @NotNull
+    public StorageDescription build() {
+        return new ImmutableStorageDescription(authorName, authorLink, copyright, storageEngineName, storageEngineLink, license, backendCopyright, backendLink, backendName, listeners);
     }
 
     /**
@@ -86,58 +98,13 @@ public class StorageDescriptionBuilder {
     }
 
     /**
-     * Set copyright information about the engine.
+     * Set the name of the author who developed the engine.
      *
-     * @return this builder.
+     * @return the name of the author who developed the engine.
      */
-    @NotNull
-    public StorageDescriptionBuilder setCopyright(@NotNull String copyright) {
-        this.copyright = copyright;
+    public StorageDescriptionBuilder setAuthorName(String authorName) {
+        this.authorName = authorName;
         return this;
-    }
-
-    /**
-     * Set the name of the engine. This parameter has to be set always or the core might not load the engine.
-     *
-     * @return this builder.
-     */
-    @NotNull
-    public StorageDescriptionBuilder setStorageEngineName(@NotNull String storageEngineName) {
-        this.storageEngineName = storageEngineName;
-        return this;
-    }
-
-    /**
-     * Set a link to the storage's engines website. This link should contain either general information about the
-     * engine or the full source code.
-     *
-     * @return this builder.
-     */
-    @NotNull
-    public StorageDescriptionBuilder setStorageEngineLink(@NotNull String storageEngineLink) {
-        this.storageEngineLink = storageEngineLink;
-        return this;
-    }
-
-    /**
-     * Set license information of the engine.
-     *
-     * @return this builder.
-     */
-    @NotNull
-    public StorageDescriptionBuilder setLicense(@NotNull String license) {
-        this.license = license;
-        return this;
-    }
-
-    /**
-     * Create a new instance of {@link StorageDescription}.
-     *
-     * @return this builder.
-     */
-    @NotNull
-    public StorageDescription build() {
-        return new StorageDescriptionImpl(authorName, authorLink, copyright, storageEngineName, storageEngineLink, license, backendCopyright, backendLink, backendName, listeners);
     }
 
     /**
@@ -167,6 +134,51 @@ public class StorageDescriptionBuilder {
      */
     public StorageDescriptionBuilder setBackendName(String backendName) {
         this.backendName = backendName;
+        return this;
+    }
+
+    /**
+     * Set copyright information about the engine.
+     *
+     * @return this builder.
+     */
+    @NotNull
+    public StorageDescriptionBuilder setCopyright(@NotNull String copyright) {
+        this.copyright = copyright;
+        return this;
+    }
+
+    /**
+     * Set license information of the engine.
+     *
+     * @return this builder.
+     */
+    @NotNull
+    public StorageDescriptionBuilder setLicense(@NotNull String license) {
+        this.license = license;
+        return this;
+    }
+
+    /**
+     * Set a link to the storage's engines website. This link should contain either general information about the
+     * engine or the full source code.
+     *
+     * @return this builder.
+     */
+    @NotNull
+    public StorageDescriptionBuilder setStorageEngineLink(@NotNull String storageEngineLink) {
+        this.storageEngineLink = storageEngineLink;
+        return this;
+    }
+
+    /**
+     * Set the name of the engine. This parameter has to be set always or the core might not load the engine.
+     *
+     * @return this builder.
+     */
+    @NotNull
+    public StorageDescriptionBuilder setStorageEngineName(@NotNull String storageEngineName) {
+        this.storageEngineName = storageEngineName;
         return this;
     }
 

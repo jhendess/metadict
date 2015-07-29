@@ -40,47 +40,51 @@ public class FeatureSetBuilder {
      * A collection of dictionaries that the engine supports for bilingual lookups. This can be e.g. English-English or
      * German-English but also English-German.
      */
-    protected List<BilingualDictionary> supportedBilingualDictionaries = new ArrayList<>();
+    private List<BilingualDictionary> supportedBilingualDictionaries = new ArrayList<>();
 
     /**
      * A collection of languages that the engine supports for monolingual lookups. This can be a normal language like
      * English or German.
      */
-    protected List<Language> supportedLexicographicLanguages = new ArrayList<>();
+    private List<Language> supportedLexicographicLanguages = new ArrayList<>();
 
     /**
      * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
      * content.
      */
-    protected boolean providesExternalContent = false;
+    private boolean providesExternalContent = false;
 
     /**
      * True, if the engine i.e. the called website supports fuzzy search.
      */
-    protected boolean supportsFuzzySearch = false;
+    private boolean supportsFuzzySearch = false;
 
     /**
      * True, if the engine provides alternatives to the given query. This can be e.g. a "did-you-mean" recommendation.
      */
-    protected boolean providesAlternatives = false;
+    private boolean providesAlternatives = false;
 
     /**
      * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
      * for more information about this.
      */
-    protected boolean supportsAutoTest = false;
+    private boolean supportsAutoTest = false;
 
     /**
      * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
      * dictionary lookup with detailed information about one entry in one language.
      */
-    protected boolean providesLexicographicEntries = false;
+    private boolean providesLexicographicEntries = false;
 
     /**
      * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
      * dictionary lookup that provides a translation between two different languages.
      */
-    protected boolean providesBilingualDictionaryEntries = false;
+    private boolean providesBilingualDictionaryEntries = false;
+
+    FeatureSetBuilder() {
+
+    }
 
     /**
      * Add a new {@link BilingualDictionary} for bilingual lookups that is supported by the engine. This can be e.g.
@@ -112,7 +116,7 @@ public class FeatureSetBuilder {
      * @return a new instance of {@link FeatureSet}.
      */
     public FeatureSet build() {
-        return new FeatureSetImpl(supportedBilingualDictionaries, supportedLexicographicLanguages, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsAutoTest, providesLexicographicEntries, providesBilingualDictionaryEntries);
+        return new ImmutableFeatureSet(supportedBilingualDictionaries, supportedLexicographicLanguages, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsAutoTest, providesLexicographicEntries, providesBilingualDictionaryEntries);
     }
 
     /**
