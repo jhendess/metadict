@@ -102,7 +102,8 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
         for (AutoTestResult autoTestResult : autoTestResults.getTestResults()) {
             if (!autoTestResult.isSuccessful()) {
                 System.err.println("Failure during test case execution: " + testCase);
-                System.err.println("Actual result: " + autoTestResult.getActualEngineQueryResult().get());
+                if (autoTestResult.getActualEngineQueryResult().isPresent())
+                    System.err.println("Actual result: " + autoTestResult.getActualEngineQueryResult().get());
 
                 if (autoTestResult.getThrownException().get() instanceof AutoTestAssertionException) {
                     AutoTestAssertionException testAssertionException = (AutoTestAssertionException) autoTestResult.getThrownException().get();

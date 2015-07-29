@@ -24,14 +24,13 @@
 
 package org.xlrnet.metadict.core.autotest;
 
+import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.core.main.EngineRegistry;
-
-import java.util.Optional;
 
 /**
  * The {@link AutoTestResult} provides information about the test result of a single {@link
@@ -56,16 +55,16 @@ public class AutoTestResult {
         this.canonicalEngineName = canonicalEngineName;
         this.executionTime = executionTime;
         this.testCase = testCase;
-        this.thrownException = Optional.empty();
+        this.thrownException = Optional.absent();
         this.isSuccessful = true;
     }
 
     private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @Nullable Exception thrownException, @Nullable EngineQueryResult actualEngineQueryResult) {
-        this.actualEngineQueryResult = Optional.ofNullable(actualEngineQueryResult);
+        this.actualEngineQueryResult = Optional.fromNullable(actualEngineQueryResult);
         this.canonicalEngineName = canonicalEngineName;
         this.executionTime = executionTime;
         this.testCase = testCase;
-        this.thrownException = Optional.ofNullable(thrownException);
+        this.thrownException = Optional.fromNullable(thrownException);
         this.isSuccessful = false;
     }
 
