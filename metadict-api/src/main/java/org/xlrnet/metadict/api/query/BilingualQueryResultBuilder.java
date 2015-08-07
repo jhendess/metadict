@@ -66,7 +66,7 @@ public class BilingualQueryResultBuilder extends EngineQueryResultBuilder {
     @NotNull
     @Override
     public BilingualQueryResult build() {
-        return new ImmutableBilingualQueryResult(bilingualEntries, similarRecommendations, externalContents);
+        return new ImmutableBilingualQueryResult(bilingualEntries, similarRecommendations, externalContents, synonyms);
     }
 
 }

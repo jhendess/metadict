@@ -43,6 +43,9 @@ public abstract class EngineQueryResultBuilder {
 
     protected List<ExternalContent> externalContents = new Vector<>();
 
+    protected List<SynonymEntry> synonyms = new Vector<>();
+
+
     /**
      * Add a new {@link ExternalContent} object to the builder. This is used to describe any content provided by a
      * {@link SearchEngine} that does not represent a lexicographic element. This may e.g. be
@@ -81,6 +84,25 @@ public abstract class EngineQueryResultBuilder {
         checkNotNull(dictionaryObject);
 
         this.similarRecommendations.add(dictionaryObject);
+        return this;
+    }
+
+    /**
+     * Add a new {@link SynonymEntry} to the builder. This should be used whenever the search engine provides synonyms.
+     * <p>
+     * When adding any objects through this method, the provided {@link FeatureSet}
+     * from the {@link SearchEngineProvider} should return <i>true</i> on either {@link
+     * FeatureSet#isProvidesSynonymsOnMonolingualQuery()} or {@link FeatureSet#isProvidesSynonymsOnBilingualQuery()}.
+     *
+     * @param synonymEntry
+     *         The {@link SynonymEntry} object - not null.
+     * @return this instance of the {@link EngineQueryResultBuilder}.
+     */
+    @NotNull
+    public EngineQueryResultBuilder addSynonymEntry(@NotNull SynonymEntry synonymEntry) {
+        checkNotNull(synonymEntry);
+
+        this.synonyms.add(synonymEntry);
         return this;
     }
 

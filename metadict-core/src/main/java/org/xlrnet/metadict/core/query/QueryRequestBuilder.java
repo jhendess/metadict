@@ -98,7 +98,7 @@ public class QueryRequestBuilder {
             }
         }
 
-        return new QueryRequestImpl(metadictCore, queryString, Lists.newArrayList(queryDictionaries), groupingType, orderType, Lists.newArrayList(queryLanguages));
+        return new ImmutableQueryRequest(metadictCore, queryString, Lists.newArrayList(queryDictionaries), groupingType, orderType, Lists.newArrayList(queryLanguages));
     }
 
     /**

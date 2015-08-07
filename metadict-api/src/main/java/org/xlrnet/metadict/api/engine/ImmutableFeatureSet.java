@@ -85,7 +85,21 @@ public class ImmutableFeatureSet implements FeatureSet {
      */
     private final Collection<Language> supportedLexicographicLanguages;
 
-    ImmutableFeatureSet(Collection<BilingualDictionary> supportedBilingualDictionaries, Collection<Language> supportedLexicographicLanguages, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives, boolean supportsSelfTest, boolean providesMonolingualEntries, boolean providesBilingualDictionaryEntries) {
+    /**
+     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
+     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
+     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
+     */
+    private final boolean providesSynonymsOnBilingualQuery;
+
+    /**
+     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
+     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
+     * synonyms were requested.
+     */
+    private final boolean providesSynonymsOnMonolingualQuery;
+
+    ImmutableFeatureSet(Collection<BilingualDictionary> supportedBilingualDictionaries, Collection<Language> supportedLexicographicLanguages, boolean providesExternalContent, boolean supportsFuzzySearch, boolean providesAlternatives, boolean supportsSelfTest, boolean providesMonolingualEntries, boolean providesBilingualDictionaryEntries, boolean providesSynonymsOnBilingualQuery, boolean providesSynonymsOnMonolingualQuery) {
         this.supportedBilingualDictionaries = supportedBilingualDictionaries;
         this.supportedLexicographicLanguages = supportedLexicographicLanguages;
         this.providesExternalContent = providesExternalContent;
@@ -94,6 +108,8 @@ public class ImmutableFeatureSet implements FeatureSet {
         this.supportsSelfTest = supportsSelfTest;
         this.providesMonolingualEntries = providesMonolingualEntries;
         this.providesBilingualDictionaryEntries = providesBilingualDictionaryEntries;
+        this.providesSynonymsOnBilingualQuery = providesSynonymsOnBilingualQuery;
+        this.providesSynonymsOnMonolingualQuery = providesSynonymsOnMonolingualQuery;
     }
 
     /**
@@ -103,21 +119,6 @@ public class ImmutableFeatureSet implements FeatureSet {
      */
     public static FeatureSetBuilder builder() {
         return new FeatureSetBuilder();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ImmutableFeatureSet)) return false;
-        ImmutableFeatureSet that = (ImmutableFeatureSet) o;
-        return Objects.equal(providesExternalContent, that.providesExternalContent) &&
-                Objects.equal(supportsFuzzySearch, that.supportsFuzzySearch) &&
-                Objects.equal(providesAlternatives, that.providesAlternatives) &&
-                Objects.equal(supportsSelfTest, that.supportsSelfTest) &&
-                Objects.equal(providesMonolingualEntries, that.providesMonolingualEntries) &&
-                Objects.equal(providesBilingualDictionaryEntries, that.providesBilingualDictionaryEntries) &&
-                Objects.equal(supportedBilingualDictionaries, that.supportedBilingualDictionaries) &&
-                Objects.equal(supportedLexicographicLanguages, that.supportedLexicographicLanguages);
     }
 
     /**
@@ -138,11 +139,6 @@ public class ImmutableFeatureSet implements FeatureSet {
     @Override
     public Collection<Language> getSupportedLexicographicLanguages() {
         return this.supportedLexicographicLanguages;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(supportedBilingualDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest, providesMonolingualEntries, providesBilingualDictionaryEntries, supportedLexicographicLanguages);
     }
 
     /**
@@ -181,6 +177,26 @@ public class ImmutableFeatureSet implements FeatureSet {
     }
 
     /**
+     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
+     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
+     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
+     */
+    @Override
+    public boolean isProvidesSynonymsOnBilingualQuery() {
+        return this.providesSynonymsOnBilingualQuery;
+    }
+
+    /**
+     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
+     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
+     * synonyms were requested.
+     */
+    @Override
+    public boolean isProvidesSynonymsOnMonolingualQuery() {
+        return this.providesSynonymsOnMonolingualQuery;
+    }
+
+    /**
      * True, if the engine i.e. the called website supports fuzzy search.
      */
     @Override
@@ -198,6 +214,29 @@ public class ImmutableFeatureSet implements FeatureSet {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImmutableFeatureSet)) return false;
+        ImmutableFeatureSet that = (ImmutableFeatureSet) o;
+        return Objects.equal(providesExternalContent, that.providesExternalContent) &&
+                Objects.equal(supportsFuzzySearch, that.supportsFuzzySearch) &&
+                Objects.equal(providesAlternatives, that.providesAlternatives) &&
+                Objects.equal(supportsSelfTest, that.supportsSelfTest) &&
+                Objects.equal(providesMonolingualEntries, that.providesMonolingualEntries) &&
+                Objects.equal(providesBilingualDictionaryEntries, that.providesBilingualDictionaryEntries) &&
+                Objects.equal(providesSynonymsOnBilingualQuery, that.providesSynonymsOnBilingualQuery) &&
+                Objects.equal(providesSynonymsOnMonolingualQuery, that.providesSynonymsOnMonolingualQuery) &&
+                Objects.equal(supportedBilingualDictionaries, that.supportedBilingualDictionaries) &&
+                Objects.equal(supportedLexicographicLanguages, that.supportedLexicographicLanguages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(supportedBilingualDictionaries, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsSelfTest, providesMonolingualEntries, providesBilingualDictionaryEntries, supportedLexicographicLanguages, providesSynonymsOnBilingualQuery, providesSynonymsOnMonolingualQuery);
+    }
+
+    @Override
+
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("supportedBilingualDictionaries", supportedBilingualDictionaries)
@@ -208,7 +247,8 @@ public class ImmutableFeatureSet implements FeatureSet {
                 .add("providesMonolingualEntries", providesMonolingualEntries)
                 .add("providesBilingualDictionaryEntries", providesBilingualDictionaryEntries)
                 .add("supportedLexicographicLanguages", supportedLexicographicLanguages)
+                .add("providesSynonymsOnBilingualQuery", providesSynonymsOnBilingualQuery)
+                .add("providesSynonymsOnMonolingualQuery", providesSynonymsOnMonolingualQuery)
                 .toString();
     }
-
 }

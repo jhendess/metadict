@@ -24,42 +24,51 @@
 
 package org.xlrnet.metadict.api.query;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Generic interface for any query result. This interface declares only support for external contents and similar
- * recommendations. The interface serves only as a base class for the actual specific interfaces like {@link
- * MonolingualQueryResult} and {@link BilingualQueryResult}.
+ * Immutable implementation of {@link SynonymGroup}.
  */
-public interface EngineQueryResult extends Serializable {
+public class ImmutableSynonymGroup implements SynonymGroup, Serializable {
+
+    private static final long serialVersionUID = -8407657557425807431L;
+
+    private final DictionaryObject baseMeaning;
+
+    private final Collection<DictionaryObject> synonyms;
+
+    ImmutableSynonymGroup(DictionaryObject baseMeaning, Collection<DictionaryObject> synonyms) {
+        this.baseMeaning = baseMeaning;
+        this.synonyms = synonyms;
+    }
 
     /**
-     * Returns all collected external content for the query. This can be used to provide links to relevant blog posts
-     * or forum entries.
+     * Return a new builder instance for creating new {@link SynonymGroup} objects.
      *
-     * @return all collected external content for the query.
+     * @return a new builder.
      */
-    @NotNull
-    List<ExternalContent> getExternalContents();
+    public static SynonymGroupBuilder builder() {
+        return new SynonymGroupBuilder();
+    }
 
     /**
-     * Returns additional recommendations for the user. The recommendations have to implement only {@link
-     * DictionaryObject}. A whole translation with two languages is therefore not needed.
+     * Returns the base meaning that all objects in this synonym group resemble.
      *
-     * @return additional recommendations for the user.
+     * @return the base meaning that all objects in this synonym group resemble.
      */
-    @NotNull
-    List<DictionaryObject> getSimilarRecommendations();
+    @Override
+    public DictionaryObject getBaseMeaning() {
+        return baseMeaning;
+    }
 
     /**
-     * Returns all synonyms in this result set. Each {@link SynonymEntry} contains different synonyms for exactly one
-     * base word.
+     * Returns a collection of objects that are synonyms for the base meaning of this group.
      *
-     * @return all synonyms in this result set
+     * @return a collection of objects that are synonyms for the base meaning of this group.
      */
-    @NotNull
-    List<SynonymEntry> getSynonymEntries();
+    @Override
+    public Collection<DictionaryObject> getSynonyms() {
+        return synonyms;
+    }
 }

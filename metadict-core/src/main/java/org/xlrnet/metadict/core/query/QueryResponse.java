@@ -24,9 +24,7 @@
 
 package org.xlrnet.metadict.core.query;
 
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.ExternalContent;
-import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
@@ -94,6 +92,16 @@ public interface QueryResponse {
      * @return a collection with additional search recommendations for the user.
      */
     Collection<DictionaryObject> getSimilarRecommendations();
+
+    /**
+     * Returns a monolingual set of synonym entries for single objects. Each entry
+     * represents all synonyms for a certain object (word, phrase, etc.) where the synonyms are grouped into
+     * different
+     * {@link SynonymGroup} objects.
+     *
+     * @return a monolingual set of synonym entries for single objects.
+     */
+    Collection<SynonymEntry> getSynonymEntries();
 
     /**
      * Returns an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query. Each

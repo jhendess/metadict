@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.core.query;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
@@ -38,7 +37,7 @@ import java.util.List;
 /**
  * Implementation for {@link QueryRequest}.
  */
-public class QueryRequestImpl implements QueryRequest {
+public class ImmutableQueryRequest implements QueryRequest {
 
     private final MetadictCore metadictCore;
 
@@ -63,7 +62,7 @@ public class QueryRequestImpl implements QueryRequest {
 
     private final List<Language> monolingualLanguages;
 
-    QueryRequestImpl(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
+    ImmutableQueryRequest(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
         this.metadictCore = metadictCore;
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
@@ -75,8 +74,8 @@ public class QueryRequestImpl implements QueryRequest {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof QueryRequestImpl)) return false;
-        QueryRequestImpl that = (QueryRequestImpl) o;
+        if (!(o instanceof ImmutableQueryRequest)) return false;
+        ImmutableQueryRequest that = (ImmutableQueryRequest) o;
         return Objects.equal(queryString, that.queryString) &&
                 Objects.equal(queryDictionaries, that.queryDictionaries);
     }
@@ -97,6 +96,7 @@ public class QueryRequestImpl implements QueryRequest {
      *
      * @return how the final query should be grouped.
      */
+    @NotNull
     public GroupingType getGroupingType() {
         return groupingType;
     }

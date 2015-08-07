@@ -24,43 +24,30 @@
 
 package org.xlrnet.metadict.api.query;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Vector;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Collection;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * The {@link SynonymEntry} interface represents a monolingual set of synonym groups for a single object. Each entry
+ * represents all synonyms for a certain object (word, phrase, etc.) where the synonyms are grouped into different
+ * {@link SynonymGroup} objects.
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
-
-    MonolingualQueryResultBuilder() {
-
-    }
-
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+public interface SynonymEntry {
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Returns the base object for which synonyms are stored in this entry. This is usually the string that was
+     * originally requested. The language of the synonym entry can also be retrieved via this object's {@link
+     * DictionaryObject#getLanguage()} method.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @return the base object for which synonyms are stored in this entry.
      */
-    @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
+    DictionaryObject getBaseObject();
 
-        this.monolingualEntries.add(monolingualEntry);
-        return this;
-    }
+    /**
+     * Returns the synonym groups for this entry. Each different meaning of the base word should have its own synonym
+     * group.
+     *
+     * @return the synonym groups for this entry.
+     */
+    Collection<SynonymGroup> getSynonymGroups();
 
-    @NotNull
-    @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
-    }
 }

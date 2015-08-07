@@ -31,7 +31,7 @@ import org.xlrnet.metadict.api.query.EngineQueryResult;
  * Implementation for {@link QueryStepResult}.
  */
 @Immutable
-public class QueryStepResultImpl implements QueryStepResult {
+public class ImmutableQueryStepResult implements QueryStepResult {
 
     private static final long serialVersionUID = 176250471774717465L;
 
@@ -45,7 +45,7 @@ public class QueryStepResultImpl implements QueryStepResult {
 
     private final String errorMessage;
 
-    QueryStepResultImpl(AbstractQueryStep queryStep, EngineQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
+    ImmutableQueryStepResult(AbstractQueryStep queryStep, EngineQueryResult engineQueryResult, long executionTime, boolean failedStep, String errorMessage) {
         this.queryStep = queryStep;
         this.engineQueryResult = engineQueryResult;
         this.executionTime = executionTime;

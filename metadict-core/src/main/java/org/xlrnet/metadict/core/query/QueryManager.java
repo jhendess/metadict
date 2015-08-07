@@ -31,6 +31,7 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
 import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.api.query.SynonymEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
@@ -107,7 +108,7 @@ public class QueryManager {
     }
 
     @NotNull
-    private Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
+    protected Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
         GroupingType groupingType = queryRequest.getQueryGrouping();
 
         LOGGER.debug("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
@@ -118,7 +119,7 @@ public class QueryManager {
     }
 
     @NotNull
-    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, QueryPerformanceStatistics performanceStatistics, List<MonolingualEntry> monolingualEntries) {
+    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull QueryPerformanceStatistics performanceStatistics, @NotNull List<MonolingualEntry> monolingualEntries, @NotNull List<SynonymEntry> synonymEntries) {
         return new QueryResponseBuilder()
                 .setQueryRequestString(queryRequest.getQueryString())
                 .setQueryPerformanceStatistics(performanceStatistics)
@@ -127,21 +128,22 @@ public class QueryManager {
                 .setSimilarRecommendations(similarRecommendations)
                 .setExternalContents(externalContents)
                 .setMonolingualEntries(monolingualEntries)
+                .setSynonymEntries(synonymEntries)
                 .build();
     }
 
     @NotNull
-    private List<ExternalContent> collectExternalContent(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    protected List<ExternalContent> collectExternalContent(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectExternalContent(engineQueryResults);
     }
 
     @NotNull
-    private List<DictionaryObject> collectSimilarRecommendations(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    protected List<DictionaryObject> collectSimilarRecommendations(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectSimilarRecommendations(engineQueryResults);
     }
 
     @NotNull
-    private QueryResponse internalExecuteQuery(@NotNull QueryRequest queryRequest) {
+    protected QueryResponse internalExecuteQuery(@NotNull QueryRequest queryRequest) {
         QueryPerformanceStatistics performanceStatistics = new QueryPerformanceStatistics();
         validateQueryRequest(queryRequest);
 
@@ -162,6 +164,7 @@ public class QueryManager {
         List<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
         List<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
         List<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
+        List<SynonymEntry> synonymEntries = collectSynonymEntries(engineQueryResults);
 
         long finishTime = System.currentTimeMillis();
         performanceStatistics.setPlanningPhaseDuration(startQueryTime - startPlanningTime)
@@ -171,16 +174,21 @@ public class QueryManager {
                 .setCollectPhaseDuration(finishTime - startCollectingTime)
                 .setTotalDuration(finishTime - startPlanningTime);
 
-        return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics, monolingualEntries);
+        return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics, monolingualEntries, synonymEntries);
     }
 
     @NotNull
-    private List<MonolingualEntry> collectMonolingualEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    protected List<MonolingualEntry> collectMonolingualEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectMonolingualEntries(engineQueryResults);
     }
 
     @NotNull
-    private Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
+    protected List<SynonymEntry> collectSynonymEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+        return QueryUtil.collectSynonymEntries(engineQueryResults);
+    }
+
+    @NotNull
+    protected Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
         OrderType orderType = queryRequest.getQueryOrdering();
 
         LOGGER.debug("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());

@@ -26,41 +26,54 @@ package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * Builder for creating new {@link SynonymEntry} objects.
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
+public class SynonymEntryBuilder {
 
-    MonolingualQueryResultBuilder() {
+    private DictionaryObject baseObject;
+
+    private Collection<SynonymGroup> synonymGroups = new ArrayList<>();
+
+    SynonymEntryBuilder() {
 
     }
 
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+    @NotNull
+    public SynonymEntry build() {
+        checkNotNull(baseObject, "Base object may not be null");
+
+        return new ImmutableSynonymEntry(baseObject, synonymGroups);
+    }
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Set the base object for which synonyms are stored in this entry. This is usually the string that was
+     * originally requested.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @return this builder
      */
     @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
-
-        this.monolingualEntries.add(monolingualEntry);
+    public SynonymEntryBuilder setBaseObject(DictionaryObject baseObject) {
+        this.baseObject = baseObject;
         return this;
     }
 
+    /**
+     * Add a new synonym group to this entry. Each different meaning of the base word should have its own synonym
+     * group.
+     *
+     * @return this builder.
+     */
     @NotNull
-    @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
+    public SynonymEntryBuilder addSynonymGroup(SynonymGroup synonymGroup) {
+        this.synonymGroups.add(synonymGroup);
+        return this;
     }
+
+
 }

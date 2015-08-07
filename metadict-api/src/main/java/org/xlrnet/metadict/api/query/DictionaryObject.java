@@ -151,14 +151,6 @@ public interface DictionaryObject extends Serializable {
     Optional<List<String>> getSyllabification();
 
     /**
-     * Returns a list of synonyms for this object. Each element of the list represents a single synonym.
-     *
-     * @return a list of synonyms for this object.
-     */
-    @NotNull
-    Optional<List<String>> getSynonyms();
-
-    /**
      * Returns a list of alternately written forms for this entry.
      * <p/>
      * Example:

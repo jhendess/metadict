@@ -82,6 +82,20 @@ public class FeatureSetBuilder {
      */
     private boolean providesBilingualDictionaryEntries = false;
 
+    /**
+     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
+     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
+     * synonyms were requested.
+     */
+    private boolean providesSynonymsOnMonolingualQuery;
+
+    /**
+     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
+     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
+     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
+     */
+    private boolean providesSynonymsOnBilingualQuery;
+
     FeatureSetBuilder() {
 
     }
@@ -116,7 +130,7 @@ public class FeatureSetBuilder {
      * @return a new instance of {@link FeatureSet}.
      */
     public FeatureSet build() {
-        return new ImmutableFeatureSet(supportedBilingualDictionaries, supportedLexicographicLanguages, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsAutoTest, providesLexicographicEntries, providesBilingualDictionaryEntries);
+        return new ImmutableFeatureSet(supportedBilingualDictionaries, supportedLexicographicLanguages, providesExternalContent, supportsFuzzySearch, providesAlternatives, supportsAutoTest, providesLexicographicEntries, providesBilingualDictionaryEntries, providesSynonymsOnBilingualQuery, providesSynonymsOnMonolingualQuery);
     }
 
     /**
@@ -169,5 +183,23 @@ public class FeatureSetBuilder {
     public FeatureSetBuilder setSupportsFuzzySearch(boolean supportsFuzzySearch) {
         this.supportsFuzzySearch = supportsFuzzySearch;
         return this;
+    }
+
+    /**
+     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
+     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
+     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
+     */
+    public boolean setProvidesSynonymsOnBilingualQuery(boolean providesSynonymsOnBilingualQuery) {
+        return this.providesSynonymsOnBilingualQuery = providesSynonymsOnBilingualQuery;
+    }
+
+    /**
+     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
+     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
+     * synonyms were requested.
+     */
+    public boolean setProvidesSynonymsOnMonolingualQuery(boolean providesSynonymsOnMonolingualQuery) {
+        return this.providesSynonymsOnMonolingualQuery = providesSynonymsOnMonolingualQuery;
     }
 }

@@ -36,12 +36,14 @@ import org.xlrnet.metadict.api.language.Language;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Immutable implementation of {@link DictionaryObject},
  */
 public class ImmutableDictionaryObject implements DictionaryObject {
 
-    private static final long serialVersionUID = -3150737898629567872L;
+    private static final long serialVersionUID = 742684176144148121L;
 
     private final Language language;
 
@@ -63,8 +65,6 @@ public class ImmutableDictionaryObject implements DictionaryObject {
 
     private final Optional<List<String>> syllabification;
 
-    private final Optional<List<String>> synonyms;
-
     private final Optional<List<String>> alternateForms;
 
     /**
@@ -73,7 +73,7 @@ public class ImmutableDictionaryObject implements DictionaryObject {
      * @param language
      *         The language this object is written in.
      * @param generalForm
-     *         The general form of this object
+     *         The general form of this object.
      * @param description
      *         The description for this object.
      * @param abbreviation
@@ -90,12 +90,10 @@ public class ImmutableDictionaryObject implements DictionaryObject {
      *         A list of different meanings for this have.
      * @param syllabification
      *         The syllabification of this object, represented with each syllable as a list-element.
-     * @param synonyms
-     *         A list of synonyms for this object.
      * @param alternateForms
      *         Alternate ways of writing this object.
      */
-    ImmutableDictionaryObject(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> synonyms, Optional<List<String>> alternateForms) {
+    ImmutableDictionaryObject(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> alternateForms) {
         this.language = language;
         this.generalForm = generalForm;
         this.description = description;
@@ -106,7 +104,6 @@ public class ImmutableDictionaryObject implements DictionaryObject {
         this.additionalForms = additionalForms;
         this.meanings = meanings;
         this.syllabification = syllabification;
-        this.synonyms = synonyms;
         this.alternateForms = alternateForms;
     }
 
@@ -115,8 +112,26 @@ public class ImmutableDictionaryObject implements DictionaryObject {
      *
      * @return a new builder.
      */
+    @NotNull
     public static DictionaryObjectBuilder builder() {
         return new DictionaryObjectBuilder();
+    }
+
+    /**
+     * Create a new {@link DictionaryObject} with only a language and a general form.
+     *
+     * @param language
+     *         The language this object is written in.
+     * @param generalForm
+     *         The general form of this object.
+     * @return a dictionary object with only language and general form set.
+     */
+    @NotNull
+    public static DictionaryObject createSimpleObject(@NotNull Language language, @NotNull String generalForm) {
+        checkNotNull("General form may not be null", generalForm);
+        checkNotNull("Language may not be null", language);
+
+        return new ImmutableDictionaryObject(language, generalForm, null, null, null, null, null, null, null, null, null);
     }
 
     @Override
@@ -132,13 +147,12 @@ public class ImmutableDictionaryObject implements DictionaryObject {
                 Objects.equal(grammaticalGender, that.grammaticalGender) &&
                 Objects.equal(additionalForms, that.additionalForms) &&
                 Objects.equal(meanings, that.meanings) &&
-                Objects.equal(syllabification, that.syllabification) &&
-                Objects.equal(synonyms, that.synonyms);
+                Objects.equal(syllabification, that.syllabification);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(language, generalForm, description, abbreviation, domain, grammaticalGender, additionalForms, meanings, syllabification, synonyms);
+        return Objects.hashCode(language, generalForm, description, abbreviation, domain, grammaticalGender, additionalForms, meanings, syllabification);
     }
 
     @Override
@@ -153,7 +167,6 @@ public class ImmutableDictionaryObject implements DictionaryObject {
                 .add("additionalForms", additionalForms)
                 .add("meanings", meanings)
                 .add("syllabification", syllabification)
-                .add("synonyms", synonyms)
 
                 .toString();
     }
@@ -293,17 +306,6 @@ public class ImmutableDictionaryObject implements DictionaryObject {
     @Override
     public Optional<List<String>> getSyllabification() {
         return syllabification;
-    }
-
-    /**
-     * Returns a list of synonyms for this object. Each element of the list represents a single synonym.
-     *
-     * @return a list of synonyms for this object.
-     */
-    @NotNull
-    @Override
-    public Optional<List<String>> getSynonyms() {
-        return synonyms;
     }
 
     /**

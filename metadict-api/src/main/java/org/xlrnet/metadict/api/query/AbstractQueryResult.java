@@ -34,13 +34,18 @@ import java.util.List;
  */
 public class AbstractQueryResult implements EngineQueryResult {
 
+    private static final long serialVersionUID = -2265934528706550873L;
+
     protected final List<DictionaryObject> similarRecommendations;
 
     protected final List<ExternalContent> externalContents;
 
-    protected AbstractQueryResult(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents) {
+    protected final List<SynonymEntry> synonymEntries;
+
+    protected AbstractQueryResult(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<SynonymEntry> synonymEntries) {
         this.similarRecommendations = similarRecommendations;
         this.externalContents = externalContents;
+        this.synonymEntries = synonymEntries;
     }
 
     /**
@@ -63,5 +68,16 @@ public class AbstractQueryResult implements EngineQueryResult {
     @NotNull
     public List<DictionaryObject> getSimilarRecommendations() {
         return Collections.unmodifiableList(similarRecommendations);
+    }
+
+    /**
+     * Returns all synonyms in this result set. Each {@link SynonymEntry} contains different synonyms for exactly one
+     * base word.
+     *
+     * @return all synonyms in this result set
+     */
+    @NotNull
+    public List<SynonymEntry> getSynonymEntries() {
+        return synonymEntries;
     }
 }

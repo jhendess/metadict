@@ -26,41 +26,50 @@ package org.xlrnet.metadict.api.query;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * Builder for creating new {@link SynonymGroup} objects.
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
+public class SynonymGroupBuilder {
 
-    MonolingualQueryResultBuilder() {
+    private DictionaryObject baseMeaning;
+
+    private Collection<DictionaryObject> synonyms = new ArrayList<>();
+
+    SynonymGroupBuilder() {
 
     }
 
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+    @NotNull
+    public SynonymGroup build() {
+        checkNotNull(baseMeaning, "Base meaning may not be null");
+
+        return new ImmutableSynonymGroup(baseMeaning, synonyms);
+    }
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Sets the base meaning that all objects in this synonym group resemble.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @return this builder.
      */
     @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
-
-        this.monolingualEntries.add(monolingualEntry);
+    public SynonymGroupBuilder setBaseMeaning(DictionaryObject baseMeaning) {
+        this.baseMeaning = baseMeaning;
         return this;
     }
 
+    /**
+     * Add a new synonym for the base meaning of this group.
+     *
+     * @return this builder.
+     */
     @NotNull
-    @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
+    public SynonymGroupBuilder addSynonym(DictionaryObject synonym) {
+        this.synonyms.add(synonym);
+        return this;
     }
 }

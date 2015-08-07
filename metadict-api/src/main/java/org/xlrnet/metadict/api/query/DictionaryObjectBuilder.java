@@ -64,8 +64,6 @@ public class DictionaryObjectBuilder {
 
     private List<String> syllabification = new ArrayList<>();
 
-    private List<String> synonyms = new ArrayList<>();
-
     private List<String> alternateForms = new ArrayList<>();
 
     DictionaryObjectBuilder() {
@@ -121,43 +119,27 @@ public class DictionaryObjectBuilder {
     }
 
     /**
-     * Add a new synonym to this object.
-     *
-     * @param synonym
-     *         The new synonym to add.
-     */
-    @NotNull
-    public DictionaryObjectBuilder addSynonym(@NotNull String synonym) {
-        checkArgument(StringUtils.isNotBlank(synonym));
-        this.synonyms.add(synonym);
-
-        return this;
-    }
-
-    /**
      * Build a new instance of {@link DictionaryObject} with the set properties.
      *
      * @return a new instance of {@link DictionaryObject}.
      */
     @NotNull
     public DictionaryObject build() {
-        checkArgument(language != null, "Language may not be null");
+        checkNotNull(language, "Language may not be null");
+        checkNotNull(generalForm, "General form may not be null");
 
         Optional<List<String>> optionalMeanings = Optional.absent();
         Optional<List<String>> optionalSyllabification = Optional.absent();
-        Optional<List<String>> optionalSynonyms = Optional.absent();
         Optional<List<String>> optionalAlternateForms = Optional.absent();
 
         if (meanings.size() > 0)
             optionalMeanings = Optional.of(meanings);
         if (syllabification.size() > 0)
             optionalSyllabification = Optional.of(syllabification);
-        if (synonyms.size() > 0)
-            optionalSynonyms = Optional.of(synonyms);
         if (alternateForms.size() > 0)
             optionalAlternateForms = Optional.of(alternateForms);
 
-        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalSynonyms, optionalAlternateForms);
+        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalAlternateForms);
     }
 
     /**

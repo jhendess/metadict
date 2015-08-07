@@ -75,6 +75,21 @@ public interface FeatureSet extends Serializable {
     boolean isProvidesMonolingualEntries();
 
     /**
+     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
+     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
+     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
+     */
+    boolean isProvidesSynonymsOnBilingualQuery();
+
+    /**
+     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
+     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
+     * synonyms
+     * were requested.
+     */
+    boolean isProvidesSynonymsOnMonolingualQuery();
+
+    /**
      * True, if the engine i.e. the called website supports fuzzy search.
      */
     boolean isSupportsFuzzySearch();

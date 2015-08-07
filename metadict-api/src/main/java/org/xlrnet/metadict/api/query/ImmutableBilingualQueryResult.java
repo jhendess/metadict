@@ -37,6 +37,8 @@ public class ImmutableBilingualQueryResult extends AbstractQueryResult implement
 
     public static final BilingualQueryResult EMPTY_QUERY_RESULT = new BilingualQueryResultBuilder().build();
 
+    private static final long serialVersionUID = 8056117222480211597L;
+
     protected final List<BilingualEntry> entries;
 
     /**
@@ -49,8 +51,8 @@ public class ImmutableBilingualQueryResult extends AbstractQueryResult implement
      * @param externalContents
      *         Ta set of external contents.
      */
-    ImmutableBilingualQueryResult(List<BilingualEntry> entries, List<DictionaryObject> similarRecommendations, List<ExternalContent> externalContents) {
-        super(similarRecommendations, externalContents);
+    ImmutableBilingualQueryResult(@NotNull List<BilingualEntry> entries, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, List<SynonymEntry> synonymEntries) {
+        super(similarRecommendations, externalContents, synonymEntries);
         this.entries = entries;
     }
 
@@ -96,6 +98,7 @@ public class ImmutableBilingualQueryResult extends AbstractQueryResult implement
                 .add("entries", entries)
                 .add("similarRecommendations", super.getSimilarRecommendations())
                 .add("externalContents", super.getExternalContents())
+                .add("synonymEntries", super.getSynonymEntries())
                 .toString();
     }
 }

@@ -25,21 +25,23 @@
 package org.xlrnet.metadict.core.query;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.ExternalContent;
-import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
 /**
  * Implementation for {@link QueryResponse},
  */
-public class QueryResponseImpl implements QueryResponse {
+public class ImmutableQueryResponse implements QueryResponse, Serializable {
+
+    private static final long serialVersionUID = 5254033672770609246L;
 
     private final QueryPerformanceStatistics queryPerformanceStatistics;
 
@@ -55,7 +57,9 @@ public class QueryResponseImpl implements QueryResponse {
 
     private final Collection<MonolingualEntry> monolingualEntries;
 
-    QueryResponseImpl(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries) {
+    private final Collection<SynonymEntry> synonymEntries;
+
+    ImmutableQueryResponse(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries, Collection<SynonymEntry> synonymEntries) {
         this.requestString = requestString;
         this.queryPerformanceStatistics = queryPerformanceStatistics;
         this.externalContents = externalContents;
@@ -63,6 +67,7 @@ public class QueryResponseImpl implements QueryResponse {
         this.groupingType = groupingType;
         this.similarRecommendations = similarRecommendations;
         this.monolingualEntries = monolingualEntries;
+        this.synonymEntries = synonymEntries;
     }
 
     /**
@@ -148,6 +153,18 @@ public class QueryResponseImpl implements QueryResponse {
     }
 
     /**
+     * Returns a monolingual set of synonym entries for single objects. Each entry
+     * represents all synonyms for a certain object (word, phrase, etc.) where the synonyms are grouped into
+     * different{@link SynonymGroup} objects.
+     *
+     * @return a monolingual set of synonym entries for single objects.
+     */
+    @Override
+    public Collection<SynonymEntry> getSynonymEntries() {
+        return synonymEntries;
+    }
+
+    /**
      * Returns an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query. Each
      * {@link ResultEntry} object that can be obtained via {@link ResultGroup} must also be accessible through the
      * returned iterator of this method.
@@ -168,6 +185,28 @@ public class QueryResponseImpl implements QueryResponse {
                 .add("groupingType", groupingType)
                 .add("similarRecommendations", similarRecommendations)
                 .add("requestString", requestString)
+                .add("monolingualEntries", monolingualEntries)
+                .add("synonymEntries", synonymEntries)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImmutableQueryResponse)) return false;
+        ImmutableQueryResponse that = (ImmutableQueryResponse) o;
+        return Objects.equal(queryPerformanceStatistics, that.queryPerformanceStatistics) &&
+                Objects.equal(externalContents, that.externalContents) &&
+                Objects.equal(groupedResults, that.groupedResults) &&
+                Objects.equal(groupingType, that.groupingType) &&
+                Objects.equal(similarRecommendations, that.similarRecommendations) &&
+                Objects.equal(requestString, that.requestString) &&
+                Objects.equal(monolingualEntries, that.monolingualEntries) &&
+                Objects.equal(synonymEntries, that.synonymEntries);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(queryPerformanceStatistics, externalContents, groupedResults, groupingType, similarRecommendations, requestString, monolingualEntries, synonymEntries);
     }
 }

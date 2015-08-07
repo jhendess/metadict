@@ -22,45 +22,30 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.query;
+package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Vector;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.core.main.EngineRegistry;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * Query planning strategy which produces an empty query plan (not null).
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
-
-    MonolingualQueryResultBuilder() {
-
-    }
-
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+public class NullQueryPlanningStrategy implements QueryPlanningStrategy {
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistry} should be used
+     * for accessing the available implementations of {@link SearchEngine}.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @param queryRequest
+     *         The query request for which a query plan has to be calculated.
+     * @param engineRegistry
+     *         The registry where all available engines are registered.
+     * @return an executable {@link QueryPlan}.
      */
     @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
-
-        this.monolingualEntries.add(monolingualEntry);
-        return this;
-    }
-
-    @NotNull
     @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
+    public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry) {
+        return new QueryPlan();
     }
 }

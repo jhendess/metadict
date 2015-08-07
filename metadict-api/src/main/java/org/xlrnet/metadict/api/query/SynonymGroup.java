@@ -24,43 +24,29 @@
 
 package org.xlrnet.metadict.api.query;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Vector;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Collection;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * This interface describes a container that can be used to store a group of synonyms for a certain base meaning
+ * of a word.
+ * <p>
+ * Example: The word house can have a synonym group for the meaning as a building, but another group for the meaning of
+ * a royal house (e.g. the royal house).
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
-
-    MonolingualQueryResultBuilder() {
-
-    }
-
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
+public interface SynonymGroup {
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Returns the base meaning that all objects in this synonym group resemble.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @return the base meaning that all objects in this synonym group resemble.
      */
-    @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
+    DictionaryObject getBaseMeaning();
 
-        this.monolingualEntries.add(monolingualEntry);
-        return this;
-    }
+    /**
+     * Returns a collection of objects that are synonyms for the base meaning of this group.
+     *
+     * @return a collection of objects that are synonyms for the base meaning of this group.
+     */
+    Collection<DictionaryObject> getSynonyms();
 
-    @NotNull
-    @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
-    }
 }

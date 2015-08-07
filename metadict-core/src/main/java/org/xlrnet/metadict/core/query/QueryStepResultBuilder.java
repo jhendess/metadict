@@ -54,7 +54,7 @@ public class QueryStepResultBuilder {
         checkNotNull(queryStep, "Provided query step may not be null");
         checkNotNull(engineQueryResult, "Provided query result may not be null");
 
-        return new QueryStepResultImpl(queryStep, engineQueryResult, executionTime, failedStep, errorMessage);
+        return new ImmutableQueryStepResult(queryStep, engineQueryResult, executionTime, failedStep, errorMessage);
     }
 
     /**

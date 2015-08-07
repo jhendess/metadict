@@ -22,45 +22,35 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.query;
+package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Vector;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Collection;
 
 /**
- * Builder for creating new {@link MonolingualQueryResult} objects.
+ * Implementation of {@link QueryPlanExecutionStrategy} which allows mocking results by passing them to the constructor.
  */
-public class MonolingualQueryResultBuilder extends EngineQueryResultBuilder {
+public class QueryPlanExecutionStrategyMock implements QueryPlanExecutionStrategy {
 
-    MonolingualQueryResultBuilder() {
+    Collection<QueryStepResult> mockedQueryResults;
 
+    public QueryPlanExecutionStrategyMock(Collection<QueryStepResult> mockedQueryResults) {
+        this.mockedQueryResults = mockedQueryResults;
     }
-
-    private List<MonolingualEntry> monolingualEntries = new Vector<>();
 
     /**
-     * Add a new {@link BilingualEntry} to the builder. This should be used for all bilingual results of the query that
-     * match the requests.
+     * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
+     * BilingualQueryStep} have to be aggregated to a {@link Iterable} of {@link QueryStepResult} objects that
+     * contains the results of each single step.
      *
-     * @param monolingualEntry
-     *         The {@link MonolingualEntry} object - not null.
-     * @return this instance of the {@link BilingualQueryResultBuilder}.
+     * @param queryPlan
+     *         The query plan that should be executed.
+     * @return a collection with the results of each step
      */
     @NotNull
-    public MonolingualQueryResultBuilder addMonolingualEntry(@NotNull MonolingualEntry monolingualEntry) {
-        checkNotNull(monolingualEntry);
-
-        this.monolingualEntries.add(monolingualEntry);
-        return this;
-    }
-
-    @NotNull
     @Override
-    public MonolingualQueryResult build() {
-        return new ImmutableMonolingualQueryResult(similarRecommendations, externalContents, monolingualEntries, synonyms);
+    public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
+        return mockedQueryResults;
     }
 }

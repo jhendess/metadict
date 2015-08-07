@@ -70,6 +70,22 @@ public class QueryUtil {
     }
 
     /**
+     * Collect all provided synonym entries from multiple {@link QueryStepResult} and merge them in one list.
+     *
+     * @param queryStepResults
+     *         The source from which the recommendations should be collected.
+     * @return A list of all {@link ExternalContent} objects from the given object.
+     */
+    @NotNull
+    public static List<SynonymEntry> collectSynonymEntries(@NotNull Iterable<QueryStepResult> queryStepResults) {
+        List<SynonymEntry> synonymEntries = new ArrayList<>();
+        for (QueryStepResult queryStepResult : queryStepResults) {
+            synonymEntries.addAll(queryStepResult.getEngineQueryResult().getSynonymEntries());
+        }
+        return synonymEntries;
+    }
+
+    /**
      * Collect all provided monolingual entries from multiple {@link QueryStepResult} and merge them in one list. The
      * corresponding {@link org.xlrnet.metadict.api.query.MonolingualEntry} objects will only be added, if any of the
      * given {@link QueryStepResult} objects contains a {@link org.xlrnet.metadict.api.query.MonolingualQueryResult}.

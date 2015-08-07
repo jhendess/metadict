@@ -42,8 +42,8 @@ public class ImmutableMonolingualQueryResult extends AbstractQueryResult impleme
 
     private final List<MonolingualEntry> entries;
 
-    protected ImmutableMonolingualQueryResult(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<MonolingualEntry> entries) {
-        super(similarRecommendations, externalContents);
+    protected ImmutableMonolingualQueryResult(@NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull List<MonolingualEntry> entries, @NotNull List<SynonymEntry> synonymEntries) {
+        super(similarRecommendations, externalContents, synonymEntries);
         this.entries = entries;
     }
 
@@ -86,6 +86,9 @@ public class ImmutableMonolingualQueryResult extends AbstractQueryResult impleme
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("entries", entries)
+                .add("similarRecommendations", super.getSimilarRecommendations())
+                .add("externalContents", super.getExternalContents())
+                .add("synonymEntries", super.getSynonymEntries())
                 .toString();
     }
 }

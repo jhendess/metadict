@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
 import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.api.query.SynonymEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
 
@@ -48,6 +49,8 @@ class QueryResponseBuilder {
 
     private Collection<MonolingualEntry> monolingualEntries;
 
+    private Collection<SynonymEntry> synonymEntries;
+
     private GroupingType groupingType;
 
     public QueryResponseBuilder setMonolingualEntries(Collection<MonolingualEntry> monolingualEntries) {
@@ -58,7 +61,7 @@ class QueryResponseBuilder {
     private String queryRequestString;
 
     public QueryResponse build() {
-        return new QueryResponseImpl(queryRequestString, queryPerformanceStatistics, externalContents, groupedBilingualResults, groupingType, similarRecommendations, monolingualEntries);
+        return new ImmutableQueryResponse(queryRequestString, queryPerformanceStatistics, externalContents, groupedBilingualResults, groupingType, similarRecommendations, monolingualEntries, synonymEntries);
     }
 
     @NotNull
@@ -94,6 +97,12 @@ class QueryResponseBuilder {
     @NotNull
     public QueryResponseBuilder setSimilarRecommendations(@NotNull Collection<DictionaryObject> similarRecommendations) {
         this.similarRecommendations = similarRecommendations;
+        return this;
+    }
+
+    @NotNull
+    public QueryResponseBuilder setSynonymEntries(@NotNull Collection<SynonymEntry> synonymEntries) {
+        this.synonymEntries = synonymEntries;
         return this;
     }
 }
