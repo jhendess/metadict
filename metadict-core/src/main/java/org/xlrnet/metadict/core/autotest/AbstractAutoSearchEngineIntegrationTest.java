@@ -78,6 +78,9 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
         // Initialize internal dictionary configuration:
         searchEngineProvider.getFeatureSet();
 
+        // Test for any exceptions when calling getDescription()
+        searchEngineProvider.getEngineDescription();
+
         // Transform auto tests into set of arrays
         AutoTestSuite autoTestSuite = searchEngineProvider.getAutoTestSuite();
         if (autoTestSuite != null)
