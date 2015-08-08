@@ -143,6 +143,7 @@
     <build>
         <plugins>
             <plugin>
+                <!-- Java 8 -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
@@ -151,8 +152,8 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!-- Skip Wildfly deployment in parent pom-->
             <plugin>
+                <!-- Skip Wildfly deployment in parent pom-->
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.0.1.Final</version>
@@ -160,7 +161,63 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <!-- Attach sources -->
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Attach javadoc -->
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- explicitly define maven-deploy-plugin after other to force exec order -->
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>xlrnet-releases</id>
+            <name>Stable Releases</name>
+            <url>http://repo.xlrnet.org/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>xlrnet-snapshots</id>
+            <name>Snapshot Releases</name>
+            <url>http://repo.xlrnet.org/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
