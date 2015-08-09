@@ -190,8 +190,9 @@ public class FeatureSetBuilder {
      * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
      * were requested. Only those dictionaries will be queried that have the requested language as an input language.
      */
-    public boolean setProvidesSynonymsOnBilingualQuery(boolean providesSynonymsOnBilingualQuery) {
-        return this.providesSynonymsOnBilingualQuery = providesSynonymsOnBilingualQuery;
+    public FeatureSetBuilder setProvidesSynonymsOnBilingualQuery(boolean providesSynonymsOnBilingualQuery) {
+        this.providesSynonymsOnBilingualQuery = providesSynonymsOnBilingualQuery;
+        return this;
     }
 
     /**
@@ -199,7 +200,8 @@ public class FeatureSetBuilder {
      * to call the described engine with a monolingual query on any of the supported lexicographic languages if
      * synonyms were requested.
      */
-    public boolean setProvidesSynonymsOnMonolingualQuery(boolean providesSynonymsOnMonolingualQuery) {
-        return this.providesSynonymsOnMonolingualQuery = providesSynonymsOnMonolingualQuery;
+    public FeatureSetBuilder setProvidesSynonymsOnMonolingualQuery(boolean providesSynonymsOnMonolingualQuery) {
+        this.providesSynonymsOnMonolingualQuery = providesSynonymsOnMonolingualQuery;
+        return this;
     }
 }

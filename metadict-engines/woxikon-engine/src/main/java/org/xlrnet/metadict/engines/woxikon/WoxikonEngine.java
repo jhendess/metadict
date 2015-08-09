@@ -44,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,7 +111,7 @@ public class WoxikonEngine implements SearchEngine {
      * @param allowBothWay
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
-     *         and output language. Otherwise the will be called for each direction separately.
+     *         and output language. Otherwise the engine will be called for each direction separately.
      * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder} to
      * build this result list.
      */
@@ -125,7 +126,7 @@ public class WoxikonEngine implements SearchEngine {
         return processBilingualDocument(queryInput, doc, targetLanguage);
     }
 
-    private BilingualQueryResult processBilingualDocument(String queryInput, Document doc, Language targetLanguage) {
+    private BilingualQueryResult processBilingualDocument(@NotNull String queryInput, @NotNull Document doc, @NotNull Language targetLanguage) {
         BilingualQueryResultBuilder resultBuilder = ImmutableBilingualQueryResult.builder();
 
         processTranslationTable(queryInput, doc, resultBuilder, Language.GERMAN, targetLanguage);
@@ -134,6 +135,42 @@ public class WoxikonEngine implements SearchEngine {
         findRecommendations(doc, resultBuilder);
 
         return resultBuilder.build();
+    }
+
+    private void extractBilingualSynonyms(@NotNull Element translationTable, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage) {
+        Elements synonymNodes = translationTable.select("tr.translationInlineSynonymsRow");
+
+        if (synonymNodes.size() == 0) {
+            LOGGER.debug("No synonym entries found");
+            return;
+        }
+
+        String synonymEntryTitle = translationTable.select(".translationInlineSynonymsTitle span.highlight").first().text();
+
+        Map<String, SynonymGroupBuilder> synonymGroupMap = new HashMap<>();
+
+        for (Element synonymNode : synonymNodes) {
+            // Extract only information from the "from"-node (i.e. source language)
+            Element fromNode = synonymNode.getElementsByClass("from").first();
+            DictionaryObject newSynonym = processSingleNode(fromNode, sourceLanguage, synonymEntryTitle);
+            String groupName = newSynonym.getDescription();
+            if (groupName != null) {
+                SynonymGroupBuilder groupBuilder = synonymGroupMap.computeIfAbsent(groupName,
+                        (s) -> ImmutableSynonymGroup.builder().setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(sourceLanguage, s))
+                );
+                groupBuilder.addSynonym(newSynonym);
+            } else {
+                LOGGER.warn("Synonym group is null");
+            }
+        }
+
+        SynonymEntryBuilder synonymEntryBuilder = ImmutableSynonymEntry.builder().setBaseObject(ImmutableDictionaryObject.createSimpleObject(sourceLanguage, synonymEntryTitle));
+
+        for (SynonymGroupBuilder synonymGroupBuilder : synonymGroupMap.values()) {
+            synonymEntryBuilder.addSynonymGroup(synonymGroupBuilder.build());
+        }
+
+        resultBuilder.addSynonymEntry(synonymEntryBuilder.build());
     }
 
     private void findRecommendations(@NotNull Document doc, @NotNull BilingualQueryResultBuilder resultBuilder) {
@@ -178,6 +215,9 @@ public class WoxikonEngine implements SearchEngine {
                     .stream()
                     .filter(e -> e.hasClass("default") || e.hasClass("alt"))
                     .forEach(e -> processEntry(queryString, e, resultBuilder, sourceLanguage, targetLanguage));
+            // Extract synonyms
+            extractBilingualSynonyms(translationTable, resultBuilder, sourceLanguage);
+
         } else {
             LOGGER.debug("Translation table for {} -> {} with query \"{}\" is null", languageIdentifier, targetLanguage.getIdentifier(), queryString);
         }

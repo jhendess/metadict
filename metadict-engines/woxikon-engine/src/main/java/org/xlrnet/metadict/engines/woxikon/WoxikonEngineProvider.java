@@ -132,6 +132,7 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
                 .setProvidesExternalContent(false)
                 .setSupportsAutoTest(true)
                 .setSupportsFuzzySearch(true)
+                .setProvidesSynonymsOnBilingualQuery(true)
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.FRENCH, true))
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.SPANISH, true))
                 .addSupportedBilingualDictionary(BilingualDictionary.fromLanguages(Language.GERMAN, Language.SWEDISH, true))

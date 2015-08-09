@@ -131,7 +131,7 @@ public class ImmutableDictionaryObject implements DictionaryObject {
         checkNotNull("General form may not be null", generalForm);
         checkNotNull("Language may not be null", language);
 
-        return new ImmutableDictionaryObject(language, generalForm, null, null, null, null, null, null, null, null, null);
+        return builder().setGeneralForm(generalForm).setLanguage(language).build();
     }
 
     @Override

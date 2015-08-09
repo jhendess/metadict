@@ -75,7 +75,7 @@ public interface SearchEngine {
      * @param allowBothWay
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
-     *         and output language. Otherwise the will be called for each direction separately.
+     *         and output language. Otherwise the engine will be called for each direction separately.
      * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
      * to build this result list.
      */
