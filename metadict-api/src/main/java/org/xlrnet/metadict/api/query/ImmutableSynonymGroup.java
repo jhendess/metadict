@@ -24,6 +24,9 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -53,9 +56,9 @@ public class ImmutableSynonymGroup implements SynonymGroup, Serializable {
     }
 
     /**
-     * Returns the base meaning that all objects in this synonym group resemble.
+     * Returns the base meaning that all objects in this synonym group have.
      *
-     * @return the base meaning that all objects in this synonym group resemble.
+     * @return the base meaning that all objects in this synonym group have.
      */
     @Override
     public DictionaryObject getBaseMeaning() {
@@ -70,5 +73,27 @@ public class ImmutableSynonymGroup implements SynonymGroup, Serializable {
     @Override
     public Collection<DictionaryObject> getSynonyms() {
         return synonyms;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("baseMeaning", baseMeaning)
+                .add("synonyms", synonyms)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImmutableSynonymGroup)) return false;
+        ImmutableSynonymGroup that = (ImmutableSynonymGroup) o;
+        return Objects.equal(baseMeaning, that.baseMeaning) &&
+                Objects.equal(synonyms, that.synonyms);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(baseMeaning, synonyms);
     }
 }

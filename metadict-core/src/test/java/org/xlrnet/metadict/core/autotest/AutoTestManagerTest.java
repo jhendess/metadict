@@ -39,10 +39,7 @@ import org.xlrnet.metadict.api.engine.ImmutableAutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.BilingualEntry;
-import org.xlrnet.metadict.api.query.BilingualQueryResult;
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +57,8 @@ import static org.mockito.Mockito.*;
 public class AutoTestManagerTest {
 
     private static final String TEST_REQUEST_STRING = "SOME_TEST_REQUEST";
+
+    private static final String TEST_BASE_MEANING = "BASE_MEANING";
 
     AutoTestManager autoTestManagerSpy;
 
@@ -211,5 +210,28 @@ public class AutoTestManagerTest {
         } catch (AutoTestAssertionException e) {
             assertEquals("Thrown exception does not contain the expected causing object", missingElement, e.getExpectedObject());
         }
+    }
+
+    @Test
+    public void testValidateSynonymEntries_contains() throws Exception {
+        Collection<SynonymEntry> expectedSynonymEntry = ImmutableList.of(
+                ImmutableSynonymEntry.builder()
+                        .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, TEST_REQUEST_STRING))
+                        .addSynonymGroup(ImmutableSynonymGroup.builder()
+                                .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, TEST_BASE_MEANING))
+                                .addSynonym(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, TEST_BASE_MEANING))
+                                .build())
+                        .build());
+
+        Collection<SynonymEntry> actualSynonymEntry = ImmutableList.of(
+                ImmutableSynonymEntry.builder()
+                        .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, TEST_REQUEST_STRING))
+                        .addSynonymGroup(ImmutableSynonymGroup.builder()
+                                .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, TEST_BASE_MEANING))
+                                .addSynonym(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, TEST_BASE_MEANING))
+                                .build())
+                        .build());
+
+        autoTestManagerSpy.validateSynonymEntries(expectedSynonymEntry, actualSynonymEntry);
     }
 }

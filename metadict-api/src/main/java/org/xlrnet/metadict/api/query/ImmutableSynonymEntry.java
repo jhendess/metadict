@@ -24,6 +24,9 @@
 
 package org.xlrnet.metadict.api.query;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -38,9 +41,12 @@ public class ImmutableSynonymEntry implements SynonymEntry, Serializable {
 
     private final Collection<SynonymGroup> synonymGroups;
 
-    protected ImmutableSynonymEntry(DictionaryObject baseObject, Collection<SynonymGroup> synonymGroups) {
+    private final EntryType baseEntryType;
+
+    protected ImmutableSynonymEntry(DictionaryObject baseObject, Collection<SynonymGroup> synonymGroups, EntryType baseEntryType) {
         this.baseObject = baseObject;
         this.synonymGroups = synonymGroups;
+        this.baseEntryType = baseEntryType;
     }
 
     /**
@@ -50,6 +56,25 @@ public class ImmutableSynonymEntry implements SynonymEntry, Serializable {
      */
     public static SynonymEntryBuilder builder() {
         return new SynonymEntryBuilder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImmutableSynonymEntry)) return false;
+        ImmutableSynonymEntry that = (ImmutableSynonymEntry) o;
+        return Objects.equal(baseObject, that.baseObject) &&
+                Objects.equal(synonymGroups, that.synonymGroups);
+    }
+
+    /**
+     * Returns the base entry type (noun, verb, etc.) that all objects in this synonym group have.
+     *
+     * @return the base meaning that all objects in this synonym group have.
+     */
+    @Override
+    public EntryType getBaseEntryType() {
+        return baseEntryType;
     }
 
     /**
@@ -72,5 +97,18 @@ public class ImmutableSynonymEntry implements SynonymEntry, Serializable {
     @Override
     public Collection<SynonymGroup> getSynonymGroups() {
         return synonymGroups;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(baseObject, synonymGroups);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("baseObject", baseObject)
+                .add("synonymGroups", synonymGroups)
+                .toString();
     }
 }

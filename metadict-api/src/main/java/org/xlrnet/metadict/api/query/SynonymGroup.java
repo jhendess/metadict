@@ -36,9 +36,9 @@ import java.util.Collection;
 public interface SynonymGroup {
 
     /**
-     * Returns the base meaning that all objects in this synonym group resemble.
+     * Returns the base meaning that all objects in this synonym group have.
      *
-     * @return the base meaning that all objects in this synonym group resemble.
+     * @return the base meaning that all objects in this synonym group have.
      */
     DictionaryObject getBaseMeaning();
 

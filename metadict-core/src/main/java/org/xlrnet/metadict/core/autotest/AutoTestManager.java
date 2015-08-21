@@ -56,29 +56,6 @@ public class AutoTestManager {
     final Map<SearchEngine, AutoTestSuite> engineAutoTestSuiteMap = new HashMap<>();
 
     /**
-     * Run a specific {@link AutoTestCase} for an external {@link SearchEngine}. By calling this method, you can
-     * explicitly execute a single auto test case without having to start a full Metadict instance. This may be handy
-     * when you want to execute unit tests on your engine. The result will be a complete {@link AutoTestReport}. Note,
-     * that you auto test case may contain both a monolingual and bilingual test case.
-     *
-     * @param searchEngine
-     *         The engine to test. The supplied auto test case will be called with this engine.
-     * @param autoTestCase
-     *         The auto test case to execute.
-     * @return The report with all results from this test.
-     */
-    public AutoTestReport runExternalAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
-        validateTestCase(autoTestCase);
-
-        AutoTestSuite autoTestSuiteWrapper = ImmutableAutoTestSuite.builder().addAutoTestCase(autoTestCase).build();
-        AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
-
-        internalRunAutoTestSuite(searchEngine, reportBuilder, autoTestSuiteWrapper);
-
-        return reportBuilder.build();
-    }
-
-    /**
      * Register the given {@link AutoTestSuite} as a test suite for the given {@link SearchEngine}. This will validate
      * the test suite and install the tests internally.
      *
@@ -111,7 +88,8 @@ public class AutoTestManager {
     }
 
     /**
-     * Run the registered test cases for a given engine. This will create a new {@link AutoTestReportBuilder} and return
+     * Run the registered test cases for a given engine. This will create a new {@link AutoTestReportBuilder} and
+     * return
      * it after completion.
      *
      * @param searchEngine
@@ -142,6 +120,29 @@ public class AutoTestManager {
         internalRunAutoTestSuite(searchEngine, reportBuilder, engineTestSuite);
 
         return reportBuilder;
+    }
+
+    /**
+     * Run a specific {@link AutoTestCase} for an external {@link SearchEngine}. By calling this method, you can
+     * explicitly execute a single auto test case without having to start a full Metadict instance. This may be handy
+     * when you want to execute unit tests on your engine. The result will be a complete {@link AutoTestReport}. Note,
+     * that you auto test case may contain both a monolingual and bilingual test case.
+     *
+     * @param searchEngine
+     *         The engine to test. The supplied auto test case will be called with this engine.
+     * @param autoTestCase
+     *         The auto test case to execute.
+     * @return The report with all results from this test.
+     */
+    public AutoTestReport runExternalAutoTestCase(@NotNull SearchEngine searchEngine, @NotNull AutoTestCase autoTestCase) {
+        validateTestCase(autoTestCase);
+
+        AutoTestSuite autoTestSuiteWrapper = ImmutableAutoTestSuite.builder().addAutoTestCase(autoTestCase).build();
+        AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
+
+        internalRunAutoTestSuite(searchEngine, reportBuilder, autoTestSuiteWrapper);
+
+        return reportBuilder.build();
     }
 
     @NotNull
@@ -204,15 +205,18 @@ public class AutoTestManager {
         List<BilingualEntry> expectedResultEntries = expectedResult.getBilingualEntries();
         List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
         List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
+        List<SynonymEntry> expectedSynonymEntries = expectedResult.getSynonymEntries();
 
         List<BilingualEntry> actualResultEntries = queryResult.getBilingualEntries();
         List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
         List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
+        List<SynonymEntry> actualSynonymEntries = queryResult.getSynonymEntries();
 
         try {
             validateActualObjects(expectedResultEntries, actualResultEntries);
             validateActualObjects(expectedExternalContents, actualExternalContents);
             validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+            validateSynonymEntries(expectedSynonymEntries, actualSynonymEntries);
         } catch (AutoTestAssertionException ae) {
             return new ResultData(queryResult, ae);
         }
@@ -232,15 +236,18 @@ public class AutoTestManager {
         List<MonolingualEntry> expectedResultEntries = expectedResult.getMonolingualEntries();
         List<ExternalContent> expectedExternalContents = expectedResult.getExternalContents();
         List<DictionaryObject> expectedSimilarRecommendations = expectedResult.getSimilarRecommendations();
+        List<SynonymEntry> expectedSynonymEntries = expectedResult.getSynonymEntries();
 
         List<MonolingualEntry> actualResultEntries = queryResult.getMonolingualEntries();
         List<ExternalContent> actualExternalContents = queryResult.getExternalContents();
         List<DictionaryObject> actualSimilarRecommendations = queryResult.getSimilarRecommendations();
+        List<SynonymEntry> actualSynonymEntries = queryResult.getSynonymEntries();
 
         try {
             validateActualObjects(expectedResultEntries, actualResultEntries);
             validateActualObjects(expectedExternalContents, actualExternalContents);
             validateActualObjects(expectedSimilarRecommendations, actualSimilarRecommendations);
+            validateSynonymEntries(expectedSynonymEntries, actualSynonymEntries);
         } catch (AutoTestAssertionException ae) {
             return new ResultData(queryResult, ae);
         }
@@ -281,6 +288,63 @@ public class AutoTestManager {
             if (!containsEntry)
                 throw new AutoTestAssertionException(expectedEntry, mostSimilar);
         }
+    }
+
+    void validateSynonymEntries(Collection<SynonymEntry> expectedSynonymEntries, Collection<SynonymEntry> actualSynonymEntries) throws AutoTestAssertionException {
+        if (expectedSynonymEntries.size() == 0) {
+            return;
+        }
+
+        for (SynonymEntry expectedSynonymEntry : expectedSynonymEntries) {
+            double bestSimilarity = 0.0;
+            boolean containsEntry = false;
+            SynonymEntry mostSimilarSynonymEntry = null;
+            DictionaryObject expectedBaseObject = expectedSynonymEntry.getBaseObject();
+
+            for (SynonymEntry actualSynonymEntry : actualSynonymEntries) {
+                DictionaryObject actualBaseObject = actualSynonymEntry.getBaseObject();
+                double similarity = 0.75 * SimilarityUtils.deepFieldSimilarity(expectedBaseObject, actualBaseObject);
+                similarity += 0.25 * SimilarityUtils.fieldSimilarity(expectedSynonymEntry.getBaseEntryType(), actualSynonymEntry.getBaseEntryType());
+
+                if (similarity == 1.0) {
+                    validateSynonymGroups(expectedSynonymEntry.getSynonymGroups(), actualSynonymEntry.getSynonymGroups());
+                    containsEntry = true;
+                    break;
+                } else if (similarity > bestSimilarity) {
+                    mostSimilarSynonymEntry = actualSynonymEntry;
+                }
+            }
+            if (!containsEntry)
+                throw new AutoTestAssertionException(expectedSynonymEntry, mostSimilarSynonymEntry);
+        }
+
+    }
+
+    void validateSynonymGroups(Collection<SynonymGroup> expectedSynonymGroups, Collection<SynonymGroup> actualSynonymGroups) throws AutoTestAssertionException {
+        if (expectedSynonymGroups.size() == 0) {
+            return;
+        }
+
+        boolean containsEntry = false;
+        SynonymGroup mostSimilarSynonymGroup = null;
+        for (SynonymGroup expectedSynonymEntry : expectedSynonymGroups) {
+            double bestSimilarity = 0.0;
+            DictionaryObject expectedBaseObject = expectedSynonymEntry.getBaseMeaning();
+
+            for (SynonymGroup actualSynonymGroup : actualSynonymGroups) {
+                double similarity = SimilarityUtils.deepFieldSimilarity(expectedBaseObject, actualSynonymGroup.getBaseMeaning());
+
+                if (similarity == 1.0) {
+                    validateActualObjects(expectedSynonymEntry.getSynonyms(), actualSynonymGroup.getSynonyms());
+                    containsEntry = true;
+                    break;
+                } else if (similarity > bestSimilarity) {
+                    mostSimilarSynonymGroup = actualSynonymGroup;
+                }
+            }
+        }
+        if (!containsEntry)
+            throw new AutoTestAssertionException(expectedSynonymGroups, mostSimilarSynonymGroup);
     }
 
     void validateTestCase(@NotNull AutoTestCase testCase) {

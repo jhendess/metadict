@@ -40,6 +40,8 @@ public class SynonymEntryBuilder {
 
     private Collection<SynonymGroup> synonymGroups = new ArrayList<>();
 
+    private EntryType baseEntryType;
+
     SynonymEntryBuilder() {
 
     }
@@ -48,7 +50,7 @@ public class SynonymEntryBuilder {
     public SynonymEntry build() {
         checkNotNull(baseObject, "Base object may not be null");
 
-        return new ImmutableSynonymEntry(baseObject, synonymGroups);
+        return new ImmutableSynonymEntry(baseObject, synonymGroups, baseEntryType);
     }
 
     /**
@@ -60,6 +62,16 @@ public class SynonymEntryBuilder {
     @NotNull
     public SynonymEntryBuilder setBaseObject(DictionaryObject baseObject) {
         this.baseObject = baseObject;
+        return this;
+    }
+
+    /**
+     * Returns the base entry type (noun, verb, etc.) that all objects in this synonym group have.
+     *
+     * @return this builder.
+     */
+    public SynonymEntryBuilder setBaseEntryType(EntryType baseEntryType) {
+        this.baseEntryType = baseEntryType;
         return this;
     }
 

@@ -34,6 +34,13 @@ import java.util.Collection;
 public interface SynonymEntry {
 
     /**
+     * Returns the base entry type (noun, verb, etc.) that all objects in this synonym group have.
+     *
+     * @return the base meaning that all objects in this synonym group have.
+     */
+    EntryType getBaseEntryType();
+
+    /**
      * Returns the base object for which synonyms are stored in this entry. This is usually the string that was
      * originally requested. The language of the synonym entry can also be retrieved via this object's {@link
      * DictionaryObject#getLanguage()} method.
@@ -49,5 +56,6 @@ public interface SynonymEntry {
      * @return the synonym groups for this entry.
      */
     Collection<SynonymGroup> getSynonymGroups();
+
 
 }

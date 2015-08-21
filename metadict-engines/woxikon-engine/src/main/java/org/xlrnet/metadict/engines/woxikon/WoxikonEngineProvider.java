@@ -96,7 +96,25 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
                                                 .build())
                                         .build())
                         .build())
-                .build();
+                .addAutoTestCase(ImmutableAutoTestCase.builder()
+                                .setTestQueryString("bank")
+                                .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-en", true))
+                                .setExpectedBilingualResults(
+                                        (BilingualQueryResult) ImmutableBilingualQueryResult.builder()
+                                                .addSynonymEntry(
+                                                        ImmutableSynonymEntry.builder()
+                                                                //.setBaseEntryType(EntryType.NOUN)
+                                                                .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "Bank"))
+                                                                .addSynonymGroup(ImmutableSynonymGroup.builder()
+                                                                        .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "Fußbank"))
+                                                                        .addSynonym(ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("Schemel").setDescription("Fußbank").build())
+                                                                        .build())
+                                                                .build()
+                                                )
+                                                .build())
+                                .build()
+                ).build();
+
     }
 
     /**
@@ -117,7 +135,8 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
     }
 
     /**
-     * Return a {@link FeatureSet} object that contains information about which features the underlying engine supports.
+     * Return a {@link FeatureSet} object that contains information about which features the underlying engine
+     * supports.
      * This includes e.g. the supported languages of the engine.
      *
      * @return an object that contains information about which features the underlying engine supports.
