@@ -79,11 +79,13 @@ public class WoxikonEngine implements SearchEngine {
             .put("(o)", EntryType.OTHER_WORD)
             .build();
 
-    private static final Map<String, GrammaticalGender> GENDER_MAP = ImmutableMap.<String, GrammaticalGender>builder()
+    private static final Map<String, GrammaticalGender> GENDER_MAP     = ImmutableMap.<String, GrammaticalGender>builder()
             .put("[m.]", GrammaticalGender.MASCULINE)
             .put("[f.]", GrammaticalGender.FEMININE)
             .put("[n.]", GrammaticalGender.NEUTER)
             .build();
+
+    private static final int                            TIMEOUT_MILLIS = 1500;
 
     /**
      * The main method for querying a {@link SearchEngine} with a <i>bilingual</i> search (i.e. translation). This
@@ -121,7 +123,7 @@ public class WoxikonEngine implements SearchEngine {
         Language targetLanguage = findTargetLanguage(inputLanguage, outputLanguage);
         URL targetUrl = buildTargetUrl(queryInput, targetLanguage);
 
-        Document doc = Jsoup.parse(targetUrl, 1000);
+        Document doc = Jsoup.parse(targetUrl, TIMEOUT_MILLIS);
 
         return processBilingualDocument(queryInput, doc, targetLanguage);
     }
