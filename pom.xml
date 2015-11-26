@@ -43,7 +43,6 @@
         <module>metadict-engines</module>
         <module>metadict-storage</module>
         <module>metadict-assembly</module>
-        <module>metadict-app</module>
     </modules>
 
     <properties>
