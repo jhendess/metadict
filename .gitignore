@@ -1,3 +1,10 @@
+### Development files for UI
+
+/metadict-ui/typings
+/metadict-ui/node_modules
+/metadict-ui/bower_components
+/metadict-ui/dist
+/metadict-ui/.tmp
 
 ### Java template
 *.class
