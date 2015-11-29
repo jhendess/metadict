@@ -34,7 +34,7 @@
 
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -47,16 +47,16 @@
 
 <div ng-controller="MainController" ng-cloak layout-fill>
     <div layout="column" layout-fill>
-        <md-toolbar class="md-whiteframe-6dp">
+        <md-toolbar class="md-whiteframe-6dp top-bar">
             <div class="md-toolbar-tools">
-                <md-button ng-click="toggleLeftNav()" hide-gt-md>
+                <md-button ng-click="toggleLeftNav()" hide-gt-lg>
                     <md-icon aria-label="Menu">menu</md-icon>
                 </md-button>
                 <div flex></div>
                 <span class="md-headline">Metadict</span>
 
                 <div flex></div>
-                <md-button ng-click="toggleRightNav()" hide-gt-md>
+                <md-button ng-click="toggleRightNav()" hide-gt-lg>
                     <md-icon aria-label="Settings">settings</md-icon>
                 </md-button>
             </div>
@@ -64,37 +64,16 @@
 
         <div layout="row" layout-fill>
             <md-sidenav md-component-id="menu-left" class="md-sidenav-left md-whiteframe-4dp"
-                        md-is-locked-open="$mdMedia('gt-md')">
-                <div ng-controller="NavigationMenuController as nav">
-                    <md-toolbar class="md-tall">
-                        <img ng-src="{{ nav.img }}" class="small-face">
-
-                        <div class="md-toolbar-tools">
-                            <div class="md-toolbar-tools-bottom md-subhead">
-                                <span><strong>{{ nav.topHeader }}</strong></span>
-                                <br>
-                                <span>{{ nav.subHeader }}</span>
-                            </div>
-                        </div>
-                    </md-toolbar>
-                    <md-list>
-
-                    </md-list>
-                </div>
+                        md-is-locked-open="$mdMedia('gt-lg')">
+                <navigation-menu></navigation-menu>
             </md-sidenav>
 
             <md-content flex layout-padding>
-
+                <ng-view></ng-view>
             </md-content>
 
-            <md-sidenav md-component-id="menu-right" md-is-locked-open="$mdMedia('gt-md')"
+            <md-sidenav md-component-id="menu-right" md-is-locked-open="$mdMedia('gt-lg')"
                         class="md-sidenav-right md-sidenav-left md-whiteframe-4dp">
-                <form>
-                    <md-input-container>
-                        <label for="testInput">Test input</label>
-                        <input id="testInput" type="text" ng-model="data" md-autofocus>
-                    </md-input-container>
-                </form>
             </md-sidenav>
         </div>
     </div>
@@ -116,9 +95,12 @@
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/App.js"></script>
-<script src="scripts/main/UserService.js"></script>
+<script src="scripts/user/UserService.js"></script>
 <script src="scripts/main/MainController.js"></script>
-<script src="scripts/main/NavigationMenuController.js"></script>
+<script src="scripts/search/SearchController.js"></script>
+<script src="scripts/navigation/NavigationMenuController.js"></script>
+<script src="scripts/navigation/NavigationMenuService.js"></script>
+<script src="scripts/navigation/NavigationMenuDirective.js"></script>
 <!-- endbuild -->
 </body>
 </html>

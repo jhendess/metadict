@@ -1,5 +1,5 @@
 /// <reference path="../App.ts" />
-/// <reference path="UserService.ts"/>
+/// <reference path="../user/UserService.ts"/>
 
 
 "use strict";
@@ -17,7 +17,8 @@ module MetadictApp {
         public subHeader: string;
 
         // @ngInject
-        constructor(private $scope: IScope, private $log: ILogService, private UserService: IUserService) {
+        constructor(private $scope: IScope, private $log: ILogService, private UserService: IUserService,
+                    private NavigationMenuService: INavigationMenuService) {
             $log.info("NavigationMenuController started!");
 
             $scope.$watch(UserService.isUserLoggedIn, () => {
@@ -29,7 +30,14 @@ module MetadictApp {
                     this.resetHeader();
                 }
             });
+        }
 
+        public isLoggedIn() : boolean {
+            return this.UserService.isUserLoggedIn();
+        }
+
+        public sections(): Array<INavigationSection> {
+            return this.NavigationMenuService.getSections();
         }
 
         private resetHeader() {
@@ -37,8 +45,6 @@ module MetadictApp {
             this.topHeader = "You are not logged in.";
             this.subHeader = "";
         }
-
-
     }
 }
 

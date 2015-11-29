@@ -22,10 +22,19 @@
  * THE SOFTWARE.
  */
 
+.top-bar {
+    z-index: 500;
+}
+
 .small-face {
     border-radius: 30px;
     border: 1px solid #ddd;
     width: 48px;
     height: 48px;
     margin: 16px;
+}
+
+.navigationTarget a {
+    text-decoration: none;
+    color: inherit;
 }

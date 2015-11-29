@@ -24,8 +24,10 @@
  * THE SOFTWARE.
  */
 
-import IThemingProvider = angular.material.IThemingProvider;
 "use strict";
+
+import IThemingProvider = angular.material.IThemingProvider;
+import IRouteProvider = angular.route.IRouteProvider;
 
 angular.module("MetadictApp", [
     "ngAnimate",
@@ -34,10 +36,25 @@ angular.module("MetadictApp", [
     "ngRoute",
     "ngTouch",
     "ngMaterial"
-]).config(($mdThemingProvider : IThemingProvider) => {
+]).config(($mdThemingProvider: IThemingProvider) => {
     $mdThemingProvider.theme("default")
-      .primaryPalette("blue", {
-          "default": "500"
-      })
-      .accentPalette("red");
+        .primaryPalette("blue", {
+            "default": "500"
+        })
+        .accentPalette("red");
+}).config(($routeProvider: IRouteProvider) => {
+    $routeProvider.when("/search", {
+        controller: "SearchController",
+        templateUrl: "/views/search.html"
+    }).when("/trainer", {
+        templateUrl: "/views/trainer.html"
+    }).when("/favorites", {
+        templateUrl: "/views/favorites.html"
+    }).when("/about", {
+        templateUrl: "/views/about.html"
+    }).when("/help", {
+        templateUrl: "/views/help.html"
+    }).otherwise({
+        redirectTo: "/search"
+    });
 });
