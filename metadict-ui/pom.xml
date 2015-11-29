@@ -63,7 +63,12 @@
                     <gruntOptions>
                         <gruntOption>--verbose</gruntOption>
                     </gruntOptions>
-                    <target>build:setup</target>
+
+                    <!-- Use grunt installation which was downloaded locally with npm -->
+                    <gruntExecutable>node_modules/grunt-cli/bin/grunt</gruntExecutable>
+                    <runGruntWithNode>true</runGruntWithNode>
+
+                    <target>build:clean</target>
                 </configuration>
                 <executions>
                     <execution>
