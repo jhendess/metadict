@@ -40,7 +40,6 @@
     <packaging>pom</packaging>
 
     <modules>
-
         <module>mapdb-storage</module>
     </modules>
 

@@ -415,6 +415,11 @@ module.exports = function (grunt) {
         'htmlmin'
     ]);
 
+    grunt.registerTask('build:clean', [
+        "setup",
+        "build"
+    ]);
+
     grunt.registerTask('serve:dist', ["build", "connect:dist", "wait-forever"]);
 
     grunt.registerTask('test:dist', [
