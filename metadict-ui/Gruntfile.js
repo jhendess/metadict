@@ -241,7 +241,6 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '*.html',
-                        'views/*.html',
                         'images/{,*/}*.*',
                         'styles/fonts/{,*/}*.*'
                     ]
@@ -422,38 +421,42 @@ module.exports = function (grunt) {
         'karma'
     ]);
 
-    grunt.registerTask('build', [
-        'clean:dist',
-        'wiredep',
-        'tsd:refresh',
-        'useminPrepare',
-        'concurrent:dist',
-        'ngtemplates',
-        'concat',
-        'ngAnnotate',
-        'copy:dist',
-        'cssmin',
-        'uglify',
-        'filerev',
-        'usemin',
-        'htmlmin'
-    ]);
+    grunt.registerTask('build', function(target) {
+        grunt.task.run([
+            'check',
+            'clean:dist',
+            'wiredep',
+            'tsd:refresh',
+            'useminPrepare',
+            'concurrent:dist',
+            'ngtemplates',
+            'concat',
+            'ngAnnotate',
+            'copy:dist',
+            'cssmin',
+            'uglify',
+            'filerev',
+            'usemin',
+            'htmlmin'
+        ]);
+        
+        if (target === "test") {
+            grunt.task.run([
+                "clean:server",
+                "typescript:test",
+                "clean:testSources",
+                "copy:distSources",
+                "karma"        
+            ]);
+        }
+    });
 
     grunt.registerTask('build:clean', [
         "setup",
         "build"
     ]);
 
-    grunt.registerTask('serve:dist', ["build", "connect:dist", "wait-forever"]);
-
-    grunt.registerTask('test:dist', [
-        "build",
-        "clean:server",
-        "typescript:test",
-        "clean:testSources",
-        "copy:distSources",
-        "karma"
-    ]);
+    grunt.registerTask('build:serve', ["build", "connect:dist", "wait-forever"]);
 
     grunt.registerTask('default', [
         "check",

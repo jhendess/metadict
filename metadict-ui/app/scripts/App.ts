@@ -32,10 +32,10 @@ import IRouteProvider = angular.route.IRouteProvider;
 angular.module("MetadictApp", [
     "ngAnimate",
     "ngCookies",
-    "ngResource",
     "ngRoute",
     "ngTouch",
-    "ngMaterial"
+    "ngMaterial",
+    "restangular"
 ]).config(($mdThemingProvider: IThemingProvider) => {
     $mdThemingProvider.theme("default")
         .primaryPalette("blue", {

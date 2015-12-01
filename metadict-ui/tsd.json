@@ -6,15 +6,12 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "angularjs/angular.d.ts": {
-      "commit": "98b4177d24ed2b5679d395c832ef337bd0b17c1c"
+      "commit": "7a3d6944036902996b87981e6150900952b35628"
     },
     "jquery/jquery.d.ts": {
-      "commit": "98b4177d24ed2b5679d395c832ef337bd0b17c1c"
+      "commit": "7a3d6944036902996b87981e6150900952b35628"
     },
     "angularjs/angular-cookies.d.ts": {
-      "commit": "e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49"
-    },
-    "angularjs/angular-resource.d.ts": {
       "commit": "e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49"
     },
     "angularjs/angular-route.d.ts": {
@@ -28,6 +25,9 @@
     },
     "angular-material/angular-material.d.ts": {
       "commit": "98b4177d24ed2b5679d395c832ef337bd0b17c1c"
+    },
+    "restangular/restangular.d.ts": {
+      "commit": "7a3d6944036902996b87981e6150900952b35628"
     }
   }
 }
