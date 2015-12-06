@@ -5,7 +5,7 @@ metadict-ui/typings
 metadict-ui/node_modules
 metadict-ui/dist
 metadict-ui/.tmp
-
+metadict-ui/app/scripts/Config.ts
 
 ### Java template
 *.class

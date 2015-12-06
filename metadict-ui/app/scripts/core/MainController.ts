@@ -3,21 +3,18 @@
 "use strict";
 
 module MetadictApp {
+
     import ILogService = angular.ILogService;
     import ISidenavService = angular.material.ISidenavService;
 
-    export interface IMainScope extends ng.IScope {
-        toggleLeftNav: Function;
-        toggleRightNav: Function;
-    }
+    class MainController {
 
-    export class MainController {
         // @ngInject
         constructor (private $scope: IMainScope, private $log : ILogService, private $mdSidenav : ISidenavService) {
-            $log.info("MainController started!");
-
             $scope.toggleLeftNav = this.toggleLeftNav;
             $scope.toggleRightNav = this.toggleRightNav;
+
+            $log.debug("MainController started!");
         }
 
         private toggleLeftNav = () => {
@@ -30,7 +27,7 @@ module MetadictApp {
                 .toggle();
         };
     }
-}
 
-angular.module("MetadictApp")
-    .controller("MainController", MetadictApp.MainController);
+    metadictModule
+        .controller("MainController", MainController);
+}

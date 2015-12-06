@@ -3,7 +3,7 @@
     "class-name": true,
     "comment-format": [true, "check-space"],
     "curly": true,
-    "eofline": true,
+    "eofline": false,
     "forin": true,
     "indent": [true, "spaces"],
     "label-position": true,

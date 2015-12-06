@@ -134,6 +134,29 @@ module.exports = function (grunt) {
             }
         },
 
+        template : {
+            dev : {
+                options : {
+                    data : {
+                        config : appConfig.env.dev
+                    }
+                },
+                files : {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                }
+            },
+            prod : {
+                options : {
+                    data : {
+                        config : appConfig.env.prod
+                    }
+                },
+                files : {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                }
+            }
+        },
+
         // Watches files for changes and runs tasks based on the changed files
         watch: {
             bower: {
@@ -408,6 +431,7 @@ module.exports = function (grunt) {
         'clean:server',
         'wiredep',
         'tsd:refresh',
+        'template:dev',
         'concurrent:server',
         'connect:livereload',
         'watch'
@@ -416,6 +440,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'wiredep',
+        'template:dev',
         'tsd:refresh',
         'concurrent:test',
         'connect:test',
@@ -426,6 +451,7 @@ module.exports = function (grunt) {
         'clean:dist',
         'wiredep',
         'tsd:refresh',
+        'template:prod',
         'useminPrepare',
         'concurrent:dist',
         'ngtemplates',

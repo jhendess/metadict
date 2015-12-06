@@ -1,20 +1,22 @@
 /// <reference path="../App.ts" />
-/// <reference path="../user/UserService.ts"/>
+/// <reference path="../core/UserService.ts"/>
 
 "use strict";
 
 module MetadictApp {
+
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
 
-    export class SearchController {
+    class SearchController {
 
         // @ngInject
         constructor(private $scope: IScope, private $log: ILogService) {
-            $log.info("SearchController started!");
+            $log.debug("SearchController started!");
         }
     }
+
+    metadictModule
+        .controller("SearchController", SearchController);
 }
 
-angular.module("MetadictApp")
-    .controller("SearchController", MetadictApp.SearchController);
