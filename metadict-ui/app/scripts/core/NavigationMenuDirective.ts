@@ -9,14 +9,13 @@ module MetadictApp {
         public templateUrl = "views/navigationMenu.html";
 
         public restrict = "E";
-
     }
 
     export function NavigationMenuFactory() {
-        return new MetadictApp.NavigationMenuDirective();
+        return new NavigationMenuDirective();
     }
 
+
+    metadictModule.directive("navigationMenu", NavigationMenuFactory);
 }
 
-angular.module("MetadictApp")
-    .directive("navigationMenu", MetadictApp.NavigationMenuFactory);

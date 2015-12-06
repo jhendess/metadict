@@ -3,20 +3,17 @@
 "use strict";
 
 module MetadictApp {
-    export interface IUser {
-        email: string;
-        img: string;
-        fullname: string;
-    }
 
-    export interface IUserService {
-        getLoggedInUser() : IUser;
-        isUserLoggedIn() : boolean;
-    }
+    import ILogService = angular.ILogService;
 
+    class UserService implements IUserService {
 
-    export class UserService implements IUserService {
-        private loggedInUser: User;
+        // @ngInject
+        constructor(private $log : ILogService) {
+            $log.debug("UserService started!");
+        }
+
+        private loggedInUser: IUser;
 
         public getLoggedInUser(): MetadictApp.IUser {
             return this.loggedInUser;
@@ -32,7 +29,8 @@ module MetadictApp {
 
         };
     }
+
+    metadictModule
+        .service("UserService", UserService);
 }
 
-angular.module("MetadictApp")
-    .service("UserService", MetadictApp.UserService);

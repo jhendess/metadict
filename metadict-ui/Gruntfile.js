@@ -134,6 +134,29 @@ module.exports = function (grunt) {
             }
         },
 
+        template : {
+            dev : {
+                options : {
+                    data : {
+                        config : appConfig.env.dev
+                    }
+                },
+                files : {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                }
+            },
+            prod : {
+                options : {
+                    data : {
+                        config : appConfig.env.prod
+                    }
+                },
+                files : {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                }
+            }
+        },
+
         // Watches files for changes and runs tasks based on the changed files
         watch: {
             bower: {
@@ -241,6 +264,7 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '*.html',
+                        'views/*.html',
                         'images/{,*/}*.*',
                         'styles/fonts/{,*/}*.*'
                     ]
@@ -407,6 +431,7 @@ module.exports = function (grunt) {
         'clean:server',
         'wiredep',
         'tsd:refresh',
+        'template:dev',
         'concurrent:server',
         'connect:livereload',
         'watch'
@@ -415,48 +440,46 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'wiredep',
+        'template:dev',
         'tsd:refresh',
         'concurrent:test',
         'connect:test',
         'karma'
     ]);
 
-    grunt.registerTask('build', function(target) {
-        grunt.task.run([
-            'check',
-            'clean:dist',
-            'wiredep',
-            'tsd:refresh',
-            'useminPrepare',
-            'concurrent:dist',
-            'ngtemplates',
-            'concat',
-            'ngAnnotate',
-            'copy:dist',
-            'cssmin',
-            'uglify',
-            'filerev',
-            'usemin',
-            'htmlmin'
-        ]);
-        
-        if (target === "test") {
-            grunt.task.run([
-                "clean:server",
-                "typescript:test",
-                "clean:testSources",
-                "copy:distSources",
-                "karma"        
-            ]);
-        }
-    });
+    grunt.registerTask('build', [
+        'clean:dist',
+        'wiredep',
+        'tsd:refresh',
+        'template:prod',
+        'useminPrepare',
+        'concurrent:dist',
+        'ngtemplates',
+        'concat',
+        'ngAnnotate',
+        'copy:dist',
+        'cssmin',
+        'uglify',
+        'filerev',
+        'usemin',
+        'htmlmin'
+    ]);
 
     grunt.registerTask('build:clean', [
         "setup",
         "build"
     ]);
 
-    grunt.registerTask('build:serve', ["build", "connect:dist", "wait-forever"]);
+    grunt.registerTask('serve:dist', ["build", "connect:dist", "wait-forever"]);
+
+    grunt.registerTask('test:dist', [
+        "build",
+        "clean:server",
+        "typescript:test",
+        "clean:testSources",
+        "copy:distSources",
+        "karma"
+    ]);
 
     grunt.registerTask('default', [
         "check",

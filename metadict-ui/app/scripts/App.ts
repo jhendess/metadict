@@ -1,4 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
+///<reference path="core/CoreInterfaces.ts"/>
+/// <reference path="Config.ts"/>
+
 
 /*
  * The MIT License (MIT)
@@ -26,35 +29,44 @@
 
 "use strict";
 
-import IThemingProvider = angular.material.IThemingProvider;
-import IRouteProvider = angular.route.IRouteProvider;
+module MetadictApp {
 
-angular.module("MetadictApp", [
-    "ngAnimate",
-    "ngCookies",
-    "ngRoute",
-    "ngTouch",
-    "ngMaterial",
-    "restangular"
-]).config(($mdThemingProvider: IThemingProvider) => {
-    $mdThemingProvider.theme("default")
-        .primaryPalette("blue", {
-            "default": "500"
-        })
-        .accentPalette("red");
-}).config(($routeProvider: IRouteProvider) => {
-    $routeProvider.when("/search", {
-        controller: "SearchController",
-        templateUrl: "/views/search.html"
-    }).when("/trainer", {
-        templateUrl: "/views/trainer.html"
-    }).when("/favorites", {
-        templateUrl: "/views/favorites.html"
-    }).when("/about", {
-        templateUrl: "/views/about.html"
-    }).when("/help", {
-        templateUrl: "/views/help.html"
-    }).otherwise({
-        redirectTo: "/search"
+    import Config = MetadictApp.Config;
+    import IThemingProvider = angular.material.IThemingProvider;
+    import IRouteProvider = angular.route.IRouteProvider;
+    import IRestangularProvider = restangular.IProvider;
+
+    export let metadictModule = angular.module("MetadictApp", [
+        "ngAnimate",
+        "ngCookies",
+        "ngRoute",
+        "ngTouch",
+        "ngMaterial",
+        "restangular"
+    ]);
+
+    metadictModule.config(($mdThemingProvider: IThemingProvider) => {
+        $mdThemingProvider.theme("default")
+            .primaryPalette("blue", {
+                "default": "500"
+            })
+            .accentPalette("red");
+    }).config(($routeProvider: IRouteProvider) => {
+        $routeProvider.when("/search", {
+            controller: "SearchController",
+            templateUrl: "/views/search.html"
+        }).when("/trainer", {
+            templateUrl: "/views/trainer.html"
+        }).when("/favorites", {
+            templateUrl: "/views/favorites.html"
+        }).when("/about", {
+            templateUrl: "/views/about.html"
+        }).when("/help", {
+            templateUrl: "/views/help.html"
+        }).otherwise({
+            redirectTo: "/search"
+        });
+    }).config((RestangularProvider: IRestangularProvider) => {
+        RestangularProvider.setBaseUrl(Config.BASE_URL);
     });
-});
+}
