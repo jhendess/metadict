@@ -98,9 +98,9 @@
                         <goals>
                             <goal>grunt</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>build:test</arguments>
+                            <arguments>build</arguments>
                             <installDirectory>${nodeInstallDirectory}</installDirectory>
                         </configuration>
                     </execution>

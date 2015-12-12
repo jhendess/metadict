@@ -35,6 +35,7 @@
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+    <link rel="stylesheet" href="bower_components/flag-icon-css/css/flag-icon.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -45,9 +46,9 @@
 </head>
 <body>
 
-<div ng-controller="MainController" ng-cloak layout-fill>
-    <div layout="column" layout-fill>
-        <md-toolbar class="md-whiteframe-6dp top-bar">
+<div ng-controller="MainController" ng-cloak layout="column" class="fullHeight">
+    <div>
+        <md-toolbar layout class="md-whiteframe-6dp top-bar">
             <div class="md-toolbar-tools">
                 <md-button ng-click="toggleLeftNav()" hide-gt-lg>
                     <md-icon aria-label="Menu">menu</md-icon>
@@ -61,21 +62,22 @@
                 </md-button>
             </div>
         </md-toolbar>
+    </div>
 
-        <div layout="row" layout-fill>
-            <md-sidenav md-component-id="menu-left" class="md-sidenav-left md-whiteframe-4dp"
-                        md-is-locked-open="$mdMedia('gt-lg')">
-                <navigation-menu></navigation-menu>
-            </md-sidenav>
+    <div layout="row" class="fullHeight">
+        <md-sidenav md-component-id="menu-left" class="md-sidenav-left md-whiteframe-4dp"
+                    md-is-locked-open="$mdMedia('gt-lg')">
+            <navigation-menu></navigation-menu>
+        </md-sidenav>
 
-            <md-content flex layout-padding>
-                <ng-view></ng-view>
-            </md-content>
+        <md-content flex>
+            <ng-view></ng-view>
+        </md-content>
 
-            <md-sidenav md-component-id="menu-right" md-is-locked-open="$mdMedia('gt-lg')"
-                        class="md-sidenav-right md-sidenav-left md-whiteframe-4dp">
-            </md-sidenav>
-        </div>
+        <md-sidenav md-component-id="menu-right" md-is-locked-open="$mdMedia('gt-lg')"
+                    class="md-sidenav-right md-sidenav-left md-whiteframe-4dp">
+            <select-dictionaries-menu></select-dictionaries-menu>
+        </md-sidenav>
     </div>
 </div>
 
@@ -97,12 +99,18 @@
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/Config.js"></script>
 <script src="scripts/App.js"></script>
-<script src="scripts/core/UserService.js"></script>
-<script src="scripts/core/MainController.js"></script>
-<script src="scripts/core/NavigationMenuService.js"></script>
-<script src="scripts/core/NavigationMenuDirective.js"></script>
-<script src="scripts/core/NavigationMenuController.js"></script>
-<script src="scripts/search/SearchController.js"></script>
+<script src="scripts/api/Constants.js"></script>
+<script src="scripts/core/services/BootstrapService.js"></script>
+<script src="scripts/core/services/UserService.js"></script>
+<script src="scripts/core/services/NavigationMenuService.js"></script>
+<script src="scripts/core/services/BackendAccessService.js"></script>
+<script src="scripts/core/services/DictionaryService.js"></script>
+<script src="scripts/core/controllers/MainController.js"></script>
+<script src="scripts/core/controllers/NavigationMenuController.js"></script>
+<script src="scripts/core/controllers/SelectDictionariesMenuController.js"></script>
+<script src="scripts/core/directives/NavigationMenuDirective.js"></script>
+<script src="scripts/core/directives/SelectDictionariesMenuDirective.js"></script>
+<script src="scripts/search/controllers/SearchController.js"></script>
 <!-- endbuild -->
 </body>
 </html>

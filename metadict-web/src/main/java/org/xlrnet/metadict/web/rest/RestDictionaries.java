@@ -121,9 +121,9 @@ public class RestDictionaries {
                 .collect(Collectors.toList());
 
         List<BilingualDictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
-        for (BilingualDictionary BilingualDictionary: bidirectional) {
-            if (!distinctBidirectional.contains(BilingualDictionary.inverse(BilingualDictionary)))
-                distinctBidirectional.add(BilingualDictionary);
+        for (BilingualDictionary bilingualDictionary: bidirectional) {
+            if (!distinctBidirectional.contains(BilingualDictionary.inverse(bilingualDictionary)))
+                distinctBidirectional.add(bilingualDictionary);
         }
         return distinctBidirectional;
     }

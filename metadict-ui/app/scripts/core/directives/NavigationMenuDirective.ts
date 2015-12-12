@@ -1,4 +1,4 @@
-/// <reference path="../App.ts" />
+/// <reference path="../../App.ts" />
 
 "use strict";
 

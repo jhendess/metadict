@@ -47,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A monolingual dictionary can be described with just a plain {@link Language} object. See the according documentation
  * for {@link FeatureSet} and {@link org.xlrnet.metadict.api.engine.SearchEngine}.
  */
-public class BilingualDictionary implements Serializable {
+public class BilingualDictionary implements Serializable, Comparable<BilingualDictionary> {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)");
 
@@ -274,5 +274,14 @@ public class BilingualDictionary implements Serializable {
                 .add("output", output)
                 .add("bidirectional", bidirectional)
                 .toString();
+    }
+
+    @Override
+    public int compareTo(@NotNull BilingualDictionary bilingualDictionary) {
+        if (!this.getInput().equals(bilingualDictionary.getInput())) {
+            return this.getInput().getDisplayName().compareTo(bilingualDictionary.getInput().getDisplayName());
+        } else {
+            return this.getOutput().getDisplayName().compareTo(bilingualDictionary.getOutput().getDisplayName());
+        }
     }
 }

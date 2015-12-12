@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.util;
+package org.xlrnet.metadict.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
+import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * Helper method for dictionary related tasks.
  */
-public class DictionaryUtils {
+public class BilingualDictionaryUtils {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)(,[A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)*");
 
@@ -48,11 +48,38 @@ public class DictionaryUtils {
         List<BilingualDictionary> dictionaryList = new ArrayList<>(explodedQuery.length);
 
         for (String query : explodedQuery) {
-                BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query, bidirectional);
-                dictionaryList.add(dictionary);
+            BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query, bidirectional);
+            dictionaryList.add(dictionary);
         }
 
         return dictionaryList;
     }
 
+    public static void sortDictionaryListAlphabetically(List<BilingualDictionary> dictionaries) {
+        Map<Language, Integer> languagePriorityMap = new HashMap<>();
+
+        // Count how often each language is used
+        for (BilingualDictionary dictionary : dictionaries) {
+            languagePriorityMap.put(dictionary.getInput(), (languagePriorityMap.getOrDefault(dictionary.getInput(), 0) + 1));
+            if (dictionary.isBidirectional()) {
+                languagePriorityMap.put(dictionary.getOutput(), (languagePriorityMap.getOrDefault(dictionary.getOutput(), 0) + 1));
+            }
+        }
+
+        // Use inverted dictionaries if the output language has a higher priority than the input language
+        for (int i = 0; i < dictionaries.size(); i++) {
+            BilingualDictionary dictionary = dictionaries.get(i);
+            if (!dictionary.isBidirectional()) {
+                continue;
+            }
+            int inputPriority = languagePriorityMap.get(dictionary.getInput());
+            int outputPriority = languagePriorityMap.get(dictionary.getOutput());
+
+            if (outputPriority > inputPriority) {
+                dictionaries.set(i, BilingualDictionary.inverse(dictionary));
+            }
+        }
+
+        Collections.sort(dictionaries);
+    }
 }

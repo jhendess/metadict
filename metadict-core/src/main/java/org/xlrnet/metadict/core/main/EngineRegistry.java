@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.main;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,7 @@ import org.xlrnet.metadict.api.engine.*;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.autotest.AutoTestManager;
+import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -64,6 +66,8 @@ public class EngineRegistry {
     Map<String, FeatureSet> featureSetMap = new HashMap<>();
 
     Map<String, SearchEngine> searchEngineMap = new HashMap<>();
+
+    List<BilingualDictionary> supportedDictionaryList;
 
     @Inject
     private Instance<SearchEngineProvider> searchProviderInstances;
@@ -187,7 +191,7 @@ public class EngineRegistry {
      */
     @NotNull
     public Collection<BilingualDictionary> getSupportedDictionaries() {
-        return Collections.unmodifiableCollection(dictionaryEngineNameMap.keySet());
+        return Collections.unmodifiableCollection(supportedDictionaryList);
     }
 
     /**
@@ -217,6 +221,9 @@ public class EngineRegistry {
         if (failedProviders > 0) {
             logger.warn("Registration failed on {} {}", failedProviders, failedProviders > 1 ? "providers" : "provider");
         }
+
+        supportedDictionaryList = Lists.newArrayList(dictionaryEngineNameMap.keySet());
+        BilingualDictionaryUtils.sortDictionaryListAlphabetically(supportedDictionaryList);
     }
 
     /**

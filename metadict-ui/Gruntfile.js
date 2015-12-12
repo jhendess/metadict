@@ -70,13 +70,13 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
-                        '<%= appConfig.paths.dist %>/{,*/}*',
-                        '!<%= appConfig.paths.dist %>/.git{,*/}*'
+                        '<%= appConfig.paths.dist %>/**/*',
+                        '!<%= appConfig.paths.dist %>/.git**/*'
                     ]
                 }]
             },
             server: '.tmp',
-            testSources : '.tmp/spec/app',
+            testSources: '.tmp/spec/app',
             dev: [
                 "bower_components",
                 "typings"
@@ -134,25 +134,25 @@ module.exports = function (grunt) {
             }
         },
 
-        template : {
-            dev : {
-                options : {
-                    data : {
-                        config : appConfig.env.dev
+        template: {
+            dev: {
+                options: {
+                    data: {
+                        config: appConfig.env.dev
                     }
                 },
-                files : {
-                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                files: {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts': ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
                 }
             },
-            prod : {
-                options : {
-                    data : {
-                        config : appConfig.env.prod
+            prod: {
+                options: {
+                    data: {
+                        config: appConfig.env.prod
                     }
                 },
-                files : {
-                    '<%= appConfig.paths.app %>/scripts/Config.ts' : ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
+                files: {
+                    '<%= appConfig.paths.app %>/scripts/Config.ts': ['<%= appConfig.paths.app %>/scripts/Config.ts.tpl']
                 }
             }
         },
@@ -164,15 +164,15 @@ module.exports = function (grunt) {
                 tasks: ['wiredep']
             },
             typescript: {
-                files: ['<%= appConfig.paths.app %>/scripts/{,*/}*.ts'],
+                files: ['<%= appConfig.paths.app %>/scripts/**/*.ts'],
                 tasks: ['typescript:base']
             },
             typescriptTest: {
-                files: ['test/spec/{,*/}*.ts'],
+                files: ['test/spec/**/*.ts'],
                 tasks: ['typescript:test', 'karma']
             },
             styles: {
-                files: ['<%= appConfig.paths.app %>/styles/{,*/}*.css'],
+                files: ['<%= appConfig.paths.app %>/styles/**/*.css'],
                 tasks: ['newer:copy:styles']
             },
             gruntfile: {
@@ -183,10 +183,10 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 },
                 files: [
-                    '<%= appConfig.paths.app %>/{,*/}*.html',
-                    '.tmp/styles/{,*/}*.css',
-                    '.tmp/scripts/{,*/}*.js',
-                    '<%= appConfig.paths.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                    '<%= appConfig.paths.app %>/**/*.html',
+                    '.tmp/styles/**/*.css',
+                    '.tmp/scripts/**/*.js',
+                    '<%= appConfig.paths.app %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
         },
@@ -220,7 +220,7 @@ module.exports = function (grunt) {
         // Compiles TypeScript to JavaScript
         typescript: {
             base: {
-                src: ['<%= appConfig.paths.app %>/scripts/{,*/}*.ts'],
+                src: ['<%= appConfig.paths.app %>/scripts/**/*.ts'],
                 dest: '.tmp/scripts',
                 options: {
                     module: 'amd', //or commonjs
@@ -231,7 +231,7 @@ module.exports = function (grunt) {
                 }
             },
             test: {
-                src: ['test/spec/{,*/}*.ts', 'test/e2e/{,*/}*.ts'],
+                src: ['test/spec/**/*.ts', 'test/e2e/**/*.ts'],
                 dest: '.tmp/spec',
                 options: {
                     module: 'amd', //or commonjs
@@ -265,8 +265,8 @@ module.exports = function (grunt) {
                         '*.{ico,png,txt}',
                         '*.html',
                         'views/*.html',
-                        'images/{,*/}*.*',
-                        'styles/fonts/{,*/}*.*'
+                        'images/**/*.*',
+                        'styles/fonts/**/*.*'
                     ]
                 }]
             },
@@ -274,14 +274,20 @@ module.exports = function (grunt) {
                 expand: true,
                 cwd: '<%= appConfig.paths.app %>/styles',
                 dest: '.tmp/styles/',
-                src: '{,*/}*.css'
+                src: '**/*.css'
             },
-            distSources : {
+            distSources: {
                 // Copy from dist to .tmp, to allow testing of minified files
                 expand: true,
                 cwd: '<%= appConfig.paths.dist %>',
-                src: '{,*/}*.*',
+                src: '**/*.*',
                 dest: '.tmp/spec'
+            },
+            flags: {
+                expand: true,
+                cwd: "bower_components/flag-icon-css/flags",
+                src: ['**/*.svg'],
+                dest: '.tmp/flags/',
             }
         },
 
@@ -289,9 +295,9 @@ module.exports = function (grunt) {
         filerev: {
             dist: {
                 src: [
-                    '<%= appConfig.paths.dist %>/scripts/{,*/}*.js',
-                    '<%= appConfig.paths.dist %>/styles/{,*/}*.css',
-                    '<%= appConfig.paths.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+                    '<%= appConfig.paths.dist %>/scripts/**/*.js',
+                    '<%= appConfig.paths.dist %>/styles/**/*.css',
+                    '<%= appConfig.paths.dist %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
                     '<%= appConfig.paths.dist %>/styles/fonts/*'
                 ]
             }
@@ -318,9 +324,9 @@ module.exports = function (grunt) {
 
         // Performs rewrites based on filerev and the useminPrepare configuration
         usemin: {
-            html: ['<%= appConfig.paths.dist %>/{,*/}*.html'],
-            css: ['<%= appConfig.paths.dist %>/styles/{,*/}*.css'],
-            js: ['<%= appConfig.paths.dist %>/scripts/{,*/}*.js'],
+            html: ['<%= appConfig.paths.dist %>/**/*.html'],
+            css: ['<%= appConfig.paths.dist %>/styles/**/*.css'],
+            js: ['<%= appConfig.paths.dist %>/scripts/**/*.js'],
             options: {
                 assetsDirs: [
                     '<%= appConfig.paths.dist %>',
@@ -348,6 +354,20 @@ module.exports = function (grunt) {
                     src: ['*.html', 'views/*.html'],
                     dest: '<%= appConfig.paths.dist %>'
                 }]
+            }
+        },
+
+        svgmin: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: "bower_components/flag-icon-css/flags",
+                    src: ['**/*.svg'],
+                    dest: 'dist/flags/',
+                    ext: '.svg'
+                    // ie:
+                }
+                ]
             }
         },
 
@@ -390,7 +410,8 @@ module.exports = function (grunt) {
         concurrent: {
             server: [
                 'typescript:base',
-                'copy:styles'
+                'copy:styles',
+                'copy:flags'
             ],
             test: [
                 'typescript:test',
@@ -398,6 +419,7 @@ module.exports = function (grunt) {
                 'copy:styles'
             ],
             dist: [
+                'svgmin',
                 'typescript:base',
                 'copy:styles'
             ]
@@ -447,43 +469,55 @@ module.exports = function (grunt) {
         'karma'
     ]);
 
-    grunt.registerTask('build', [
-        'clean:dist',
-        'wiredep',
-        'tsd:refresh',
-        'template:prod',
-        'useminPrepare',
-        'concurrent:dist',
-        'ngtemplates',
-        'concat',
-        'ngAnnotate',
-        'copy:dist',
-        'cssmin',
-        'uglify',
-        'filerev',
-        'usemin',
-        'htmlmin'
-    ]);
+    grunt.registerTask('build', function (target) {
+        grunt.task.run([
+            'check',
+            'clean:dist',
+            'wiredep',
+            'tsd:refresh']);
+
+        if (target === "serve") {
+            grunt.task.run("template:dev");
+        } else {
+            grunt.task.run("template:prod");
+        }
+
+        grunt.task.run([
+            'useminPrepare',
+            'concurrent:dist',
+            'ngtemplates',
+            'concat',
+            'ngAnnotate',
+            'copy:dist',
+            'cssmin',
+            'uglify',
+            'filerev',
+            'usemin',
+            'htmlmin'
+        ]);
+
+        if (target === "test") {
+            grunt.task.run([
+                "typescript:test",
+                "clean:testSources",
+                "copy:distSources",
+                "karma"
+            ]);
+        } else if (target === "serve") {
+            grunt.task.run([
+                "connect:dist",
+                "wait-forever"
+            ]);
+        }
+    });
 
     grunt.registerTask('build:clean', [
         "setup",
         "build"
     ]);
 
-    grunt.registerTask('serve:dist', ["build", "connect:dist", "wait-forever"]);
-
-    grunt.registerTask('test:dist', [
-        "build",
-        "clean:server",
-        "typescript:test",
-        "clean:testSources",
-        "copy:distSources",
-        "karma"
-    ]);
-
     grunt.registerTask('default', [
-        "check",
-        "test:dist"
+        "build:test"
     ])
 
 };

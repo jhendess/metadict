@@ -36,9 +36,9 @@ import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.core.query.QueryResponse;
+import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
-import org.xlrnet.metadict.web.util.DictionaryUtils;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -152,7 +152,7 @@ public class RestQuery {
         OrderType orderType = Enums.getIfPresent(OrderType.class, StringUtils.stripToEmpty(ordering).toUpperCase()).or(OrderType.RELEVANCE);
         List<BilingualDictionary> dictionaries;
         try {
-            dictionaries = DictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
+            dictionaries = BilingualDictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
         } catch (IllegalArgumentException e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Malformed dictionary query", null)).build();
         } catch (UnsupportedDictionaryException e) {

@@ -22,32 +22,44 @@
  * THE SOFTWARE.
  */
 
-.top-bar {
-    /*z-index: 500;*/
-}
+package org.xlrnet.metadict.web.api;
 
-.small-face {
-    border-radius: 24px;
-    border: 1px solid #ddd;
-    width: 48px;
-    height: 48px;
-    margin: 16px;
-}
+import javax.ws.rs.core.MediaType;
 
-.navigationTarget a {
-    text-decoration: none;
-    color: inherit;
-}
+/**
+ * Description for a single method (i.e. GET) on a REST resource.
+ */
+public class MethodDescription {
 
-.center-block {
-    margin-left: auto;
-    margin-right: auto;
-}
+    private String method;
 
-.fullHeight {
-    height: 100%;
-}
+    private String fullPath;
 
-.dictionaryList .md-list-item-inner {
-    padding-right: 0px;
+    private MediaType[] produces;
+
+    private MediaType[] consumes;
+
+    public MethodDescription(String method, String fullPath, MediaType[] produces, MediaType[] consumes) {
+        super();
+        this.method = method;
+        this.fullPath = fullPath;
+        this.produces = produces;
+        this.consumes = consumes;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public MediaType[] getProduces() {
+        return produces;
+    }
+
+    public MediaType[] getConsumes() {
+        return consumes;
+    }
 }

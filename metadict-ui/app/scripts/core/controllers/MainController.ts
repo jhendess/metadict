@@ -1,4 +1,4 @@
-/// <reference path="../App.ts" />
+/// <reference path="../../App.ts" />
 
 "use strict";
 
@@ -7,6 +7,11 @@ module MetadictApp {
     import ILogService = angular.ILogService;
     import ISidenavService = angular.material.ISidenavService;
 
+    interface IMainScope extends ng.IScope {
+        toggleLeftNav: Function;
+        toggleRightNav: Function;
+    }
+
     class MainController {
 
         // @ngInject
@@ -14,7 +19,7 @@ module MetadictApp {
             $scope.toggleLeftNav = this.toggleLeftNav;
             $scope.toggleRightNav = this.toggleRightNav;
 
-            $log.debug("MainController started!");
+            $log.debug("MainController started");
         }
 
         private toggleLeftNav = () => {

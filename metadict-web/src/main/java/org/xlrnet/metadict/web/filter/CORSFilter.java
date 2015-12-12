@@ -22,32 +22,26 @@
  * THE SOFTWARE.
  */
 
-.top-bar {
-    /*z-index: 500;*/
-}
+package org.xlrnet.metadict.web.filter;
 
-.small-face {
-    border-radius: 24px;
-    border: 1px solid #ddd;
-    width: 48px;
-    height: 48px;
-    margin: 16px;
-}
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
-.navigationTarget a {
-    text-decoration: none;
-    color: inherit;
-}
+/**
+ * Filter for allowing cross-origin requests.
+ */
+@Provider
+public class CORSFilter implements ContainerResponseFilter {
 
-.center-block {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.fullHeight {
-    height: 100%;
-}
-
-.dictionaryList .md-list-item-inner {
-    padding-right: 0px;
+   @Override
+   public void filter(final ContainerRequestContext requestContext,
+                      final ContainerResponseContext responseContext) throws IOException {
+      responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
+      responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+      responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
+      responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+   }
 }

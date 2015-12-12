@@ -1,6 +1,8 @@
-/// <reference path="../../typings/tsd.d.ts" />
-///<reference path="core/CoreInterfaces.ts"/>
-/// <reference path="Config.ts"/>
+///<reference path="../../typings/tsd.d.ts" />
+///<reference path="api/CoreServices.ts"/>
+///<reference path="api/CoreInterfaces.ts"/>
+///<reference path="api/DomainInterfaces.ts"/>
+///<reference path="Config.ts"/>
 
 
 /*
@@ -45,28 +47,34 @@ module MetadictApp {
         "restangular"
     ]);
 
-    metadictModule.config(($mdThemingProvider: IThemingProvider) => {
-        $mdThemingProvider.theme("default")
-            .primaryPalette("blue", {
-                "default": "500"
-            })
-            .accentPalette("red");
-    }).config(($routeProvider: IRouteProvider) => {
-        $routeProvider.when("/search", {
-            controller: "SearchController",
-            templateUrl: "/views/search.html"
-        }).when("/trainer", {
-            templateUrl: "/views/trainer.html"
-        }).when("/favorites", {
-            templateUrl: "/views/favorites.html"
-        }).when("/about", {
-            templateUrl: "/views/about.html"
-        }).when("/help", {
-            templateUrl: "/views/help.html"
-        }).otherwise({
-            redirectTo: "/search"
+    metadictModule
+        .config(($mdThemingProvider: IThemingProvider) => {
+            $mdThemingProvider.theme("default")
+                .primaryPalette("blue", {
+                    "default": "500"
+                })
+                .accentPalette("red");
+        })
+        .config(($routeProvider: IRouteProvider) => {
+            $routeProvider.when("/search", {
+                controller: "SearchController",
+                templateUrl: "/views/search.html"
+            }).when("/trainer", {
+                templateUrl: "/views/trainer.html"
+            }).when("/favorites", {
+                templateUrl: "/views/favorites.html"
+            }).when("/about", {
+                templateUrl: "/views/about.html"
+            }).when("/help", {
+                templateUrl: "/views/help.html"
+            }).otherwise({
+                redirectTo: "/search"
+            });
+        })
+        .config((RestangularProvider: IRestangularProvider) => {
+            RestangularProvider.setBaseUrl(Config.BASE_URL);
+        })
+        .run((bootstrapService: IBootstrapService) => {
+            bootstrapService.bootstrapApplication();
         });
-    }).config((RestangularProvider: IRestangularProvider) => {
-        RestangularProvider.setBaseUrl(Config.BASE_URL);
-    });
 }

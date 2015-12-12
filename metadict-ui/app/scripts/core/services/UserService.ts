@@ -1,4 +1,4 @@
-/// <reference path="../App.ts" />
+/// <reference path="../../App.ts" />
 
 "use strict";
 
@@ -10,12 +10,12 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $log : ILogService) {
-            $log.debug("UserService started!");
+            $log.debug("UserService started");
         }
 
-        private loggedInUser: IUser;
+        private loggedInUser: User;
 
-        public getLoggedInUser(): MetadictApp.IUser {
+        public getLoggedInUser(): MetadictApp.User {
             return this.loggedInUser;
         }
 
@@ -24,13 +24,7 @@ module MetadictApp {
         }
     }
 
-    class User implements IUser {
-        constructor(public email: string, public img: string, public fullname: string) {
-
-        };
-    }
-
     metadictModule
-        .service("UserService", UserService);
+        .service("userService", UserService);
 }
 

@@ -1,4 +1,4 @@
-/// <reference path="../App.ts" />
+/// <reference path="../../App.ts" />
 
 "use strict";
 
@@ -10,10 +10,10 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $log : ILogService) {
-            $log.debug("NavigationMenuService started!");
+            $log.debug("NavigationMenuService started");
         }
 
-        private sections: Array<INavigationSection> = [
+        private sections: Array<NavigationSection> = [
             {
                 "title": null,
                 "pages": [
@@ -68,12 +68,12 @@ module MetadictApp {
             }
         ];
 
-        public getSections(): Array<INavigationSection> {
+        public getSections(): Array<NavigationSection> {
             return this.sections;
         }
     }
 
     metadictModule
-        .service("NavigationMenuService", NavigationMenuService);
+        .service("navigationMenuService", NavigationMenuService);
 }
 

@@ -1,5 +1,5 @@
-/// <reference path="../App.ts" />
-/// <reference path="../core/UserService.ts"/>
+/// <reference path="../../App.ts" />
+/// <reference path="../../core/services/UserService.ts"/>
 
 "use strict";
 
@@ -12,7 +12,7 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $scope: IScope, private $log: ILogService) {
-            $log.debug("SearchController started!");
+            $log.debug("SearchController started");
         }
     }
 

@@ -1,0 +1,17 @@
+<div ng-controller="SelectDictionariesMenuController as selectDictionariesController">
+    <md-progress-circular md-mode="indeterminate" class="center-block"
+                          ng-show="loadingDictionaries"></md-progress-circular>
+    <md-list>
+        <md-list-item flex ng-repeat="dictionary in availableDictionaries" class="dictionaryList">
+            <span flex>
+                <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.input)"></span>
+                <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.output)"></span>
+                <span>{{dictionary.input.displayName}}</span>&nbsp;-&nbsp;<span>{{dictionary.output.displayName}}</span>
+            </span>
+            <md-switch
+                    ng-change="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
+                    ng-model="selectionMap[dictionary.queryStringWithDialect]">
+            </md-switch>
+        </md-list-item>
+    </md-list>
+</div>
