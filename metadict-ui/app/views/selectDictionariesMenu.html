@@ -1,11 +1,17 @@
 <div ng-controller="SelectDictionariesMenuController as selectDictionariesController">
     <md-progress-circular md-mode="indeterminate" class="center-block"
                           ng-show="loadingDictionaries"></md-progress-circular>
+    <md-toolbar ng-if="availableDictionaries.length === 0 && !loadingDictionaries" class="md-warn">
+        <div class="md-toolbar-tools">
+            <span>Oops. This server has no configured dictionaries.</span>
+        </div>
+    </md-toolbar>
     <md-list>
         <md-list-item flex ng-repeat="dictionary in availableDictionaries" class="dictionaryList">
             <span flex>
                 <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.input)"></span>
-                <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.output)"></span>
+                <span class="flag-icon"
+                      ng-class="selectDictionariesController.buildIconClass(dictionary.output)"></span>
                 <span>{{dictionary.input.displayName}}</span>&nbsp;-&nbsp;<span>{{dictionary.output.displayName}}</span>
             </span>
             <md-switch

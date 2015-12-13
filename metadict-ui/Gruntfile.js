@@ -357,6 +357,7 @@ module.exports = function (grunt) {
             }
         },
 
+        //  Minify the svg flag icons
         svgmin: {
             dist: {
                 files: [{
@@ -365,9 +366,7 @@ module.exports = function (grunt) {
                     src: ['**/*.svg'],
                     dest: 'dist/flags/',
                     ext: '.svg'
-                    // ie:
-                }
-                ]
+                }]
             }
         },
 
@@ -423,6 +422,23 @@ module.exports = function (grunt) {
                 'typescript:base',
                 'copy:styles'
             ]
+        },
+
+        // Generate an appcache manifest
+        appcache: {
+            options: {
+                basePath: 'dist'
+            },
+            all: {
+                dest: 'dist/manifest.appcache',
+                cache: {
+                    patterns: [
+                        'dist/scripts/*.js',
+                        'dist/styles/*.css'
+                    ]
+                },
+                network: '*'
+            }
         },
 
         // Code quality check with TSLint
@@ -493,7 +509,8 @@ module.exports = function (grunt) {
             'uglify',
             'filerev',
             'usemin',
-            'htmlmin'
+            'htmlmin',
+            'appcache'
         ]);
 
         if (target === "test") {
