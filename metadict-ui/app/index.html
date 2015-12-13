@@ -23,7 +23,7 @@
   ~ THE SOFTWARE.
   -->
 
-<html ng-app="MetadictApp" manifest="manifest.appcacheapple webap">
+<html ng-app="MetadictApp" manifest="manifest.appcache">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
@@ -48,6 +48,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+
+<div ng-if="false">
+    <img src="images/preload.gif" style="position: fixed; top: 50%; left: 50%;">
+</div>
 
 <div ng-controller="MainController" ng-cloak layout="column" class="fullHeight">
     <div>
