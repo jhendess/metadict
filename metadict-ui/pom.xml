@@ -33,9 +33,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.xlrnet.metadict.</groupId>
+    <groupId>org.xlrnet.metadict</groupId>
     <artifactId>metadict-ui</artifactId>
-    <name>Metadict App UI</name>
+    <name>Metadict Webapp</name>
 
     <packaging>war</packaging>
 
