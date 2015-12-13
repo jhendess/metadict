@@ -58,15 +58,15 @@ module MetadictApp {
         .config(($routeProvider: IRouteProvider) => {
             $routeProvider.when("/search", {
                 controller: "SearchController",
-                templateUrl: "/views/search.html"
+                templateUrl: "views/search.html"
             }).when("/trainer", {
-                templateUrl: "/views/trainer.html"
+                templateUrl: "views/trainer.html"
             }).when("/favorites", {
-                templateUrl: "/views/favorites.html"
+                templateUrl: "views/favorites.html"
             }).when("/about", {
-                templateUrl: "/views/about.html"
+                templateUrl: "views/about.html"
             }).when("/help", {
-                templateUrl: "/views/help.html"
+                templateUrl: "views/help.html"
             }).otherwise({
                 redirectTo: "/search"
             });
