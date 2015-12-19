@@ -47,15 +47,16 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
+      'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-cookies/angular-cookies.js',
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-touch/angular-touch.js',
-      'bower_components/angular-aria/angular-aria.js',
-      'bower_components/angular-material/angular-material.js',
       'bower_components/lodash/lodash.js',
       'bower_components/restangular/dist/restangular.js',
+      'bower_components/materialize/bin/materialize.js',
+      'bower_components/angular-materialize/src/angular-materialize.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/jasmine-core/lib/jasmine-core/jasmine.js',
       // endbower

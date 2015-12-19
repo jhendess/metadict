@@ -23,9 +23,6 @@
     "jasmine/jasmine.d.ts": {
       "commit": "e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49"
     },
-    "angular-material/angular-material.d.ts": {
-      "commit": "98b4177d24ed2b5679d395c832ef337bd0b17c1c"
-    },
     "restangular/restangular.d.ts": {
       "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
     },

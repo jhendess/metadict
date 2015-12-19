@@ -37,8 +37,8 @@
 
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <link rel="stylesheet" href="bower_components/flag-icon-css/css/flag-icon.min.css" />
+    <link rel="stylesheet" href="bower_components/materialize/bin/materialize.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -47,59 +47,87 @@
     <!-- Google Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
 
-<div ng-if="false">
-    <img src="images/preload.gif" style="position: fixed; top: 50%; left: 50%;">
-</div>
+<body ng-controller="MainController as main">
 
-<div ng-controller="MainController" ng-cloak layout="column" class="fullHeight">
+<!--<a class="hide-on-small-only" href="https://github.com/jhendess/metadict">
+    <img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme.png" alt="Fork me on GitHub">
+</a>-->
+
+<nav class="#1976d2 blue darken-2" role="navigation">
     <div>
-        <md-toolbar layout class="md-whiteframe-6dp top-bar">
-            <div class="md-toolbar-tools">
-                <md-button ng-click="toggleLeftNav()" hide-gt-lg>
-                    <md-icon aria-label="Menu">menu</md-icon>
-                </md-button>
-                <div flex></div>
-                <span class="md-headline">Metadict</span>
+        <div class="nav-wrapper container">
+            <ul id="menu-left" class="side-nav">
+                <navigation-menu></navigation-menu>
+            </ul>
 
-                <div flex></div>
-                <md-button ng-click="toggleRightNav()" hide-gt-lg>
-                    <md-icon aria-label="Settings">settings</md-icon>
-                </md-button>
+            <ul id="menu-right" class="side-nav right">
+                <select-dictionaries-menu></select-dictionaries-menu>
+            </ul>
+
+            <a href="#" data-activates="menu-left" data-sidenav="left" class="button-collapse"
+               data-menuwidth="300">
+                <i class="material-icons">menu</i>
+            </a>
+            <a id="logo-container" href="#" class="brand-logo">Metadict</a>
+            <a href="#" data-activates="menu-right" data-sidenav="right" class="button-collapse right"
+               data-menuwidth="300">
+                <i class="material-icons">settings</i>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main>
+
+    <!-- Loading indicator -->
+    <div class="section" ng-show="main.loading">
+        <div class="col s12 m4 center">
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-red-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
             </div>
-        </md-toolbar>
+        </div>
     </div>
 
-    <div layout="row" class="fullHeight">
-        <md-sidenav md-component-id="menu-left" class="md-sidenav-left md-whiteframe-4dp"
-                    md-is-locked-open="$mdMedia('gt-lg')">
-            <navigation-menu></navigation-menu>
-        </md-sidenav>
+    <div ng-view ng-cloak>
 
-        <md-content flex>
-            <ng-view></ng-view>
-        </md-content>
-
-        <md-sidenav md-component-id="menu-right" md-is-locked-open="$mdMedia('gt-lg')"
-                    class="md-sidenav-right md-sidenav-left md-whiteframe-4dp">
-            <select-dictionaries-menu></select-dictionaries-menu>
-        </md-sidenav>
     </div>
-</div>
+
+</main>
+
+<footer class="page-footer #e53935 red darken-1 modal-footer">
+    <div class="footer-copyright">
+        <div class="container">
+            Copryright by <a class="orange-text text-lighten-3" href="https://github.com/jhendess/">Jakob Hendeß</a>
+            |
+            MIT License
+        </div>
+    </div>
+</footer>
 
 
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-touch/angular-touch.js"></script>
-<script src="bower_components/angular-aria/angular-aria.js"></script>
-<script src="bower_components/angular-material/angular-material.js"></script>
 <script src="bower_components/lodash/lodash.js"></script>
 <script src="bower_components/restangular/dist/restangular.js"></script>
+<script src="bower_components/materialize/bin/materialize.js"></script>
+<script src="bower_components/angular-materialize/src/angular-materialize.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 

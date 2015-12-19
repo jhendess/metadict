@@ -226,7 +226,7 @@ module.exports = function (grunt) {
                     module: 'amd', //or commonjs
                     target: 'es5', //or es3
                     'base_path': '<%= appConfig.paths.app %>/scripts', //quoting base_path to get around jshint warning.
-                    sourcemap: true,
+                    sourceMap: true,
                     declaration: true
                 }
             },
@@ -236,7 +236,7 @@ module.exports = function (grunt) {
                 options: {
                     module: 'amd', //or commonjs
                     target: 'es5', //or es3
-                    sourcemap: true,
+                    sourceMap: true,
                     declaration: true
                 }
             }
@@ -266,8 +266,13 @@ module.exports = function (grunt) {
                         '*.html',
                         'views/*.html',
                         'images/**/*.*',
-                        'styles/fonts/**/*.*'
+                        '/font/**/*.*'
                     ]
+                }, {
+                    expand: true,
+                    cwd: "bower_components/materialize/dist/",
+                    src: ["font/**/*"],
+                    dest: "dist"
                 }]
             },
             styles: {
@@ -287,7 +292,7 @@ module.exports = function (grunt) {
                 expand: true,
                 cwd: "bower_components/flag-icon-css/flags",
                 src: ['**/*.svg'],
-                dest: '.tmp/flags/',
+                dest: '.tmp/flags/'
             }
         },
 
@@ -298,7 +303,7 @@ module.exports = function (grunt) {
                     '<%= appConfig.paths.dist %>/scripts/**/*.js',
                     '<%= appConfig.paths.dist %>/styles/**/*.css',
                     '<%= appConfig.paths.dist %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                    '<%= appConfig.paths.dist %>/styles/fonts/*'
+                    '<%= appConfig.paths.dist %>/font/*'
                 ]
             }
         },

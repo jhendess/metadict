@@ -1,32 +1,27 @@
 <div ng-controller="NavigationMenuController as nav">
-    <md-toolbar class="md-tall">
-        <img ng-src="{{ nav.img }}" class="small-face">
-
-        <div class="md-toolbar-tools">
-            <div class="md-toolbar-tools-bottom md-subhead">
-                <span><strong>{{ nav.topHeader }}</strong></span>
-                <br>
+    <div class="col s12 m5">
+        <div class="card-panel blue sidenav-card-panel">
+            <img ng-src="{{ nav.img }}" class="small-face">
+            <p>
+                <strong>{{ nav.topHeader }}</strong>
+            </p>
+            <p>
                 <span>{{ nav.subHeader }}</span>
-            </div>
+            </p>
         </div>
-    </md-toolbar>
-    <div ng-repeat="section in nav.sections()">
-        <md-subheader ng-if="section.title">{{ section.title }}</md-subheader>
-        <md-list>
-            <md-list-item ng-repeat="page in section.pages" class="navigationTarget"
-                          ng-if="(nav.isLoggedIn() && page.loginRequired) || (!nav.isLoggedIn() && !page.loginRequired)">
+    </div>
+    <div ng-repeat="section in nav.sections()" class="col grey-text text-darken-2">
+        <p class="navSectionTitle" ng-if="section.title">{{ section.title }}</p>
+        <ul>
+            <li ng-repeat="page in section.pages" class="navigationTarget"
+                ng-if="(nav.isLoggedIn() && page.loginRequired) || (!nav.isLoggedIn() && !page.loginRequired)">
                 <a ng-href="#{{ page.target }}">
-                    <div md-ink-ripple layout="row" layout-align="start center">
-                        <div class="inset">
-                            <md-icon>{{ page.icon }}</md-icon>
-                        </div>
-                        <div class="inset">{{ page.title }}
-                        </div>
-                    </div>
+                    <i class="material-icons inline align-middle">{{ page.icon }}</i>
+                    <span class="align-middle nav-title">{{ page.title }}</span>
                 </a>
-            </md-list-item>
-            <md-divider ng-if="!$last"></md-divider>
-        </md-list>
+            </li>
+        </ul>
+        <i class="divider" ng-if="!$last"></i>
     </div>
 </div>
 

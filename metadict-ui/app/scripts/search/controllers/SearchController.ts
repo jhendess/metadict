@@ -8,10 +8,16 @@ module MetadictApp {
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
 
+    interface ISearchScope extends IScope {
+
+        searchRequest: string;
+    }
+
     class SearchController {
 
         // @ngInject
-        constructor(private $scope: IScope, private $log: ILogService) {
+        constructor(private $scope: ISearchScope, private $log: ILogService) {
+            $log.debug($scope);
             $log.debug("SearchController started");
         }
     }

@@ -31,7 +31,6 @@
     border: 1px solid #ddd;
     width: 48px;
     height: 48px;
-    margin: 16px;
 }
 
 .navigationTarget a {
@@ -48,6 +47,68 @@
     height: 100%;
 }
 
-.dictionaryList .md-list-item-inner {
-    padding-right: 0px;
+.dictionaryList .switch {
+    padding-right: 0;
+    display: inline-flex;
+}
+
+.searchContainer {
+    margin-top: 50px;
+}
+
+.sidenav-card-panel {
+    margin: 0 0 16px;
+}
+
+.sidenav-card-panel p {
+    margin: 6px 0;
+    line-height: 120%;
+}
+
+.inline {
+    display: inline !important;
+}
+
+.align-middle {
+    vertical-align: middle;
+}
+
+.nav-title {
+    margin-left: 12px;
+}
+
+.side-nav li, .side-nav li *:not(.lever) {
+    /* overwrite default link height from materialize */
+    height: 48px !important;
+    line-height: 48px !important;
+}
+
+.divider {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    height: 1px !important;
+}
+
+.navSectionTitle {
+    line-height: 24px;
+    height: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 16px;
+    padding: 0;
+}
+
+/* Sticky footer */
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: white;
+}
+
+main {
+    flex: 1 0 auto;
 }

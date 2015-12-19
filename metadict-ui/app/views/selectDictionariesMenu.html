@@ -1,23 +1,42 @@
 <div ng-controller="SelectDictionariesMenuController as selectDictionariesController">
-    <md-progress-circular md-mode="indeterminate" class="center-block"
-                          ng-show="loadingDictionaries"></md-progress-circular>
-    <md-toolbar ng-if="availableDictionaries.length === 0 && !loadingDictionaries" class="md-warn">
-        <div class="md-toolbar-tools">
-            <span>Oops. This server has no configured dictionaries.</span>
+    <div class="col s12 m4 center" ng-if="loadingDictionaries">
+        <div class="preloader-wrapper active">
+            <div class="spinner-layer spinner-red-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
         </div>
-    </md-toolbar>
-    <md-list>
-        <md-list-item flex ng-repeat="dictionary in availableDictionaries" class="dictionaryList">
-            <span flex>
+    </div>
+
+    <div class="col s12 m5" ng-if="availableDictionaries.length === 0 && !loadingDictionaries">
+        <div class="card-panel red sidenav-card-panel">
+            <p><strong>Couldn't load dictionaries.</strong></p>
+        </div>
+    </div>
+
+    <ul class="grey-text text-darken-2">
+        <li ng-repeat="dictionary in availableDictionaries" class="dictionaryList">
+            <span>
                 <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.input)"></span>
                 <span class="flag-icon"
                       ng-class="selectDictionariesController.buildIconClass(dictionary.output)"></span>
                 <span>{{dictionary.input.displayName}}</span>&nbsp;-&nbsp;<span>{{dictionary.output.displayName}}</span>
             </span>
-            <md-switch
-                    ng-change="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
-                    ng-model="selectionMap[dictionary.queryStringWithDialect]">
-            </md-switch>
-        </md-list-item>
-    </md-list>
+            <span class="switch right">
+                <label>
+                    <input type="checkbox"
+                           ng-change="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
+                           ng-model="selectionMap[dictionary.queryStringWithDialect]">
+                    <span class="lever"></span>
+                </label>
+            </span>
+        </li>
+    </ul>
 </div>

@@ -34,7 +34,6 @@
 module MetadictApp {
 
     import Config = MetadictApp.Config;
-    import IThemingProvider = angular.material.IThemingProvider;
     import IRouteProvider = angular.route.IRouteProvider;
     import IRestangularProvider = restangular.IProvider;
 
@@ -43,18 +42,11 @@ module MetadictApp {
         "ngCookies",
         "ngRoute",
         "ngTouch",
-        "ngMaterial",
-        "restangular"
+        "restangular",
+        "ui.materialize"
     ]);
 
     metadictModule
-        .config(($mdThemingProvider: IThemingProvider) => {
-            $mdThemingProvider.theme("default")
-                .primaryPalette("blue", {
-                    "default": "500"
-                })
-                .accentPalette("red");
-        })
         .config(($routeProvider: IRouteProvider) => {
             $routeProvider.when("/search", {
                 controller: "SearchController",
