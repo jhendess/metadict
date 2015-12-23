@@ -4,6 +4,13 @@
 
 module MetadictApp {
 
+    import IScope = angular.IScope;
+
+    export interface IMainScope extends IScope {
+
+        status: IStatusService;
+    }
+
     export interface NavigationPage {
         title: string;
         icon: string;

@@ -22,7 +22,9 @@
     </div>
 
     <ul class="grey-text text-darken-2">
-        <li ng-repeat="dictionary in availableDictionaries" class="dictionaryList">
+        <li ng-repeat="dictionary in availableDictionaries" class="dictionaryList"
+        ng-click="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
+        >
             <span>
                 <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.input)"></span>
                 <span class="flag-icon"
@@ -32,7 +34,7 @@
             <span class="switch right">
                 <label>
                     <input type="checkbox"
-                           ng-change="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
+                           ng-change=""
                            ng-model="selectionMap[dictionary.queryStringWithDialect]">
                     <span class="lever"></span>
                 </label>

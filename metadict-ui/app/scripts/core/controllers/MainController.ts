@@ -6,10 +6,6 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
 
-    interface IMainScope extends ng.IScope {
-        isLoading: boolean;
-    }
-
     class MainController {
 
         // @ngInject

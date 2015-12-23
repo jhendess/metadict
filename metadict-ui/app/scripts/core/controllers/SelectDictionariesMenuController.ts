@@ -14,7 +14,7 @@ module MetadictApp {
 
         availableDictionaries: BilingualDictionary[];
 
-        selectionMap: Dictionary<String>;
+        selectionMap: Dictionary<boolean>;
     }
 
     class SelectDictionariesMenuController {
@@ -37,6 +37,7 @@ module MetadictApp {
         }
 
         public toggleSelection(dictionaryIdentifier: string) {
+            this.$scope.selectionMap[dictionaryIdentifier] = !this.$scope.selectionMap[dictionaryIdentifier];
             this.dictionaryService.toggleDictionarySelection(dictionaryIdentifier);
         }
 

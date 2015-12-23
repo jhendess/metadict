@@ -1,1 +1,35 @@
-This will be the search view.
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+
+        <h1 class="header center red-text lighten-1">Metadict <span
+                class="hide-on-small-and-down">Search Engine</span>
+        </h1>
+        <br class="hide-on-small-and-down">
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="section">
+        <div class="row">
+            <form class="col s12 push-m2 m8">
+                <div class="row">
+                    <div class="col input-field s9 m9">
+                        <input placeholder="Your search query" id="query_input" name="queryString" type="text"
+                               class="validate"
+                               autofocus data-bind="value: queryString">
+                        <label for="query_input">Search dictionaries...</label>
+                        <input type="hidden" name="dictionaries" data-bind="value: selectedDictionariesString"/>
+                    </div>
+                    <div class="col s3 m3 right-align">
+                        <button id="query_button" data-bind="click: submitQuery" type="submit"
+                                class="waves-effect waves-light btn #0091ea light-blue accent-4">
+                            <i class="mdi-action-search right"></i>
+                            <span class="hide-on-small-only">Find</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

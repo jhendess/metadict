@@ -2,6 +2,7 @@
 ///<reference path="api/CoreServices.ts"/>
 ///<reference path="api/CoreInterfaces.ts"/>
 ///<reference path="api/DomainInterfaces.ts"/>
+///<reference path="api/SearchServices.ts"/>
 ///<reference path="Config.ts"/>
 
 

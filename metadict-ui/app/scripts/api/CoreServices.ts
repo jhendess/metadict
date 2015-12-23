@@ -95,4 +95,8 @@ module MetadictApp {
          */
         bootstrapApplication();
     }
+
+    export interface IStatusService {
+
+    }
 }

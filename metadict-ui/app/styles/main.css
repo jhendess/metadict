@@ -112,3 +112,31 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+/* Overwrite default container styles for small screen sizes*/
+
+@media only screen and (max-width: 600px) {
+    .container {
+        padding: 0 1.5rem;
+        margin: 0 auto;
+        max-width: 1280px;
+        width: 90%;
+    }
+}
+
+/* Offset the main content on large screens to the right, so the sidenav can be displayed properly */
+
+@media only screen and (max-width : 600px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+/* Let the Sidenavs fit inside the main panel on large screens */
+
+@media only screen and (min-width: 600px) {
+    .side-nav {
+        top: 64px;
+        height: calc(100% - 64px - 70px)
+    }
+}

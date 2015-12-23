@@ -15,13 +15,13 @@
         <ul>
             <li ng-repeat="page in section.pages" class="navigationTarget"
                 ng-if="(nav.isLoggedIn() && page.loginRequired) || (!nav.isLoggedIn() && !page.loginRequired)">
-                <a ng-href="#{{ page.target }}">
+                <a ng-href="#{{ page.target }}" class="waves-effect">
                     <i class="material-icons inline align-middle">{{ page.icon }}</i>
                     <span class="align-middle nav-title">{{ page.title }}</span>
                 </a>
             </li>
         </ul>
-        <i class="divider" ng-if="!$last"></i>
+        <div class="divider" ng-if="!$last"></div>
     </div>
 </div>
 

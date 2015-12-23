@@ -11,6 +11,8 @@ module MetadictApp {
     interface ISearchScope extends IScope {
 
         searchRequest: string;
+
+        isSearching: boolean;
     }
 
     class SearchController {
