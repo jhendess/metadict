@@ -273,6 +273,11 @@ module.exports = function (grunt) {
                     cwd: "bower_components/materialize/dist/",
                     src: ["font/**/*"],
                     dest: "dist"
+                }, {
+                    expand: true,
+                    cwd: "bower_components/material-design-icons/iconfont/",
+                    src: ["*.{eot,woff,woff2,ttf,ijmap}"],
+                    dest: "dist/font"
                 }]
             },
             styles: {
@@ -293,6 +298,12 @@ module.exports = function (grunt) {
                 cwd: "bower_components/flag-icon-css/flags",
                 src: ['**/*.svg'],
                 dest: '.tmp/flags/'
+            },
+            icons:  {
+                expand: true,
+                cwd: "bower_components/material-design-icons/iconfont/",
+                src: ["*.{eot,woff,woff2,ttf,ijmap}"],
+                dest: ".tmp/font"
             }
         },
 
@@ -415,7 +426,8 @@ module.exports = function (grunt) {
             server: [
                 'typescript:base',
                 'copy:styles',
-                'copy:flags'
+                'copy:flags',
+                'copy:icons'
             ],
             test: [
                 'typescript:test',
