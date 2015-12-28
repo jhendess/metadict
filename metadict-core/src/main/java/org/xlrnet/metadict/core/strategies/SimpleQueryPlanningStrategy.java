@@ -59,9 +59,9 @@ public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
                 engineRegistry.getSearchEngineNamesByDictionary(d).forEach(
                         (s) -> queryPlan.addQueryStep(
                                 new BilingualQueryStep()
-                                        .setInputLanguage(d.getInput())
+                                        .setInputLanguage(d.getSource())
                                         .setAllowBothWay(d.isBidirectional())
-                                        .setOutputLanguage(d.getOutput())
+                                        .setOutputLanguage(d.getTarget())
                                         .setQueryString(queryRequest.getQueryString())
                                         .setSearchEngineName(s)
                                         .setSearchEngine(engineRegistry.getEngineByName(s))

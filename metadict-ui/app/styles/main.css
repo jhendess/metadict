@@ -73,6 +73,10 @@
     vertical-align: middle;
 }
 
+.align-right {
+    text-align: right;
+}
+
 .nav-title {
     margin-left: 12px;
 }
@@ -81,6 +85,8 @@
     /* overwrite default link height from materialize */
     height: 48px !important;
     line-height: 48px !important;
+    /* Change mouse cursor */
+    cursor: pointer;
 }
 
 .divider {
@@ -98,6 +104,24 @@
     margin-bottom: 0;
     margin-left: 16px;
     padding: 0;
+}
+
+/* Format for the different table cells */
+
+.entryTypeCell {
+    font-weight: lighter;
+    width: 20%;
+    font-size: 80%;
+    padding: 3px;
+}
+
+.entryTypeCell.row {
+    margin: 0;
+}
+
+.dictionaryObjectCell {
+    padding: 5px;
+    width: 40%;
 }
 
 /* Sticky footer */
@@ -138,5 +162,13 @@ main {
     .side-nav {
         top: 64px;
         height: calc(100% - 64px - 70px)
+    }
+}
+
+/* Disable sidenav-overlay on large screenss */
+
+@media only screen and (min-width: 600px) {
+    #sidenav-overlay {
+        display: none;
     }
 }

@@ -56,10 +56,10 @@ public class LevenstheinRelevanceOrderStrategy implements OrderStrategy {
     }
 
     double calculateEntryScore(@NotNull ResultEntry entry, @NotNull String queryString) {
-        int levenstheinInput = StringUtils.getLevenshteinDistance(entry.getInput().getGeneralForm().toLowerCase(), queryString.toLowerCase());
+        int levenstheinInput = StringUtils.getLevenshteinDistance(entry.getSource().getGeneralForm().toLowerCase(), queryString.toLowerCase());
         int levenstheinOutput = Integer.MAX_VALUE;
-        if (entry.getOutput() != null && entry.getOutput().getGeneralForm() != null)
-            levenstheinOutput = StringUtils.getLevenshteinDistance(entry.getOutput().getGeneralForm().toLowerCase(), queryString.toLowerCase());
+        if (entry.getTarget() != null && entry.getTarget().getGeneralForm() != null)
+            levenstheinOutput = StringUtils.getLevenshteinDistance(entry.getTarget().getGeneralForm().toLowerCase(), queryString.toLowerCase());
         int levensthein = Integer.min(levenstheinInput, levenstheinOutput);
         return 1.0 - ((double) levensthein / (1 + (double) levensthein));
     }

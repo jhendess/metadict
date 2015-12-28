@@ -35,24 +35,24 @@ public class ImmutableBilingualEntry extends AbstractEntry implements BilingualE
 
     private static final long serialVersionUID = -1482979366776782055L;
 
-    private final DictionaryObject inputObject;
+    private final DictionaryObject sourceObject;
 
-    private final DictionaryObject outputObject;
+    private final DictionaryObject targetObject;
 
     /**
      * Create a new immutable instance. See {@link BilingualEntry} for more information about the parameters.
      *
-     * @param inputObject
+     * @param sourceObject
      *         The dictionary object in input language.
-     * @param outputObject
+     * @param targetObject
      *         The dictionary object in target language
      * @param entryType
      *         The type of this entry.
      */
-    ImmutableBilingualEntry(DictionaryObject inputObject, DictionaryObject outputObject, EntryType entryType) {
+    ImmutableBilingualEntry(DictionaryObject sourceObject, DictionaryObject targetObject, EntryType entryType) {
         super(entryType);
-        this.inputObject = inputObject;
-        this.outputObject = outputObject;
+        this.sourceObject = sourceObject;
+        this.targetObject = targetObject;
     }
 
     /**
@@ -69,46 +69,39 @@ public class ImmutableBilingualEntry extends AbstractEntry implements BilingualE
         if (this == o) return true;
         if (!(o instanceof ImmutableBilingualEntry)) return false;
         ImmutableBilingualEntry that = (ImmutableBilingualEntry) o;
-        return Objects.equal(inputObject, that.inputObject) &&
-                Objects.equal(outputObject, that.outputObject) &&
+        return Objects.equal(sourceObject, that.sourceObject) &&
+                Objects.equal(targetObject, that.targetObject) &&
                 Objects.equal(entryType, that.entryType);
     }
 
     /**
-     * Get the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't
-     * have to correspond exactly to the original input query, but should be as similar as possible. If the entry
-     * originates from a one-language dictionary, this method has to return the word's meaning.
-     *
-     * @return the {@link DictionaryObject} in input language.
+     * @inheritDoc
      */
     @NotNull
     @Override
-    public DictionaryObject getInput() {
-        return this.inputObject;
+    public DictionaryObject getSource() {
+        return this.sourceObject;
     }
 
     /**
-     * Get the entry's {@link DictionaryObject} that contains information in the output language. If the entry
-     * originates from a one-language dictionary, the returned value may be null.
-     *
-     * @return the {@link DictionaryObject} in output language or null for one-language dictionaries.
+     * @inheritDoc
      */
     @NotNull
     @Override
-    public DictionaryObject getOutput() {
-        return this.outputObject;
+    public DictionaryObject getTarget() {
+        return this.targetObject;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(inputObject, outputObject, entryType);
+        return Objects.hashCode(sourceObject, targetObject, entryType);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("inputObject", inputObject)
-                .add("outputObject", outputObject)
+                .add("sourceObject", sourceObject)
+                .add("targetObject", targetObject)
                 .add("entryType", entryType)
                 .toString();
     }

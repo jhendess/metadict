@@ -197,7 +197,7 @@ public class AutoTestManager {
     ResultData invokeBilingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) throws Exception {
         BilingualQueryResult queryResult;
         try {
-            queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getInput(), targetDictionary.getOutput(), targetDictionary.isBidirectional());
+            queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getSource(), targetDictionary.getTarget(), targetDictionary.isBidirectional());
         } catch (Exception e) {
             return new ResultData(null, e);
         }

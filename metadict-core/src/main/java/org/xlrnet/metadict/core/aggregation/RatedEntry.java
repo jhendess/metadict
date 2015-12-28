@@ -24,12 +24,24 @@
 
 package org.xlrnet.metadict.core.aggregation;
 
-import org.xlrnet.metadict.api.query.BilingualEntry;
-
 /**
- * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
- * a {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
+ * A rated entry provides information about the relevance score regarding the original query the user entered and the
+ * source engine. This data can e.g. be used for sorting.
  */
-public interface ResultEntry extends BilingualEntry, RatedEntry {
+public interface RatedEntry extends Comparable<ResultEntry> {
 
+    /**
+     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
+     * (inclusive) where a value of 1.0 means best possible relevancy.
+     *
+     * @return the calculated relevance score for this entry.
+     */
+    double getEntryScore();
+
+    /**
+     * Returns the name of the engine that produced this entry.
+     *
+     * @return the name of the engine that produced this entry.
+     */
+    String getSourceEngine();
 }

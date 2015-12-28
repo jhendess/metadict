@@ -8,14 +8,10 @@ module MetadictApp {
     import IRestangularService = restangular.IService;
     import IRestangularElement = restangular.IElement;
 
-    export type SuccessCallback<T> = (data: T) => any;
-    export type ErrorCallback = (reason: any) => any;
-
     /**
      * @inheritDoc
      */
     class BackendAccessService implements IBackendAccessService {
-
         // @ngInject
         constructor(private $log: ILogService, private Restangular: IRestangularService) {
             this.setupResources();
@@ -25,17 +21,37 @@ module MetadictApp {
 
         private _bilingualDictionaryAccess: IRestangularElement;
 
+        private _bilingualQueryAccess: IRestangularElement;
+
         /**
          * @inheritDoc
          */
-        public fetchBilingualDictionaries(successCallback: SuccessCallback<BilingualDictionary[]>,
-                                          errorCallback: ErrorCallback) {
+        public fetchBilingualDictionaries(success: SuccessCallback<BilingualDictionary[]>,
+                                          error: ErrorCallback) {
             this._bilingualDictionaryAccess.get("bidirected")
                 .then<ResponseContainer<BilingualDictionary[]>>(
-                    this.buildSuccessHandler<BilingualDictionary[]>(successCallback, errorCallback),
-                    this.buildErrorHandler(errorCallback)
+                    this.buildSuccessHandler<BilingualDictionary[]>(success, error),
+                    this.buildErrorHandler(error)
                 );
         }
+
+        /**
+         * @inheritDoc
+         */
+        executeBilingualQuery(dictionaries: string,
+                              requestString: string,
+                              success: SuccessCallback<QueryResponse>,
+                              error: ErrorCallback) {
+            this._bilingualQueryAccess
+                .one(dictionaries)
+                .one(requestString)
+                .get()
+                .then<ResponseContainer<QueryResponse>>(
+                    this.buildSuccessHandler<QueryResponse>(success, error),
+                    this.buildErrorHandler(error)
+                );
+        }
+
 
         /**
          * Generic handler for unwrapping the response container from the backend. Detects backend errors automatically
@@ -49,7 +65,7 @@ module MetadictApp {
          */
         private buildSuccessHandler<T>(successCallback: SuccessCallback<T>,
                                        errorCallback: ErrorCallback): (responseContainer: ResponseContainer<T>) => ResponseContainer<T> {
-            return (responseContainer: ResponseContainer<T>) : ResponseContainer<T> => {
+            return (responseContainer: ResponseContainer<T>): ResponseContainer<T> => {
                 let responseStatus = responseContainer.status;
                 this.$log.debug(`Received response with status ${status}`);
 
@@ -75,6 +91,7 @@ module MetadictApp {
          */
         private setupResources() {
             this._bilingualDictionaryAccess = this.Restangular.all("dictionaries/bilingual");
+            this._bilingualQueryAccess = this.Restangular.all("query")
         }
     }
 

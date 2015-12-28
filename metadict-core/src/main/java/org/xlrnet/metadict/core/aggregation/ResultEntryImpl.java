@@ -188,8 +188,8 @@ public class ResultEntryImpl implements ResultEntry {
      */
     @NotNull
     @Override
-    public DictionaryObject getInput() {
-        return dictionaryEntry.getInput();
+    public DictionaryObject getSource() {
+        return dictionaryEntry.getSource();
     }
 
     /**
@@ -200,8 +200,8 @@ public class ResultEntryImpl implements ResultEntry {
      */
     @NotNull
     @Override
-    public DictionaryObject getOutput() {
-        return dictionaryEntry.getOutput();
+    public DictionaryObject getTarget() {
+        return dictionaryEntry.getTarget();
     }
 
     /**

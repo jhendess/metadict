@@ -29,4 +29,16 @@ module MetadictApp {
          */
         public static MALFORMED_QUERY = "MALFORMED_QUERY";
     }
+
+    /**
+     * Constants for URL parameters.
+     */
+    export class Parameters {
+
+        public static QUERY_STRING = "queryString";
+
+        public static DICTIONARIES = "dictionaries";
+
+        public static SEPARATOR = ",";
+    }
 }

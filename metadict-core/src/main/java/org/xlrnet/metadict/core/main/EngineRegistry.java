@@ -292,7 +292,7 @@ public class EngineRegistry {
                 dictionaryEngineNameMap.put(inverseBidirectional, canonicalEngineName);
             }
             // Register as non-bidirectional to improve lookup speeds
-            BilingualDictionary simpleDictionary = BilingualDictionary.fromLanguages(dictionary.getInput(), dictionary.getOutput(), false);
+            BilingualDictionary simpleDictionary = BilingualDictionary.fromLanguages(dictionary.getSource(), dictionary.getTarget(), false);
             if (!dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
                 dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
             }
@@ -311,8 +311,8 @@ public class EngineRegistry {
 
         for (BilingualDictionary dictionary : featureSet.getSupportedBilingualDictionaries()) {
             checkNotNull(dictionary, "Dictionary from search provider %s may not be null", canonicalName);
-            checkNotNull(dictionary.getInput(), "Input language in dictionary from search provider %s may not be null", canonicalName);
-            checkNotNull(dictionary.getOutput(), "Output language in dictionary from search provider %s may not be null", canonicalName);
+            checkNotNull(dictionary.getSource(), "Input language in dictionary from search provider %s may not be null", canonicalName);
+            checkNotNull(dictionary.getTarget(), "Output language in dictionary from search provider %s may not be null", canonicalName);
         }
     }
 

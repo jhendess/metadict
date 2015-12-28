@@ -6,7 +6,6 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
-    import Dictionary = _.Dictionary;
 
     interface ISelectDictionariesScope extends IScope {
 
@@ -14,14 +13,14 @@ module MetadictApp {
 
         availableDictionaries: BilingualDictionary[];
 
-        selectionMap: Dictionary<boolean>;
+        selectionMap: Map<boolean>;
     }
 
     class SelectDictionariesMenuController {
         // @ngInject
         constructor(private $log: ILogService, private $scope: ISelectDictionariesScope,
                     private dictionaryService: IDictionaryService) {
-            $scope.selectionMap = {};
+            this.initializeSelectionMap();
 
             $scope.$watch(
                 () => dictionaryService.isDictionaryListLoading(),
@@ -42,15 +41,15 @@ module MetadictApp {
         }
 
         public buildIconClass(language: Language) {
-            let identifier = language.identifier;
-            if (identifier === "en") {
-                identifier = "gb";
-            } else if (identifier === "se") {
-                identifier = "sv";
-            }
-
-            return "flag-icon-" + identifier;
+            this.dictionaryService.buildIconClass(language);
         }
+
+        private initializeSelectionMap() {
+            this.$scope.selectionMap = {};
+            for (let dictionaryId of this.dictionaryService.selectedDictionaries) {
+                this.$scope.selectionMap[dictionaryId] = true;
+            }
+        };
     }
 
     metadictModule.controller("SelectDictionariesMenuController", SelectDictionariesMenuController);

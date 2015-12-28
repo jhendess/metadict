@@ -55,11 +55,20 @@
 
 <nav class="#1976d2 blue darken-2" role="navigation">
     <div class="nav-wrapper container">
+        <ul class="right hide-on-med-and-down">
+            <li>
+                <a href="#" data-activates="menu-right" data-sidenav="right" class="right"
+                   data-menuwidth="300">
+                    <i class="material-icons">settings</i>
+                </a>
+            </li>
+        </ul>
+
         <ul id="menu-left" class="side-nav fixed ng-cloak">
             <navigation-menu></navigation-menu>
         </ul>
 
-        <ul id="menu-right" class="side-nav right fixed">
+        <ul id="menu-right" class="side-nav right ng-cloak">
             <select-dictionaries-menu></select-dictionaries-menu>
         </ul>
 
@@ -134,6 +143,8 @@
 <script src="scripts/Config.js"></script>
 <script src="scripts/App.js"></script>
 <script src="scripts/api/Constants.js"></script>
+<script src="scripts/api/CoreEvents.js"></script>
+<script src="scripts/core/services/StatusService.js"></script>
 <script src="scripts/core/services/BootstrapService.js"></script>
 <script src="scripts/core/services/UserService.js"></script>
 <script src="scripts/core/services/NavigationMenuService.js"></script>
@@ -145,6 +156,8 @@
 <script src="scripts/core/directives/NavigationMenuDirective.js"></script>
 <script src="scripts/core/directives/SelectDictionariesMenuDirective.js"></script>
 <script src="scripts/search/controllers/SearchController.js"></script>
+<script src="scripts/search/services/SearchService.js"></script>
+<script src="scripts/search/directives/DictionaryObjectDirective.js"></script>
 <!-- endbuild -->
 </body>
 </html>

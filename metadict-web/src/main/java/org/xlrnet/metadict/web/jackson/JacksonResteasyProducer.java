@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.xlrnet.metadict.core.query.QueryResponse;
+import org.xlrnet.metadict.web.jackson.mixins.QueryResponseMixIn;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -56,7 +58,9 @@ public class JacksonResteasyProducer implements ContextResolver<ObjectMapper> {
                     // Indentation for output
             .configure(SerializationFeature.INDENT_OUTPUT, true)
                     // Allow field names without quotes
-            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+            // Enable a custom mixin which prevents transmitting ungrouped bilingual entries
+            .addMixIn(QueryResponse.class, QueryResponseMixIn.class);
 
     public static ObjectMapper getObjectMapper() {
         return objectMapper;

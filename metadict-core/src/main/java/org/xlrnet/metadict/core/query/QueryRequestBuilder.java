@@ -93,8 +93,8 @@ public class QueryRequestBuilder {
     public QueryRequest build() {
         if (autoDeriveMonolingualLanguages) {
             for (BilingualDictionary d : queryDictionaries) {
-                queryLanguages.add(d.getInput());
-                queryLanguages.add(d.getOutput());
+                queryLanguages.add(d.getSource());
+                queryLanguages.add(d.getTarget());
             }
         }
 

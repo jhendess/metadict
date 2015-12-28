@@ -485,7 +485,7 @@ module.exports = function (grunt) {
     grunt.registerTask('serve', [
         'clean:server',
         'wiredep',
-        'tsd:refresh',
+        //'tsd:refresh',
         'template:dev',
         'concurrent:server',
         'connect:livereload',

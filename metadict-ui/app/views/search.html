@@ -12,14 +12,13 @@
 <div class="container">
     <div class="section">
         <div class="row">
-            <form class="col s12 push-m2 m8">
+            <form class="col s12 push-m2 m8" ng-submit="runSearch()">
                 <div class="row">
                     <div class="col input-field s9 m9">
                         <input placeholder="Your search query" id="query_input" name="queryString" type="text"
-                               class="validate"
-                               autofocus data-bind="value: queryString">
+                               class="validate" autofocus ng-model="searchRequest">
                         <label for="query_input">Search dictionaries...</label>
-                        <input type="hidden" name="dictionaries" data-bind="value: selectedDictionariesString"/>
+                        <input id="dictionaryString" type="hidden" name="dictionaries"/>
                     </div>
                     <div class="col s3 m3 right-align">
                         <button id="query_button" data-bind="click: submitQuery" type="submit"
@@ -30,6 +29,53 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="section" ng-if="isSearching">
+        <div class="col s12 m4 center">
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-red-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results -->
+<div class="row">
+    <div class="col s12 offset-m2 m8 offset-l3 l6">
+        <div class="section" ng-repeat="bilingualResultGroup in queryResponse.groupedBilingualEntries">
+            <h5>{{bilingualResultGroup.groupIdentifier}}:</h5>
+            <table class="striped">
+                <tbody data-bind="foreach: $data.resultEntries">
+                <tr ng-repeat="entry in bilingualResultGroup.resultEntries" class="valign-wrapper">
+                    <td class="dictionaryObjectCell left">
+                        <dictionary-object entry="entry.source"></dictionary-object>
+                    </td>
+                    <td class="entryTypeCell center row">
+                        <div>
+                            <span class="flag-icon" ng-class="buildIconClass(entry.source.language)"></span>
+                            <span class="flag-icon" ng-class="buildIconClass(entry.target.language)"></span>
+                        </div>
+                        <div >{{entry.entryType}}</div>
+                    </td>
+                    <td class="dictionaryObjectCell right align-right">
+                        <dictionary-object entry="entry.target"></dictionary-object>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

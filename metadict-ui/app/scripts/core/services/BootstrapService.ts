@@ -9,7 +9,7 @@ module MetadictApp {
     class BootstrapService implements IBootstrapService {
         // @ngInject
         constructor(private $log: ILogService, private dictionaryService: IDictionaryService) {
-            $log.debug("BoostrapService started");
+            $log.debug("BootstrapService started");
         }
 
         public bootstrapApplication() {

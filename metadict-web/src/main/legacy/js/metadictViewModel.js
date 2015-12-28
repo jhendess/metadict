@@ -195,7 +195,7 @@ function MetadictViewModel() {
                 self.setError("The last query failed: " + response.status + " - " + (response.message != undefined) ? response.message : "", true);
                 return;
             }
-            if (!(responseData.groupedBilingualResults instanceof Array)
+            if (!(responseData.groupedBilingualEntries instanceof Array)
                 || !(responseData.similarRecommendations instanceof Array)
                 || !(responseData.monolingualEntries instanceof Array)
                 || !(responseData.externalContents instanceof Array)
@@ -203,7 +203,7 @@ function MetadictViewModel() {
                 self.setError("Illegal data structure", true);
                 return;
             }
-            self.entryGroups(responseData.groupedBilingualResults);
+            self.entryGroups(responseData.groupedBilingualEntries);
             self.similarRecommendations(responseData.similarRecommendations);
             self.externalContents(responseData.externalContents);
             self.monolingualEntries(responseData.monolingualEntries);

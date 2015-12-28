@@ -37,22 +37,22 @@ import org.jetbrains.annotations.NotNull;
 public interface BilingualEntry extends Entry {
 
     /**
-     * Get the entry's {@link DictionaryObject} that contains information in the input language. This object doesn't
+     * Get the entry's {@link DictionaryObject} that contains information in the source language. This object doesn't
      * have to correspond exactly to the original input query, but should should be as similar as possible. The value may
      * never be null.
      *
      * @return the {@link DictionaryObject} in input language.
      */
     @NotNull
-    DictionaryObject getInput();
+    DictionaryObject getSource();
 
     /**
-     * Get the entry's {@link DictionaryObject} that contains information in the output language. The value may
+     * Get the entry's {@link DictionaryObject} that contains information in the target language. The value may
      * never be null.
      *
      * @return the {@link DictionaryObject} in output language or null for one-language dictionaries.
      */
     @NotNull
-    DictionaryObject getOutput();
+    DictionaryObject getTarget();
 
 }

@@ -26,10 +26,10 @@
         ng-click="selectDictionariesController.toggleSelection(dictionary.queryStringWithDialect)"
         >
             <span>
-                <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.input)"></span>
+                <span class="flag-icon" ng-class="selectDictionariesController.buildIconClass(dictionary.source)"></span>
                 <span class="flag-icon"
-                      ng-class="selectDictionariesController.buildIconClass(dictionary.output)"></span>
-                <span>{{dictionary.input.displayName}}</span>&nbsp;-&nbsp;<span>{{dictionary.output.displayName}}</span>
+                      ng-class="selectDictionariesController.buildIconClass(dictionary.target)"></span>
+                <span>{{dictionary.source.displayName}}</span>&nbsp;-&nbsp;<span>{{dictionary.target.displayName}}</span>
             </span>
             <span class="switch right">
                 <label>

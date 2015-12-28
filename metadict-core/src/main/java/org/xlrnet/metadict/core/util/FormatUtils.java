@@ -59,8 +59,8 @@ public class FormatUtils {
     public static String formatDictionaryName(@NotNull BilingualDictionary dictionary) {
         checkNotNull(dictionary);
 
-        Language input = dictionary.getInput();
-        Language output = dictionary.getOutput();
+        Language input = dictionary.getSource();
+        Language output = dictionary.getTarget();
         boolean bidirectional = dictionary.isBidirectional();
 
         StringBuilder stringBuilder = new StringBuilder();

@@ -5,6 +5,8 @@
 module MetadictApp {
 
     import ILogService = angular.ILogService;
+    import IRootScopeService = angular.IRootScopeService;
+    import ILocationService = angular.ILocationService;
 
     /**
      * @inheritDoc
@@ -12,7 +14,9 @@ module MetadictApp {
     class DictionaryService implements IDictionaryService {
 
         // @ngInject
-        constructor(private $log: ILogService, private backendAccessService: IBackendAccessService) {
+        constructor(private $log: ILogService, private backendAccessService: IBackendAccessService,
+                    private $rootScope: IRootScopeService, private $location: ILocationService) {
+            this.initializeDictionaryConfiguration();
             $log.debug("DictionaryService started");
         }
 
@@ -35,10 +39,14 @@ module MetadictApp {
             this.$log.debug("Updated dictionary list");
 
             // TODO: Check if selected dictionaries are still available after reload
-
             this.updateDictionaryIndices(dictionaries);
 
             this._bilingualDictionaries = dictionaries;
+
+            // Filter unavailable dictionaries from selection
+            _.filter(this._selectedDictionaries, (dictionaryId: string) => {
+                return this.isDictionaryAvailable(dictionaryId);
+            });
 
             this._dictionaryListLoaded = true;
             this._dictionaryListLoading = false;
@@ -79,20 +87,31 @@ module MetadictApp {
          * @inheritDoc
          */
         public toggleDictionarySelection(dictionaryIdentifier: string): boolean {
+            return this.internalToggleDictionarySelection(dictionaryIdentifier, false);
+        }
+
+        private internalToggleDictionarySelection(dictionaryIdentifier, checkIfExisting: boolean) {
+            let result: boolean;
+
             if (this.isDictionarySelected(dictionaryIdentifier)) {
                 this.$log.debug("Disabled dictionary " + dictionaryIdentifier + " for query");
                 _.pull(this._selectedDictionaries, dictionaryIdentifier);
-                return false;
+                result = false;
             } else {
-                if (this.isDictionaryAvailable(dictionaryIdentifier)) {
+                if (checkIfExisting && this.isDictionaryAvailable(dictionaryIdentifier)
+                    || !checkIfExisting) {
                     this.$log.debug("Enabled dictionary " + dictionaryIdentifier + " for query");
                     this._selectedDictionaries.push(dictionaryIdentifier);
+                    result = true;
                 } else {
                     this.$log.debug("Couldn't select unknown dictionary " + dictionaryIdentifier);
+                    result = false;
                 }
-                return false;
             }
-        }
+            this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
+            this.$location.search(Parameters.DICTIONARIES, this.getCurrentDictionaryString());
+            return result;
+        };
 
         /**
          * @inheritDoc
@@ -104,17 +123,65 @@ module MetadictApp {
         /**
          * @inheritDoc
          */
-        public getDictionariesForInputLanguage(languageIdentifer: string): MetadictApp.BilingualDictionary[] {
+        public getDictionariesForSourceLanguage(languageIdentifer: string): BilingualDictionary[] {
+            // TODO
             return undefined;
         }
 
-        private isDictionaryAvailable(dictionaryIdentifier: string): boolean {
-            return _.findIndex(this._bilingualDictionaries, (bilingualDictionary: BilingualDictionary) =>
-                bilingualDictionary.queryString === dictionaryIdentifier
-                || bilingualDictionary.queryStringWithDialect === dictionaryIdentifier
-            ) > -1;
+        /**
+         * @inheritDoc
+         */
+        public buildDictionaryString(dictionaries: MetadictApp.BilingualDictionary[]): string {
+            return _.map(dictionaries, (d: BilingualDictionary) => d.queryStringWithDialect).join(",");
         }
 
+        /**
+         * @inheritDoc
+         */
+        buildIconClass(language: MetadictApp.Language): string {
+            let identifier = language.identifier;
+            if (identifier === "en") {
+                identifier = "gb";
+            } else if (identifier === "se") {
+                identifier = "sv";
+            }
+
+            return "flag-icon-" + identifier;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public getCurrentDictionaryString(): string {
+            return this._selectedDictionaries.join(Parameters.SEPARATOR);
+        }
+
+        public get selectedDictionaries(): string[] {
+            return this._selectedDictionaries;
+        }
+
+        private initializeDictionaryConfiguration() {
+            let dictionaryString = this.$location.search()[Parameters.DICTIONARIES];
+
+            if (dictionaryString) {
+                this.initializeDictionariesFromParameters(dictionaryString);
+            } else {
+                // Load dictionaries from localstorage
+            }
+        }
+
+        private initializeDictionariesFromParameters(dictionaryString) {
+            _.forEach(dictionaryString.split(Parameters.SEPARATOR), (dictionaryId: string) => {
+                this.toggleDictionarySelection(dictionaryId)
+            });
+        };
+
+        private isDictionaryAvailable(dictionaryIdentifier: string): boolean {
+            return _.findIndex(this._bilingualDictionaries, (bilingualDictionary: BilingualDictionary) =>
+                    bilingualDictionary.queryString === dictionaryIdentifier
+                    || bilingualDictionary.queryStringWithDialect === dictionaryIdentifier
+                ) > -1;
+        }
 
         private updateDictionaryIndices(dictionaries: BilingualDictionary[]) {
             // TODO

@@ -22,14 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.aggregation;
+package org.xlrnet.metadict.web.jackson.mixins;
 
-import org.xlrnet.metadict.api.query.BilingualEntry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.xlrnet.metadict.core.aggregation.ResultEntry;
+import org.xlrnet.metadict.core.query.QueryResponse;
 
 /**
- * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
- * a {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
+ * Jackson mixin for disabling transmission of ungrouped bilingual entries.
  */
-public interface ResultEntry extends BilingualEntry, RatedEntry {
+public abstract class QueryResponseMixIn implements QueryResponse{
+
+    @Override
+    @JsonIgnore
+    public abstract Iterable<ResultEntry> getUngroupedBilingualEntries();
 
 }

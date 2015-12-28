@@ -9,7 +9,8 @@ module MetadictApp {
     class MainController {
 
         // @ngInject
-        constructor (private $scope: IMainScope, private $log : ILogService) {
+        constructor (private $scope: IMainScope, private $log : ILogService, private statusService: IStatusService) {
+            $scope.statusService = statusService;
             $log.debug("MainController started");
         }
     }

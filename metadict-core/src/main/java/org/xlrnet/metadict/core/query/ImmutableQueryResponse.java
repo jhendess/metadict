@@ -47,7 +47,7 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
 
     private final Collection<ExternalContent> externalContents;
 
-    private final Collection<ResultGroup> groupedResults;
+    private final Collection<ResultGroup> groupedBilingualResults;
 
     private final GroupingType groupingType;
 
@@ -59,11 +59,11 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
 
     private final Collection<SynonymEntry> synonymEntries;
 
-    ImmutableQueryResponse(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries, Collection<SynonymEntry> synonymEntries) {
+    ImmutableQueryResponse(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedBilingualResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries, Collection<SynonymEntry> synonymEntries) {
         this.requestString = requestString;
         this.queryPerformanceStatistics = queryPerformanceStatistics;
         this.externalContents = externalContents;
-        this.groupedResults = groupedResults;
+        this.groupedBilingualResults = groupedBilingualResults;
         this.groupingType = groupingType;
         this.similarRecommendations = similarRecommendations;
         this.monolingualEntries = monolingualEntries;
@@ -90,9 +90,9 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
      * @return a view on the underlying result set based on the requested grouping mechanism.
      */
     @Override
-    public Collection<ResultGroup> getGroupedBilingualResults() {
-        if (this.groupedResults != null)
-            return Collections.unmodifiableCollection(this.groupedResults);
+    public Collection<ResultGroup> getGroupedBilingualEntries() {
+        if (this.groupedBilingualResults != null)
+            return Collections.unmodifiableCollection(this.groupedBilingualResults);
         return Collections.EMPTY_LIST;
     }
 
@@ -172,8 +172,8 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
      * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.
      */
     @Override
-    public Iterable<ResultEntry> getUngroupedBilingualResults() {
-        return Iterables.concat(getGroupedBilingualResults());       // Don't access field directly to avoid NPEs!
+    public Iterable<ResultEntry> getUngroupedBilingualEntries() {
+        return Iterables.concat(getGroupedBilingualEntries());       // Don't access field directly to avoid NPEs!
     }
 
     @Override
@@ -181,7 +181,7 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("queryPerformanceStatistics", queryPerformanceStatistics)
                 .add("externalContents", externalContents)
-                .add("groupedResults", groupedResults)
+                .add("groupedBilingualResults", groupedBilingualResults)
                 .add("groupingType", groupingType)
                 .add("similarRecommendations", similarRecommendations)
                 .add("requestString", requestString)
@@ -197,7 +197,7 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
         ImmutableQueryResponse that = (ImmutableQueryResponse) o;
         return Objects.equal(queryPerformanceStatistics, that.queryPerformanceStatistics) &&
                 Objects.equal(externalContents, that.externalContents) &&
-                Objects.equal(groupedResults, that.groupedResults) &&
+                Objects.equal(groupedBilingualResults, that.groupedBilingualResults) &&
                 Objects.equal(groupingType, that.groupingType) &&
                 Objects.equal(similarRecommendations, that.similarRecommendations) &&
                 Objects.equal(requestString, that.requestString) &&
@@ -207,6 +207,6 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(queryPerformanceStatistics, externalContents, groupedResults, groupingType, similarRecommendations, requestString, monolingualEntries, synonymEntries);
+        return Objects.hashCode(queryPerformanceStatistics, externalContents, groupedBilingualResults, groupingType, similarRecommendations, requestString, monolingualEntries, synonymEntries);
     }
 }

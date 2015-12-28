@@ -49,12 +49,11 @@ public interface QueryResponse {
     /**
      * Returns a view on the underlying bilingual result set based on the requested grouping mechanism. Each element of
      * {@link ResultGroup} in the returned collection contains the {@link ResultEntry} objects that were matched to
-     * this
-     * group.
+     * this group.
      *
      * @return a view on the underlying result set based on the requested grouping mechanism.
      */
-    Collection<ResultGroup> getGroupedBilingualResults();
+    Collection<ResultGroup> getGroupedBilingualEntries();
 
     /**
      * Returns the {@link GroupingType} that was used for grouping the resulting set.
@@ -110,6 +109,6 @@ public interface QueryResponse {
      *
      * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.
      */
-    Iterable<ResultEntry> getUngroupedBilingualResults();
+    Iterable<ResultEntry> getUngroupedBilingualEntries();
 
 }

@@ -55,9 +55,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
 
     private static final long serialVersionUID = -1851855085963129942L;
 
-    private final Language input;
+    private final Language source;
 
-    private final Language output;
+    private final Language target;
 
     private final boolean bidirectional;
 
@@ -65,12 +65,12 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
 
     private final String queryStringWithDialect;
 
-    private BilingualDictionary(@NotNull Language input, @NotNull Language output, boolean bidirectional) {
-        this.input = input;
-        this.output = output;
+    private BilingualDictionary(@NotNull Language source, @NotNull Language target, boolean bidirectional) {
+        this.source = source;
+        this.target = target;
         this.bidirectional = bidirectional;
-        this.queryString = buildQueryString(input, output);
-        this.queryStringWithDialect = buildQueryStringWithDialect(input, output);
+        this.queryString = buildQueryString(source, target);
+        this.queryStringWithDialect = buildQueryStringWithDialect(source, target);
     }
 
     /**
@@ -80,9 +80,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * Example: "de-en" is the query string for a dictionary from german ("de") to english ("en")
      *
      * @param input
-     *         The input language.
+     *         The source language.
      * @param output
-     *         The output language.
+     *         The target language.
      * @return a dictionary query string
      */
     @NotNull
@@ -104,9 +104,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * "de" and the dialect "ny" of language "no").
      *
      * @param input
-     *         The input language.
+     *         The source language.
      * @param output
-     *         The output language.
+     *         The target language.
      * @return a dictionary query string
      */
     @NotNull
@@ -128,9 +128,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * internal cache.
      *
      * @param input
-     *         The input language of the new dictionary.
+     *         The source language of the new dictionary.
      * @param output
-     *         The input language of the new dictionary.
+     *         The source language of the new dictionary.
      * @param bidirectional
      *         If set to true, the dictionary supports looking up entries in both directions.
      * @return a new instance of {@link BilingualDictionary} or lookup if such a configuration already exists in the
@@ -207,11 +207,11 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      *
      * @param dictionary
      *         The dictionary object to invert.
-     * @return A dictionary with inversed in- and output languages.
+     * @return A dictionary with inversed in- and target languages.
      */
     @NotNull
     public static BilingualDictionary inverse(@NotNull BilingualDictionary dictionary) {
-        return BilingualDictionary.fromLanguages(dictionary.getOutput(), dictionary.getInput(), dictionary.isBidirectional());
+        return BilingualDictionary.fromLanguages(dictionary.getTarget(), dictionary.getSource(), dictionary.isBidirectional());
     }
 
     /**
@@ -227,23 +227,23 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     }
 
     /**
-     * Returns the expected input language of this dictionary.
+     * Returns the expected source language of this dictionary.
      *
-     * @return the expected input language of this dictionary.
+     * @return the expected source language of this dictionary.
      */
     @NotNull
-    public Language getInput() {
-        return input;
+    public Language getSource() {
+        return source;
     }
 
     /**
-     * Returns the expected output language of this dictionary.
+     * Returns the expected target language of this dictionary.
      *
-     * @return the expected output language of this dictionary.
+     * @return the expected target language of this dictionary.
      */
     @NotNull
-    public Language getOutput() {
-        return output;
+    public Language getTarget() {
+        return target;
     }
 
     @NotNull
@@ -270,18 +270,18 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("input", input)
-                .add("output", output)
+                .add("source", source)
+                .add("target", target)
                 .add("bidirectional", bidirectional)
                 .toString();
     }
 
     @Override
     public int compareTo(@NotNull BilingualDictionary bilingualDictionary) {
-        if (!this.getInput().equals(bilingualDictionary.getInput())) {
-            return this.getInput().getDisplayName().compareTo(bilingualDictionary.getInput().getDisplayName());
+        if (!this.getSource().equals(bilingualDictionary.getSource())) {
+            return this.getSource().getDisplayName().compareTo(bilingualDictionary.getSource().getDisplayName());
         } else {
-            return this.getOutput().getDisplayName().compareTo(bilingualDictionary.getOutput().getDisplayName());
+            return this.getTarget().getDisplayName().compareTo(bilingualDictionary.getTarget().getDisplayName());
         }
     }
 }

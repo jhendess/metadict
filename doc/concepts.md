@@ -4,7 +4,7 @@
 
 The main concept of Metadict is built around the idea of querying multiple dictionaries at the same time. In Metadict,
 a dictionary is like a rule that says which language can be translated to another. The languages of a dictionary are
-therefore divided in *input* and *output*, where "input" is the input language and "output" is the output language.
+therefore divided in *source* and *target*, where "source" is the input language and "target" is the output language.
  
 A language itself is usually a spoken language that has to contain an identifier (e.g. "en" for English) and can
 optionally have a dialect. In fact, "dialect" might be wrong in a linguistic sense, since it is only used to describe a
@@ -12,8 +12,8 @@ subtype of a language. For english a valid dialect might therefore be "gb" to re
 Great Britain).
 
 Furthermore, dictionaries are described by their direction. A dictionary can either be unidirected or bidirected. If it
-is unidirected it can only be looked up in one direction (input -> output), whereas bidirected dictionaries indicate
-support for querying in both ways (input -> output and output -> input).  
+is unidirected it can only be looked up in one direction (source -> target), whereas bidirected dictionaries indicate
+support for querying in both ways (source -> target and target -> source).  
       
 ## Engines and providers
 
@@ -33,7 +33,7 @@ The result set is divided in different types of objects:
   - DictionaryEntry:
   Dictionary entries contain a certain word in two different languages. Each dictionary has an entry
   type (e.g. noun or verb) and contains two ``DictionaryObject`` objects. These contain the different words for a
-  single entry in different languages (remember the input and output types for dictionaries?).  
+  single entry in different languages (remember the source and target types for dictionaries?).  
  
   - Similar recommendations:
   These are basically recommendations for the user. The user should see them *after* his query to find similar sounding

@@ -6,9 +6,13 @@ module MetadictApp {
 
     import IScope = angular.IScope;
 
+    export interface Map<T> {
+        [index: string]: T;
+    }
+
     export interface IMainScope extends IScope {
 
-        status: IStatusService;
+        statusService: IStatusService;
     }
 
     export interface NavigationPage {

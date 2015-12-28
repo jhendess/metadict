@@ -60,9 +60,9 @@ public class BilingualDictionaryUtils {
 
         // Count how often each language is used
         for (BilingualDictionary dictionary : dictionaries) {
-            languagePriorityMap.put(dictionary.getInput(), (languagePriorityMap.getOrDefault(dictionary.getInput(), 0) + 1));
+            languagePriorityMap.put(dictionary.getSource(), (languagePriorityMap.getOrDefault(dictionary.getSource(), 0) + 1));
             if (dictionary.isBidirectional()) {
-                languagePriorityMap.put(dictionary.getOutput(), (languagePriorityMap.getOrDefault(dictionary.getOutput(), 0) + 1));
+                languagePriorityMap.put(dictionary.getTarget(), (languagePriorityMap.getOrDefault(dictionary.getTarget(), 0) + 1));
             }
         }
 
@@ -72,8 +72,8 @@ public class BilingualDictionaryUtils {
             if (!dictionary.isBidirectional()) {
                 continue;
             }
-            int inputPriority = languagePriorityMap.get(dictionary.getInput());
-            int outputPriority = languagePriorityMap.get(dictionary.getOutput());
+            int inputPriority = languagePriorityMap.get(dictionary.getSource());
+            int outputPriority = languagePriorityMap.get(dictionary.getTarget());
 
             if (outputPriority > inputPriority) {
                 dictionaries.set(i, BilingualDictionary.inverse(dictionary));
