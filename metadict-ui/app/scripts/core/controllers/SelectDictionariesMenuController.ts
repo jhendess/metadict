@@ -40,8 +40,8 @@ module MetadictApp {
             this.dictionaryService.toggleDictionarySelection(dictionaryIdentifier);
         }
 
-        public buildIconClass(language: Language) {
-            this.dictionaryService.buildIconClass(language);
+        public buildIconClass(language: Language): string {
+            return this.dictionaryService.buildIconClass(language);
         }
 
         private initializeSelectionMap() {

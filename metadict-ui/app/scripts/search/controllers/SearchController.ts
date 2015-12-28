@@ -56,7 +56,7 @@ module MetadictApp {
 
             this.$location.search(Parameters.QUERY_STRING, requestString);
             this.$scope.isSearching = true;
-            this.searchService.runBilingualQuery(requestString, dictionaries, this.successCallback, this.errorCallback);
+            this.searchService.runBilingualQuery(dictionaries, requestString, this.successCallback, this.errorCallback);
         };
 
         private successCallback: SuccessCallback<QueryResponse> = (data: QueryResponse) => {

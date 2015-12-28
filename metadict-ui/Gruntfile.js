@@ -485,7 +485,7 @@ module.exports = function (grunt) {
     grunt.registerTask('serve', [
         'clean:server',
         'wiredep',
-        //'tsd:refresh',
+        'tsd:refresh',
         'template:dev',
         'concurrent:server',
         'connect:livereload',
@@ -507,7 +507,8 @@ module.exports = function (grunt) {
             'check',
             'clean:dist',
             'wiredep',
-            'tsd:refresh']);
+            'tsd:refresh'
+        ]);
 
         if (target === "serve") {
             grunt.task.run("template:dev");

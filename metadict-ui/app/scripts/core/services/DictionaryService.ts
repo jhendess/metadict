@@ -119,8 +119,8 @@ module MetadictApp {
             let identifier = language.identifier;
             if (identifier === "en") {
                 identifier = "gb";
-            } else if (identifier === "se") {
-                identifier = "sv";
+            } else if (identifier === "sv") {
+                identifier = "se";
             }
 
             return "flag-icon-" + identifier;
