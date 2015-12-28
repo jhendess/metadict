@@ -38,7 +38,7 @@ module MetadictApp {
         /**
          * @inheritDoc
          */
-        executeBilingualQuery(dictionaries: string,
+        public executeBilingualQuery(dictionaries: string,
                               requestString: string,
                               success: SuccessCallback<QueryResponse>,
                               error: ErrorCallback) {
@@ -91,7 +91,7 @@ module MetadictApp {
          */
         private setupResources() {
             this._bilingualDictionaryAccess = this.Restangular.all("dictionaries/bilingual");
-            this._bilingualQueryAccess = this.Restangular.all("query")
+            this._bilingualQueryAccess = this.Restangular.all("query");
         }
     }
 

@@ -4,7 +4,7 @@
 
 module MetadictApp {
 
-    let StatusService:IStatusService = {
+    let StatusService: IStatusService = {
 
         errorMessage: undefined,
 

@@ -7,18 +7,21 @@ module MetadictApp {
     import ILogService = angular.ILogService;
 
     class SearchService implements ISearchService {
-        //@ngInject
-        constructor(private $log: ILogService, private backendAccessService: IBackendAccessService, private dictionaryService: IDictionaryService) {
+        // @ngInject
+        constructor(private $log: ILogService, private backendAccessService: IBackendAccessService,
+                    private dictionaryService: IDictionaryService) {
             $log.debug("SearchService started");
         }
 
         /**
          * @inheritDoc
          */
-        runBilingualQuery(requestString: string, success: SuccessCallback<QueryResponse>, error: ErrorCallback) {
-
+        public runBilingualQuery(dictionaries: string, requestString: string,
+                                 success: SuccessCallback<QueryResponse>,
+                                 error: ErrorCallback) {
+            this.backendAccessService.executeBilingualQuery(dictionaries, requestString, success, error);
         }
     }
 
-    metadictModule.service("searchService", SearchService)
+    metadictModule.service("searchService", SearchService);
 }

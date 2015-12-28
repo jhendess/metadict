@@ -66,7 +66,7 @@ module MetadictApp {
 
         domain?: string;
 
-        generalForm: string
+        generalForm: string;
 
         grammaticalGender: string;
 
@@ -74,11 +74,11 @@ module MetadictApp {
 
         pronunciation?: string;
 
-        meanings?: string[]
+        meanings?: string[];
 
         syllabification?: string[];
 
-        alternateForms?: string[]
+        alternateForms?: string[];
     }
 
     export interface Entry {

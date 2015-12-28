@@ -90,29 +90,6 @@ module MetadictApp {
             return this.internalToggleDictionarySelection(dictionaryIdentifier, false);
         }
 
-        private internalToggleDictionarySelection(dictionaryIdentifier, checkIfExisting: boolean) {
-            let result: boolean;
-
-            if (this.isDictionarySelected(dictionaryIdentifier)) {
-                this.$log.debug("Disabled dictionary " + dictionaryIdentifier + " for query");
-                _.pull(this._selectedDictionaries, dictionaryIdentifier);
-                result = false;
-            } else {
-                if (checkIfExisting && this.isDictionaryAvailable(dictionaryIdentifier)
-                    || !checkIfExisting) {
-                    this.$log.debug("Enabled dictionary " + dictionaryIdentifier + " for query");
-                    this._selectedDictionaries.push(dictionaryIdentifier);
-                    result = true;
-                } else {
-                    this.$log.debug("Couldn't select unknown dictionary " + dictionaryIdentifier);
-                    result = false;
-                }
-            }
-            this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
-            this.$location.search(Parameters.DICTIONARIES, this.getCurrentDictionaryString());
-            return result;
-        };
-
         /**
          * @inheritDoc
          */
@@ -138,7 +115,7 @@ module MetadictApp {
         /**
          * @inheritDoc
          */
-        buildIconClass(language: MetadictApp.Language): string {
+        public buildIconClass(language: MetadictApp.Language): string {
             let identifier = language.identifier;
             if (identifier === "en") {
                 identifier = "gb";
@@ -172,7 +149,7 @@ module MetadictApp {
 
         private initializeDictionariesFromParameters(dictionaryString) {
             _.forEach(dictionaryString.split(Parameters.SEPARATOR), (dictionaryId: string) => {
-                this.toggleDictionarySelection(dictionaryId)
+                this.toggleDictionarySelection(dictionaryId);
             });
         };
 
@@ -186,6 +163,29 @@ module MetadictApp {
         private updateDictionaryIndices(dictionaries: BilingualDictionary[]) {
             // TODO
         }
+
+        private internalToggleDictionarySelection(dictionaryIdentifier, checkIfExisting: boolean) {
+            let result: boolean;
+
+            if (this.isDictionarySelected(dictionaryIdentifier)) {
+                this.$log.debug("Disabled dictionary " + dictionaryIdentifier + " for query");
+                _.pull(this._selectedDictionaries, dictionaryIdentifier);
+                result = false;
+            } else {
+                if (checkIfExisting && this.isDictionaryAvailable(dictionaryIdentifier)
+                    || !checkIfExisting) {
+                    this.$log.debug("Enabled dictionary " + dictionaryIdentifier + " for query");
+                    this._selectedDictionaries.push(dictionaryIdentifier);
+                    result = true;
+                } else {
+                    this.$log.debug("Couldn't select unknown dictionary " + dictionaryIdentifier);
+                    result = false;
+                }
+            }
+            this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
+            this.$location.search(Parameters.DICTIONARIES, this.getCurrentDictionaryString());
+            return result;
+        };
     }
 
     metadictModule.service("dictionaryService", DictionaryService);

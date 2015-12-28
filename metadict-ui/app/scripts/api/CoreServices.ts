@@ -25,6 +25,11 @@ module MetadictApp {
     export interface IDictionaryService {
 
         /**
+         * The list of currently selected dictionaries as ids.
+         */
+        selectedDictionaries: string[];
+
+        /**
          * Returns true if the list of supported dictionaries has been completely loaded. If the dictionary list is
          * either not yet loaded or currently reloading, this method will return false.
          */
@@ -94,11 +99,6 @@ module MetadictApp {
         getCurrentDictionaryString(): string;
 
         /**
-         * The list of currently selected dictionaries as ids.
-         */
-        selectedDictionaries: string[];
-
-        /**
          * Derive a css class which can be used to display the flag of the country which belongs to the given language.
 
          * @param language The language.
@@ -164,6 +164,6 @@ module MetadictApp {
          * @param success The success callback which should be called upon successful retrieval.
          * @param error The error callback which should be called upon a failed request.
          */
-        runBilingualQuery(requestString: string, success: SuccessCallback<QueryResponse>, error: ErrorCallback);
+        runBilingualQuery(dictionaries: string, grequestString: string, success: SuccessCallback<QueryResponse>, error: ErrorCallback);
     }
 }

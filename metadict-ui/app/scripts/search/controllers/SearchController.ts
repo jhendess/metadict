@@ -13,7 +13,7 @@ module MetadictApp {
 
         searchRequest: string;
 
-        dictionaryString: string
+        dictionaryString: string;
 
         isSearching: boolean;
 
@@ -27,7 +27,7 @@ module MetadictApp {
     class SearchController {
         // @ngInject
         constructor(private $scope: ISearchScope, private $log: ILogService,
-                    private dictionaryService: IDictionaryService, private backendAccessService: IBackendAccessService,
+                    private dictionaryService: IDictionaryService, private searchService: ISearchService,
                     private $location: ILocationService) {
 
             $scope.runSearch = this.runSearch;
@@ -56,8 +56,7 @@ module MetadictApp {
 
             this.$location.search(Parameters.QUERY_STRING, requestString);
             this.$scope.isSearching = true;
-            this.backendAccessService.executeBilingualQuery(dictionaries, requestString, this.successCallback, this.errorCallback);
-
+            this.searchService.runBilingualQuery(requestString, dictionaries, this.successCallback, this.errorCallback);
         };
 
         private successCallback: SuccessCallback<QueryResponse> = (data: QueryResponse) => {
@@ -69,7 +68,7 @@ module MetadictApp {
         private errorCallback: ErrorCallback = (reason: any) => {
             this.$scope.isSearching = false;
             // TODO
-        }
+        };
     }
 
     metadictModule

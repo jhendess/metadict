@@ -4,8 +4,6 @@
 
 module MetadictApp {
 
-    import IScope = angular.IScope;
-
     interface IDictionaryObjectDirectiveScope {
 
         entry: DictionaryObject;
@@ -20,9 +18,6 @@ module MetadictApp {
         public scope: IDictionaryObjectDirectiveScope = {
             entry: <any>"="
         };
-
-        public link(scope: IDictionaryObjectDirectiveScope) {
-        }
     }
 
     function DictionaryObjectFactory() {
