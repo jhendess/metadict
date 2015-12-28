@@ -26,13 +26,17 @@
 
 module.exports = function (grunt) {
 
+    // Load package.json
+    var pkg =  grunt.file.readJSON("package.json");
+
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
 
     // Automatically load required Grunt tasks
     require('jit-grunt')(grunt, {
         useminPrepare: 'grunt-usemin',
-        ngtemplates: 'grunt-angular-templates'
+        ngtemplates: 'grunt-angular-templates',
+        revision: 'grunt-git-revision'
     });
 
     // Allow serving of static content (i.e. everything)
@@ -60,6 +64,15 @@ module.exports = function (grunt) {
                 options: {
                     production: false
                 }
+            }
+        },
+
+        // Store the git revision to property meta.revision
+        revision: {
+            options: {
+                property: 'meta.revision',
+                ref: 'HEAD',
+                short: true
             }
         },
 
@@ -138,7 +151,9 @@ module.exports = function (grunt) {
             dev: {
                 options: {
                     data: {
-                        config: appConfig.env.dev
+                        config: appConfig.env.dev,
+                        pkg: pkg,
+                        revision: "<%= meta.revision %>"
                     }
                 },
                 files: {
@@ -148,7 +163,9 @@ module.exports = function (grunt) {
             prod: {
                 options: {
                     data: {
-                        config: appConfig.env.prod
+                        config: appConfig.env.prod,
+                        pkg: pkg,
+                        revision: "<%= meta.revision %>"
                     }
                 },
                 files: {
@@ -486,6 +503,7 @@ module.exports = function (grunt) {
         'clean:server',
         'wiredep',
         'tsd:refresh',
+        'revision',
         'template:dev',
         'concurrent:server',
         'connect:livereload',
@@ -495,6 +513,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'wiredep',
+        'revision',
         'template:dev',
         'tsd:refresh',
         'concurrent:test',
@@ -507,7 +526,8 @@ module.exports = function (grunt) {
             'check',
             'clean:dist',
             'wiredep',
-            'tsd:refresh'
+            'tsd:refresh',
+            'revision'
         ]);
 
         if (target === "serve") {

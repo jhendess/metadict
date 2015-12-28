@@ -64,11 +64,15 @@
             </li>
         </ul>
 
-        <ul id="menu-left" class="side-nav fixed ng-cloak">
+        <ul id="menu-left" class="side-nav fixed" ng-cloak>
             <navigation-menu></navigation-menu>
+            <div class="grey-text versionbox align-bottom">
+                <p>Client version: <span ng-bind="statusService.clientVersion"></span></p>
+                <p>Revision: <span ng-bind="statusService.clientRevision"></span></p>
+            </div>
         </ul>
 
-        <ul id="menu-right" class="side-nav right ng-cloak">
+        <ul id="menu-right" class="side-nav right" ng-cloak>
             <select-dictionaries-menu></select-dictionaries-menu>
         </ul>
 

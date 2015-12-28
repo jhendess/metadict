@@ -9,5 +9,9 @@ module MetadictApp {
     export class Config {
 
         public static BASE_URL = "<%= config.baseUrl %>";
+
+        public static CLIENT_VERSION = "<%= pkg.version %>";
+
+        public static CLIENT_REVISION = "<%= revision %>";
     }
 }

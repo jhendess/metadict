@@ -10,7 +10,13 @@ module MetadictApp {
 
         isConnected: false,
 
-        isError: false
+        isError: false,
+
+        clientVersion: Config.CLIENT_VERSION,
+
+        clientRevision: Config.CLIENT_REVISION,
+
+        serverVersion: "..."
     };
 
     metadictModule.value("statusService", StatusService);

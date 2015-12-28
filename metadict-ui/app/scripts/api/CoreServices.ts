@@ -149,6 +149,15 @@ module MetadictApp {
 
         /** Error message for the user */
         errorMessage: string;
+
+        /** The current git revision of the executing client */
+        clientRevision: string;
+
+        /** The current version of the executing client */
+        clientVersion: string;
+
+        /** The version of the currently connected server */
+        serverVersion: string;
     }
 
     /**

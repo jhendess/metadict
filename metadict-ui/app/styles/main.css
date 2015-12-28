@@ -106,6 +106,16 @@
     padding: 0;
 }
 
+.versionbox {
+    bottom: 50px;
+    position: absolute;
+    margin: 16px;
+}
+
+.versionbox > p {
+    line-height: 100%;
+}
+
 /* Format for the different table cells */
 
 .entryTypeCell {
