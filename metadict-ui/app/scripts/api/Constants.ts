@@ -41,4 +41,12 @@ module MetadictApp {
 
         public static SEPARATOR = ",";
     }
+
+    /**
+     * Predefined keys for local storage.
+     */
+    export class StorageKeys {
+
+        public static LAST_SELECTED_DICTIONARIES = "lastSelectedDictionaries";
+    }
 }

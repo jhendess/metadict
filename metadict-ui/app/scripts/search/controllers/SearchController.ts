@@ -45,6 +45,11 @@ module MetadictApp {
             // Load previously entered query string:
             $scope.searchRequest = $location.search()[Parameters.QUERY_STRING];
 
+            // Initiate a search request if the query string parameter is set on page load
+            if ($scope.searchRequest) {
+                this.runSearch();
+            }
+
             $log.debug("SearchController started");
         }
 

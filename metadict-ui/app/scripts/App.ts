@@ -44,7 +44,8 @@ module MetadictApp {
         "ngRoute",
         "ngTouch",
         "restangular",
-        "ui.materialize"
+        "ui.materialize",
+        "LocalStorageModule"
     ]);
 
     metadictModule

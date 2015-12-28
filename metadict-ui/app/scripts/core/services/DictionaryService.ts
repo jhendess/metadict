@@ -7,6 +7,7 @@ module MetadictApp {
     import ILogService = angular.ILogService;
     import IRootScopeService = angular.IRootScopeService;
     import ILocationService = angular.ILocationService;
+    import ILocalStorageService = angular.local.storage.ILocalStorageService;
 
     /**
      * @inheritDoc
@@ -15,7 +16,8 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $log: ILogService, private backendAccessService: IBackendAccessService,
-                    private $rootScope: IRootScopeService, private $location: ILocationService) {
+                    private $rootScope: IRootScopeService, private $location: ILocationService,
+                    private localStorageService: ILocalStorageService) {
             this.initializeDictionaryConfiguration();
             $log.debug("DictionaryService started");
         }
@@ -140,11 +142,11 @@ module MetadictApp {
         private initializeDictionaryConfiguration() {
             let dictionaryString = this.$location.search()[Parameters.DICTIONARIES];
 
-            if (dictionaryString) {
-                this.initializeDictionariesFromParameters(dictionaryString);
-            } else {
-                // Load dictionaries from localstorage
+            if (!dictionaryString) {
+                dictionaryString = this.localStorageService.get(StorageKeys.LAST_SELECTED_DICTIONARIES);
             }
+
+            this.initializeDictionariesFromParameters(dictionaryString);
         }
 
         private initializeDictionariesFromParameters(dictionaryString) {
@@ -182,8 +184,13 @@ module MetadictApp {
                     result = false;
                 }
             }
+
+            let currentDictionaryString = this.getCurrentDictionaryString();
+
             this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
-            this.$location.search(Parameters.DICTIONARIES, this.getCurrentDictionaryString());
+            this.$location.search(Parameters.DICTIONARIES, currentDictionaryString);
+            this.localStorageService.set(StorageKeys.LAST_SELECTED_DICTIONARIES, currentDictionaryString);
+
             return result;
         };
     }

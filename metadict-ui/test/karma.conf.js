@@ -57,6 +57,7 @@ module.exports = function(config) {
       'bower_components/restangular/dist/restangular.js',
       'bower_components/materialize/bin/materialize.js',
       'bower_components/angular-materialize/src/angular-materialize.js',
+      'bower_components/angular-local-storage/dist/angular-local-storage.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/jasmine-core/lib/jasmine-core/jasmine.js',
       // endbower
