@@ -146,7 +146,9 @@ module MetadictApp {
                 dictionaryString = this.localStorageService.get(StorageKeys.LAST_SELECTED_DICTIONARIES);
             }
 
-            this.initializeDictionariesFromParameters(dictionaryString);
+            if (dictionaryString) {
+                this.initializeDictionariesFromParameters(dictionaryString);
+            }
         }
 
         private initializeDictionariesFromParameters(dictionaryString) {
