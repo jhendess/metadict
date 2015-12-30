@@ -9,6 +9,8 @@ module MetadictApp {
     import IScope = angular.IScope;
     import ILocationService = angular.ILocationService;
 
+    declare var Materialize;
+
     interface ISearchScope extends IScope {
 
         searchRequest: string;
@@ -56,8 +58,17 @@ module MetadictApp {
         public runSearch = () => {
             let requestString = this.$scope.searchRequest;
             let dictionaries = this.$scope.dictionaryString;
-            this.$log.debug(`Invoking search for request string '${requestString}' in dictionaries ${dictionaries} ...`);
 
+            if (!requestString || requestString.length <= 0) {
+                Materialize.toast("No query entered", 4000);
+                return;
+            }
+            if (!dictionaries || dictionaries.length <= 0) {
+                Materialize.toast("No dictionaries selected", 4000);
+                return;
+            }
+
+            this.$log.debug(`Invoking search for request string '${requestString}' in dictionaries ${dictionaries} ...`);
 
             this.$location.search(Parameters.QUERY_STRING, requestString);
             this.$scope.isSearching = true;
