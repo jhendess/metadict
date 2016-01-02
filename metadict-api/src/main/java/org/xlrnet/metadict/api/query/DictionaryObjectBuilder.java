@@ -102,6 +102,40 @@ public class DictionaryObjectBuilder {
     }
 
     /**
+     * Adds all syllables of a given list to the syllables of this builder. This will not overwrite already added
+     * syllables.
+     *
+     * @param syllabification A list of syllables to add.
+     */
+    @NotNull
+    public DictionaryObjectBuilder setSyllabification(@NotNull List<String> syllabification) {
+        checkNotNull(syllabification);
+
+        for (String syllable : syllabification) {
+            this.addSyllable(syllable);
+        }
+
+        return this;
+    }
+
+    /**
+     * Adds all syllables of a given list to the syllables of this builder. This will not overwrite already added
+     * syllables.
+     *
+     * @param syllabification A list of syllables to add.
+     */
+    @NotNull
+    public DictionaryObjectBuilder setSyllabification(@NotNull String[] syllabification) {
+        checkNotNull(syllabification);
+
+        for (String syllable : syllabification) {
+            this.addSyllable(syllable);
+        }
+
+        return this;
+    }
+
+    /**
      * Add a new alternately written form of the general form to this object.
      * <p/>
      * Example:

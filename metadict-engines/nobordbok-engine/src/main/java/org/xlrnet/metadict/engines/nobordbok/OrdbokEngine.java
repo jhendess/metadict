@@ -64,6 +64,8 @@ public class OrdbokEngine implements SearchEngine {
             .put("konj.", EntryType.CONJUNCTION)
             .build();
 
+    private static final String SYLLABLE_SEPARATOR_CHAR = "|";
+
     @NotNull
     @Override
     public MonolingualQueryResult executeMonolingualQuery(@NotNull String queryString, @NotNull Language queryLanguage) throws Exception {
@@ -93,6 +95,18 @@ public class OrdbokEngine implements SearchEngine {
         }
 
         return targetUrlBuilder.toString();
+    }
+
+    /**
+     * Extract both the general form and all syllables from the oppslagsord-node.
+     */
+    private void extractGeneralForm(DictionaryObjectBuilder objectBuilder, Element oppslagsord) {
+        String rawForm = oppslagsord.text();
+        String[] syllabification = StringUtils.split(rawForm, SYLLABLE_SEPARATOR_CHAR);
+
+        String generalForm = StringUtils.remove(rawForm, SYLLABLE_SEPARATOR_CHAR);
+        objectBuilder.setGeneralForm(generalForm);
+        objectBuilder.setSyllabification(syllabification);
     }
 
     private Document fetchResponse(@NotNull String queryString, @NotNull Language queryLanguage) throws IOException {
@@ -148,8 +162,7 @@ public class OrdbokEngine implements SearchEngine {
         // Extract general form
         Element oppslagsord = tableRow.getElementsByClass("oppslagsord").first();
         if (oppslagsord != null) {
-            String generalForm = oppslagsord.text();
-            objectBuilder.setGeneralForm(generalForm);
+            extractGeneralForm(objectBuilder, oppslagsord);
         } else {
             LOGGER.warn("Unable to find main element - skipping entry.");
             return Optional.empty();
@@ -194,19 +207,10 @@ public class OrdbokEngine implements SearchEngine {
     /**
      * Try to resolve the {@link EntryType} with a given "word class" string from the bokmaalordboka.
      * <p>
-     * Supported entries:
-     * <ul>
-     * <li>mX -> male noun (X is any int)</li>
-     * <li>fX -> female noun (X is any int</li>
-     * <li>nX -> neuter noun (X is any int)</li>
-     * <li>adv. -> adverb</li>>
-     * <li>adj. -> adjective</li>
-     * <li>aX -> adjective (X is any int)</li>
-     * <li>prep. -> preposition</li>
-     * <li>konj. -> conjuction</li>
-     * <li>vX -> verb (X is any int)</li>
-     * <li>verb -> verb</li>
-     * </ul>
+     * Supported entries: <ul> <li>mX -> male noun (X is any int)</li> <li>fX -> female noun (X is any int</li> <li>nX
+     * -> neuter noun (X is any int)</li> <li>adv. -> adverb</li>> <li>adj. -> adjective</li> <li>aX -> adjective (X is
+     * any int)</li> <li>prep. -> preposition</li> <li>konj. -> conjuction</li> <li>vX -> verb (X is any int)</li>
+     * <li>verb -> verb</li> </ul>
      *
      * @param wordClass
      *         The word class.
