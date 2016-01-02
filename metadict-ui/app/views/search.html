@@ -55,6 +55,14 @@
 <!-- Results -->
 <div class="row">
     <div class="col s12 offset-m2 m8 offset-l3 l6">
+        <!-- Monolingual Results -->
+        <div class="section" ng-if="queryResponse.monolingualEntries && queryResponse.monolingualEntries.length > 0">
+            <h5>Monolingual entries:</h5>
+            <div class="row">
+                <monolingual-entry class="col s12 m12 l6" entry="entry" ng-repeat="entry in queryResponse.monolingualEntries"></monolingual-entry>
+            </div>
+        </div>
+        <!-- Bilingual Results -->
         <div class="section" ng-repeat="bilingualResultGroup in queryResponse.groupedBilingualEntries">
             <h5>{{bilingualResultGroup.groupIdentifier}}:</h5>
             <table class="striped">
@@ -68,7 +76,7 @@
                             <span class="flag-icon" ng-class="buildIconClass(entry.source.language)"></span>
                             <span class="flag-icon" ng-class="buildIconClass(entry.target.language)"></span>
                         </div>
-                        <div >{{entry.entryType}}</div>
+                        <div>{{formatEntryType(entry.entryType)}}</div>
                     </td>
                     <td class="dictionaryObjectCell right align-right">
                         <dictionary-object entry="entry.target"></dictionary-object>

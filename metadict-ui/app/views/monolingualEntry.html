@@ -1,0 +1,24 @@
+<div class="monolingualEntry">
+    <h6>
+        <div>
+            <span class="monolingualEntry-language">
+            <span class="flag-icon" ng-class="iconClass"></span>
+            <span ng-bind="entry.content.language.displayName"></span>
+            <span ng-if="entry.content.language.dialectDisplayName">({{entry.content.language.dialectDisplayName}})</span></span>:
+            <span class="monolingualEntry-generalForm">{{entry.content.generalForm}}</span>
+            <span class="monolingualEntry-additionalHeader">{{additionalHeader}}</span>
+        </div>
+        <div class="monolingualEntry-subContainer">
+            <p ng-if="syllabification && syllabification != entry.content.generalForm">
+                <span class="monolingualEntry-infoTitle">Syllabification</span>: {{syllabification}}
+            </p>
+            <p ng-if="entry.content.pronunciation">
+                <span class="monolingualEntry-infoTitle">Pronunciation</span>: {{entry.content.pronunciation}}
+            </p>
+            <ul>
+                <li ng-repeat="meaning in entry.content.meanings">{{meaning}}</li>
+            </ul>
+
+        </div>
+    </h6>
+</div>

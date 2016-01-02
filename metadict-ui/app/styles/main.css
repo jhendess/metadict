@@ -116,6 +116,43 @@
     line-height: 100%;
 }
 
+/* Styles for monolingual entries */
+
+.monolingualEntry {
+    margin-bottom: 10px;
+}
+
+.monolingualEntry-additionalHeader {
+    font-style: italic;
+}
+
+.monolingualEntry-generalForm {
+    font-weight: 500;
+}
+
+.monolingualEntry-language {
+    font-weight: 300;
+}
+
+.monolingualEntry-infoTitle {
+    font-weight: 300;
+}
+
+.monolingualEntry-subContainer {
+    margin-left: 36px;
+    line-height: 100%;
+}
+
+.monolingualEntry-subContainer p, .monolingualEntry-subContainer ul {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.monolingualEntry ul > li{
+    list-style: disc;
+    margin-left: 19px;
+}
+
 /* Format for the different table cells */
 
 .entryTypeCell {

@@ -24,17 +24,20 @@ module MetadictApp {
         runSearch: Function;
 
         buildIconClass: Function;
+
+        formatEntryType: Function;
     }
 
     class SearchController {
         // @ngInject
         constructor(private $scope: ISearchScope, private $log: ILogService,
                     private dictionaryService: IDictionaryService, private searchService: ISearchService,
-                    private $location: ILocationService) {
+                    private $location: ILocationService, private prettyFormattingService: IPrettyFormattingService) {
 
             $scope.runSearch = this.runSearch;
             $scope.dictionaryString = dictionaryService.getCurrentDictionaryString();
             $scope.buildIconClass = dictionaryService.buildIconClass;
+            $scope.formatEntryType = prettyFormattingService.formatEntryType;
 
             $scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE, (event) => {
                 $log.debug("Received " + event.name + " event");

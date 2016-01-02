@@ -161,18 +161,33 @@ module MetadictApp {
     }
 
     /**
-     * Service for searching through dictionaries.
+     * Service for formatting various data nicely for the user. This includes also e.g. abbreviating certain phrases,
+     * so that the user can read them more easily.
      */
-    export interface ISearchService {
+    export interface IPrettyFormattingService {
 
         /**
-         * Run a search query for bilingual dictionaries against the currently connected metadict instance. This method
-         * will use the currently selected dictionaries from {@link DictionaryService} for querying.
+         * Format an input string which shall be used as the grammatical gender of an entry. This method will abbreviate
+         * the input to respectively either "masc.", "fem.", "neut." or "nat.". If abbreviation is not possible, the string
+         * will be only lowercased.
          *
-         * @param requestString The search request for which metadict shall search.
-         * @param success The success callback which should be called upon successful retrieval.
-         * @param error The error callback which should be called upon a failed request.
+         * @param gender The grammatical gender to format.
          */
-        runBilingualQuery(dictionaries: string, grequestString: string, success: SuccessCallback<QueryResponse>, error: ErrorCallback);
+        formatGrammaticalGender(gender: string): string;
+
+        /**
+         * Format an input string which shall be used as the entry type of an entry. All inputs will be lowercased and
+         * underscores (if any) will be replaced by spaces.
+         *
+         * @param entryType The entry type to format.
+         */
+        formatEntryType(entryType: string): string;
+
+        /**
+         * Takes an array of strings which represent the syllabification of a word and merges them into a single string.
+         *
+         * @param syllabificationList
+         */
+        formatSyllabificationList(syllabificationList: string[]): string;
     }
 }
