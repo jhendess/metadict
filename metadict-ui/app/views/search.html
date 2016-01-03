@@ -85,5 +85,14 @@
                 </tbody>
             </table>
         </div>
+        <!-- Similar recommendations -->
+        <div class="section" ng-if="queryResponse.similarRecommendations && queryResponse.similarRecommendations.length > 0">
+            <div class="divider"></div>
+            <h5>Similar words:</h5>
+
+            <div class="col s4 m3 l2" ng-repeat="recommendation in queryResponse.similarRecommendations">
+                <span class="flag-icon" ng-class="buildIconClass(recommendation.language)"></span>
+                <span>{{recommendation.generalForm}}</span>
+            </div>
     </div>
 </div>
