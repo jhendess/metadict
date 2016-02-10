@@ -68,7 +68,7 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
                                                         .build())
                                                 .build())
                                         /* The Woxikon website seems to be quite inconsistent with their results.
-                                        /*These test cases are disabled until each request returns the same response. */
+                                        /* These test cases are disabled until each request returns the same response. */
                                         /*.addSimilarRecommendation(ImmutableDictionaryObject.builder()
                                                 .setGeneralForm("Rasen")
                                                 .setLanguage(Language.GERMAN).build())
@@ -98,7 +98,9 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
                                                 .build())
                                         .build())
                         .build())
-                .addAutoTestCase(ImmutableAutoTestCase.builder()
+                /* The Woxikon website seems to be quite inconsistent with their results.
+                /* These test cases are disabled until each request returns the same response. */
+                /*.addAutoTestCase(ImmutableAutoTestCase.builder()
                                 .setTestQueryString("bank")
                                 .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-en", true))
                                 .setExpectedBilingualResults(
@@ -115,7 +117,8 @@ public class WoxikonEngineProvider implements SearchEngineProvider {
                                                 )
                                                 .build())
                                 .build()
-                ).build();
+                )*/
+                .build();
 
     }
 
