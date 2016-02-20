@@ -468,7 +468,8 @@ module.exports = function (grunt) {
                 cache: {
                     patterns: [
                         'dist/scripts/*.js',
-                        'dist/styles/*.css'
+                        'dist/styles/*.css',
+                        'dist/font/**/*'
                     ]
                 },
                 network: '*'

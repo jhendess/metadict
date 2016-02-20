@@ -158,6 +158,15 @@ module MetadictApp {
 
         /** The version of the currently connected server */
         serverVersion: string;
+
+        /** Indicator if the browser cache is currently reloading the application. */
+        isUpdating: boolean;
+
+        /** Indicator if a previous update has been finished. */
+        isUpdateFinished: boolean;
+
+        /** Progress of reloading in percentage. */
+        updateProgress: number;
     }
 
     /**

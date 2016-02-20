@@ -16,7 +16,13 @@ module MetadictApp {
 
         clientRevision: Config.CLIENT_REVISION,
 
-        serverVersion: "..."
+        serverVersion: "...",
+
+        isUpdating: false,
+
+        isUpdateFinished: false,
+
+        updateProgress: 0
     };
 
     metadictModule.value("statusService", StatusService);

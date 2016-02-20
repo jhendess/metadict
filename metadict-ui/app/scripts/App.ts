@@ -9,7 +9,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2015,2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,8 @@ module MetadictApp {
         .config((RestangularProvider: IRestangularProvider) => {
             RestangularProvider.setBaseUrl(Config.BASE_URL);
         })
-        .run((bootstrapService: IBootstrapService) => {
+        .run((clientUpdateService: ClientUpdateService, bootstrapService: IBootstrapService) => {
+            clientUpdateService.registerEventHandlers();
             bootstrapService.bootstrapApplication();
         });
 }
