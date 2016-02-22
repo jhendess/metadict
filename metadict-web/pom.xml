@@ -98,6 +98,11 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-guava</artifactId>
         </dependency>
+        <!-- ModRewrite for Angular's HTML5 mode -->
+        <dependency>
+            <groupId>org.tuckey</groupId>
+            <artifactId>urlrewritefilter</artifactId>
+        </dependency>
         <!-- Hamcrest testing -->
         <dependency>
             <groupId>org.hamcrest</groupId>

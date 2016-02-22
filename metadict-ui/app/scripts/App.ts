@@ -37,6 +37,10 @@ module MetadictApp {
     import Config = MetadictApp.Config;
     import IRouteProvider = angular.route.IRouteProvider;
     import IRestangularProvider = restangular.IProvider;
+    import ILocationProvider = angular.ILocationProvider;
+
+    declare var window;
+    declare var $browser;
 
     export let metadictModule = angular.module("MetadictApp", [
         "ngAnimate",
@@ -47,6 +51,14 @@ module MetadictApp {
         "ui.materialize",
         "LocalStorageModule"
     ]);
+
+    let clientBasePath = Config.CLIENT_BASE_PATH;
+    if (clientBasePath.charAt(0) !== "/") {
+        clientBasePath = "/" + clientBasePath;
+    }
+
+    let finalBasePath = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${Config.CLIENT_BASE_PATH}`;
+    $("head").prepend(`<base href="${finalBasePath}" target="_blank"/>`);
 
     metadictModule
         .config(($routeProvider: IRouteProvider) => {
@@ -66,8 +78,11 @@ module MetadictApp {
                 redirectTo: "/search"
             });
         })
+        .config(($locationProvider: ILocationProvider) => {
+            $locationProvider.html5Mode(true);
+        })
         .config((RestangularProvider: IRestangularProvider) => {
-            RestangularProvider.setBaseUrl(Config.BASE_URL);
+            RestangularProvider.setBaseUrl(Config.API_URL);
         })
         .run((clientUpdateService: ClientUpdateService, bootstrapService: IBootstrapService) => {
             clientUpdateService.registerEventHandlers();

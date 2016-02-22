@@ -8,10 +8,12 @@ module MetadictApp {
      */
     export class Config {
 
-        public static BASE_URL = "<%= config.baseUrl %>";
+        public static API_URL = "<%= config.apiUrl %>";
 
         public static CLIENT_VERSION = "<%= pkg.version %>";
 
         public static CLIENT_REVISION = "<%= revision %>";
+
+        public static CLIENT_BASE_PATH = "<%= clientBasePath %>";
     }
 }

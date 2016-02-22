@@ -1,0 +1,30 @@
+<!--
+    Configuration file for UrlRewriteFilter
+    http://www.tuckey.org/urlrewrite/
+-->
+<urlrewrite>
+
+    <rule>
+        <note>
+            Rewrite all URLs which do not link do /images, /scripts, /styles, /views or /api to index.html in order
+            to let angular's HTML5 mode work correctly. See also https://regex101.com/ for further explanations.
+        </note>
+        <!--<from>^[^\\.]*$</from>-->
+        <from>^(?!\/((images|flags|scripts|styles|views|api|font|manifest\.appcache|index\.html)\/?.*)).*$</from>
+        <to>/index.html</to>
+    </rule>
+
+    <outbound-rule>
+        <note>
+            The outbound-rule specifies that when response.encodeURL is called (if you are using JSTL c:url)
+            the url /rewrite-status will be rewritten to /test/status/.
+
+            The above rule and this outbound-rule means that end users should never see the
+            url /rewrite-status only /test/status/ both in thier location bar and in hyperlinks
+            in your pages.
+        </note>
+        <from>/rewrite-status</from>
+        <to>/test/status/</to>
+    </outbound-rule>
+</urlrewrite>
+

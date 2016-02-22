@@ -33,7 +33,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.xlrnet.metadict</groupId>
     <artifactId>metadict-ui</artifactId>
     <name>Metadict Webapp</name>
 
@@ -100,7 +99,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>build</arguments>
+                            <arguments>build --clientBasePath=${metadict.clientBasePath}</arguments>
                             <installDirectory>${nodeInstallDirectory}</installDirectory>
                         </configuration>
                     </execution>

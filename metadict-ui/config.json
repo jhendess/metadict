@@ -5,10 +5,10 @@
   },
   "env" : {
     "dev" : {
-      "baseUrl" : "http://localhost:8080/metadict-web-0.4.0-SNAPSHOT/api"
+      "apiUrl" : "http://localhost:8080/metadict-web-0.4.0-SNAPSHOT/api"
     },
     "prod" : {
-      "baseUrl" : "api"
+      "apiUrl" : "api"
     }
   }
 }

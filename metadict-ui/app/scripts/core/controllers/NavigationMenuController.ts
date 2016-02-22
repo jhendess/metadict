@@ -6,6 +6,7 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
+    import Config = MetadictApp.Config;
 
     /**
      * Controller for handling the left navigation menu.
@@ -24,6 +25,10 @@ module MetadictApp {
             this.setupWatchers();
 
             $log.debug("NavigationMenuController started");
+        }
+
+        public prependBasePath(target: string) {
+            return Config.CLIENT_BASE_PATH + target;
         }
 
         public isLoggedIn(): boolean {

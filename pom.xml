@@ -186,6 +186,12 @@
                 <artifactId>javaee-web-api</artifactId>
                 <version>7.0</version>
             </dependency>
+            <!-- ModRewrite for Angular's HTML5 mode -->
+            <dependency>
+                <groupId>org.tuckey</groupId>
+                <artifactId>urlrewritefilter</artifactId>
+                <version>4.0.3</version>
+            </dependency>
             <!-- Hamcrest testing -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
