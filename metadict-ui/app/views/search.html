@@ -56,14 +56,16 @@
 <div class="row">
     <div class="col s12 offset-m2 m8 offset-l3 l6">
         <!-- Monolingual Results -->
-        <div class="section" ng-if="queryResponse.monolingualEntries && queryResponse.monolingualEntries.length > 0">
+        <div class="row section"
+             ng-if="queryResponse.monolingualEntries && queryResponse.monolingualEntries.length > 0">
             <h5>Monolingual entries:</h5>
             <div class="row">
-                <monolingual-entry class="col s12 m12 l6" entry="entry" ng-repeat="entry in queryResponse.monolingualEntries"></monolingual-entry>
+                <monolingual-entry class="col s12 m12 l6" entry="entry"
+                                   ng-repeat="entry in queryResponse.monolingualEntries"></monolingual-entry>
             </div>
         </div>
         <!-- Bilingual Results -->
-        <div class="section" ng-repeat="bilingualResultGroup in queryResponse.groupedBilingualEntries">
+        <div class="row section" ng-repeat="bilingualResultGroup in queryResponse.groupedBilingualEntries">
             <h5>{{bilingualResultGroup.groupIdentifier}}:</h5>
             <table class="striped">
                 <tbody data-bind="foreach: $data.resultEntries">
@@ -85,14 +87,30 @@
                 </tbody>
             </table>
         </div>
-        <!-- Similar recommendations -->
-        <div class="section" ng-if="queryResponse.similarRecommendations && queryResponse.similarRecommendations.length > 0">
             <div class="divider"></div>
+        <!-- Similar recommendations -->
+        <div class="row section"
+             ng-if="queryResponse.similarRecommendations && queryResponse.similarRecommendations.length > 0">
             <h5>Similar words:</h5>
 
             <div class="col s4 m3 l2" ng-repeat="recommendation in queryResponse.similarRecommendations">
                 <span class="flag-icon" ng-class="buildIconClass(recommendation.language)"></span>
                 <span>{{recommendation.generalForm}}</span>
             </div>
+        </div>
+        <!-- External contents -->
+            <div class="divider"></div>
+        <div class="row section" ng-if="queryResponse.externalContents && queryResponse.externalContents.length > 0">
+            <h5>External content:</h5>
+
+            <div class="col s12 m6" ng-repeat="extContent in queryResponse.externalContents">
+                <h6>
+                    <a target="_blank" class="underlinedLink" ng-href="{{extContent.link}}">{{extContent.title}}</a>
+                </h6>
+                <span ng-if="extContent.description">
+                    {{extContent.description}}
+                </span>
+            </div>
+        </div>
     </div>
 </div>
