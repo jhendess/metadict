@@ -2,7 +2,6 @@
 ///<reference path="api/CoreInterfaces.ts"/>
 ///<reference path="api/DomainInterfaces.ts"/>
 ///<reference path="api/CoreServices.ts"/>
-///<reference path="api/SearchServices.ts"/>
 ///<reference path="Config.ts"/>
 
 
@@ -64,6 +63,7 @@ module MetadictApp {
         .config(($routeProvider: IRouteProvider) => {
             $routeProvider.when("/search", {
                 controller: "SearchController",
+                controllerAs: "searchController",
                 templateUrl: "views/search.html",
                 reloadOnSearch: false
             }).when("/trainer", {

@@ -26,5 +26,11 @@ module MetadictApp {
          * @type {string}
          */
         public static UPDATE_FINISHED = "UPDATE_FINISHED";
+
+        /**
+         * Event which will be fired if the user started a new query by clicking on a result entry.
+         * @type {string}
+         */
+        public static INVOKE_CLICK_QUERY = "INVOKE_CLICK_QUERY";
     }
 }

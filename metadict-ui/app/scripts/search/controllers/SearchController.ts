@@ -11,13 +11,9 @@ module MetadictApp {
 
     declare var Materialize;
 
-    interface ISearchScope extends IScope {
+    export interface ISearchScope extends ISuccessErrorScope<QueryResponse> {
 
         searchRequest: string;
-
-        dictionaryString: string;
-
-        isSearching: boolean;
 
         queryResponse: QueryResponse;
 
@@ -31,21 +27,13 @@ module MetadictApp {
     class SearchController {
         // @ngInject
         constructor(private $scope: ISearchScope, private $log: ILogService,
-                    private dictionaryService: IDictionaryService, private searchService: ISearchService,
-                    private $location: ILocationService, private prettyFormattingService: IPrettyFormattingService) {
+                    private searchService: SearchService, private $location: ILocationService,
+                    private prettyFormattingService: IPrettyFormattingService,
+                    private dictionaryService: IDictionaryService,
+                    private statusService: StatusService) {
 
-            $scope.runSearch = this.runSearch;
-            $scope.dictionaryString = dictionaryService.getCurrentDictionaryString();
-            $scope.buildIconClass = dictionaryService.buildIconClass;
-            $scope.formatEntryType = prettyFormattingService.formatEntryType;
-
-            $scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE, (event) => {
-                $log.debug("Received " + event.name + " event");
-                $scope.dictionaryString = dictionaryService.getCurrentDictionaryString();
-                // This is not the angular way, but seems to be the only way of updating the hidden field for custom
-                // searches
-                $("#dictionaryString").val($scope.dictionaryString);
-            });
+            this.prepareScope();
+            this.registerEvents();
 
             // Load previously entered query string:
             $scope.searchRequest = $location.search()[Parameters.QUERY_STRING];
@@ -59,8 +47,8 @@ module MetadictApp {
         }
 
         public runSearch = () => {
-            let requestString = this.$scope.searchRequest;
-            let dictionaries = this.$scope.dictionaryString;
+            let requestString: string = this.$scope.searchRequest;
+            let dictionaries: string = this.dictionaryService.getCurrentDictionaryString();
 
             if (!requestString || requestString.length <= 0) {
                 Materialize.toast("No query entered", 4000);
@@ -71,22 +59,44 @@ module MetadictApp {
                 return;
             }
 
-            this.$log.debug(`Invoking search for request string '${requestString}' in dictionaries ${dictionaries} ...`);
+            this.searchService.runBilingualQuery(requestString, this.successCallback, this.errorCallback);
+        };
 
-            this.$location.search(Parameters.QUERY_STRING, requestString);
-            this.$scope.isSearching = true;
-            this.searchService.runBilingualQuery(dictionaries, requestString, this.successCallback, this.errorCallback);
+        private animateClickQuery = () => {
+            $("html, body").animate({scrollTop: "0"});
         };
 
         private successCallback: SuccessCallback<QueryResponse> = (data: QueryResponse) => {
-            this.$scope.isSearching = false;
+            this.statusService.isSearching = false;
             this.$scope.queryResponse = data;
             // TODO
         };
 
         private errorCallback: ErrorCallback = (reason: any) => {
-            this.$scope.isSearching = false;
+            this.statusService.isSearching = false;
             // TODO
+        };
+
+        private registerEvents() {
+            // Update an hidden form field which is used by browser's for creating a custom search URL
+            this.$scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE, (event) => {
+                this.$log.debug("Received " + event.name + " event");
+                // This is not the angular way, but seems to be the only way of updating the hidden field for custom searches
+                $("#dictionaryString").val(this.dictionaryService.getCurrentDictionaryString());
+            });
+            this.$scope.$on(CoreEvents.INVOKE_CLICK_QUERY, this.animateClickQuery);
+        };
+
+        private prepareScope() {
+            this.$scope.runSearch = this.runSearch;
+            this.$scope.buildIconClass = this.dictionaryService.buildIconClass;
+            this.$scope.formatEntryType = this.prettyFormattingService.formatEntryType;
+            this.$scope.success = this.successCallback;
+            this.$scope.error = this.errorCallback;
+            this.$scope.$watch(
+                () => this.searchService.lastQueryString,
+                (newValue: string, oldValue: string, scope: ISearchScope) => scope.searchRequest = newValue
+            );
         };
     }
 

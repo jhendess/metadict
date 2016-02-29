@@ -67,7 +67,8 @@ module MetadictApp {
                                        errorCallback: ErrorCallback): (responseContainer: ResponseContainer<T>) => ResponseContainer<T> {
             return (responseContainer: ResponseContainer<T>): ResponseContainer<T> => {
                 let responseStatus = responseContainer.status;
-                this.$log.debug(`Received response with status ${status}`);
+                this.$log.debug(`Received response with status ${responseStatus}`);
+                this.$log.debug(responseContainer.data);
 
                 if (responseStatus === ResponseStatus.OK) {
                     successCallback(responseContainer.data);

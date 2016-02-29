@@ -4,7 +4,9 @@
 
 module MetadictApp {
 
-    interface IDictionaryObjectDirectiveScope {
+    import ISuccessErrorScope = MetadictApp.ISuccessErrorScope;
+
+    interface IDictionaryObjectDirectiveScope extends ISuccessErrorScope<QueryResponse> {
 
         entry: DictionaryObject;
     }
@@ -15,8 +17,10 @@ module MetadictApp {
 
         public restrict = "E";
 
-        public scope: IDictionaryObjectDirectiveScope = {
-            entry: <any>"="
+        public scope = {
+            entry: "=",
+            success: "=success",
+            error: "=error"
         };
     }
 

@@ -35,4 +35,20 @@ module MetadictApp {
 
         fullname: string;
     }
+
+    /**
+     * Private scope with a success and error callback.
+     */
+    export interface ISuccessErrorScope<T> extends IScope {
+
+        /**
+         * The callback function that will be executed upon a successful request.
+         */
+        success: SuccessCallback<T>;
+
+        /**
+         * The callback function that will be executed upon a failed request.
+         */
+        error: ErrorCallback;
+    }
 }

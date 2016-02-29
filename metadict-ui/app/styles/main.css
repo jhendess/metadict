@@ -171,6 +171,16 @@
     width: 40%;
 }
 
+/* Clickable link */
+
+a:hover.underlinedLink {
+    text-decoration: underline;
+}
+
+a.underlinedLink {
+    cursor: pointer;
+}
+
 /* Sticky footer */
 
 body {

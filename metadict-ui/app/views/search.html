@@ -21,7 +21,7 @@
                         <input id="dictionaryString" type="hidden" name="dictionaries"/>
                     </div>
                     <div class="col s3 m3 right-align">
-                        <button id="query_button" data-bind="click: submitQuery" type="submit"
+                        <button id="query_button" type="submit"
                                 class="waves-effect waves-light btn #0091ea light-blue accent-4">
                             <i class="mdi-action-search right"></i>
                             <span class="hide-on-small-only">Find</span>
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Loading indicator -->
-    <div class="section" ng-if="isSearching">
+    <div class="section" ng-if="statusService.isSearching">
         <div class="col s12 m4 center">
             <div class="preloader-wrapper active">
                 <div class="spinner-layer spinner-red-only">
@@ -71,7 +71,7 @@
                 <tbody data-bind="foreach: $data.resultEntries">
                 <tr ng-repeat="entry in bilingualResultGroup.resultEntries" class="valign-wrapper">
                     <td class="dictionaryObjectCell left">
-                        <dictionary-object entry="entry.source"></dictionary-object>
+                        <dictionary-object success="searchController.successCallback" error="searchController.errorCallback" entry="entry.source"></dictionary-object>
                     </td>
                     <td class="entryTypeCell center row">
                         <div>
@@ -81,33 +81,33 @@
                         <div>{{formatEntryType(entry.entryType)}}</div>
                     </td>
                     <td class="dictionaryObjectCell right align-right">
-                        <dictionary-object entry="entry.target"></dictionary-object>
+                        <dictionary-object success="searchController.successCallback" error="searchController.errorCallback" entry="entry.target"></dictionary-object>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-            <div class="divider"></div>
         <!-- Similar recommendations -->
         <div class="row section"
              ng-if="queryResponse.similarRecommendations && queryResponse.similarRecommendations.length > 0">
+        <div class="divider"></div>
             <h5>Similar words:</h5>
 
             <div class="col s4 m3 l2" ng-repeat="recommendation in queryResponse.similarRecommendations">
                 <span class="flag-icon" ng-class="buildIconClass(recommendation.language)"></span>
-                <span>{{recommendation.generalForm}}</span>
+                <a class="underlinedLink black-text" click-query success="searchController.successCallback" error="searchController.errorCallback">{{recommendation.generalForm}}</a>
             </div>
         </div>
         <!-- External contents -->
-            <div class="divider"></div>
         <div class="row section" ng-if="queryResponse.externalContents && queryResponse.externalContents.length > 0">
+        <div class="divider"></div>
             <h5>External content:</h5>
 
             <div class="col s12 m6" ng-repeat="extContent in queryResponse.externalContents">
                 <h6>
                     <a target="_blank" class="underlinedLink" ng-href="{{extContent.link}}">{{extContent.title}}</a>
                 </h6>
-                <span ng-if="extContent.description">
+                <span ng-if="extContent.description" class="truncate">
                     {{extContent.description}}
                 </span>
             </div>

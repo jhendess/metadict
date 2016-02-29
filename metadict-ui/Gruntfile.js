@@ -88,6 +88,9 @@ module.exports = function (grunt) {
 
         // Clean various folders
         clean: {
+            options: {
+                "force": true
+            },
             dist: {
                 files: [{
                     dot: true,
@@ -126,8 +129,8 @@ module.exports = function (grunt) {
                                 serveStatic('./bower_components')
                             ),
                             connect().use(
-                                '/<%= appConfig.paths.app %>/styles',
-                                serveStatic('./app/styles')
+                                '/app',
+                                serveStatic('./app')
                             ),
                             serveStatic(appConfig.paths.app)
                         ];
@@ -153,7 +156,12 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     open: true,
-                    base: '<%= appConfig.paths.dist %>'
+                    middleware: function (connect) {
+                        return [
+                            modRewrite(['^[^\\.]*$ /index.html [L]']),
+                            serveStatic(appConfig.paths.dist)
+                            ]
+                    }
                 }
             }
         },
