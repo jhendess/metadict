@@ -6,7 +6,11 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
 
-    class PrettyFormattingService implements IPrettyFormattingService {
+    /**
+     * Service for formatting various data nicely for the user. This includes also e.g. abbreviating certain phrases,
+     * so that the user can read them more easily.
+     */
+    export class PrettyFormattingService{
 
         // @ngInject
         constructor(private $log: ILogService) {
@@ -28,7 +32,11 @@ module MetadictApp {
         };
 
         /**
-         * @inheritDoc
+         * Format an input string which shall be used as the grammatical gender of an entry. This method will abbreviate
+         * the input to respectively either "masc.", "fem.", "neut." or "nat.". If abbreviation is not possible, the string
+         * will be only lowercased.
+         *
+         * @param gender The grammatical gender to format.
          */
         public formatGrammaticalGender(gender: string): string {
             let lowercaseGender = gender.toLowerCase();
@@ -41,7 +49,10 @@ module MetadictApp {
         }
 
         /**
-         * @inheritDoc
+         * Format an input string which shall be used as the entry type of an entry. All inputs will be lowercased and
+         * underscores (if any) will be replaced by spaces.
+         *
+         * @param entryType The entry type to format.
          */
         public formatEntryType(entryType: string): string {
             let lowercaseEntryType = entryType.toLowerCase();
@@ -49,7 +60,9 @@ module MetadictApp {
         }
 
         /**
-         * @inheritDoc
+         * Takes an array of strings which represent the syllabification of a word and merges them into a single string.
+         *
+         * @param syllabificationList
          */
         public formatSyllabificationList(syllabificationList: string[]): string {
             return syllabificationList.join(PrettyFormattingService.SYLLABIFICATION_JOIN_CHARACTER);

@@ -25,7 +25,7 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $log: ILogService, private $rootScope: IRootScopeService,
-                    private statusService: IStatusService, private localStorageService: ILocalStorageService) {
+                    private statusService: StatusService, private localStorageService: ILocalStorageService) {
             if (localStorageService.get(ClientUpdateService.UPDATE_STARTED_KEY)) {
                 this.localStorageService.remove(ClientUpdateService.UPDATE_STARTED_KEY);
                 $log.debug("Client update finished");

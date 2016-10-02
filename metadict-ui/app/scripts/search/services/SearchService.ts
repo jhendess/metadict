@@ -13,8 +13,8 @@ module MetadictApp {
      */
     export class SearchService {
         // @ngInject
-        constructor(private $log: ILogService, private backendAccessService: IBackendAccessService,
-                    private dictionaryService: IDictionaryService, private $location: ILocationService,
+        constructor(private $log: ILogService, private backendAccessService: BackendAccessService,
+                    private dictionaryService: DictionaryService, private $location: ILocationService,
                     private statusService: StatusService) {
             $log.debug("SearchService started");
         }

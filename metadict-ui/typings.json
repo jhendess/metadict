@@ -1,0 +1,14 @@
+{
+  "name": "metadict-ui",
+  "globalDependencies": {
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts#dc9dabe74a5be62613b17a3605309783a12ff28a",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#dc9dabe74a5be62613b17a3605309783a12ff28a",
+    "angular-cookies": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular-cookies.d.ts#e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49",
+    "angular-route": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular-route.d.ts#e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49",
+    "angular-mocks": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular-mocks.d.ts#f23cd55e319a0f67362ca0dbc4cf3e2ec1339f4e",
+    "jasmine": "github:DefinitelyTyped/DefinitelyTyped/jasmine/jasmine.d.ts#e48f0c7a0a5f9e9d35e9cfd7506461bab435cb49",
+    "restangular": "github:DefinitelyTyped/DefinitelyTyped/restangular/restangular.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#8ea42cd8bb11863ed6f242d67c502288ebc45a7b",
+    "angular-local-storage": "github:DefinitelyTyped/DefinitelyTyped/angular-local-storage/angular-local-storage.d.ts#dc9dabe74a5be62613b17a3605309783a12ff28a"
+  }
+}

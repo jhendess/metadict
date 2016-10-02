@@ -18,8 +18,8 @@ module MetadictApp {
 
     class MonolingualEntryDirective implements ng.IDirective {
 
-        constructor(private $log: ILogService, private prettyFormattingService: IPrettyFormattingService,
-                    private dictionaryService: IDictionaryService) {
+        constructor(private $log: ILogService, private prettyFormattingService: PrettyFormattingService,
+                    private dictionaryService: DictionaryService) {
             this.$log.debug("MonolingualEntryDirective started");
         }
 
@@ -55,8 +55,8 @@ module MetadictApp {
     }
 
     // @ngInject
-    function MonolingualEntryFactory($log: ILogService, prettyFormattingService: IPrettyFormattingService,
-                                     dictionaryService: IDictionaryService) {
+    function MonolingualEntryFactory($log: ILogService, prettyFormattingService: PrettyFormattingService,
+                                     dictionaryService: DictionaryService) {
         return new MonolingualEntryDirective($log, prettyFormattingService, dictionaryService);
     }
 

@@ -47,6 +47,11 @@
     height: 100%;
 }
 
+li.dictionaryList {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 .dictionaryList .switch {
     padding-right: 0;
     display: inline-flex;

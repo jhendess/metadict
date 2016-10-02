@@ -10,11 +10,6 @@ module MetadictApp {
         [index: string]: T;
     }
 
-    export interface IMainScope extends IScope {
-
-        statusService: IStatusService;
-    }
-
     export interface NavigationPage {
         title: string;
         icon: string;

@@ -6,8 +6,15 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import IRootScopeService = angular.IRootScopeService;
+    import IScope = angular.IScope;
 
     declare var Materialize;
+
+
+    export interface IMainScope extends IScope {
+
+        statusService: StatusService;
+    }
 
     /**
      * Main controller for the application. Used for handling application-wide events and actions.
@@ -27,7 +34,7 @@ module MetadictApp {
         private static APPLICATION_UPDATE_MESSAGE_TIMEOUT = 4000;
 
         // @ngInject
-        constructor(private $scope: IMainScope, private $log: ILogService, private statusService: IStatusService,
+        constructor(private $scope: IMainScope, private $log: ILogService, private statusService: StatusService,
                     private $rootScope: IRootScopeService) {
             this.checkFinishedUpdate();
             $scope.statusService = statusService;

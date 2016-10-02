@@ -281,14 +281,8 @@ module.exports = function (grunt) {
         },
 
         // Install typescript type definitions
-        tsd: {
-            refresh: {
-                options: {
-                    // execute a command
-                    command: 'reinstall',
-                    config: 'tsd.json'
-                }
-            }
+        typings: {
+            install: {}
         },
 
         // Copy remaining files to places other tasks can use
@@ -514,7 +508,7 @@ module.exports = function (grunt) {
     // Register tasks
     grunt.registerTask("setup", ["clean:dev",
         "bower-install-simple",
-        "tsd:refresh"
+        "typings:install"
     ]);
 
     grunt.registerTask("check", [
@@ -524,7 +518,7 @@ module.exports = function (grunt) {
     grunt.registerTask('serve', [
         'clean:server',
         'wiredep',
-        //'tsd:refresh',
+        //'typings:install',
         'revision',
         'template:dev',
         'concurrent:server',
@@ -537,7 +531,7 @@ module.exports = function (grunt) {
         'wiredep',
         'revision',
         'template:dev',
-        'tsd:refresh',
+        'typings:install',
         'concurrent:test',
         'connect:test',
         'karma'
@@ -549,7 +543,7 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:dist',
             'wiredep',
-            'tsd:refresh',
+            'typings:install',
             'revision'
         ]);
 

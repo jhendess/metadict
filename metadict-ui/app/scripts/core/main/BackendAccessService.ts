@@ -9,9 +9,9 @@ module MetadictApp {
     import IRestangularElement = restangular.IElement;
 
     /**
-     * @inheritDoc
+     * Central service for accessing the Metadict backend data.
      */
-    class BackendAccessService implements IBackendAccessService {
+    export class BackendAccessService {
         // @ngInject
         constructor(private $log: ILogService, private Restangular: IRestangularService) {
             this.setupResources();
@@ -36,7 +36,12 @@ module MetadictApp {
         }
 
         /**
-         * @inheritDoc
+         * Execute a bilingual search query against the currently connected instance.
+         *
+         * @param dictionaries The dictionary query string.
+         * @param requestString The query request to search for.
+         * @param success The success callback which should be called upon successful retrieval.
+         * @param error The error callback which should be called upon a failed request.
          */
         public executeBilingualQuery(dictionaries: string,
                               requestString: string,

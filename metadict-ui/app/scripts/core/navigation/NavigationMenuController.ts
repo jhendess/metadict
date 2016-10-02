@@ -20,7 +20,7 @@ module MetadictApp {
         public subHeader: string;
 
         // @ngInject
-        constructor(private $scope: IScope, private $log: ILogService, private userService: IUserService,
+        constructor(private $scope: IScope, private $log: ILogService, private userService: UserService,
                     private navigationMenuService: INavigationMenuService) {
             this.setupWatchers();
 
@@ -42,9 +42,9 @@ module MetadictApp {
         private setupWatchers() {
             this.$scope.$watch(this.userService.isUserLoggedIn, () => {
                 if (this.userService.isUserLoggedIn()) {
-                    this.img = this.userService.getLoggedInUser().img;
-                    this.topHeader = this.userService.getLoggedInUser().fullname;
-                    this.subHeader = this.userService.getLoggedInUser().email;
+                    this.img = this.userService.loggedInUser.img;
+                    this.topHeader = this.userService.loggedInUser.fullname;
+                    this.subHeader = this.userService.loggedInUser.email;
                 } else {
                     this.resetHeader();
                 }

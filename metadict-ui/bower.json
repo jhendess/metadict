@@ -2,20 +2,20 @@
   "name": "metadict-ui",
   "version": "0.0.1-SNAPSHOT",
   "dependencies": {
-    "angular": "~1.4.0",
-    "angular-animate": "~1.4.0",
-    "angular-cookies": "~1.4.0",
-    "angular-route": "~1.4.0",
-    "angular-touch": "~1.4.0",
+    "angular": "=1.5.8",
+    "angular-animate": "=1.5.8",
+    "angular-cookies": "=1.5.8",
+    "angular-route": "=1.5.8",
+    "angular-touch": "=1.5.8",
     "restangular": "~1.5.1",
-    "lodash": "~3.10.1",
-    "flag-icon-css": "~0.8.5",
-    "angular-materialize": "~0.1.2",
-    "material-design-icons": "~2.1.1",
+    "lodash": "=4.16.2",
+    "flag-icon-css": "=2.5.0",
+    "angular-materialize": "=0.2.1",
+    "material-design-icons": "=2.1.1",
     "angular-local-storage": "~0.2.3"
   },
   "devDependencies": {
-    "angular-mocks": "~1.4.0",
-    "jasmine-core": "jasmine#~2.3.4"
+    "angular-mocks": "=1.5.8",
+    "jasmine-core": "jasmine#~2.5.2"
   }
 }

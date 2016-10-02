@@ -19,7 +19,7 @@ module MetadictApp {
     class SelectDictionariesMenuController {
         // @ngInject
         constructor(private $log: ILogService, private $scope: ISelectDictionariesScope,
-                    private dictionaryService: IDictionaryService) {
+                    private dictionaryService: DictionaryService) {
             this.initializeSelectionMap();
 
             $scope.$watch(

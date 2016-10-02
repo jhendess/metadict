@@ -1,5 +1,5 @@
 /// <reference path="../../App.ts" />
-/// <reference path="../../core/services/UserService.ts"/>
+/// <reference path="../../core/user/UserService.ts"/>
 
 "use strict";
 
@@ -28,8 +28,8 @@ module MetadictApp {
         // @ngInject
         constructor(private $scope: ISearchScope, private $log: ILogService,
                     private searchService: SearchService, private $location: ILocationService,
-                    private prettyFormattingService: IPrettyFormattingService,
-                    private dictionaryService: IDictionaryService,
+                    private prettyFormattingService: PrettyFormattingService,
+                    private dictionaryService: DictionaryService,
                     private statusService: StatusService) {
 
             this.prepareScope();

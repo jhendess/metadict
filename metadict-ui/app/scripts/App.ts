@@ -1,4 +1,4 @@
-///<reference path="../../typings/tsd.d.ts" />
+///<reference path="../../typings/index.d.ts" />
 ///<reference path="api/CoreInterfaces.ts"/>
 ///<reference path="api/DomainInterfaces.ts"/>
 ///<reference path="api/CoreServices.ts"/>
@@ -39,7 +39,6 @@ module MetadictApp {
     import ILocationProvider = angular.ILocationProvider;
 
     declare var window;
-    declare var $browser;
 
     export let metadictModule = angular.module("MetadictApp", [
         "ngAnimate",
@@ -84,7 +83,7 @@ module MetadictApp {
         .config((RestangularProvider: IRestangularProvider) => {
             RestangularProvider.setBaseUrl(Config.API_URL);
         })
-        .run((clientUpdateService: ClientUpdateService, bootstrapService: IBootstrapService) => {
+        .run((clientUpdateService: ClientUpdateService, bootstrapService: BootstrapService) => {
             clientUpdateService.registerEventHandlers();
             bootstrapService.bootstrapApplication();
         });

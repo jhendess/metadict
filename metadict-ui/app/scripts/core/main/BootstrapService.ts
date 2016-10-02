@@ -6,12 +6,18 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
 
-    class BootstrapService implements IBootstrapService {
+    /**
+     * Service for initial bootstrapping of Metadict.
+     */
+    export class BootstrapService {
         // @ngInject
-        constructor(private $log: ILogService, private dictionaryService: IDictionaryService) {
+        constructor(private $log: ILogService, private dictionaryService: DictionaryService) {
             $log.debug("BootstrapService started");
         }
 
+        /**
+         * Start and configure all required services.
+         */
         public bootstrapApplication() {
             this.dictionaryService.reloadDictionaries();
             this.$log.info("Application started");
