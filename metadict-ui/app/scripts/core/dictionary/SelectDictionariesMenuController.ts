@@ -36,7 +36,6 @@ module MetadictApp {
         }
 
         public toggleSelection(dictionaryIdentifier: string) {
-            this.$scope.selectionMap[dictionaryIdentifier] = !this.$scope.selectionMap[dictionaryIdentifier];
             this.dictionaryService.toggleDictionarySelection(dictionaryIdentifier);
         }
 
@@ -46,7 +45,7 @@ module MetadictApp {
 
         private initializeSelectionMap() {
             this.$scope.selectionMap = {};
-            for (let dictionaryId of this.dictionaryService.selectedDictionaries) {
+            for (let dictionaryId of this.dictionaryService.selectedDictionaryIds) {
                 this.$scope.selectionMap[dictionaryId] = true;
             }
         };

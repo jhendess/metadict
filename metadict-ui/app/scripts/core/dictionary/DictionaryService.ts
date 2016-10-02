@@ -29,7 +29,7 @@ module MetadictApp {
 
         private _bilingualDictionaries: BilingualDictionary[] = [];
 
-        private _selectedDictionaries: string[] = [];
+        private _selectedDictionaryIds: string[] = [];
 
         private reloadErrorCallback = (reason: string) => {
             this._dictionaryListLoading = false;
@@ -47,7 +47,7 @@ module MetadictApp {
             this._bilingualDictionaries = dictionaries;
 
             // Filter unavailable dictionaries from selection
-            _.filter(this._selectedDictionaries, (dictionaryId: string) => {
+            _.filter(this._selectedDictionaryIds, (dictionaryId: string) => {
                 return this.isDictionaryAvailable(dictionaryId);
             });
 
@@ -112,7 +112,7 @@ module MetadictApp {
          * @return True if the dictionary is selected for querying.
          */
         public isDictionarySelected(dictionaryIdentifier: string): boolean {
-            return _.includes(this._selectedDictionaries, dictionaryIdentifier);
+            return _.includes(this._selectedDictionaryIds, dictionaryIdentifier);
         }
 
         /**
@@ -159,14 +159,22 @@ module MetadictApp {
          * Get the currently selected dictionaries as a metadict-compatible request string.
          */
         public getCurrentDictionaryString(): string {
-            return this._selectedDictionaries.join(Parameters.SEPARATOR);
+            return this._selectedDictionaryIds.join(Parameters.SEPARATOR);
         }
 
         /**
          * The list of currently selected dictionaries as ids.
          */
-        public get selectedDictionaries(): string[] {
-            return this._selectedDictionaries;
+        public get selectedDictionaryIds(): string[] {
+            return this._selectedDictionaryIds;
+        }
+
+        /**
+         * Returns an array of the currently selected bilingual dictionaries.
+         * @returns {any}
+         */
+        public get selectedBilingualDictionaries(): BilingualDictionary[] {
+            return _.filter(this.getBilingualDictionaries(), (bd: BilingualDictionary) => this.isDictionarySelected(bd.queryStringWithDialect));
         }
 
         private initializeDictionaryConfiguration() {
@@ -203,13 +211,13 @@ module MetadictApp {
 
             if (this.isDictionarySelected(dictionaryIdentifier)) {
                 this.$log.debug("Disabled dictionary " + dictionaryIdentifier + " for query");
-                _.pull(this._selectedDictionaries, dictionaryIdentifier);
+                _.pull(this._selectedDictionaryIds, dictionaryIdentifier);
                 result = false;
             } else {
                 if (checkIfExisting && this.isDictionaryAvailable(dictionaryIdentifier)
                     || !checkIfExisting) {
                     this.$log.debug("Enabled dictionary " + dictionaryIdentifier + " for query");
-                    this._selectedDictionaries.push(dictionaryIdentifier);
+                    this._selectedDictionaryIds.push(dictionaryIdentifier);
                     result = true;
                 } else {
                     this.$log.debug("Couldn't select unknown dictionary " + dictionaryIdentifier);

@@ -22,6 +22,8 @@ module MetadictApp {
         buildIconClass: Function;
 
         formatEntryType: Function;
+
+        enabledDictionaries: BilingualDictionary[];
     }
 
     class SearchController {
@@ -93,9 +95,13 @@ module MetadictApp {
             this.$scope.formatEntryType = this.prettyFormattingService.formatEntryType;
             this.$scope.success = this.successCallback;
             this.$scope.error = this.errorCallback;
+            this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries
             this.$scope.$watch(
                 () => this.searchService.lastQueryString,
                 (newValue: string, oldValue: string, scope: ISearchScope) => scope.searchRequest = newValue
+            );
+            this.$scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE,
+                () => this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries
             );
         };
     }

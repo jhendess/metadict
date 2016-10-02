@@ -15,7 +15,7 @@ module MetadictApp {
 
     export interface BilingualDictionary {
 
-        input: Language;
+        source: Language;
 
         target: Language;
 
