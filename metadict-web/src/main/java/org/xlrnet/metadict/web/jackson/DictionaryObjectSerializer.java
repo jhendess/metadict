@@ -35,6 +35,7 @@ import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.core.util.FormatUtils;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Custom serializer for {@link DictionaryObject} objects that adds a precalculated field with additional information
@@ -74,6 +75,11 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
     @Override
     public BeanSerializerBase withObjectIdWriter(ObjectIdWriter objectIdWriter) {
         return new DictionaryObjectSerializer(this, objectIdWriter);
+    }
+
+    @Override
+    protected BeanSerializerBase withIgnorals(Set<String> set) {
+        throw new NotImplementedException(getClass().getCanonicalName() + ".withIgnorals() is not implemented");
     }
 
     @Override

@@ -44,6 +44,11 @@
             <artifactId>metadict-api</artifactId>
             <version>${metadict.version}</version>
         </dependency>
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
         <!-- Deep cloning library -->
         <dependency>
             <groupId>uk.com.robust-it</groupId>
@@ -62,18 +67,9 @@
             <artifactId>cdi-unit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Weld dependencies -->
         <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
         </dependency>
         <!-- IntelliJ annotations -->
         <dependency>
@@ -105,7 +101,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
