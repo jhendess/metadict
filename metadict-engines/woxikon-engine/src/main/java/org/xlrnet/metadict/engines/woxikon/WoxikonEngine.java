@@ -45,8 +45,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Engine for woxikon.de backend. Internal methods work based on reverse-engineered HTML structures.
@@ -79,13 +81,27 @@ public class WoxikonEngine implements SearchEngine {
             .put("(o)", EntryType.OTHER_WORD)
             .build();
 
-    private static final Map<String, GrammaticalGender> GENDER_MAP     = ImmutableMap.<String, GrammaticalGender>builder()
-            .put("[m.]", GrammaticalGender.MASCULINE)
-            .put("[f.]", GrammaticalGender.FEMININE)
-            .put("[n.]", GrammaticalGender.NEUTER)
+    private static final Map<String, GrammaticalGender> GENDER_MAP = ImmutableMap.<String, GrammaticalGender>builder()
+            .put("{m}", GrammaticalGender.MASCULINE)
+            .put("{f}", GrammaticalGender.FEMININE)
+            .put("{n}", GrammaticalGender.NEUTER)
             .build();
 
-    private static final int                            TIMEOUT_MILLIS = 1500;
+    private static final int TIMEOUT_MILLIS = 1500;
+
+    private static final String CLASS_TRANSLATION = "dictionary-table-word";
+
+    private static final String DESCRIPTION_BEGIN = "[";
+
+    private static final String DESCRIPTION_END = "]";
+
+    private static final String CLASS_GENDER = "word-gender";
+
+    private static final String CLASS_WORDTYPE = "word-type";
+
+    private static final String CLASS_DESCRIPTION = "word-description";
+
+    private static final String CLASS_EXTRA_INFO = "word-extra-info";
 
     /**
      * The main method for querying a {@link SearchEngine} with a <i>bilingual</i> search (i.e. translation). This
@@ -139,23 +155,26 @@ public class WoxikonEngine implements SearchEngine {
         return resultBuilder.build();
     }
 
-    private void extractBilingualSynonyms(@NotNull Element translationTable, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage) {
-        Elements synonymNodes = translationTable.select("tr.translationInlineSynonymsRow");
+    private void extractBilingualSynonyms(@NotNull String queryString, @NotNull Element synonymsTable, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage) {
+        List<Element> synonymNodes = synonymsTable
+                .select("tr")
+                .stream()
+                .filter(e -> e.getElementsByTag("th").size() == 0)
+        .collect(Collectors.toList());
 
         if (synonymNodes.size() == 0) {
             LOGGER.debug("No synonym entries found");
             return;
         }
 
-        String synonymEntryTitle = translationTable.select(".translationInlineSynonymsTitle span.highlight").first().text();
+        String synonymEntryTitle = synonymsTable.select("span.hl").first().text();
 
         Map<String, SynonymGroupBuilder> synonymGroupMap = new HashMap<>();
 
         for (Element synonymNode : synonymNodes) {
             // Extract only information from the "from"-node (i.e. source language)
-            Element fromNode = synonymNode.getElementsByClass("from").first();
-            DictionaryObject newSynonym = processSingleNode(fromNode, sourceLanguage, synonymEntryTitle);
-            String groupName = newSynonym.getDescription();
+            DictionaryObject newSynonym = processSingleNode(synonymNode.getElementsByClass(CLASS_TRANSLATION).get(0), sourceLanguage, queryString);
+            String groupName = newSynonym.getDescription() != null ? newSynonym.getDescription() : queryString;
             if (groupName != null) {
                 SynonymGroupBuilder groupBuilder = synonymGroupMap.computeIfAbsent(groupName,
                         (s) -> ImmutableSynonymGroup.builder().setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(sourceLanguage, s))
@@ -206,19 +225,22 @@ public class WoxikonEngine implements SearchEngine {
 
     private void processTranslationTable(@NotNull String queryString, @NotNull Document document, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage, @NotNull Language targetLanguage) {
         // Find main table (german to X)
-        String languageIdentifier = sourceLanguage.getIdentifier().toLowerCase();
+        String languageIdentifier = sourceLanguage.getIdentifier().toLowerCase() + "-" + targetLanguage.getIdentifier().toLowerCase();
 
-        Element translationTable = document.getElementById("gridTranslations-" + languageIdentifier);
+        Element translationTable = document.getElementById("dictionary-" + languageIdentifier);
 
         // Process the main table with its entries
         if (translationTable != null) {
             // Find all relevant entries, filter them by class and process them
-            translationTable.getElementsByClass("hover")
+            translationTable.getElementsByTag("tr")
                     .stream()
-                    .filter(e -> e.hasClass("default") || e.hasClass("alt"))
+                    .filter(e -> e.getElementsByTag("th").size() == 0)
                     .forEach(e -> processEntry(queryString, e, resultBuilder, sourceLanguage, targetLanguage));
             // Extract synonyms
-            extractBilingualSynonyms(translationTable, resultBuilder, sourceLanguage);
+            Elements synonymTableCandidates = document.getElementsByClass("dictionary-synonyms-table");
+            if (synonymTableCandidates.size() > 0) {
+                extractBilingualSynonyms(queryString, synonymTableCandidates.get(0), resultBuilder, sourceLanguage);
+            }
 
         } else {
             LOGGER.debug("Translation table for {} -> {} with query \"{}\" is null", languageIdentifier, targetLanguage.getIdentifier(), queryString);
@@ -230,10 +252,10 @@ public class WoxikonEngine implements SearchEngine {
             LOGGER.warn("Expected <tr> tag - got <{}>", entryNode.tag().getName());
             return;
         }
-        Elements words = entryNode.getElementsByClass("words");
+        Elements words = entryNode.getElementsByClass(CLASS_TRANSLATION);
 
         if (words.size() != 2) {
-            LOGGER.warn("Expected 2 elements with class \"words\" - got {}", words.size());
+            LOGGER.warn("Expected 2 elements with class \"" + CLASS_TRANSLATION + "\" - got {}", words.size());
             return;
         }
 
@@ -266,12 +288,16 @@ public class WoxikonEngine implements SearchEngine {
     }
 
     private void extractDescription(@NotNull Element element, String queryString, DictionaryObjectBuilder objectBuilder) {
-        Element descriptionNode = element.getElementsByClass("info").first();
+        Element descriptionNode = element.getElementsByClass(CLASS_DESCRIPTION).first();
+        if (descriptionNode == null) {
+            // Try to detect the description node with an alternative class (necessary for synonyms)
+            descriptionNode = element.getElementsByClass(CLASS_EXTRA_INFO).first();
+        }
         if (descriptionNode != null) {
             String description = descriptionNode.text();
 
-            description = StringUtils.removeStart(description, "(");
-            description = StringUtils.removeEnd(description, ")");
+            description = StringUtils.removeStart(description, DESCRIPTION_BEGIN);
+            description = StringUtils.removeEnd(description, DESCRIPTION_END);
 
             if (!StringUtils.equalsIgnoreCase(description, queryString))    // Set description only if it is different from request string
                 objectBuilder.setDescription(StringUtils.strip(description));
@@ -279,7 +305,7 @@ public class WoxikonEngine implements SearchEngine {
     }
 
     private void extractGender(@NotNull Element element, DictionaryObjectBuilder objectBuilder) {
-        Element genderNode = element.getElementsByClass("gender").first();
+        Element genderNode = element.getElementsByClass(CLASS_GENDER).first();
         if (genderNode != null) {
             String gender = genderNode.text();
             if (GENDER_MAP.containsKey(gender))
@@ -288,7 +314,7 @@ public class WoxikonEngine implements SearchEngine {
     }
 
     private EntryType detectEntryType(@NotNull Element element) {
-        Elements wordTypeNodes = element.getElementsByClass("wordType");
+        Elements wordTypeNodes = element.getElementsByClass(CLASS_WORDTYPE);
 
         if (wordTypeNodes.size() < 1) {
             LOGGER.debug("No wordType node found - defaulting to {}", EntryType.UNKNOWN);

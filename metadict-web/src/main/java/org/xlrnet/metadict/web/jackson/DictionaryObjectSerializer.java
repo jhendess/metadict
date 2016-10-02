@@ -64,8 +64,9 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
         serializeFields(bean, jsonGenerator, serializerProvider);
         if (bean instanceof DictionaryObject) {
             String representation = FormatUtils.formatDictionaryObjectRepresentation((DictionaryObject) bean);
-            if (StringUtils.isNotEmpty(representation))
+            if (StringUtils.isNotEmpty(representation)) {
                 jsonGenerator.writeStringField(ADDITIONAL_REPRESENTATION_FIELD_NAME, representation);
+            }
         }
         jsonGenerator.writeEndObject();
     }
@@ -73,6 +74,11 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
     @Override
     public BeanSerializerBase withObjectIdWriter(ObjectIdWriter objectIdWriter) {
         return new DictionaryObjectSerializer(this, objectIdWriter);
+    }
+
+    @Override
+    public BeanSerializerBase withFilterId(Object filterId) {
+        throw new NotImplementedException(getClass().getCanonicalName() + ".withFilterId() is not implemented - avoid using @JsonFilter annotations");
     }
 
     /**
@@ -87,11 +93,6 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
             return new BeanAsArraySerializer(this);
         }
         return this;
-    }
-
-    @Override
-    public BeanSerializerBase withFilterId(Object filterId) {
-        throw new NotImplementedException(getClass().getCanonicalName() + ".withFilterId() is not implemented - avoid using @JsonFilter annotations");
     }
 
     @Override
