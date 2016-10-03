@@ -55,31 +55,21 @@ public class ImmutableSynonymGroup implements SynonymGroup, Serializable {
         return new SynonymGroupBuilder();
     }
 
-    /**
-     * Returns the base meaning that all objects in this synonym group have.
-     *
-     * @return the base meaning that all objects in this synonym group have.
-     */
     @Override
     public DictionaryObject getBaseMeaning() {
-        return baseMeaning;
+        return this.baseMeaning;
     }
 
-    /**
-     * Returns a collection of objects that are synonyms for the base meaning of this group.
-     *
-     * @return a collection of objects that are synonyms for the base meaning of this group.
-     */
     @Override
     public Collection<DictionaryObject> getSynonyms() {
-        return synonyms;
+        return this.synonyms;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("baseMeaning", baseMeaning)
-                .add("synonyms", synonyms)
+                .add("baseMeaning", this.baseMeaning)
+                .add("synonyms", this.synonyms)
                 .toString();
     }
 
@@ -88,12 +78,12 @@ public class ImmutableSynonymGroup implements SynonymGroup, Serializable {
         if (this == o) return true;
         if (!(o instanceof ImmutableSynonymGroup)) return false;
         ImmutableSynonymGroup that = (ImmutableSynonymGroup) o;
-        return Objects.equal(baseMeaning, that.baseMeaning) &&
-                Objects.equal(synonyms, that.synonyms);
+        return Objects.equal(this.baseMeaning, that.baseMeaning) &&
+                Objects.equal(this.synonyms, that.synonyms);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(baseMeaning, synonyms);
+        return Objects.hashCode(this.baseMeaning, this.synonyms);
     }
 }

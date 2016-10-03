@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Abstract entry implementation.
  */
@@ -41,16 +43,11 @@ public abstract class AbstractEntry implements Serializable {
         entryType = null;
     }
 
-    public AbstractEntry(EntryType entryType) {
+    protected AbstractEntry(@NotNull EntryType entryType) {
+        checkNotNull(entryType);
         this.entryType = entryType;
     }
 
-    /**
-     * Get the entry's type. In most cases this is similar to a word class like nouns or verbs. However, you can also
-     * provide phrases by using {@link EntryType#PHRASE}.
-     *
-     * @return the entry's type (i.e. word class in most cases).
-     */
     @NotNull
     public EntryType getEntryType() {
         return this.entryType;

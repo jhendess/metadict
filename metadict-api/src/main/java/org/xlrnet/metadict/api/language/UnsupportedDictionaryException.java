@@ -30,6 +30,8 @@ package org.xlrnet.metadict.api.language;
  */
 public class UnsupportedDictionaryException extends Exception {
 
+    private static final long serialVersionUID = -5635269869139884252L;
+
     private final Language inLanguage;
 
     private final Language outLanguage;

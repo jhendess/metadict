@@ -48,11 +48,6 @@ public class ImmutableAutoTestSuite implements AutoTestSuite{
         return new AutoTestSuiteBuilder();
     }
 
-    /**
-     * Returns an iterator over elements of type {@code T}.
-     *
-     * @return an Iterator.
-     */
     @Override
     public Iterator<AutoTestCase> iterator() {
         return autoTestCases.iterator();

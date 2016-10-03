@@ -74,18 +74,12 @@ public class ImmutableBilingualEntry extends AbstractEntry implements BilingualE
                 Objects.equal(entryType, that.entryType);
     }
 
-    /**
-     * @inheritDoc
-     */
     @NotNull
     @Override
     public DictionaryObject getSource() {
         return this.sourceObject;
     }
 
-    /**
-     * @inheritDoc
-     */
     @NotNull
     @Override
     public DictionaryObject getTarget() {

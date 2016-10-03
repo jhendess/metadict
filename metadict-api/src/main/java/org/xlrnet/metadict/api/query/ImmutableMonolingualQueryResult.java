@@ -64,13 +64,6 @@ public class ImmutableMonolingualQueryResult extends AbstractQueryResult impleme
         return Objects.equal(entries, that.entries);
     }
 
-    /**
-     * Returns the monolingual results of the query that match the input query. This should be used for most
-     * applications
-     * that involve query results.
-     *
-     * @return the bilingual results of the query that match the input.
-     */
     @NotNull
     @Override
     public List<MonolingualEntry> getMonolingualEntries() {

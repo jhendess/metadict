@@ -121,93 +121,53 @@ public class ImmutableFeatureSet implements FeatureSet {
         return new FeatureSetBuilder();
     }
 
-    /**
-     * A collection of dictionaries the engine supports for bilingual lookups. This can be e.g. English-English or
-     * German-English but also English-German.
-     */
     @NotNull
     @Override
     public Collection<BilingualDictionary> getSupportedBilingualDictionaries() {
         return supportedBilingualDictionaries;
     }
 
-    /**
-     * Return a collection of languages that the engine supports for monolingual lookups. This can be a normal language
-     * like English or German.
-     */
     @NotNull
     @Override
     public Collection<Language> getSupportedLexicographicLanguages() {
         return this.supportedLexicographicLanguages;
     }
 
-    /**
-     * True, if the engine provides alternatives to the given query. This can be e.g. a "did-you-mean" recommendation.
-     */
     @Override
     public boolean isProvidesAlternatives() {
         return providesAlternatives;
     }
 
-    /**
-     * True, if the engine supports searching for dictionary entries. A dictionary entry is a bilingual
-     * dictionary lookup that provides a translation between two different languages.
-     */
     @Override
     public boolean isProvidesBilingualDictionaryEntries() {
         return this.providesBilingualDictionaryEntries;
     }
 
-    /**
-     * True, if the engine can also provide external (i.e. non-vocabulary) content like e.g. websites or newsgroup
-     * content.
-     */
     @Override
     public boolean isProvidesExternalContent() {
         return providesExternalContent;
     }
 
-    /**
-     * True, if the engine supports searching for lexicographic entries. A lexicographic entry is a monolingual
-     * dictionary lookup with detailed information about one entry in one language.
-     */
     @Override
     public boolean isProvidesMonolingualEntries() {
         return this.providesMonolingualEntries;
     }
 
-    /**
-     * True, if the engine returns synonyms when issuing a bilingual query. When returning true, the core may decide
-     * to call the described engine with a bilingual query on any of the supported bilingual dictionaries if synonyms
-     * were requested. Only those dictionaries will be queried that have the requested language as an input language.
-     */
     @Override
     public boolean isProvidesSynonymsOnBilingualQuery() {
         return this.providesSynonymsOnBilingualQuery;
     }
 
-    /**
-     * True, if the engine returns synonyms when issuing a monolingual query. When returning true, the core may decide
-     * to call the described engine with a monolingual query on any of the supported lexicographic languages if
-     * synonyms were requested.
-     */
     @Override
     public boolean isProvidesSynonymsOnMonolingualQuery() {
         return this.providesSynonymsOnMonolingualQuery;
     }
 
-    /**
-     * True, if the engine i.e. the called website supports fuzzy search.
-     */
     @Override
     public boolean isSupportsFuzzySearch() {
         return supportsFuzzySearch;
     }
 
-    /**
-     * True, if the provider can test if the underlying engine works as expected. See the corresponding documentation
-     * for more information about this.
-     */
     @Override
     public boolean isSupportsSelfTest() {
         return supportsSelfTest;
@@ -236,7 +196,6 @@ public class ImmutableFeatureSet implements FeatureSet {
     }
 
     @Override
-
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("supportedBilingualDictionaries", supportedBilingualDictionaries)

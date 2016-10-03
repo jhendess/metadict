@@ -75,12 +75,6 @@ public class ImmutableBilingualQueryResult extends AbstractQueryResult implement
                 Objects.equal(externalContents, that.externalContents);
     }
 
-    /**
-     * Returns the bilingual (i.e translations) results of the query that match the input. This should be used for most applications that involve
-     * query results.
-     *
-     * @return the results of the query that match the input.
-     */
     @NotNull
     @Override
     public List<BilingualEntry> getBilingualEntries() {

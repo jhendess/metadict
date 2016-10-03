@@ -38,13 +38,6 @@ import org.xlrnet.metadict.api.query.*;
  */
 public class LeoEngineProvider implements SearchEngineProvider {
 
-    /**
-     * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable
-     * automatic testing, the provided {@link FeatureSet} has to return <i>true</i> when calling {@link
-     * FeatureSet#isSupportsSelfTest()}.
-     *
-     * @return a set of user-defined automatic test cases.
-     */
     @Nullable
     @Override
     public AutoTestSuite getAutoTestSuite() {
@@ -152,12 +145,6 @@ public class LeoEngineProvider implements SearchEngineProvider {
                 ;    // TODO: More test cases
     }
 
-    /**
-     * Return an {@link EngineDescription} object that contains descriptive i.e. textual information about the
-     * underlying engine. This can be e.g.the name, url, etc. of the engine.
-     *
-     * @return an object that contains descriptive i.e. textual information about the underlying engine.
-     */
     @NotNull
     @Override
     public EngineDescription getEngineDescription() {
@@ -169,12 +156,6 @@ public class LeoEngineProvider implements SearchEngineProvider {
                 .build();
     }
 
-    /**
-     * Return a {@link FeatureSet} object that contains information about which features the underlying engine supports.
-     * This includes e.g. the supported languages of the engine.
-     *
-     * @return an object that contains information about which features the underlying engine supports.
-     */
     @NotNull
     @Override
     public FeatureSet getFeatureSet() {
@@ -192,12 +173,6 @@ public class LeoEngineProvider implements SearchEngineProvider {
                 .build();
     }
 
-    /**
-     * Create a new instance of the search engine. The returned engine should not be stateful and has to be implemented
-     * thread-safe.
-     *
-     * @return a new instance of the search engine.
-     */
     @NotNull
     @Override
     public SearchEngine newEngineInstance() {

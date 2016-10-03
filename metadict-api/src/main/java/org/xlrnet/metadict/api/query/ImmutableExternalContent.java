@@ -69,33 +69,18 @@ public class ImmutableExternalContent implements ExternalContent {
                 Objects.equal(link, that.link);
     }
 
-    /**
-     * Returns a description for the external content. This should be longer than the title of the content.
-     *
-     * @return a description for the external content.
-     */
     @Nullable
     @Override
     public String getDescription() {
         return this.description;
     }
 
-    /**
-     * Returns a link to the external content.
-     *
-     * @return a link to the external content.
-     */
     @NotNull
     @Override
     public URL getLink() {
         return this.link;
     }
 
-    /**
-     * Returns the title of the external content. This should be shorter than the content's description.
-     *
-     * @return the title of the external content.
-     */
     @NotNull
     @Override
     public String getTitle() {

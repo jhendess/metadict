@@ -57,5 +57,4 @@ public interface SynonymEntry {
      */
     Collection<SynonymGroup> getSynonymGroups();
 
-
 }

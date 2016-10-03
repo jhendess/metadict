@@ -71,113 +71,56 @@ public class ImmutableStorageDescription implements StorageDescription {
         this.listeners = listeners;
     }
 
-    /**
-     * Return a new builder instance for creating new {@link StorageDescription} objects.
-     *
-     * @return a new builder.
-     */
     public static StorageDescriptionBuilder builder() {
         return new StorageDescriptionBuilder();
     }
 
-    /**
-     * Returns the name of the author who developed the engine.
-     *
-     * @return the name of the author who developed the engine.
-     */
     @Override
     public String getAuthorName() {
         return authorName;
     }
 
-    /**
-     * Returns the url to the website of the author.
-     *
-     * @return the url to the website of the author.
-     */
     @Override
     public String getAuthorLink() {
         return authorLink;
     }
 
-    /**
-     * Returns copyright information about the engine.
-     *
-     * @return copyright information about the engine.
-     */
     @Override
     public String getCopyright() {
         return copyright;
     }
 
-    /**
-     * Returns the name of the engine. This parameter has to be set always or the core might not load the engine.
-     *
-     * @return the name of the engine.
-     */
     @Override
     public String getEngineName() {
         return storageEngineName;
     }
 
-    /**
-     * Returns a link to the storage's website. This link should contain either general information about the engine or
-     * the full source code.
-     *
-     * @return a link to the storage's website.
-     */
     @Override
     public String getEngineLink() {
         return storageEngineLink;
     }
 
-    /**
-     * Returns license information about the storage.
-     *
-     * @return license information about the storage.
-     */
     @Override
     public String getLicense() {
         return license;
     }
 
-    /**
-     * Return a list of attached listeners. The order of which listeners will be called depends only on the order of
-     * elements in the list.
-     *
-     * @return a list of attached listeners.
-     */
     @NotNull
     @Override
     public List<ListenerConfiguration<StorageEventType, StorageEventListener>> getListeners() {
         return listeners;
     }
 
-    /**
-     * Returns copyright information about the underlying search backend.
-     *
-     * @return copyright information about the underlying search backend.
-     */
     @Override
     public String getBackendCopyright() {
         return backendCopyright;
     }
 
-    /**
-     * Returns a link to the backend. This is usually the url of the underlying search engine that is being called.
-     *
-     * @return a link to the backend.
-     */
     @Override
     public String getBackendLink() {
         return backendLink;
     }
 
-    /**
-     * Returns the name of the backend. This is usually the name of the underlying search engine that is being called.
-     *
-     * @return the name of the backend.
-     */
     @Override
     public String getBackendName() {
         return backendName;

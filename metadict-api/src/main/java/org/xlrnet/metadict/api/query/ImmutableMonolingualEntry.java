@@ -56,30 +56,24 @@ public class ImmutableMonolingualEntry extends AbstractEntry implements Monoling
         if (this == o) return true;
         if (!(o instanceof ImmutableMonolingualEntry)) return false;
         ImmutableMonolingualEntry that = (ImmutableMonolingualEntry) o;
-        return Objects.equal(content, that.content);
+        return Objects.equal(this.content, that.content);
     }
 
-    /**
-     * Get the entry's main data object. This object doesn't  have to correspond exactly to the original input query,
-     * but should should be as similar as possible. The value may never be null.
-     *
-     * @return the main data object of this entry.
-     */
     @NotNull
     @Override
     public DictionaryObject getContent() {
-        return content;
+        return this.content;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(content);
+        return Objects.hashCode(this.content);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("content", content)
+                .add("content", this.content)
                 .toString();
     }
 }

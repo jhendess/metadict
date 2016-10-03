@@ -27,7 +27,6 @@ package org.xlrnet.metadict.core.strategies;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,28 +68,18 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             .maximumSize(8192)
             .build();
 
-    /**
-     * Execute the given {@link QueryPlan} with the internally provided strategy. The results of each executed {@link
-     * BilingualQueryStep} have to be aggregated to a {@link Iterable< Pair < AbstractQueryStep ,  EngineQueryResult  >>} that
-     * contains the results of each single step.
-     *
-     * @param queryPlan
-     *         The query plan that should be executed. The caller of this method has make sure that the provided query
-     *         plan is valid.
-     * @return a collection with the results of each step
-     */
     @NotNull
     @Override
     public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         List<QueryStepResult> queryResults = new ArrayList<>();
 
         for (AbstractQueryStep currentQueryStep : queryPlan.getQueryStepList()) {
-            QueryStepResult queryStepResult = queryStepResultCache.getIfPresent(currentQueryStep);
+            QueryStepResult queryStepResult = this.queryStepResultCache.getIfPresent(currentQueryStep);
 
             try {
                 if (queryStepResult == null) {
                     LOGGER.debug("Local cache miss on query step {}", currentQueryStep);
-                    queryStepResult = queryStepResultCache.get(currentQueryStep, () -> accessStorageService(currentQueryStep));
+                    queryStepResult = this.queryStepResultCache.get(currentQueryStep, () -> accessStorageService(currentQueryStep));
                 } else {
                     LOGGER.debug("Local cache hit on query step {}", currentQueryStep);
                 }
@@ -104,7 +93,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
                         .build();
             }
             if (queryStepResult != null && queryStepResult.isFailedStep())
-                queryStepResultCache.invalidate(currentQueryStep);
+                this.queryStepResultCache.invalidate(currentQueryStep);
             queryResults.add(queryStepResult);
         }
 
@@ -113,7 +102,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     private QueryStepResult accessStorageService(AbstractQueryStep currentQueryStep) {
         String queryStepKey = currentQueryStep.toString();
-        Optional<QueryStepResult> storedStepResult = storageService.read("QueryCache", queryStepKey, QueryStepResult.class);
+        Optional<QueryStepResult> storedStepResult = this.storageService.read("QueryCache", queryStepKey, QueryStepResult.class);
 
         if (storedStepResult.isPresent())
             return storedStepResult.get();
@@ -125,7 +114,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             return queryStepResult;
 
         try {
-            storageService.create("QueryCache", queryStepKey, queryStepResult);
+            this.storageService.create("QueryCache", queryStepKey, queryStepResult);
         } catch (StorageBackendException b) {
             LOGGER.error("Internal storage backend error", b);
         } catch (StorageOperationException o) {

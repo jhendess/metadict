@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Implementation of {@link AutoTestReport}.
  */
-public class AutoTestReportImpl implements AutoTestReport {
+public class ImmutableAutoTestReport implements AutoTestReport {
 
     private final int failedTests;
 
@@ -40,30 +40,18 @@ public class AutoTestReportImpl implements AutoTestReport {
 
     private final List<AutoTestResult> testResultList;
 
-    AutoTestReportImpl(List<AutoTestResult> testResultList, int successfulTests, int failedTests, int totalTestCount) {
+    ImmutableAutoTestReport(List<AutoTestResult> testResultList, int successfulTests, int failedTests, int totalTestCount) {
         this.failedTests = failedTests;
         this.totalTestCount = totalTestCount;
         this.successfulTests = successfulTests;
         this.testResultList = testResultList;
     }
 
-    /**
-     * Returns the amount of failed test cases in this report i.e. the number of objects where {@link
-     * AutoTestResult#isSuccessful()} returns false.
-     *
-     * @return the amount of failed test cases in this report.
-     */
     @Override
     public int getFailedTests() {
         return this.failedTests;
     }
 
-    /**
-     * Returns the amount of successfully executed test cases in this report i.e. the number of objects where {@link
-     * AutoTestResult#isSuccessful()} returns true.
-     *
-     * @return the amount of successfully executed test cases in this report.
-     */
     @Override
     public int getSuccessfulTests() {
         return this.successfulTests;
@@ -74,21 +62,11 @@ public class AutoTestReportImpl implements AutoTestReport {
         return this.testResultList;
     }
 
-    /**
-     * Returns the amount of total test cases in this report.
-     *
-     * @return the amount of total test cases in this report.
-     */
     @Override
     public int getTotalTestCount() {
         return this.totalTestCount;
     }
 
-    /**
-     * Returns an iterator over elements of type {@code T}.
-     *
-     * @return an Iterator.
-     */
     @Override
     public Iterator<AutoTestResult> iterator() {
         return this.testResultList.iterator();

@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.language;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * This enumeration represents the grammatical gender. It can e.g. be used to define the gender of a noun, but can also
  * be used to define additional forms on a {@link org.xlrnet.metadict.api.query.DictionaryObject}. This may be handy to
@@ -43,13 +45,7 @@ public enum GrammaticalGender implements GrammaticalForm {
 
     NONE;
 
-    /**
-     * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
-     * lowercase letters. When implementing this interface inside an {@link Enum}, this method should return the enum
-     * value in lowercase (i.e. {@link Enum#name()} must be lowercased).
-     *
-     * @return the identifier for this grammatical form.
-     */
+    @NotNull
     @Override
     public String getFormIdentifier() {
         return name().toLowerCase();

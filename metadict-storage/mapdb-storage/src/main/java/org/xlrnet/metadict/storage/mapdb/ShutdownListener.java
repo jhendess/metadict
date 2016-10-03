@@ -32,12 +32,6 @@ import org.xlrnet.metadict.api.storage.StorageService;
  */
 public class ShutdownListener implements StorageEventListener {
 
-    /**
-     * Handler method for the thrown event.
-     *
-     * @param source
-     *         The unwrapped {@link StorageService} that caused the event to occur.
-     */
     @Override
     public void handleEvent(StorageService source) {
         ((MapdbStorageEngine) source).shutdown();

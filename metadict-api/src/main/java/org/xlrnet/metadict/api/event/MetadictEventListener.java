@@ -29,6 +29,12 @@ package org.xlrnet.metadict.api.event;
  */
 public interface MetadictEventListener<T> {
 
+    /**
+     * Handler method for the thrown event.
+     *
+     * @param source
+     *         The element that threw the event.
+     */
     void handleEvent(T source);
 
 }

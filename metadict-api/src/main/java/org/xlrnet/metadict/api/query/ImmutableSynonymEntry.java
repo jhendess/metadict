@@ -67,33 +67,16 @@ public class ImmutableSynonymEntry implements SynonymEntry, Serializable {
                 Objects.equal(synonymGroups, that.synonymGroups);
     }
 
-    /**
-     * Returns the base entry type (noun, verb, etc.) that all objects in this synonym group have.
-     *
-     * @return the base meaning that all objects in this synonym group have.
-     */
     @Override
     public EntryType getBaseEntryType() {
         return baseEntryType;
     }
 
-    /**
-     * Returns the base object for which synonyms are stored in this entry. This is usually the string that was
-     * originally requested.
-     *
-     * @return the base object for which synonyms are stored in this entry.
-     */
     @Override
     public DictionaryObject getBaseObject() {
         return baseObject;
     }
 
-    /**
-     * Returns the synonym groups for this entry. Each different meaning of the base word should have its own synonym
-     * group.
-     *
-     * @return the synonym groups for this entry.
-     */
     @Override
     public Collection<SynonymGroup> getSynonymGroups() {
         return synonymGroups;

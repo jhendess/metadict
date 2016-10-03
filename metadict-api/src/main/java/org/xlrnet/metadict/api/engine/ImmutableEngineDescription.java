@@ -111,84 +111,38 @@ public class ImmutableEngineDescription implements EngineDescription {
                 Objects.equal(searchBackendCopyright, that.searchBackendCopyright);
     }
 
-    /**
-     * Returns the url to the website of the author.
-     *
-     * @return the url to the website of the author.
-     */
     public String getAuthorLink() {
         return authorLink;
     }
 
-    /**
-     * Returns the name of the author who developed the engine.
-     *
-     * @return the name of the author who developed the engine.
-     */
     public String getAuthorName() {
         return authorName;
     }
 
-    /**
-     * Returns copyright information about the underlying search backend.
-     *
-     * @return copyright information about the underlying search backend.
-     */
     public String getBackendCopyright() {
         return searchBackendCopyright;
     }
 
-    /**
-     * Returns a link to the search backend. This is the url of the underlying search engine that is being called.
-     *
-     * @return a link to the search backend.
-     */
     public String getBackendLink() {
         return searchBackendLink;
     }
 
-    /**
-     * Returns the name of the search backend. This is the name of the underlying search engine that is being called.
-     *
-     * @return the name of the search backend.
-     */
     public String getBackendName() {
         return searchBackendName;
     }
 
-    /**
-     * Returns copyright information about the engine.
-     *
-     * @return copyright information about the engine.
-     */
     public String getCopyright() {
         return copyright;
     }
 
-    /**
-     * Returns a link to the engine's website. This link should contain either general information about the engine or
-     * the full source code.
-     *
-     * @return a link to the engine's website.
-     */
     public String getEngineLink() {
         return engineLink;
     }
 
-    /**
-     * Returns the name of the engine. This parameter has to be set always or the core might not load the engine.
-     *
-     * @return the name of the engine.
-     */
     public String getEngineName() {
         return engineName;
     }
 
-    /**
-     * Returns license information of the engine.
-     *
-     * @return license information of the engine.
-     */
     public String getLicense() {
         return license;
     }

@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.api.language;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * This enumeration can be used to represent a grammatical number. The most common forms are the singular and plural
  * form.
@@ -34,13 +36,7 @@ public enum GrammaticalNumber implements GrammaticalForm {
 
     PLURAL;
 
-    /**
-     * Return the identifier for this grammatical form. The identifier should be as unique as possible and written in
-     * lowercase letters. When implementing this interface inside an {@link Enum}, this method should return the enum
-     * value in lowercase (i.e. {@link Enum#name()} must be lowercased).
-     *
-     * @return the identifier for this grammatical form.
-     */
+    @NotNull
     @Override
     public String getFormIdentifier() {
         return name().toLowerCase();

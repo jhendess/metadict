@@ -61,75 +61,34 @@ public class ImmutableAutoTestCase implements AutoTestCase {
         this.testQueryString = testQueryString;
     }
 
-    /**
-     * Return a new builder instance for creating new {@link AutoTestCase} objects.
-     *
-     * @return a new builder.
-     */
     public static AutoTestCaseBuilder builder() {
         return new AutoTestCaseBuilder();
     }
 
-    /**
-     * Return the expected query results for this test case. The core will only test if all of the elements inside the
-     * returned object are contained inside the actual query result.
-     * The test will fail, if not all elements inside this expected result object can be found by value-based equality
-     * inside the actual result.  If there are more elements in the actual result, the test won't fail.
-     *
-     * @return the expected query results for this test case.
-     */
     @NotNull
     @Override
     public Optional<BilingualQueryResult> getExpectedBilingualResults() {
         return expectedBilingualResults;
     }
 
-    /**
-     * Return the expected monolingual query results for this test case. The core will only test if all of the elements
-     * inside the returned object are contained inside the actual query result from {@link
-     * SearchEngine#executeMonolingualQuery(String, Language)}.
-     * The test will fail, if not all elements inside this expected result object can be found by value-based equality
-     * inside the actual result.  If there are more elements in the actual result, the test won't fail.
-     * <p>
-     * Note that the monolingual test will only be executed if also a monolingual target language is also set.
-     *
-     * @return the expected query results for this test case.
-     */
     @NotNull
     @Override
     public Optional<MonolingualQueryResult> getExpectedMonolingualResults() {
         return expectedMonolingualQueryResult;
     }
 
-    /**
-     * Return the monolingual target language which should be queried for this test case.
-     * <p>
-     * Note that the monolingual test will only be executed if an expected monolingual query result is also set.
-     *
-     * @return the monolingual target language which should be queried for this test case.
-     */
     @NotNull
     @Override
     public Optional<Language> getMonolingualTargetLanguage() {
         return monolingualTargetLanguage;
     }
 
-    /**
-     * Return the target dictionary which should be queried for this test case.
-     *
-     * @return the target dictionary which should be queried for this test case.
-     */
     @NotNull
     @Override
     public Optional<BilingualDictionary> getBilingualTargetDictionary() {
         return bilingualTargetDictionary;
     }
 
-    /**
-     * Return the query string that should be given to the engine for this test case.
-     *
-     * @return the query string that should be given to the engine for this test case.
-     */
     @NotNull
     @Override
     public String getTestQueryString() {

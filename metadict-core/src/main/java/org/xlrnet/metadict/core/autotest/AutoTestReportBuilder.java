@@ -48,17 +48,17 @@ public class AutoTestReportBuilder {
         checkNotNull(autoTestResult);
 
         if (autoTestResult.isSuccessful())
-            successfulTests++;
+            this.successfulTests++;
         else
-            failedTests++;
+            this.failedTests++;
 
-        totalTests++;
+        this.totalTests++;
 
-        testResultList.add(autoTestResult);
+        this.testResultList.add(autoTestResult);
         return this;
     }
 
     AutoTestReport build() {
-        return new AutoTestReportImpl(testResultList, successfulTests, failedTests, totalTests);
+        return new ImmutableAutoTestReport(this.testResultList, this.successfulTests, this.failedTests, this.totalTests);
     }
 }

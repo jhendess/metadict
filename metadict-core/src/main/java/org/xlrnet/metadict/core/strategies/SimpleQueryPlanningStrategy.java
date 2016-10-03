@@ -25,7 +25,6 @@
 package org.xlrnet.metadict.core.strategies;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.main.EngineRegistry;
 import org.xlrnet.metadict.core.query.*;
@@ -40,16 +39,6 @@ import javax.enterprise.inject.Default;
 @Default
 public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
 
-    /**
-     * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistry} should be used
-     * for accessing the available implementations of {@link SearchEngine}.
-     *
-     * @param queryRequest
-     *         The query request for which a query plan has to be calculated.
-     * @param engineRegistry
-     *         The registry where all available engines are registered.
-     * @return an executable {@link QueryPlan}.
-     */
     @NotNull
     @Override
     public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry) {

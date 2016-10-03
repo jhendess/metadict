@@ -48,34 +48,16 @@ public class AbstractQueryResult implements EngineQueryResult {
         this.synonymEntries = synonymEntries;
     }
 
-    /**
-     * Returns all collected external content for the query. This can be used to provide links to relevant blog posts
-     * or forum entries.
-     *
-     * @return all collected external content for the query.
-     */
     @NotNull
     public List<ExternalContent> getExternalContents() {
         return Collections.unmodifiableList(externalContents);
     }
 
-    /**
-     * Returns additional recommendations for the user. The recommendations have to implement only {@link
-     * DictionaryObject}. A whole translation with two languages is therefore not needed.
-     *
-     * @return additional recommendations for the user.
-     */
     @NotNull
     public List<DictionaryObject> getSimilarRecommendations() {
         return Collections.unmodifiableList(similarRecommendations);
     }
 
-    /**
-     * Returns all synonyms in this result set. Each {@link SynonymEntry} contains different synonyms for exactly one
-     * base word.
-     *
-     * @return all synonyms in this result set
-     */
     @NotNull
     public List<SynonymEntry> getSynonymEntries() {
         return synonymEntries;

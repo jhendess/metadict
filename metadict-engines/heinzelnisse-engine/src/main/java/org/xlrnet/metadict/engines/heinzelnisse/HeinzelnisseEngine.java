@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.engine.FeatureSet;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
@@ -80,37 +79,6 @@ public class HeinzelnisseEngine implements SearchEngine {
 
     private final ObjectReader heinzelReader = new ObjectMapper().reader(HeinzelResponse.class);
 
-    /**
-     * The main method for querying a {@link SearchEngine}. This method will be called by the metadict core on incoming
-     * search queries. The core will always try to parallelize the query as much as possible according to the specified
-     * supported dictionaries of this engine.
-     * <p>
-     * Upon calling, the core will make sure that the language parameters of this method correspond exactly to a
-     * supported {@link BilingualDictionary} as described in the engine's {@link FeatureSet}. However, an engine may
-     * also return results from a different language. In this case, the core component will decide it the supplied
-     * results are useful.
-     * <p>
-     * Example:
-     * If the engine says it supports a one-way german-english dictionary, this method will be called with the language
-     * parameters inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=false.
-     * However, it the engine supports a bidirectional german-english dictionary, this method will be called with the
-     * language parameters inputLanguage=GERMAN, outputLanguage=ENGLISH and allowBothWay=true.
-     *
-     * @param queryInput
-     *         The query string i.e. word that should be looked up.
-     * @param inputLanguage
-     *         The input language of the query. This language must be specified as a dictionary's input language of
-     *         this engine.
-     * @param outputLanguage
-     *         The expected output language of the query. This language must be specified as the output language of the
-     *         same dictionary to which the given inputLanguage belongs.
-     * @param allowBothWay
-     *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
-     *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
-     *         and output language. Otherwise the will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
-     * to build this result list.
-     */
     @NotNull
     @Override
     public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
