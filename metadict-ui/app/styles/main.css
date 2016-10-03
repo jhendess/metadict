@@ -148,6 +148,19 @@ li.dictionaryList label {
     padding: 0 8px;
 }
 
+#query_button {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media only screen and (max-width: 1000px) {
+    #query_button i.right {
+        line-height: 1;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+}
+
 /* Styles for monolingual entries */
 
 .monolingualEntry {
@@ -180,7 +193,7 @@ li.dictionaryList label {
     margin-bottom: 4px;
 }
 
-.monolingualEntry ul > li{
+.monolingualEntry ul > li {
     list-style: disc;
     margin-left: 19px;
 }
@@ -239,7 +252,7 @@ main {
 
 /* Offset the main content on large screens to the right, so the sidenav can be displayed properly */
 
-@media only screen and (max-width : 600px) {
+@media only screen and (max-width: 600px) {
     header, main, footer {
         padding-left: 0;
     }

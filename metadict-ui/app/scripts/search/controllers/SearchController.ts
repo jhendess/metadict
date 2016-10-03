@@ -95,7 +95,7 @@ module MetadictApp {
             this.$scope.formatEntryType = this.prettyFormattingService.formatEntryType;
             this.$scope.success = this.successCallback;
             this.$scope.error = this.errorCallback;
-            this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries
+            this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries;
             this.$scope.$watch(
                 () => this.searchService.lastQueryString,
                 (newValue: string, oldValue: string, scope: ISearchScope) => scope.searchRequest = newValue

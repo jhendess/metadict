@@ -28,7 +28,6 @@ module MetadictApp {
         }
 
         public prependBasePath(target: string) {
-
             return Config.CLIENT_BASE_PATH + (target !== undefined && target.indexOf("/") === 0) ? target.substr(1) : target;
         }
 
