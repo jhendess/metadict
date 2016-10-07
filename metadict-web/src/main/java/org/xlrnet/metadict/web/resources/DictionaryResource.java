@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.resources;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.core.main.MetadictCore;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
 
@@ -59,19 +59,27 @@ import java.util.stream.Collectors;
  * </ul>
  */
 @Path("/dictionaries")
-public class RestDictionaries {
+public class DictionaryResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestQuery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryResource.class);
+
+    /** The central engine registry. */
+    private EngineRegistryService engineRegistryService;
+
+    public DictionaryResource() {
+    }
 
     @Inject
-    MetadictCore metadictCore;
+    public DictionaryResource(EngineRegistryService engineRegistryService) {
+        this.engineRegistryService = engineRegistryService;
+    }
 
     @GET
     @Path("/bilingual/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listAllRegisteredDictionaries() {
         try {
-            return Response.ok(ResponseContainer.fromSuccessful(metadictCore.getEngineRegistry().getSupportedDictionaries())).build();
+            return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getSupportedDictionaries())).build();
         } catch (Exception e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
         }
@@ -112,8 +120,7 @@ public class RestDictionaries {
 
     @NotNull
     private Collection<BilingualDictionary> getBidirectedDictionaries() {
-        List<BilingualDictionary> bidirectional = metadictCore
-                .getEngineRegistry()
+        List<BilingualDictionary> bidirectional = this.engineRegistryService
                 .getSupportedDictionaries()
                 .stream()
                 .filter(BilingualDictionary::isBidirectional)
@@ -121,7 +128,7 @@ public class RestDictionaries {
                 .collect(Collectors.toList());
 
         List<BilingualDictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
-        for (BilingualDictionary bilingualDictionary: bidirectional) {
+        for (BilingualDictionary bilingualDictionary : bidirectional) {
             if (!distinctBidirectional.contains(BilingualDictionary.inverse(bilingualDictionary)))
                 distinctBidirectional.add(bilingualDictionary);
         }
@@ -130,8 +137,7 @@ public class RestDictionaries {
 
     @NotNull
     private Collection<BilingualDictionary> getUnidirectedDictionaries() {
-        return metadictCore
-                .getEngineRegistry()
+        return this.engineRegistryService
                 .getSupportedDictionaries()
                 .stream()
                 .filter(d -> !d.isBidirectional())

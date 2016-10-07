@@ -38,14 +38,6 @@ import java.util.List;
 public interface QueryRequest {
 
     /**
-     * Send this request to the Metadict core and execute it.
-     *
-     * @return the results of the query.
-     */
-    @NotNull
-    QueryResponse executeRequest();
-
-    /**
      * Return a list of all dictionaries that should be queried for a bilingual lookup (i.e. translations).
      *
      * @return a list of all dictionaries that should be queried.

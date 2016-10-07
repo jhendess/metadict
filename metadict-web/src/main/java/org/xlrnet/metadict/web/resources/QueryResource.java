@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.resources;
 
 import com.google.common.base.Enums;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +34,8 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.core.query.QueryResponse;
+import org.xlrnet.metadict.core.query.QueryService;
 import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
@@ -64,12 +64,20 @@ import java.util.List;
  * </ul>
  */
 @Path("/")
-public class RestQuery {
+public class QueryResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestQuery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryResource.class);
+
+    /** Injected query service. */
+    private QueryService queryService;
+
+    public QueryResource() {
+    }
 
     @Inject
-    MetadictCore metadictCore;
+    public QueryResource(QueryService queryService) {
+        this.queryService = queryService;
+    }
 
     /**
      * Issue a two-way dictionary query.
@@ -94,13 +102,11 @@ public class RestQuery {
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
      *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.GroupingType} but will only
-     *         be checked case-insensitive.
-     *         If no value is defined, the single-group strategy will be used.
+     *         be checked case-insensitive. If no value is defined, the single-group strategy will be used.
      * @param ordering
-     *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
-     *         be checked case-insensitive.
-     *         If no value is defined, the relevance ordering will be used.
+     *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
+     *         with one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
+     *         be checked case-insensitive. If no value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/query/{dictionaries}/{request}")
@@ -123,22 +129,20 @@ public class RestQuery {
      *         A comma-separated list of dictionaries to call. Each dictionary's language is separated with a minus
      *         ("-"). If you need to query a concrete dialect, use an underscore ("_") after the language identifiers.
      *         <p/>
-     *         Example: "de-en,de-no_ny" will issue a query from german to english (i.e. the two identifiers "de"
-     *         and "en") and also german to norwegian nynorsk (i.e. the identifier "de" and the dialect "ny" of
-     *         language "no").
+     *         Example: "de-en,de-no_ny" will issue a query from german to english (i.e. the two identifiers "de" and
+     *         "en") and also german to norwegian nynorsk (i.e. the identifier "de" and the dialect "ny" of language
+     *         "no").
      * @param queryRequest
      *         The concrete query string that should be passed to the internal engines. Special URI unescaping is
      *         handled automatically through the underlying JAX-RS engine.
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
      *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.GroupingType} but will only
-     *         be checked case-insensitive.
-     *         If no value is defined, the single-group strategy will be used.
+     *         be checked case-insensitive. If no value is defined, the single-group strategy will be used.
      * @param ordering
-     *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
-     *         be checked case-insensitive.
-     *         If no value is defined, the relevance ordering will be used.
+     *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
+     *         with one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
+     *         be checked case-insensitive. If no value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/uniquery/{dictionaries}/{request}")
@@ -165,14 +169,15 @@ public class RestQuery {
         QueryResponse queryResponse;
         try {
             queryResponse =
-                    metadictCore.createNewQueryRequestBuilder()
-                            .setQueryString(queryRequest)
-                            .setQueryDictionaries(dictionaries)
-                            .setAutoDeriveMonolingualLanguages(true)
-                            .setGroupBy(groupingType)
-                            .setOrderBy(orderType)
-                            .build()
-                            .executeRequest();
+                    this.queryService.executeQuery(
+                            this.queryService.createNewQueryRequestBuilder()
+                                    .setQueryString(queryRequest)
+                                    .setQueryDictionaries(dictionaries)
+                                    .setAutoDeriveMonolingualLanguages(true)
+                                    .setGroupBy(groupingType)
+                                    .setOrderBy(orderType)
+                                    .build()
+                    );
         } catch (Exception e) {
             LOGGER.error("An internal core error occurred", e);
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, "An internal error occurred: " + e.getMessage(), null)).build();

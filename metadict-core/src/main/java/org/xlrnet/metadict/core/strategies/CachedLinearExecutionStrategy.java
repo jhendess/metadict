@@ -57,9 +57,12 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
 
+    private final StorageService storageService;
+
     @Inject
-    @DefaultStorageService
-    StorageService storageService;
+    public CachedLinearExecutionStrategy(@DefaultStorageService StorageService storageService) {
+        this.storageService = storageService;
+    }
 
     Cache<AbstractQueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
             .newBuilder()

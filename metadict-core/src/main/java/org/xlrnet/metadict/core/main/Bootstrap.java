@@ -38,7 +38,7 @@ public class Bootstrap {
         WeldContainer container = weld.initialize();
 
         MetadictCore core = container.instance().select(MetadictCore.class).get();
-        final EngineRegistry engineRegistry = core.getEngineRegistry();
+        final EngineRegistryService engineRegistryService = core.getEngineRegistryService();
         /*for (String engineName : engineRegistry.getRegisteredEngineNames()) {
             System.out.println(engineName);
             System.out.println(engineRegistry.getEngineDescriptionByName(engineName));

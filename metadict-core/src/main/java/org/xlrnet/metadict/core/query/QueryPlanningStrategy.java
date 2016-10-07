@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.core.query;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.main.EngineRegistry;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 
 /**
  * The {@link QueryPlanningStrategy} interface is used to implement various strategies for selecting the engines that
@@ -35,16 +35,16 @@ import org.xlrnet.metadict.core.main.EngineRegistry;
 public interface QueryPlanningStrategy {
 
     /**
-     * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistry} should be used
-     * for accessing the available implementations of {@link org.xlrnet.metadict.api.engine.SearchEngine}.
+     * Calculate a query plan for the given {@link QueryRequest}. The provided {@link EngineRegistryService} should be
+     * used for accessing the available implementations of {@link org.xlrnet.metadict.api.engine.SearchEngine}.
      *
      * @param queryRequest
      *         The query request for which a query plan has to be calculated.
-     * @param engineRegistry
+     * @param engineRegistryService
      *         The registry where all available engines are registered.
      * @return an executable {@link QueryPlan}.
      */
     @NotNull
-    QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry);
+    QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistryService engineRegistryService);
 
 }

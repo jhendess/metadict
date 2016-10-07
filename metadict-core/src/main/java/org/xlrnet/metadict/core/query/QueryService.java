@@ -35,8 +35,7 @@ import org.xlrnet.metadict.api.query.SynonymEntry;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
 import org.xlrnet.metadict.core.aggregation.ResultGroup;
-import org.xlrnet.metadict.core.main.EngineRegistry;
-import org.xlrnet.metadict.core.main.MetadictCore;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 import org.xlrnet.metadict.core.strategies.DefaultExecutionStrategy;
 
 import javax.inject.Inject;
@@ -46,29 +45,50 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@link QueryManager} is used for managing and coordinating the execution of {@link QueryRequest} objects.
+ * The {@link QueryService} is used for managing and coordinating the execution of {@link QueryRequest} objects.
  */
-public class QueryManager {
+public class QueryService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryService.class);
+
+    /**
+     * The registry which contains all available engines.
+     */
+    private final EngineRegistryService engineRegistryService;
+
+    /**
+     * The default strategy which should be used for planning queries.
+     */
+    private final QueryPlanningStrategy queryPlanningStrategy;
+
+    /**
+     * The strategy which should be used for executing a query plan.
+     */
+    private final QueryPlanExecutionStrategy queryPlanExecutionStrategy;
 
     @Inject
-    private MetadictCore metadictCore;
-
-    @Inject
-    private EngineRegistry engineRegistry;
-
-    @Inject
-    private QueryPlanningStrategy queryPlanningStrategy;
-
-    @Inject
-    @DefaultExecutionStrategy
-    private QueryPlanExecutionStrategy queryPlanExecutionStrategy;
-
-    public QueryRequestBuilder createNewQueryRequestBuilder() {
-        return new QueryRequestBuilder(metadictCore);
+    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, @DefaultExecutionStrategy QueryPlanExecutionStrategy queryPlanExecutionStrategy) {
+        this.engineRegistryService = engineRegistryService;
+        this.queryPlanningStrategy = queryPlanningStrategy;
+        this.queryPlanExecutionStrategy = queryPlanExecutionStrategy;
     }
 
+    /**
+     * Returns a new instance of {@link QueryRequestBuilder} to build a new query.
+     *
+     * @return a new instance of {@link QueryRequestBuilder} to build a new query.
+     */
+    public QueryRequestBuilder createNewQueryRequestBuilder() {
+        return new QueryRequestBuilder();
+    }
+
+    /**
+     * Execute a given query request and return the collected result data.
+     *
+     * @param queryRequest
+     *         The request to execute.
+     * @return The resulting data.
+     */
     @NotNull
     public QueryResponse executeQuery(@NotNull QueryRequest queryRequest) {
         try {
@@ -79,22 +99,21 @@ public class QueryManager {
             // TODO: Return QueryResponse with error
             throw new RuntimeException(e);
         }
-        //return new QueryResponseBuilder().build();
     }
 
     @NotNull
     protected Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
-        LOGGER.debug("Executing query plan {} using executor {} ...", queryPlan, queryPlanExecutionStrategy.getClass().getSimpleName());
-        Iterable<QueryStepResult> queryStepResults = queryPlanExecutionStrategy.executeQueryPlan(queryPlan);
-        LOGGER.debug("Executed query plan {} using executor {}.", queryPlan, queryPlanExecutionStrategy.getClass().getSimpleName());
+        LOGGER.debug("Executing query plan {} using executor {} ...", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
+        Iterable<QueryStepResult> queryStepResults = this.queryPlanExecutionStrategy.executeQueryPlan(queryPlan);
+        LOGGER.debug("Executed query plan {} using executor {}.", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
         return queryStepResults;
     }
 
     @NotNull
     protected QueryPlan prepareQueryPlan(@NotNull QueryRequest queryRequest) {
-        LOGGER.debug("Calculating query plan using {} for request {} ...", queryPlanningStrategy.getClass().getSimpleName(), queryRequest);
-        QueryPlan queryPlan = queryPlanningStrategy.calculateQueryPlan(queryRequest, engineRegistry);
-        LOGGER.debug("Calculated query plan using {} for request {}: {}", queryPlanningStrategy.getClass().getSimpleName(), queryRequest, queryPlan);
+        LOGGER.debug("Calculating query plan using {} for request {} ...", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest);
+        QueryPlan queryPlan = this.queryPlanningStrategy.calculateQueryPlan(queryRequest, this.engineRegistryService);
+        LOGGER.debug("Calculated query plan using {} for request {}: {}", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest, queryPlan);
         return queryPlan;
     }
 
@@ -143,7 +162,7 @@ public class QueryManager {
     }
 
     @NotNull
-    protected QueryResponse internalExecuteQuery(@NotNull QueryRequest queryRequest) {
+    private QueryResponse internalExecuteQuery(@NotNull QueryRequest queryRequest) {
         QueryPerformanceStatistics performanceStatistics = new QueryPerformanceStatistics();
         validateQueryRequest(queryRequest);
 
@@ -178,17 +197,17 @@ public class QueryManager {
     }
 
     @NotNull
-    protected List<MonolingualEntry> collectMonolingualEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private List<MonolingualEntry> collectMonolingualEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectMonolingualEntries(engineQueryResults);
     }
 
     @NotNull
-    protected List<SynonymEntry> collectSynonymEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private List<SynonymEntry> collectSynonymEntries(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectSynonymEntries(engineQueryResults);
     }
 
     @NotNull
-    protected Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
+    private Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
         OrderType orderType = queryRequest.getQueryOrdering();
 
         LOGGER.debug("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());

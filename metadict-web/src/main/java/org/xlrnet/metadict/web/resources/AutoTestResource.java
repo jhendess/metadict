@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.main.MetadictCore;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
 
@@ -40,26 +40,31 @@ import javax.ws.rs.core.Response;
 /**
  * REST service for invoking the internal auto testing of search engines.
  * <p>
- * Currently the following modes are supported:
- * <ul>
- * <li>Run all tests: /api/autotest/all invokes all internally registered test suites and returns the test report from the
- * core component.</li>
- * </ul>
+ * Currently the following modes are supported: <ul> <li>Run all tests: /api/autotest/all invokes all internally
+ * registered test suites and returns the test report from the core component.</li> </ul>
  */
 @Path("/autotest")
-public class RestAutoTest {
+public class AutoTestResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestQuery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoTestResource.class);
+
+    /** The central engine registry. */
+    private EngineRegistryService engineRegistryService;
+
+    public AutoTestResource() {
+    }
 
     @Inject
-    MetadictCore metadictCore;
+    public AutoTestResource(EngineRegistryService engineRegistryService) {
+        this.engineRegistryService = engineRegistryService;
+    }
 
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response invokeAllAutoTests() {
         try {
-            return Response.ok(ResponseContainer.fromSuccessful(metadictCore.executeAllAutoTests())).build();
+            return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getAutoTestManager().runAllRegisteredAutoTests())).build();
         } catch (Exception e) {
             LOGGER.error("Executing all auto tests failed", e);
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();

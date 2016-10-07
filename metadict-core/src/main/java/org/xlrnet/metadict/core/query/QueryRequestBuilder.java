@@ -31,7 +31,6 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.main.MetadictCore;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,8 +43,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class QueryRequestBuilder {
 
-    private final MetadictCore metadictCore;
-
     private String queryString;
 
     private Set<BilingualDictionary> queryDictionaries = new HashSet<>();
@@ -57,10 +54,6 @@ public class QueryRequestBuilder {
     private Set<Language> queryLanguages = new HashSet<>();
 
     private boolean autoDeriveMonolingualLanguages = false;
-
-    protected QueryRequestBuilder(@NotNull MetadictCore metadictCore) {
-        this.metadictCore = metadictCore;
-    }
 
     /**
      * Adds a new {@link BilingualDictionary} to the current query.
@@ -91,14 +84,14 @@ public class QueryRequestBuilder {
     }
 
     public QueryRequest build() {
-        if (autoDeriveMonolingualLanguages) {
-            for (BilingualDictionary d : queryDictionaries) {
-                queryLanguages.add(d.getSource());
-                queryLanguages.add(d.getTarget());
+        if (this.autoDeriveMonolingualLanguages) {
+            for (BilingualDictionary d : this.queryDictionaries) {
+                this.queryLanguages.add(d.getSource());
+                this.queryLanguages.add(d.getTarget());
             }
         }
 
-        return new ImmutableQueryRequest(metadictCore, queryString, Lists.newArrayList(queryDictionaries), groupingType, orderType, Lists.newArrayList(queryLanguages));
+        return new ImmutableQueryRequest(this.queryString, Lists.newArrayList(this.queryDictionaries), this.groupingType, this.orderType, Lists.newArrayList(this.queryLanguages));
     }
 
     /**
@@ -108,8 +101,7 @@ public class QueryRequestBuilder {
      *
      * @param autoDeriveMonolingualLanguages
      *         If set to true, the builder will create automatically a new monolingual language entry for each added
-     *         bilingual
-     *         dictionary upon calling build().
+     *         bilingual dictionary upon calling build().
      * @return the current builder
      */
     public QueryRequestBuilder setAutoDeriveMonolingualLanguages(boolean autoDeriveMonolingualLanguages) {

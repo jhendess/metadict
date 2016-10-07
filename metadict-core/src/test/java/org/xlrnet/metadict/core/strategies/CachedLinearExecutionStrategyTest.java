@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.Language;
@@ -38,7 +37,7 @@ import org.xlrnet.metadict.core.query.AbstractQueryStep;
 import org.xlrnet.metadict.core.query.BilingualQueryStep;
 import org.xlrnet.metadict.core.query.QueryPlan;
 import org.xlrnet.metadict.core.query.QueryStepResult;
-import org.xlrnet.metadict.core.storage.StorageServiceFactory;
+import org.xlrnet.metadict.core.storage.InMemoryStorage;
 
 import java.util.Collection;
 
@@ -56,7 +55,6 @@ public class CachedLinearExecutionStrategyTest {
 
     private static final String QUERY_STRING = "queryString";
 
-    @Spy
     CachedLinearExecutionStrategy executionStrategy;
 
     @Mock
@@ -67,39 +65,39 @@ public class CachedLinearExecutionStrategyTest {
 
     @Before
     public void setup() {
-        executionStrategy.storageService = new StorageServiceFactory().createTemporaryStorageService();
+        this.executionStrategy = Mockito.spy(new CachedLinearExecutionStrategy(new InMemoryStorage()));
     }
 
     @Test
     public void testExecuteQueryPlan_successful() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
-        when(stepResultMock.isFailedStep()).thenReturn(false);
+        when(this.stepResultMock.isFailedStep()).thenReturn(false);
 
-        doReturn(stepResultMock).when(executionStrategy).executeQueryStep(any());
+        doReturn(this.stepResultMock).when(this.executionStrategy).executeQueryStep(any());
 
-        Collection<QueryStepResult> queryStepResults = executionStrategy.executeQueryPlan(queryPlan);
+        Collection<QueryStepResult> queryStepResults = this.executionStrategy.executeQueryPlan(queryPlan);
 
-        verify(executionStrategy).executeQueryPlan(queryPlan);
+        verify(this.executionStrategy).executeQueryPlan(queryPlan);
         assertEquals(queryStepResults.size(), 1);
-        assertEquals(stepResultMock, queryStepResults.iterator().next());
-        assertNotNull(executionStrategy.queryStepResultCache.getIfPresent(queryStep));
+        assertEquals(this.stepResultMock, queryStepResults.iterator().next());
+        assertNotNull(this.executionStrategy.queryStepResultCache.getIfPresent(queryStep));
     }
 
     @Test
     public void testExecuteQueryPlan_failedStep() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
-        when(stepResultMock.isFailedStep()).thenReturn(true);
+        when(this.stepResultMock.isFailedStep()).thenReturn(true);
 
-        doReturn(stepResultMock).when(executionStrategy).executeQueryStep(any());
+        doReturn(this.stepResultMock).when(this.executionStrategy).executeQueryStep(any());
 
-        Collection<QueryStepResult> queryStepResults = executionStrategy.executeQueryPlan(queryPlan);
+        Collection<QueryStepResult> queryStepResults = this.executionStrategy.executeQueryPlan(queryPlan);
 
-        verify(executionStrategy).executeQueryPlan(queryPlan);
+        verify(this.executionStrategy).executeQueryPlan(queryPlan);
         assertEquals(queryStepResults.size(), 1);
-        assertEquals(stepResultMock, queryStepResults.iterator().next());
-        assertNull(executionStrategy.queryStepResultCache.getIfPresent(queryStep));
+        assertEquals(this.stepResultMock, queryStepResults.iterator().next());
+        assertNull(this.executionStrategy.queryStepResultCache.getIfPresent(queryStep));
     }
 
     @Test
@@ -107,28 +105,28 @@ public class CachedLinearExecutionStrategyTest {
         AbstractQueryStep queryStep = getQueryStepMock();
         QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
 
-        doThrow(new RuntimeException("Exception")).when(executionStrategy).executeQueryStep(any());
+        doThrow(new RuntimeException("Exception")).when(this.executionStrategy).executeQueryStep(any());
 
-        Collection<QueryStepResult> queryStepResults = executionStrategy.executeQueryPlan(queryPlan);
+        Collection<QueryStepResult> queryStepResults = this.executionStrategy.executeQueryPlan(queryPlan);
 
-        verify(executionStrategy).executeQueryPlan(queryPlan);
+        verify(this.executionStrategy).executeQueryPlan(queryPlan);
         assertEquals(queryStepResults.size(), 1);
 
         QueryStepResult queryStepResult = queryStepResults.iterator().next();
 
         assertTrue(queryStepResult.isFailedStep());
         assertEquals("java.lang.RuntimeException: Exception", queryStepResult.getErrorMessage());
-        assertNull(executionStrategy.queryStepResultCache.getIfPresent(queryStep));
+        assertNull(this.executionStrategy.queryStepResultCache.getIfPresent(queryStep));
     }
 
     @Test
     public void testExecuteQueryStep_returnsNull() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
-        when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(null);
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(null);
 
-        QueryStepResult queryStepResult = executionStrategy.executeQueryStep(queryStep);
+        QueryStepResult queryStepResult = this.executionStrategy.executeQueryStep(queryStep);
 
-        verify(engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
+        verify(this.engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
 
         assertTrue(queryStepResult.isFailedStep());
         assertNotNull(queryStepResult.getErrorMessage());
@@ -141,11 +139,11 @@ public class CachedLinearExecutionStrategyTest {
         AbstractQueryStep queryStep = getQueryStepMock();
         BilingualQueryResult resultMock = Mockito.mock(BilingualQueryResult.class);
 
-        when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(resultMock);
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(resultMock);
 
-        QueryStepResult queryStepResult = executionStrategy.executeQueryStep(queryStep);
+        QueryStepResult queryStepResult = this.executionStrategy.executeQueryStep(queryStep);
 
-        verify(engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
+        verify(this.engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
 
         assertFalse(queryStepResult.isFailedStep());
         assertNull(queryStepResult.getErrorMessage());
@@ -156,11 +154,11 @@ public class CachedLinearExecutionStrategyTest {
     @Test
     public void testExecuteQueryStep_throwsException() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
-        when(engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenThrow(new Exception("Exception"));
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenThrow(new Exception("Exception"));
 
-        QueryStepResult queryStepResult = executionStrategy.executeQueryStep(queryStep);
+        QueryStepResult queryStepResult = this.executionStrategy.executeQueryStep(queryStep);
 
-        verify(engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
+        verify(this.engineMock).executeBilingualQuery(eq(QUERY_STRING), eq(Language.ENGLISH), eq(Language.GERMAN), eq(true));
 
         assertTrue(queryStepResult.isFailedStep());
         assertEquals("Exception", queryStepResult.getErrorMessage());
@@ -174,7 +172,7 @@ public class CachedLinearExecutionStrategyTest {
                 .setInputLanguage(Language.ENGLISH)
                 .setOutputLanguage(Language.GERMAN)
                 .setQueryString(QUERY_STRING)
-                .setSearchEngine(engineMock)
+                .setSearchEngine(this.engineMock)
                 .setSearchEngineName("mockedEngine");
     }
 }

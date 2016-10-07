@@ -36,7 +36,7 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.util.SimilarityUtils;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Core component for running and registering {@link org.xlrnet.metadict.api.engine.AutoTestSuite} objects.
  */
-@ApplicationScoped
+@Dependent
 public class AutoTestManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoTestManager.class);
@@ -67,13 +67,13 @@ public class AutoTestManager {
      *         Will be thrown if the given test suite contains illegal values.
      */
     public void registerAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestSuite autoTestSuite) throws IllegalArgumentException {
-        checkArgument(!engineAutoTestSuiteMap.containsKey(searchEngine), "Engine is already registered for auto testing");
+        checkArgument(!this.engineAutoTestSuiteMap.containsKey(searchEngine), "Engine is already registered for auto testing");
 
         for (AutoTestCase testCase : autoTestSuite) {
             validateTestCase(testCase);
         }
 
-        engineAutoTestSuiteMap.put(searchEngine, autoTestSuite);
+        this.engineAutoTestSuiteMap.put(searchEngine, autoTestSuite);
     }
 
     /**
@@ -83,7 +83,7 @@ public class AutoTestManager {
      */
     public AutoTestReport runAllRegisteredAutoTests() {
         AutoTestReportBuilder reportBuilder = new AutoTestReportBuilder();
-        engineAutoTestSuiteMap.keySet().forEach(searchEngine -> runAutoTestsForEngine(searchEngine, reportBuilder));
+        this.engineAutoTestSuiteMap.keySet().forEach(searchEngine -> runAutoTestsForEngine(searchEngine, reportBuilder));
         return reportBuilder.build();
     }
 
@@ -111,12 +111,12 @@ public class AutoTestManager {
      */
     @NotNull
     public AutoTestReportBuilder runAutoTestsForEngine(@NotNull SearchEngine searchEngine, @NotNull AutoTestReportBuilder reportBuilder) {
-        if (!engineAutoTestSuiteMap.containsKey(searchEngine)) {
+        if (!this.engineAutoTestSuiteMap.containsKey(searchEngine)) {
             LOGGER.warn("No registered auto tests found for engine {}", searchEngine.getClass().getCanonicalName());
             return reportBuilder;
         }
 
-        AutoTestSuite engineTestSuite = engineAutoTestSuiteMap.get(searchEngine);
+        AutoTestSuite engineTestSuite = this.engineAutoTestSuiteMap.get(searchEngine);
         internalRunAutoTestSuite(searchEngine, reportBuilder, engineTestSuite);
 
         return reportBuilder;

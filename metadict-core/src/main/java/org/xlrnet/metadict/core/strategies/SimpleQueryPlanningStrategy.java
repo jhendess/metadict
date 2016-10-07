@@ -26,7 +26,7 @@ package org.xlrnet.metadict.core.strategies;
 
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.core.main.EngineRegistry;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 import org.xlrnet.metadict.core.query.*;
 
 import javax.enterprise.inject.Default;
@@ -41,11 +41,11 @@ public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
 
     @NotNull
     @Override
-    public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistry engineRegistry) {
+    public QueryPlan calculateQueryPlan(@NotNull QueryRequest queryRequest, @NotNull EngineRegistryService engineRegistryService) {
         QueryPlan queryPlan = new QueryPlan();
 
         queryRequest.getBilingualDictionaries().forEach((d) ->
-                engineRegistry.getSearchEngineNamesByDictionary(d).forEach(
+                engineRegistryService.getSearchEngineNamesByDictionary(d).forEach(
                         (s) -> queryPlan.addQueryStep(
                                 new BilingualQueryStep()
                                         .setInputLanguage(d.getSource())
@@ -53,17 +53,17 @@ public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
                                         .setOutputLanguage(d.getTarget())
                                         .setQueryString(queryRequest.getQueryString())
                                         .setSearchEngineName(s)
-                                        .setSearchEngine(engineRegistry.getEngineByName(s))
+                                        .setSearchEngine(engineRegistryService.getEngineByName(s))
                         )));
 
         queryRequest.getMonolingualLanguages()
-                .forEach((l) -> engineRegistry.getSearchEngineNamesByLanguage(l)
+                .forEach((l) -> engineRegistryService.getSearchEngineNamesByLanguage(l)
                         .forEach((s) -> queryPlan.addQueryStep(
                                 new MonolingualQueryStep()
                                         .setRequestLanguage(l)
                                         .setQueryString(queryRequest.getQueryString())
                                         .setSearchEngineName(s)
-                                        .setSearchEngine(engineRegistry.getEngineByName(s))
+                                        .setSearchEngine(engineRegistryService.getEngineByName(s))
                         )));
 
         return queryPlan;

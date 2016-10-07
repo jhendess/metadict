@@ -102,7 +102,7 @@ public class MapdbStorageEngineFactory {
     }
 
 
-    enum OperationMode {
+    private enum OperationMode {
 
         TEMPORARY,
 

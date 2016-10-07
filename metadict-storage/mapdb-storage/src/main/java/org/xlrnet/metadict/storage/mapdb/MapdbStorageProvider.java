@@ -41,8 +41,12 @@ public class MapdbStorageProvider implements StorageServiceProvider {
      */
     private static final int COMMIT_INTERVAL_SECONDS = 300;
 
+    private final MapdbStorageEngineFactory engineFactory;
+
     @Inject
-    MapdbStorageEngineFactory engineFactory;
+    public MapdbStorageProvider(MapdbStorageEngineFactory engineFactory) {
+        this.engineFactory = engineFactory;
+    }
 
     /**
      * Return the identifier of the supplied backend. An identifier may contain only lower- and uppercase letters,
@@ -93,7 +97,7 @@ public class MapdbStorageProvider implements StorageServiceProvider {
      */
     @Override
     public StorageService createNewStorageService(Map<String, String> configuration) {
-        return engineFactory.fromConfiguration(configuration);
+        return this.engineFactory.fromConfiguration(configuration);
     }
 
 }

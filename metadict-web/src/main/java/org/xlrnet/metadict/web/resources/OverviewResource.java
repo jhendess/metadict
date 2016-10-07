@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.resources;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.core.ResourceInvoker;
@@ -43,10 +43,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Endpoint which returns an overview of all currently supported REST endpoints.
+ * Endpoint which returns an overview of all currently supported REST endpoints (Resteasy-specifc implementation).
  */
 @Path("/")
-public class RestOverview {
+public class OverviewResource {
 
     @GET
     @Path("/")

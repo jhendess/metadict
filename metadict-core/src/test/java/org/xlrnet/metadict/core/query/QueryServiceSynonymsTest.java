@@ -25,6 +25,8 @@
 package org.xlrnet.metadict.core.query;
 
 import com.google.common.collect.Lists;
+import org.jglue.cdiunit.ActivatedAlternatives;
+import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.junit.Test;
@@ -33,6 +35,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.core.autotest.AutoTestManager;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 import org.xlrnet.metadict.core.main.MetadictCore;
 import org.xlrnet.metadict.core.strategies.DefaultExecutionStrategy;
 
@@ -46,7 +50,9 @@ import static org.junit.Assert.assertTrue;
  * Test for merging of synonyms.
  */
 @RunWith(CdiRunner.class)
-public class QueryManagerSynonymsTest {
+@ActivatedAlternatives(NullQueryPlanningStrategy.class)
+@AdditionalClasses({EngineRegistryService.class, AutoTestManager.class})
+public class QueryServiceSynonymsTest {
 
     final SynonymGroup synonymGroup1 = ImmutableSynonymGroup.builder()
             .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "BASE_MEANING_1"))
@@ -61,13 +67,13 @@ public class QueryManagerSynonymsTest {
 
     final SynonymEntry synonymEntry1 = ImmutableSynonymEntry.builder()
             .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "TEST_WORD_1"))
-            .addSynonymGroup(synonymGroup1)
+            .addSynonymGroup(this.synonymGroup1)
             .build();
 
     final QueryStepResult stepResult1 = new QueryStepResultBuilder()
             .setEngineQueryResult(
                     ImmutableBilingualQueryResult.builder()
-                            .addSynonymEntry(synonymEntry1)
+                            .addSynonymEntry(this.synonymEntry1)
                             .build()
             )
             .setQueryStep(new BilingualQueryStep())
@@ -75,13 +81,13 @@ public class QueryManagerSynonymsTest {
 
     final SynonymEntry synonymEntry2 = ImmutableSynonymEntry.builder()
             .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "TEST_WORD_2"))
-            .addSynonymGroup(synonymGroup2)
+            .addSynonymGroup(this.synonymGroup2)
             .build();
 
     final QueryStepResult stepResult2 = new QueryStepResultBuilder()
             .setEngineQueryResult(
                     ImmutableBilingualQueryResult.builder()
-                            .addSynonymEntry(synonymEntry2)
+                            .addSynonymEntry(this.synonymEntry2)
                             .build()
             )
             .setQueryStep(new BilingualQueryStep())
@@ -92,31 +98,25 @@ public class QueryManagerSynonymsTest {
     MetadictCore coreMock = Mockito.mock(MetadictCore.class);
 
     @Inject
-    private QueryManager queryManager;
+    private QueryService queryService;
 
     @Produces
     @ProducesAlternative
     @DefaultExecutionStrategy
     public QueryPlanExecutionStrategy produceQueryPlanExecutionStrategyMock() {
-        Collection<QueryStepResult> resultMock = Lists.newArrayList(stepResult1, stepResult2);
+        Collection<QueryStepResult> resultMock = Lists.newArrayList(this.stepResult1, this.stepResult2);
         return new QueryPlanExecutionStrategyMock(resultMock);
-    }
-
-    @Produces
-    @ProducesAlternative
-    public QueryPlanningStrategy produceQueryPlanningStrategyMock() {
-        return new NullQueryPlanningStrategy();
     }
 
     @Test
     public void testExecuteQuery() throws Exception {
-        QueryRequest request = new QueryRequestBuilder(coreMock).setQueryString("TEST").build();
-        QueryResponse queryResponse = queryManager.executeQuery(request);
+        QueryRequest request = new QueryRequestBuilder().setQueryString("TEST").build();
+        QueryResponse queryResponse = this.queryService.executeQuery(request);
 
         Collection<SynonymEntry> synonymEntries = queryResponse.getSynonymEntries();
 
-        assertTrue("First synonym is missing", synonymEntries.contains(synonymEntry1));
-        assertTrue("Second synonym is missing", synonymEntries.contains(synonymEntry2));
+        assertTrue("First synonym is missing", synonymEntries.contains(this.synonymEntry1));
+        assertTrue("Second synonym is missing", synonymEntries.contains(this.synonymEntry2));
     }
 
 }

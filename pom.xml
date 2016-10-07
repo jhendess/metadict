@@ -148,7 +148,7 @@
             <dependency>
                 <groupId>org.jglue.cdi-unit</groupId>
                 <artifactId>cdi-unit</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
                 <scope>test</scope>
             </dependency>
             <!-- Weld dependencies -->

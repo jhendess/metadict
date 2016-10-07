@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
-import org.xlrnet.metadict.core.main.EngineRegistry;
+import org.xlrnet.metadict.core.main.EngineRegistryService;
 
 /**
  * The {@link AutoTestResult} provides information about the test result of a single {@link
@@ -120,7 +120,7 @@ public class AutoTestResult {
     /**
      * Returns the canonical class name of the tested search engine. A canonical includes always the full package name
      * and the name of the class. This name must be the same under which the engine was registered in the {@link
-     * EngineRegistry} during startup.
+     * EngineRegistryService} during startup.
      * <p>
      * Example:
      * A class DummyEngine in package com.example.metadict should have the canonical name

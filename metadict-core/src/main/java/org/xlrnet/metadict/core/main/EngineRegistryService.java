@@ -53,9 +53,9 @@ import static com.google.common.base.Preconditions.checkState;
  * same time.
  */
 @ApplicationScoped
-public class EngineRegistry {
+public class EngineRegistryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EngineRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(EngineRegistryService.class);
 
     Multimap<BilingualDictionary, String> dictionaryEngineNameMap = ArrayListMultimap.create();
 
@@ -69,12 +69,20 @@ public class EngineRegistry {
 
     List<BilingualDictionary> supportedDictionaryList;
 
-    @Inject
+    /** List of available search providers. */
     private Instance<SearchEngineProvider> searchProviderInstances;
 
-    @Inject
+    /** The auto test manager. */
     private AutoTestManager autoTestManager;
 
+    public EngineRegistryService() {
+    }
+
+    @Inject
+    public EngineRegistryService(Instance<SearchEngineProvider> searchProviderInstances, AutoTestManager autoTestManager) {
+        this.searchProviderInstances = searchProviderInstances;
+        this.autoTestManager = autoTestManager;
+    }
 
     /**
      * Returns the amount of currently registered search engines. Search engines are provided by implementations of
@@ -83,7 +91,7 @@ public class EngineRegistry {
      * @return the amount of currently registered search engines.
      */
     public int countRegisteredEngines() {
-        return searchEngineMap.size();
+        return this.searchEngineMap.size();
     }
 
     /**
@@ -99,10 +107,10 @@ public class EngineRegistry {
      */
     @NotNull
     public SearchEngine getEngineByName(String engineName) throws UnknownSearchEngineException {
-        if (!searchEngineMap.containsKey(engineName)) {
+        if (!this.searchEngineMap.containsKey(engineName)) {
             throw new UnknownSearchEngineException(engineName);
         }
-        return searchEngineMap.get(engineName);
+        return this.searchEngineMap.get(engineName);
     }
 
     /**
@@ -118,10 +126,10 @@ public class EngineRegistry {
      */
     @NotNull
     public EngineDescription getEngineDescriptionByName(String engineName) {
-        if (!engineDescriptionMap.containsKey(engineName)) {
+        if (!this.engineDescriptionMap.containsKey(engineName)) {
             throw new UnknownSearchEngineException(engineName);
         }
-        return engineDescriptionMap.get(engineName);
+        return this.engineDescriptionMap.get(engineName);
     }
 
     /**
@@ -137,10 +145,10 @@ public class EngineRegistry {
      */
     @NotNull
     public FeatureSet getFeatureSetByName(String engineName) {
-        if (!featureSetMap.containsKey(engineName)) {
+        if (!this.featureSetMap.containsKey(engineName)) {
             throw new UnknownSearchEngineException(engineName);
         }
-        return featureSetMap.get(engineName);
+        return this.featureSetMap.get(engineName);
     }
 
     /**
@@ -151,7 +159,7 @@ public class EngineRegistry {
      */
     @NotNull
     public Set<String> getRegisteredEngineNames() {
-        return Collections.unmodifiableSet(searchEngineMap.keySet());
+        return Collections.unmodifiableSet(this.searchEngineMap.keySet());
     }
 
     /**
@@ -163,7 +171,7 @@ public class EngineRegistry {
      */
     @NotNull
     public Collection<String> getSearchEngineNamesByDictionary(@NotNull BilingualDictionary dictionary) {
-        return Collections.unmodifiableCollection(dictionaryEngineNameMap.get(dictionary));
+        return Collections.unmodifiableCollection(this.dictionaryEngineNameMap.get(dictionary));
     }
 
     /**
@@ -175,7 +183,7 @@ public class EngineRegistry {
      */
     @NotNull
     public Collection<String> getSearchEngineNamesByLanguage(@NotNull Language language) {
-        return Collections.unmodifiableCollection(languageEngineNameMap.get(language));
+        return Collections.unmodifiableCollection(this.languageEngineNameMap.get(language));
     }
 
     /**
@@ -191,7 +199,7 @@ public class EngineRegistry {
      */
     @NotNull
     public Collection<BilingualDictionary> getSupportedDictionaries() {
-        return Collections.unmodifiableCollection(supportedDictionaryList);
+        return Collections.unmodifiableCollection(this.supportedDictionaryList);
     }
 
     /**
@@ -199,16 +207,17 @@ public class EngineRegistry {
      *
      * @return the internal {@link AutoTestManager} instance.
      */
-    AutoTestManager getAutoTestManager() {
-        return autoTestManager;
+    @NotNull
+    public AutoTestManager getAutoTestManager() {
+        return this.autoTestManager;
     }
 
     @PostConstruct
-    void initialize() {
+    public void initialize() {
         logger.info("Registering search providers...");
         int failedProviders = 0;
 
-        for (SearchEngineProvider searchEngineProvider : searchProviderInstances) {
+        for (SearchEngineProvider searchEngineProvider : this.searchProviderInstances) {
 
             try {
                 registerSearchProvider(searchEngineProvider);
@@ -222,14 +231,14 @@ public class EngineRegistry {
             logger.warn("Registration failed on {} {}", failedProviders, failedProviders > 1 ? "providers" : "provider");
         }
 
-        supportedDictionaryList = Lists.newArrayList(dictionaryEngineNameMap.keySet());
-        BilingualDictionaryUtils.sortDictionaryListAlphabetically(supportedDictionaryList);
+        this.supportedDictionaryList = Lists.newArrayList(this.dictionaryEngineNameMap.keySet());
+        BilingualDictionaryUtils.sortDictionaryListAlphabetically(this.supportedDictionaryList);
     }
 
     /**
-     * Register the given {@link SearchEngineProvider} in the internal registry. The registration may fail, if any of the
-     * mandatory methods of the {@link SearchEngineProvider} return null or a provider with the same class name is already
-     * registered.
+     * Register the given {@link SearchEngineProvider} in the internal registry. The registration may fail, if any of
+     * the mandatory methods of the {@link SearchEngineProvider} return null or a provider with the same class name is
+     * already registered.
      *
      * @param searchEngineProvider
      *         The {@link SearchEngineProvider} that should be registered.
@@ -239,7 +248,7 @@ public class EngineRegistry {
     void registerSearchProvider(@NotNull SearchEngineProvider searchEngineProvider) throws Exception {
         String canonicalProviderName = searchEngineProvider.getClass().getCanonicalName();
 
-        checkState(!searchEngineMap.containsKey(canonicalProviderName), "Provider %s is already registered", canonicalProviderName);
+        checkState(!this.searchEngineMap.containsKey(canonicalProviderName), "Provider %s is already registered", canonicalProviderName);
 
         EngineDescription engineDescription = searchEngineProvider.getEngineDescription();
         FeatureSet featureSet = searchEngineProvider.getFeatureSet();
@@ -252,9 +261,9 @@ public class EngineRegistry {
 
         String canonicalEngineName = searchEngine.getClass().getCanonicalName();
 
-        engineDescriptionMap.put(canonicalEngineName, engineDescription);
-        featureSetMap.put(canonicalEngineName, featureSet);
-        searchEngineMap.put(canonicalEngineName, searchEngine);
+        this.engineDescriptionMap.put(canonicalEngineName, engineDescription);
+        this.featureSetMap.put(canonicalEngineName, featureSet);
+        this.searchEngineMap.put(canonicalEngineName, searchEngine);
         registerDictionariesFromFeatureSet(canonicalEngineName, featureSet);
 
         logger.info("Registered engine {} from provider {}", canonicalEngineName, canonicalProviderName);
@@ -266,7 +275,7 @@ public class EngineRegistry {
             if (testSuite == null)
                 logger.warn("Provider {} provides no auto test suite", searchEngineProvider.getClass().getCanonicalName());
             else
-                autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
+                this.autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
         } catch (Exception e) {
             logger.error("Initializing auto test suite from provider {} failed", searchEngineProvider.getClass().getCanonicalName(), e);
         }
@@ -277,28 +286,28 @@ public class EngineRegistry {
             registerDictionary(canonicalEngineName, dictionary);
         }
         for (Language language : featureSet.getSupportedLexicographicLanguages()) {
-            languageEngineNameMap.put(language, canonicalEngineName);
+            this.languageEngineNameMap.put(language, canonicalEngineName);
         }
     }
 
     private void registerDictionary(@NotNull String canonicalEngineName, @NotNull BilingualDictionary dictionary) {
-        if (!dictionaryEngineNameMap.containsEntry(dictionary, canonicalEngineName)) {
-            dictionaryEngineNameMap.put(dictionary, canonicalEngineName);
+        if (!this.dictionaryEngineNameMap.containsEntry(dictionary, canonicalEngineName)) {
+            this.dictionaryEngineNameMap.put(dictionary, canonicalEngineName);
         }
         if (dictionary.isBidirectional()) {
             // Register inverted bidirectional dictionary
             BilingualDictionary inverseBidirectional = BilingualDictionary.inverse(dictionary);
-            if (!dictionaryEngineNameMap.containsEntry(inverseBidirectional, canonicalEngineName)) {
-                dictionaryEngineNameMap.put(inverseBidirectional, canonicalEngineName);
+            if (!this.dictionaryEngineNameMap.containsEntry(inverseBidirectional, canonicalEngineName)) {
+                this.dictionaryEngineNameMap.put(inverseBidirectional, canonicalEngineName);
             }
             // Register as non-bidirectional to improve lookup speeds
             BilingualDictionary simpleDictionary = BilingualDictionary.fromLanguages(dictionary.getSource(), dictionary.getTarget(), false);
-            if (!dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
-                dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
+            if (!this.dictionaryEngineNameMap.containsEntry(simpleDictionary, canonicalEngineName)) {
+                this.dictionaryEngineNameMap.put(simpleDictionary, canonicalEngineName);
             }
             BilingualDictionary inverseSimpleDictionary = BilingualDictionary.inverse(simpleDictionary);
-            if (!dictionaryEngineNameMap.containsEntry(inverseSimpleDictionary, canonicalEngineName)) {
-                dictionaryEngineNameMap.put(inverseSimpleDictionary, canonicalEngineName);
+            if (!this.dictionaryEngineNameMap.containsEntry(inverseSimpleDictionary, canonicalEngineName)) {
+                this.dictionaryEngineNameMap.put(inverseSimpleDictionary, canonicalEngineName);
             }
         }
     }

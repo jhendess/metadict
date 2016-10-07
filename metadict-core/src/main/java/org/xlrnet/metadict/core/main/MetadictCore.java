@@ -30,14 +30,13 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.EngineDescription;
 import org.xlrnet.metadict.api.engine.FeatureSet;
 import org.xlrnet.metadict.core.autotest.AutoTestReport;
-import org.xlrnet.metadict.core.query.QueryManager;
 import org.xlrnet.metadict.core.query.QueryRequest;
 import org.xlrnet.metadict.core.query.QueryRequestBuilder;
 import org.xlrnet.metadict.core.query.QueryResponse;
+import org.xlrnet.metadict.core.query.QueryService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
@@ -47,16 +46,25 @@ import javax.inject.Inject;
  * Since this object is {@link javax.enterprise.context.ApplicationScoped}, only one instance will be running at the
  * same time.
  */
-@ApplicationScoped
 public class MetadictCore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MetadictCore.class);
 
-    @Inject
-    private EngineRegistry engineRegistry;
+    /**
+     * The registry which contains all available engines.
+     */
+    private final EngineRegistryService engineRegistryService;
+
+    /**
+     * Manager for issuing new queries.
+     */
+    private final QueryService queryService;
 
     @Inject
-    private QueryManager queryManager;
+    public MetadictCore(EngineRegistryService engineRegistryService, QueryService queryService) {
+        this.engineRegistryService = engineRegistryService;
+        this.queryService = queryService;
+    }
 
     /**
      * Creates a new builder for creating {@link QueryRequest} objects. Use this method to prepare your queries.
@@ -65,7 +73,7 @@ public class MetadictCore {
      */
     @NotNull
     public QueryRequestBuilder createNewQueryRequestBuilder() {
-        return queryManager.createNewQueryRequestBuilder();
+        return this.queryService.createNewQueryRequestBuilder();
     }
 
     /**
@@ -75,16 +83,16 @@ public class MetadictCore {
      */
     @NotNull
     public AutoTestReport executeAllAutoTests() {
-        return engineRegistry.getAutoTestManager().runAllRegisteredAutoTests();
+        return this.engineRegistryService.getAutoTestManager().runAllRegisteredAutoTests();
     }
 
     @NotNull
     public QueryResponse executeRequest(QueryRequest queryRequest) {
-        return queryManager.executeQuery(queryRequest);
+        return this.queryService.executeQuery(queryRequest);
     }
 
     /**
-     * Return a reference to the internal {@link EngineRegistry} of this instance. You can use it for viewing the
+     * Return a reference to the internal {@link EngineRegistryService} of this instance. You can use it for viewing the
      * currently registered engines and their implemented {@link FeatureSet} and
      * {@link
      * EngineDescription}.
@@ -93,8 +101,8 @@ public class MetadictCore {
      *
      * @return a reference to the internal engine registry.
      */
-    public EngineRegistry getEngineRegistry() {
-        return engineRegistry;
+    public EngineRegistryService getEngineRegistryService() {
+        return this.engineRegistryService;
     }
 
     /**
@@ -109,7 +117,7 @@ public class MetadictCore {
     @PostConstruct
     private void initialize() {
         SystemStatus.initialize();
-        LOGGER.info("Metadict Core booted with {} search engines.", engineRegistry.countRegisteredEngines());
+        LOGGER.info("Metadict Core booted with {} search engines.", this.engineRegistryService.countRegisteredEngines());
     }
 
     @PreDestroy

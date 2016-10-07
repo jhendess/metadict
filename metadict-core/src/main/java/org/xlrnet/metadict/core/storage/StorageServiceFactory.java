@@ -63,25 +63,36 @@ public class StorageServiceFactory {
 
     private static final String STORAGE_CONFIG_FILE = "storage.properties";
 
+    /** Name of the default storage. */
     private String defaultStorageServiceName;
 
+    /** The default storage service that will be injected. */
     private StorageEngineProxy defaultStorageService;
 
+    /** Map with all available storage service providers. */
     private Map<String, StorageServiceProvider> storageServiceMap = new HashMap<>();
 
+    /** Configuration for the default storage engine. */
     private Map<String, String> defaultStorageConfigMap = new HashMap<>();
 
+    /** Map with descriptions for all storage engines. */
     private Map<String, StorageDescription> storageDescriptionMap = new HashMap<>();
 
+    /** List of instantiated storage engines. */
     private List<StorageEngineProxy> instantiatedStorageEngines = new ArrayList<>();
 
+    /** List of available storage service providers. */
+    private final Instance<StorageServiceProvider> storageServiceProviders;
+
     @Inject
-    private Instance<StorageServiceProvider> storageServiceProviders;
+    public StorageServiceFactory(Instance<StorageServiceProvider> storageServiceProviders) {
+        this.storageServiceProviders = storageServiceProviders;
+    }
 
     @PostConstruct
     public void initialize() {
         LOGGER.info("Registering storage service providers ...");
-        for (StorageServiceProvider storageServiceProvider : storageServiceProviders) {
+        for (StorageServiceProvider storageServiceProvider : this.storageServiceProviders) {
             try {
                 registerStorageService(storageServiceProvider);
             } catch (Exception e) {
@@ -94,11 +105,11 @@ public class StorageServiceFactory {
 
     @PreDestroy
     public void shutdown() {
-        LOGGER.info("Shutting down {} storage engine instances ...", instantiatedStorageEngines.size());
+        LOGGER.info("Shutting down {} storage engine instances ...", this.instantiatedStorageEngines.size());
 
         int successfulShutdowns = 0;
 
-        for (StorageEngineProxy storageEngine : instantiatedStorageEngines) {
+        for (StorageEngineProxy storageEngine : this.instantiatedStorageEngines) {
             try {
                 if (!storageEngine.isShutdown())
                     storageEngine.shutdown();
@@ -108,7 +119,7 @@ public class StorageServiceFactory {
             }
         }
 
-        if (successfulShutdowns != instantiatedStorageEngines.size())
+        if (successfulShutdowns != this.instantiatedStorageEngines.size())
             LOGGER.warn("Some storage engine instances failed to stop");
         else
             LOGGER.info("All storage engine instances have been shut down");
@@ -129,10 +140,10 @@ public class StorageServiceFactory {
     @Produces
     @DefaultStorageService
     public StorageService getDefaultStorageServiceInstance() {
-        if (defaultStorageService == null)
-            defaultStorageService = createNewDefaultStorageService();
-        defaultStorageService.notifyListeners(StorageEventType.ON_INJECT);
-        return defaultStorageService;
+        if (this.defaultStorageService == null)
+            this.defaultStorageService = createNewDefaultStorageService();
+        this.defaultStorageService.notifyListeners(StorageEventType.ON_INJECT);
+        return this.defaultStorageService;
     }
 
     /**
@@ -148,15 +159,15 @@ public class StorageServiceFactory {
     }
 
     private void validateStorageProviders() {
-        if (storageServiceMap.size() == 0) {
+        if (this.storageServiceMap.size() == 0) {
             LOGGER.error("No storage service provider could be found - make sure that at least one working provider is available on classpath and try again");
             throw new StorageInitializationError("No storage service provider could be found");
         }
 
-        defaultStorageServiceName = CommonUtils.getProperty(STORAGE_CONFIG_FILE, "storage.default");
+        this.defaultStorageServiceName = CommonUtils.getProperty(STORAGE_CONFIG_FILE, "storage.default");
 
-        if (!storageServiceMap.containsKey(defaultStorageServiceName)) {
-            LOGGER.error("Default storage service provider '{}' could not be found", defaultStorageServiceName);
+        if (!this.storageServiceMap.containsKey(this.defaultStorageServiceName)) {
+            LOGGER.error("Default storage service provider '{}' could not be found", this.defaultStorageServiceName);
             throw new Error("Default storage service provider could not be found");
         }
     }
@@ -165,10 +176,10 @@ public class StorageServiceFactory {
         Map<String, String> properties = CommonUtils.getProperties(STORAGE_CONFIG_FILE);
 
         for (String key : properties.keySet()) {
-            if (StringUtils.startsWith(key, "storage." + defaultStorageServiceName + ".")) {
-                String configKey = StringUtils.removeStart(key, "storage." + defaultStorageServiceName + ".");
+            if (StringUtils.startsWith(key, "storage." + this.defaultStorageServiceName + ".")) {
+                String configKey = StringUtils.removeStart(key, "storage." + this.defaultStorageServiceName + ".");
                 String configValue = properties.get(key);
-                defaultStorageConfigMap.put(configKey, configValue);
+                this.defaultStorageConfigMap.put(configKey, configValue);
                 LOGGER.debug("Detected configuration key '{}' with value '{}'", configKey, configValue);
             }
         }
@@ -180,16 +191,16 @@ public class StorageServiceFactory {
             throw new MetadictRuntimeException("Illegal storage provider identifier: " + identifier);
         }
 
-        if (storageServiceMap.containsKey(identifier)) {
+        if (this.storageServiceMap.containsKey(identifier)) {
             LOGGER.error("Duplicated storage service identifier '{}' encountered - check provider classes '{}' and '{}'",
-                    identifier, storageServiceProvider.getClass().getCanonicalName(), storageServiceMap.get(identifier).getClass().getCanonicalName());
+                    identifier, storageServiceProvider.getClass().getCanonicalName(), this.storageServiceMap.get(identifier).getClass().getCanonicalName());
         }
 
         StorageDescription storageDescription = storageServiceProvider.getStorageDescription();
         checkNotNull(storageDescription, "Storage description may not be null");
 
-        storageServiceMap.put(identifier, storageServiceProvider);
-        storageDescriptionMap.put(identifier, storageDescription);
+        this.storageServiceMap.put(identifier, storageServiceProvider);
+        this.storageDescriptionMap.put(identifier, storageDescription);
 
         LOGGER.info("Registered storage provider service '{}'", identifier);
     }
@@ -202,9 +213,9 @@ public class StorageServiceFactory {
      */
     @NotNull
     private StorageEngineProxy createNewDefaultStorageService() {
-        LOGGER.info("Creating new default storage service for '{}' ...", defaultStorageServiceName);
-        StorageServiceProvider provider = storageServiceMap.get(defaultStorageServiceName);
-        StorageEngineProxy storageService = internalInstantiateStorageService(provider, defaultStorageConfigMap);
+        LOGGER.info("Creating new default storage service for '{}' ...", this.defaultStorageServiceName);
+        StorageServiceProvider provider = this.storageServiceMap.get(this.defaultStorageServiceName);
+        StorageEngineProxy storageService = internalInstantiateStorageService(provider, this.defaultStorageConfigMap);
         LOGGER.info("Created new default storage service");
         return storageService;
     }
@@ -238,7 +249,7 @@ public class StorageServiceFactory {
         StorageService newStorageService = provider.createNewStorageService(storageConfigurationMap);
         checkNotNull(newStorageService, "Instantiated storage engine may not be null");
 
-        StorageDescription storageDescription = storageDescriptionMap.get(provider.getStorageBackendIdentifier());
+        StorageDescription storageDescription = this.storageDescriptionMap.get(provider.getStorageBackendIdentifier());
         List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners = storageDescription.getListeners();
         return new StorageEngineProxy(newStorageService, listeners);
     }

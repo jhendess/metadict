@@ -30,7 +30,6 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.aggregation.GroupingType;
 import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.main.MetadictCore;
 
 import java.util.List;
 
@@ -39,18 +38,16 @@ import java.util.List;
  */
 public class ImmutableQueryRequest implements QueryRequest {
 
-    private final MetadictCore metadictCore;
-
     private final String queryString;
 
     @Override
     public String toString() {
         return "QueryRequestImpl{" +
-                "queryString='" + queryString + '\'' +
-                ", queryDictionaries=" + queryDictionaries +
-                ", groupingType=" + groupingType +
-                ", orderType=" + orderType +
-                ", monolingualLanguages=" + monolingualLanguages +
+                "queryString='" + this.queryString + '\'' +
+                ", queryDictionaries=" + this.queryDictionaries +
+                ", groupingType=" + this.groupingType +
+                ", orderType=" + this.orderType +
+                ", monolingualLanguages=" + this.monolingualLanguages +
                 '}';
     }
 
@@ -62,8 +59,7 @@ public class ImmutableQueryRequest implements QueryRequest {
 
     private final List<Language> monolingualLanguages;
 
-    ImmutableQueryRequest(@NotNull MetadictCore metadictCore, String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
-        this.metadictCore = metadictCore;
+    ImmutableQueryRequest(String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
         this.groupingType = groupingType;
@@ -76,19 +72,8 @@ public class ImmutableQueryRequest implements QueryRequest {
         if (this == o) return true;
         if (!(o instanceof ImmutableQueryRequest)) return false;
         ImmutableQueryRequest that = (ImmutableQueryRequest) o;
-        return Objects.equal(queryString, that.queryString) &&
-                Objects.equal(queryDictionaries, that.queryDictionaries);
-    }
-
-    /**
-     * Send this request to the Metadict core and execute it.
-     *
-     * @return the results of the query.
-     */
-    @NotNull
-    @Override
-    public QueryResponse executeRequest() {
-        return metadictCore.executeRequest(this);
+        return Objects.equal(this.queryString, that.queryString) &&
+                Objects.equal(this.queryDictionaries, that.queryDictionaries);
     }
 
     /**
@@ -98,7 +83,7 @@ public class ImmutableQueryRequest implements QueryRequest {
      */
     @NotNull
     public GroupingType getGroupingType() {
-        return groupingType;
+        return this.groupingType;
     }
 
     /**
@@ -109,7 +94,7 @@ public class ImmutableQueryRequest implements QueryRequest {
     @Override
     @NotNull
     public List<BilingualDictionary> getBilingualDictionaries() {
-        return queryDictionaries;
+        return this.queryDictionaries;
     }
 
     /**
@@ -120,7 +105,7 @@ public class ImmutableQueryRequest implements QueryRequest {
     @NotNull
     @Override
     public List<Language> getMonolingualLanguages() {
-        return monolingualLanguages;
+        return this.monolingualLanguages;
     }
 
     /**
@@ -131,7 +116,7 @@ public class ImmutableQueryRequest implements QueryRequest {
     @NotNull
     @Override
     public GroupingType getQueryGrouping() {
-        return groupingType;
+        return this.groupingType;
     }
 
     /**
@@ -142,7 +127,7 @@ public class ImmutableQueryRequest implements QueryRequest {
     @NotNull
     @Override
     public OrderType getQueryOrdering() {
-        return orderType;
+        return this.orderType;
     }
 
     /**
@@ -154,12 +139,12 @@ public class ImmutableQueryRequest implements QueryRequest {
     @Override
     @NotNull
     public String getQueryString() {
-        return queryString;
+        return this.queryString;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(queryString, queryDictionaries);
+        return Objects.hashCode(this.queryString, this.queryDictionaries);
     }
 
 }

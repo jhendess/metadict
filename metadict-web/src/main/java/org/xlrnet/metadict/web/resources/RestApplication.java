@@ -22,34 +22,47 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.rest;
+package org.xlrnet.metadict.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 import org.xlrnet.metadict.core.main.MetadictCore;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
 
 /**
- * REST service for querying the current system status.
+ * REST application for JAX-RS.
  */
-@Path("/status")
-public class RestStatus {
+@ApplicationPath("/api")
+public class RestApplication extends Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestStatus.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RestApplication.class);
 
+    /** The central engine registry. */
     @Inject
-    MetadictCore metadictCore;
+    private MetadictCore metadictCore;
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(metadictCore.getSystemStatus()).build();
+    public RestApplication() {
     }
 
+    @Inject
+    public RestApplication(MetadictCore metadictCore) {
+        this.metadictCore = metadictCore;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        if (this.metadictCore != null) {
+            this.metadictCore.getEngineRegistryService();
+            LOGGER.info("Metadict web application started successfully");
+        } else {
+            LOGGER.error("Metadict could not be started - check log files");
+            throw new MetadictRuntimeException("Metadict could not be started.");
+        }
+    }
 }
