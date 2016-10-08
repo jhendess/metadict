@@ -53,6 +53,7 @@ module MetadictApp {
 
             this._dictionaryListLoaded = true;
             this._dictionaryListLoading = false;
+            this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
         };
 
         /**
