@@ -49,15 +49,15 @@ public class JacksonResteasyProducer implements ContextResolver<ObjectMapper> {
             .findAndRegisterModules()
             // Register custom module for Metadict serializers
             .registerModule(new MetadictModule())
-                    // Don't print null-values
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    // Don't write timestamps
+            // Don't print null-values
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            // Don't write timestamps
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                    // Don't fail on unknown values
-                    //.configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    // Indentation for output
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-                    // Allow field names without quotes
+            // Don't fail on unknown values
+            //.configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+            // Indentation for output
+            //.configure(SerializationFeature.INDENT_OUTPUT, true)
+            // Allow field names without quotes
             .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
             // Enable a custom mixin which prevents transmitting ungrouped bilingual entries
             .addMixIn(QueryResponse.class, QueryResponseMixIn.class);

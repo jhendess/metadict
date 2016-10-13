@@ -60,7 +60,7 @@ module MetadictApp {
 
         abbreviation?: string;
 
-        additionalForms: Map<string>;
+        additionalForms?: Map<string>;
 
         description?: string;
 
