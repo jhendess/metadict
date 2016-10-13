@@ -27,7 +27,7 @@
 module.exports = function (grunt) {
 
     // Load package.json
-    var pkg =  grunt.file.readJSON("package.json");
+    var pkg = grunt.file.readJSON("package.json");
 
     // Load modRewrite for using angular's html5mode in grunt:serve
     var modRewrite = require('connect-modrewrite');
@@ -158,7 +158,7 @@ module.exports = function (grunt) {
                         return [
                             modRewrite(['^[^\\.]*$ /index.html [L]']),
                             serveStatic(appConfig.paths.dist)
-                            ]
+                        ]
                     }
                 }
             }
@@ -294,20 +294,19 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '*.html',
-                        'views/*.html',
                         'images/**/*.*',
-                        '/font/**/*.*'
+                        '/fonts/**/*.*'
                     ]
                 }, {
                     expand: true,
-                    cwd: "bower_components/materialize/dist/",
-                    src: ["font/**/*"],
-                    dest: "dist"
+                    cwd: "bower_components/roboto-fontface/fonts/",
+                    src: "roboto/*-{Thin,Light,Regular,Medium,Bold}.{eot,woff2,woff,ttf}",
+                    dest: "dist/fonts"
                 }, {
                     expand: true,
                     cwd: "bower_components/material-design-icons/iconfont/",
                     src: ["*.{eot,woff,woff2,ttf,ijmap}"],
-                    dest: "dist/font"
+                    dest: "dist/fonts"
                 }]
             },
             styles: {
@@ -329,11 +328,17 @@ module.exports = function (grunt) {
                 src: ['**/*.svg'],
                 dest: '.tmp/flags/'
             },
-            icons:  {
+            icons: {
                 expand: true,
                 cwd: "bower_components/material-design-icons/iconfont/",
                 src: ["*.{eot,woff,woff2,ttf,ijmap}"],
-                dest: ".tmp/font"
+                dest: ".tmp/fonts"
+            },
+            roboto: {
+                expand: true,
+                cwd: "bower_components/roboto-fontface/fonts/",
+                src: "roboto/*-{Thin,Light,Regular,Medium,Bold}.{eot,woff2,woff,ttf}",
+                dest: ".tmp/fonts"
             }
         },
 
@@ -344,7 +349,7 @@ module.exports = function (grunt) {
                     '<%= appConfig.paths.dist %>/scripts/**/*.js',
                     '<%= appConfig.paths.dist %>/styles/**/*.css',
                     '<%= appConfig.paths.dist %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                    '<%= appConfig.paths.dist %>/font/*'
+                    '<%= appConfig.paths.dist %>/fonts/*'
                 ]
             }
         },
@@ -457,7 +462,8 @@ module.exports = function (grunt) {
                 'typescript:base',
                 'copy:styles',
                 'copy:flags',
-                'copy:icons'
+                'copy:icons',
+                'copy:roboto'
             ],
             test: [
                 'typescript:test',
@@ -482,7 +488,7 @@ module.exports = function (grunt) {
                     patterns: [
                         'dist/scripts/*.js',
                         'dist/styles/*.css',
-                        'dist/font/**/*'
+                        'dist/fonts/**/*'
                     ]
                 },
                 network: '*'
