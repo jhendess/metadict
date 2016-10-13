@@ -10,7 +10,7 @@
             to let angular's HTML5 mode work correctly. See also https://regex101.com/ for further explanations.
         </note>
         <!--<from>^[^\\.]*$</from>-->
-        <from>^(?!\/((images|flags|scripts|styles|views|api|font|manifest\.appcache|index\.html)\/?.*)).*$</from>
+        <from>^(?!\/((images|flags|scripts|styles|views|api|fonts|manifest\.appcache|index\.html)\/?.*)).*$</from>
         <to>/index.html</to>
     </rule>
 

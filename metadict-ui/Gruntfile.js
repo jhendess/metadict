@@ -300,7 +300,7 @@ module.exports = function (grunt) {
                 }, {
                     expand: true,
                     cwd: "bower_components/roboto-fontface/fonts/",
-                    src: "roboto/*-{Thin,Light,Regular,Medium,Bold}.{eot,woff2,woff,ttf}",
+                    src: "roboto/*-{Thin,Light,Regular,RegularItalic,Medium,Bold}.{eot,woff2,woff,ttf}",
                     dest: "dist/fonts"
                 }, {
                     expand: true,
@@ -337,7 +337,7 @@ module.exports = function (grunt) {
             roboto: {
                 expand: true,
                 cwd: "bower_components/roboto-fontface/fonts/",
-                src: "roboto/*-{Thin,Light,Regular,Medium,Bold}.{eot,woff2,woff,ttf}",
+                src: "roboto/*-{Thin,Light,Regular,RegularItalic,Medium,Bold}.{eot,woff2,woff,ttf}",
                 dest: ".tmp/fonts"
             }
         },
