@@ -24,15 +24,17 @@
 
 package org.xlrnet.metadict.api.engine;
 
+import com.google.inject.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * The generic interface for search providers. Implement this interface to make your provider available to the Metadict
- * core.
- * A search provider must provider a {@link SearchEngine} implementation to the Metadict core.
+ * core. A search provider must provide a {@link SearchEngine} implementation to the Metadict core. In order to detect
+ * the SearchEngineProvider, it must be implemented as a Guice module which performs a multibinding on {@link
+ * SearchEngineProvider}.
  */
-public interface SearchEngineProvider {
+public interface SearchEngineProvider extends Module {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

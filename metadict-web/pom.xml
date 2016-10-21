@@ -56,42 +56,39 @@
             <artifactId>metadict-core</artifactId>
             <version>${metadict.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict.engines</groupId>
+            <artifactId>woxikon-engine</artifactId>
+            <version>${metadict.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict.engines</groupId>
+            <artifactId>nobordbok-engine</artifactId>
+            <version>${metadict.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict.engines</groupId>
+            <artifactId>leo-engine</artifactId>
+            <version>${metadict.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict.engines</groupId>
+            <artifactId>heinzelnisse-engine</artifactId>
+            <version>${metadict.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xlrnet.metadict.storage</groupId>
+            <artifactId>mapdb-storage</artifactId>
+            <version>${metadict.version}</version>
+        </dependency>
         <!-- Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <!-- Weld dependencies -->
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-api</artifactId>
-        </dependency>
-        <!-- JAX-RS RESTEasy -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-        </dependency>
-        <!-- Jackson plugins -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-guava</artifactId>
         </dependency>
         <!-- ModRewrite for Angular's HTML5 mode -->
         <dependency>
@@ -107,27 +104,15 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>${dropwizard.version}</version>
+        </dependency>
+        <!-- Guice integration for dropwizard -->
+        <dependency>
+            <groupId>ru.vyarus</groupId>
+            <artifactId>dropwizard-guicey</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.containers.glassfish</groupId>
-            <artifactId>jersey-gf-cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld.servlet</groupId>
-            <artifactId>weld-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-cdi</artifactId>
+            <groupId>com.netflix.governator</groupId>
+            <artifactId>governator</artifactId>
         </dependency>
     </dependencies>
 

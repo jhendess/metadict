@@ -51,14 +51,14 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <wildfly.version>8.2.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
-        <jackson.version>2.8.3</jackson.version>
+        <jackson.version>2.7.6</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <metadict.version>${project.version}</metadict.version>
         <dropwizard.version>1.0.2</dropwizard.version>
         <weld.version>2.2.8.Final</weld.version>
         <cdi-api.version>1.2</cdi-api.version>
-        <jetty.version>9.2.4.v20141103</jetty.version>
-
+        <guice.version>4.1.0</guice.version>
+        <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
     </properties>
 
 
@@ -155,47 +155,7 @@
                 <version>3.1.2</version>
                 <scope>test</scope>
             </dependency>
-            <!-- Weld dependencies -->
-            <dependency>
-                <groupId>org.jboss.weld</groupId>
-                <artifactId>weld-api</artifactId>
-                <version>${weld.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se-core</artifactId>
-                <version>${weld.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.servlet</groupId>
-                <artifactId>weld-servlet</artifactId>
-                <version>${weld.version}</version>
-            </dependency>
-            <!-- Jetty CDI -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-cdi</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <!-- JAX-RS RESTEasy -->
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxrs</artifactId>
-                <version>${resteasy.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jackson2-provider</artifactId>
-                <version>${resteasy.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <!-- Jackson for JAX RS -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
+            <!-- Java EE API (Deprecated?) -->
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-web-api</artifactId>
@@ -218,6 +178,41 @@
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>${cdi-api.version}</version>
+            </dependency>
+            <!-- Dropwizard -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <!-- Guice -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-multibindings</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+            <!-- Governator extensions for guice -->
+            <dependency>
+                <groupId>com.netflix.governator</groupId>
+                <artifactId>governator</artifactId>
+                <version>1.15.5</version>
+            </dependency>
+            <!-- Guice support for Dropwizard -->
+            <dependency>
+                <groupId>ru.vyarus</groupId>
+                <artifactId>dropwizard-guicey</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <!-- Version of Hibernate validator must be overwritten to avoid errors with Governator and Dropwizard -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

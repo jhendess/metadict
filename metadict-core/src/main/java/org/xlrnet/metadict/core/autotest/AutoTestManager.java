@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.autotest;
 
+import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,6 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.util.SimilarityUtils;
 
-import javax.enterprise.context.Dependent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Core component for running and registering {@link org.xlrnet.metadict.api.engine.AutoTestSuite} objects.
  */
-@Dependent
+@Singleton
 public class AutoTestManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoTestManager.class);

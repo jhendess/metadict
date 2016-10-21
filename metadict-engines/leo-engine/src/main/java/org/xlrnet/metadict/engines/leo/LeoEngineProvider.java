@@ -36,7 +36,7 @@ import org.xlrnet.metadict.api.query.*;
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a href="http://leo.org/">leo.org</a>}.
  */
-public class LeoEngineProvider implements SearchEngineProvider {
+public class LeoEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override

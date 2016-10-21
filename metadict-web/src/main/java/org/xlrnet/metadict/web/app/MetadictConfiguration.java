@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,13 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.api;
+package org.xlrnet.metadict.web.app;
 
-import javax.ws.rs.core.MediaType;
+import io.dropwizard.Configuration;
 
 /**
- * Description for a single method (i.e. GET) on a REST resource.
+ * Configuration class for standalone deployment using dropwizard.
  */
-public class MethodDescription {
+public class MetadictConfiguration extends Configuration {
 
-    private String method;
-
-    private String fullPath;
-
-    private MediaType[] produces;
-
-    private MediaType[] consumes;
-
-    public MethodDescription(String method, String fullPath, MediaType[] produces, MediaType[] consumes) {
-        super();
-        this.method = method;
-        this.fullPath = fullPath;
-        this.produces = produces;
-        this.consumes = consumes;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public String getFullPath() {
-        return fullPath;
-    }
-
-    public MediaType[] getProduces() {
-        return produces;
-    }
-
-    public MediaType[] getConsumes() {
-        return consumes;
-    }
 }

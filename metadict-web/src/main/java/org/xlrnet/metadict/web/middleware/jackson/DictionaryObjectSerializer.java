@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.jackson;
+package org.xlrnet.metadict.web.middleware.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -35,7 +35,6 @@ import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.core.util.FormatUtils;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Custom serializer for {@link DictionaryObject} objects that adds a precalculated field with additional information
@@ -78,11 +77,6 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
     }
 
     @Override
-    protected BeanSerializerBase withIgnorals(Set<String> set) {
-        throw new NotImplementedException(getClass().getCanonicalName() + ".withIgnorals() is not implemented");
-    }
-
-    @Override
     public BeanSerializerBase withFilterId(Object filterId) {
         throw new NotImplementedException(getClass().getCanonicalName() + ".withFilterId() is not implemented - avoid using @JsonFilter annotations");
     }
@@ -92,9 +86,9 @@ class DictionaryObjectSerializer extends BeanSerializerBase {
      */
     @Override
     protected BeanSerializerBase asArraySerializer() {
-        if ((_objectIdWriter == null)
-                && (_anyGetterWriter == null)
-                && (_propertyFilterId == null)
+        if ((this._objectIdWriter == null)
+                && (this._anyGetterWriter == null)
+                && (this._propertyFilterId == null)
                 ) {
             return new BeanAsArraySerializer(this);
         }

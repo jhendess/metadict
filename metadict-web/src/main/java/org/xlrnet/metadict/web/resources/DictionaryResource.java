@@ -75,9 +75,9 @@ public class DictionaryResource {
     }
 
     @GET
-    @Path("/bilingual/all")
+    @Path("/bilingual")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllRegisteredDictionaries() {
+    public Response listBilingualDictionaries() {
         try {
             return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getSupportedDictionaries())).build();
         } catch (Exception e) {
@@ -108,10 +108,11 @@ public class DictionaryResource {
     }
 
     @GET
-    @Path("/monolingual/all")
+    @Path("/monolingual")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listMonolingualDictionaries() {
         try {
+            // FIXME: These are actually not monolingual
             return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
         } catch (Exception e) {
             return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();

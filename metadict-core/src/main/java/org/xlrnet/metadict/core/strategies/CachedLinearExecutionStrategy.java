@@ -57,6 +57,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
 
+    /** The storage service to use for storing the cached data. */
     private final StorageService storageService;
 
     @Inject
@@ -121,7 +122,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         } catch (StorageBackendException b) {
             LOGGER.error("Internal storage backend error", b);
         } catch (StorageOperationException o) {
-            LOGGER.warn("Storage backend was updated before results could be created - using own result");
+            LOGGER.debug("Storage backend was updated before results could be created - using own result");
         }
 
         return queryStepResult;

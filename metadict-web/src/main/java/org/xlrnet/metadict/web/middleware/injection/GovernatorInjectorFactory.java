@@ -22,13 +22,21 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.dropwizard;
+package org.xlrnet.metadict.web.middleware.injection;
 
-import io.dropwizard.Configuration;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Stage;
+import com.netflix.governator.guice.LifecycleInjector;
+import ru.vyarus.dropwizard.guice.injector.InjectorFactory;
 
 /**
- * Configuration class for standalone deployment using dropwizard.
+ * Guice injector factory to start Netflix Governator.
  */
-public class MetadictConfiguration extends Configuration {
+public class GovernatorInjectorFactory implements InjectorFactory {
 
+    @Override
+    public Injector createInjector(Stage stage, Iterable<? extends Module> modules) {
+        return LifecycleInjector.builder().withModules(modules).inStage(stage).build().createInjector();
+    }
 }

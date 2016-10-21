@@ -22,19 +22,26 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.jackson.mixins;
+package org.xlrnet.metadict.web.middleware.filter;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.xlrnet.metadict.core.aggregation.ResultEntry;
-import org.xlrnet.metadict.core.query.QueryResponse;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 /**
- * Jackson mixin for disabling transmission of ungrouped bilingual entries.
+ * Filter for allowing cross-origin requests.
  */
-public abstract class QueryResponseMixIn implements QueryResponse{
+@Provider
+public class CORSFilter implements ContainerResponseFilter {
 
     @Override
-    @JsonIgnore
-    public abstract Iterable<ResultEntry> getUngroupedBilingualEntries();
-
+    public void filter(final ContainerRequestContext requestContext,
+                       final ContainerResponseContext responseContext) throws IOException {
+        responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
+        responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+        responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+    }
 }

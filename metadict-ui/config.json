@@ -1,14 +1,14 @@
 {
-  "paths" : {
+  "paths": {
     "dist": "dist",
     "app": "app"
   },
-  "env" : {
-    "dev" : {
-      "apiUrl" : "http://localhost:8080/metadict-web-0.4.0-SNAPSHOT/api"
+  "env": {
+    "dev": {
+      "apiUrl": "http://localhost:8080/"
     },
-    "prod" : {
-      "apiUrl" : "api"
+    "prod": {
+      "apiUrl": "api"
     }
   }
 }

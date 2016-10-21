@@ -22,28 +22,18 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.dropwizard.cdi;
+package org.xlrnet.metadict.api.engine;
 
-import io.dropwizard.Bundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener;
-import org.jboss.weld.environment.servlet.Listener;
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 
 /**
- * Dropwizard bundle that starts and initializes a weld CDIContainer.
+ * Abstract implementation of {@link SearchEngineProvider} which can already be used as an injectable Guice module.
  */
-public class WeldBundle implements Bundle {
+public abstract class AbstractSearchEngineProvider extends AbstractModule implements SearchEngineProvider {
 
     @Override
-    public void initialize(final Bootstrap<?> bootstrap) {
-        // empty
+    protected void configure() {
+        Multibinder.newSetBinder(binder(), SearchEngineProvider.class).addBinding().to(getClass());
     }
-
-    @Override
-    public void run(final Environment environment) {
-        environment.getApplicationContext().addEventListener(new BeanManagerResourceBindingListener());
-        environment.getApplicationContext().addEventListener(new Listener());
-    }
-
 }

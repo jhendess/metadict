@@ -24,10 +24,11 @@
 
 package org.xlrnet.metadict.api.storage;
 
+import com.google.common.base.MoreObjects;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 
 /**
- * Thrown if an access operation encountered an unwanted state that indicates no backend failure. This includes the
+ * Thrown if an access operation encountered an unexpected state that indicates no backend failure. This includes the
  * following concrete states:
  * <p>
  * <ul> <li>Trying to create a new value under an already existing key</li> <li>Trying to update a value under a
@@ -51,10 +52,18 @@ public class StorageOperationException extends MetadictRuntimeException {
     }
 
     public String getNamespace() {
-        return namespace;
+        return this.namespace;
     }
 
     public String getKey() {
-        return key;
+        return this.key;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("namespace", this.namespace)
+                .add("key", this.key)
+                .toString();
     }
 }

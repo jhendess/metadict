@@ -32,7 +32,7 @@ import org.xlrnet.metadict.api.language.Language;
 /**
  * Provider for Bokmålordbok and Nynorskordbok search engine.
  */
-public class OrdbokEngineProvider implements SearchEngineProvider {
+public class OrdbokEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override

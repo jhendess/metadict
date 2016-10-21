@@ -27,6 +27,7 @@ package org.xlrnet.metadict.core.main;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -39,7 +40,6 @@ import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.*;
 
@@ -53,6 +53,7 @@ import static com.google.common.base.Preconditions.checkState;
  * same time.
  */
 @ApplicationScoped
+@Singleton
 public class EngineRegistryService {
 
     private static final Logger logger = LoggerFactory.getLogger(EngineRegistryService.class);
@@ -70,7 +71,7 @@ public class EngineRegistryService {
     List<BilingualDictionary> supportedDictionaryList;
 
     /** List of available search providers. */
-    private Instance<SearchEngineProvider> searchProviderInstances;
+    private Set<SearchEngineProvider> searchProviderInstances;
 
     /** The auto test manager. */
     private AutoTestManager autoTestManager;
@@ -79,7 +80,7 @@ public class EngineRegistryService {
     }
 
     @Inject
-    public EngineRegistryService(Instance<SearchEngineProvider> searchProviderInstances, AutoTestManager autoTestManager) {
+    public EngineRegistryService(Set<SearchEngineProvider> searchProviderInstances, AutoTestManager autoTestManager) {
         this.searchProviderInstances = searchProviderInstances;
         this.autoTestManager = autoTestManager;
     }
@@ -272,10 +273,11 @@ public class EngineRegistryService {
     private void registerAutoTestSuite(@NotNull SearchEngineProvider searchEngineProvider, @NotNull SearchEngine searchEngine) {
         try {
             AutoTestSuite testSuite = searchEngineProvider.getAutoTestSuite();
-            if (testSuite == null)
+            if (testSuite == null) {
                 logger.warn("Provider {} provides no auto test suite", searchEngineProvider.getClass().getCanonicalName());
-            else
+            } else {
                 this.autoTestManager.registerAutoTestSuite(searchEngine, testSuite);
+            }
         } catch (Exception e) {
             logger.error("Initializing auto test suite from provider {} failed", searchEngineProvider.getClass().getCanonicalName(), e);
         }

@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.query;
 
+import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * The {@link QueryService} is used for managing and coordinating the execution of {@link QueryRequest} objects.
  */
+@Singleton
 public class QueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryService.class);

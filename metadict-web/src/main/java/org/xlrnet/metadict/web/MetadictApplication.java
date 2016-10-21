@@ -22,15 +22,22 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.dropwizard;
+package org.xlrnet.metadict.web;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.web.dropwizard.cdi.WeldBundle;
-import org.xlrnet.metadict.web.rest.*;
+import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
+import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
+import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
+import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
+import org.xlrnet.metadict.web.app.MetadictConfiguration;
+import org.xlrnet.metadict.web.app.WebModule;
+import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
+import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
+import ru.vyarus.dropwizard.guice.GuiceBundle;
 
 /**
  * Standalone bootstrap application using dropwizard.
@@ -45,17 +52,23 @@ public class MetadictApplication extends Application<MetadictConfiguration> {
 
     @Override
     public void run(MetadictConfiguration metadictConfiguration, Environment environment) throws Exception {
-        environment.jersey().register(RestApplication.class);
-        environment.jersey().register(RestStatus.class);
-        environment.jersey().register(RestDictionaries.class);
-        environment.jersey().register(RestAutoTest.class);
-        environment.jersey().register(RestQuery.class);
-        environment.healthChecks().register("core", new RestStatus());
+
     }
 
     @Override
     public void initialize(Bootstrap<MetadictConfiguration> bootstrap) {
-        // Start CDI container
-        bootstrap.addBundle(new WeldBundle());
+        bootstrap.addBundle(
+                GuiceBundle.<MetadictConfiguration>builder()
+                        .injectorFactory(new GovernatorInjectorFactory())
+                        .modules(new WoxikonEngineProvider(),
+                                new HeinzelnisseEngineProvider(),
+                                new LeoEngineProvider(),
+                                new OrdbokEngineProvider(),
+                                new WebModule())
+                        .enableAutoConfig(getClass().getPackage().getName())
+                        .build()
+        );
+
+        JacksonUtils.configureObjectMapper(bootstrap.getObjectMapper());
     }
 }

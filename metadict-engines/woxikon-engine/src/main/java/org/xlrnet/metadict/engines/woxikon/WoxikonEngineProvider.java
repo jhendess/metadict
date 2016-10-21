@@ -36,7 +36,7 @@ import org.xlrnet.metadict.api.query.*;
  * Provider with a search engine for searching in various dictionaries on {@see <a
  * href="http://www.woxikon.de/">woxikon.de</a>}.
  */
-public class WoxikonEngineProvider implements SearchEngineProvider {
+public class WoxikonEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override

@@ -33,7 +33,7 @@ import org.xlrnet.metadict.api.query.*;
 /**
  * Provider for Heinzelnisse.info engine.
  */
-public class HeinzelnisseEngineProvider implements SearchEngineProvider {
+public class HeinzelnisseEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override

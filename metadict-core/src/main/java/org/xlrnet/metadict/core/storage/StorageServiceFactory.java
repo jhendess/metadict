@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.core.storage;
 
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -36,13 +38,9 @@ import org.xlrnet.metadict.core.util.CommonUtils;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -57,11 +55,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * To create a new non-persistent dummy storage service, call {@link #createTemporaryStorageService()}.
  */
 @ApplicationScoped
-public class StorageServiceFactory {
+@Singleton
+public class StorageServiceFactory implements Provider<StorageService> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageServiceFactory.class);
 
     private static final String STORAGE_CONFIG_FILE = "storage.properties";
+
+    /** List of available storage service providers. */
+    private final Set<StorageServiceProvider> storageServiceProviders;
 
     /** Name of the default storage. */
     private String defaultStorageServiceName;
@@ -81,11 +83,8 @@ public class StorageServiceFactory {
     /** List of instantiated storage engines. */
     private List<StorageEngineProxy> instantiatedStorageEngines = new ArrayList<>();
 
-    /** List of available storage service providers. */
-    private final Instance<StorageServiceProvider> storageServiceProviders;
-
     @Inject
-    public StorageServiceFactory(Instance<StorageServiceProvider> storageServiceProviders) {
+    public StorageServiceFactory(Set<StorageServiceProvider> storageServiceProviders) {
         this.storageServiceProviders = storageServiceProviders;
     }
 
@@ -111,19 +110,20 @@ public class StorageServiceFactory {
 
         for (StorageEngineProxy storageEngine : this.instantiatedStorageEngines) {
             try {
-                if (!storageEngine.isShutdown())
+                if (!storageEngine.isShutdown()) {
                     storageEngine.shutdown();
+                }
                 successfulShutdowns++;
             } catch (Exception e) {
                 LOGGER.error("Shutting down storage engine '{}' failed", storageEngine.proxiedEngine.getClass().getCanonicalName(), e);
             }
         }
 
-        if (successfulShutdowns != this.instantiatedStorageEngines.size())
+        if (successfulShutdowns != this.instantiatedStorageEngines.size()) {
             LOGGER.warn("Some storage engine instances failed to stop");
-        else
+        } else {
             LOGGER.info("All storage engine instances have been shut down");
-
+        }
     }
 
     /**
@@ -139,9 +139,10 @@ public class StorageServiceFactory {
     @NotNull
     @Produces
     @DefaultStorageService
-    public StorageService getDefaultStorageServiceInstance() {
-        if (this.defaultStorageService == null)
+    public StorageService get() {
+        if (this.defaultStorageService == null) {
             this.defaultStorageService = createNewDefaultStorageService();
+        }
         this.defaultStorageService.notifyListeners(StorageEventType.ON_INJECT);
         return this.defaultStorageService;
     }
@@ -212,7 +213,7 @@ public class StorageServiceFactory {
      * @return a new instance of the currently configured default storage service.
      */
     @NotNull
-    private StorageEngineProxy createNewDefaultStorageService() {
+    private synchronized StorageEngineProxy createNewDefaultStorageService() {
         LOGGER.info("Creating new default storage service for '{}' ...", this.defaultStorageServiceName);
         StorageServiceProvider provider = this.storageServiceMap.get(this.defaultStorageServiceName);
         StorageEngineProxy storageService = internalInstantiateStorageService(provider, this.defaultStorageConfigMap);

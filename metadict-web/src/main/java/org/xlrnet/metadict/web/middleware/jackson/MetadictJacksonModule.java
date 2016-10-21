@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.jackson;
+package org.xlrnet.metadict.web.middleware.jackson;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
  * Custom Jackson Module for adding an additional representation string to instances of {@link
  * org.xlrnet.metadict.api.query.DictionaryObject}.
  */
-public class MetadictModule extends SimpleModule {
+public class MetadictJacksonModule extends SimpleModule {
 
     @Override
     public void setupModule(SetupContext context) {

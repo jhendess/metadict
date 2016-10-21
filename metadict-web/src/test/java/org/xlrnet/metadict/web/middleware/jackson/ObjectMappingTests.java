@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.jackson;
+package org.xlrnet.metadict.web.middleware.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -45,19 +45,20 @@ public class ObjectMappingTests {
 
     @Before
     public void setup() {
-        objectMapper = JacksonResteasyProducer.getObjectMapper();
+        this.objectMapper = new ObjectMapper();
+        JacksonUtils.configureObjectMapper(this.objectMapper);
     }
 
     @Test
-    public void testDictionaryObjectMapping_empty() throws Exception{
+    public void testDictionaryObjectMapping_empty() throws Exception {
         DictionaryObject testObject = prepareDictionaryObjectBuilder().build();
 
-        String actualRepresentation = objectMapper.writeValueAsString(testObject);
+        String actualRepresentation = this.objectMapper.writeValueAsString(testObject);
         assertThat(actualRepresentation, not(containsString(DictionaryObjectSerializer.ADDITIONAL_REPRESENTATION_FIELD_NAME)));
     }
 
     @Test
-    public void testDictionaryObjectMapping_full() throws Exception{
+    public void testDictionaryObjectMapping_full() throws Exception {
         DictionaryObject testObject = prepareDictionaryObjectBuilder()
                 .setAbbreviation("abbreviation")
                 .setDescription("description")
@@ -76,7 +77,7 @@ public class ObjectMappingTests {
                 .build();
 
         String expectedString = "\"" + DictionaryObjectSerializer.ADDITIONAL_REPRESENTATION_FIELD_NAME + "\""
-                + " : \""
+                + ":\""
                 + "description, "
                 + "sg.: singular, "
                 + "pl.: plural, "
@@ -92,7 +93,7 @@ public class ObjectMappingTests {
                 + "dom.: domain, "
                 + "(feminine)\"";
 
-        String actualRepresentation = objectMapper.writeValueAsString(testObject);
+        String actualRepresentation = this.objectMapper.writeValueAsString(testObject);
         assertThat(actualRepresentation, containsString(expectedString));
     }
 
