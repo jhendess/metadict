@@ -1,16 +1,23 @@
 
 ##############################################################################################################
 #                                                                                                            #
-#  This is a sample properties file to explain how the MapDB storage engine for Metadict can be configured.  #
-#  To use MapDB as the default storage, your main storage.properties must be configured accordingly.         #
+# Main configuration file for metadict.                                                                      #
 #                                                                                                            #
 ##############################################################################################################
 
+#
+# Configuration of the storage subsystem
+#
 storage:
-  defaultStorage: mapdb
-
+  #
+  # Set the name of the default storage backend to use.
+  # In case you don't need any persistent storage, the "inmemory" backend can be used. Metadict will refuse to boot
+  # when no storage is configured.
+  #
+  default: mapdb
 
   engines:
+
     #
     # Configuration for MapDB
     #

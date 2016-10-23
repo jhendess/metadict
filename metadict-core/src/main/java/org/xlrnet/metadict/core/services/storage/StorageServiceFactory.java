@@ -26,13 +26,14 @@ package org.xlrnet.metadict.core.services.storage;
 
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.event.ListenerConfiguration;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 import org.xlrnet.metadict.api.storage.*;
+import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
+import org.xlrnet.metadict.core.api.config.StorageConfiguration;
 import org.xlrnet.metadict.core.util.CommonUtils;
 
 import javax.annotation.PostConstruct;
@@ -65,6 +66,9 @@ public class StorageServiceFactory implements Provider<StorageService> {
     /** List of available storage service providers. */
     private final Set<StorageServiceProvider> storageServiceProviders;
 
+    /** Configuration of storage subsystem. */
+    private final StorageConfiguration storageConfiguration;
+
     /** Name of the default storage. */
     private String defaultStorageServiceName;
 
@@ -84,8 +88,9 @@ public class StorageServiceFactory implements Provider<StorageService> {
     private List<StorageEngineProxy> instantiatedStorageEngines = new ArrayList<>();
 
     @Inject
-    public StorageServiceFactory(Set<StorageServiceProvider> storageServiceProviders) {
+    public StorageServiceFactory(Set<StorageServiceProvider> storageServiceProviders, MetadictConfiguration metadictConfiguration) {
         this.storageServiceProviders = storageServiceProviders;
+        this.storageConfiguration = metadictConfiguration.getStorageConfiguration();
     }
 
     @PostConstruct
@@ -165,7 +170,7 @@ public class StorageServiceFactory implements Provider<StorageService> {
             throw new StorageInitializationError("No storage service provider could be found");
         }
 
-        this.defaultStorageServiceName = CommonUtils.getProperty(STORAGE_CONFIG_FILE, "storage.default");
+        this.defaultStorageServiceName = this.storageConfiguration.getDefaultStorage();
 
         if (!this.storageServiceMap.containsKey(this.defaultStorageServiceName)) {
             LOGGER.error("Default storage service provider '{}' could not be found", this.defaultStorageServiceName);
@@ -174,16 +179,13 @@ public class StorageServiceFactory implements Provider<StorageService> {
     }
 
     private void initializeDefaultConfiguration() {
-        Map<String, String> properties = CommonUtils.getProperties(STORAGE_CONFIG_FILE);
+        Map<String, Map<String, String>> engineConfigurations = this.storageConfiguration.getEngineConfigurations();
 
-        for (String key : properties.keySet()) {
-            if (StringUtils.startsWith(key, "storage." + this.defaultStorageServiceName + ".")) {
-                String configKey = StringUtils.removeStart(key, "storage." + this.defaultStorageServiceName + ".");
-                String configValue = properties.get(key);
-                this.defaultStorageConfigMap.put(configKey, configValue);
-                LOGGER.debug("Detected configuration key '{}' with value '{}'", configKey, configValue);
-            }
+        if (engineConfigurations == null) {
+            engineConfigurations = new HashMap<>();
         }
+
+        this.defaultStorageConfigMap = engineConfigurations.getOrDefault(this.defaultStorageServiceName, new HashMap<>());
     }
 
     private void registerStorageService(@NotNull StorageServiceProvider storageServiceProvider) {

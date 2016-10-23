@@ -26,49 +26,40 @@ package org.xlrnet.metadict.web.app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
+import org.xlrnet.metadict.core.api.config.StorageConfiguration;
 
 import java.util.Map;
 
 /**
  * Configuration class for standalone deployment using dropwizard.
  */
-public class MetadictConfiguration extends Configuration {
+public class MappedJsonConfiguration extends Configuration implements MetadictConfiguration {
 
-    private StorageConfiguration storage;
+    @JsonProperty("storage")
+    private StorageConfigurationImpl storage;
 
-    public StorageConfiguration getStorage() {
+    @Override
+    public StorageConfigurationImpl getStorageConfiguration() {
         return this.storage;
     }
 
-    public MetadictConfiguration setStorage(StorageConfiguration storage) {
-        this.storage = storage;
-        return this;
-    }
+    private static class StorageConfigurationImpl implements StorageConfiguration {
 
-    private static class StorageConfiguration {
-
+        @JsonProperty("engines")
         private Map<String, Map<String, String>> engines;
 
+        @JsonProperty("default")
         private String defaultStorage;
 
-        @JsonProperty("defaultStorage")
+        @Override
         public String getDefaultStorage() {
             return this.defaultStorage;
         }
 
-        @JsonProperty("defaultStorage")
-        public StorageConfiguration setDefaultStorage(String defaultStorage) {
-            this.defaultStorage = defaultStorage;
-            return this;
-        }
-
+        @Override
         @JsonProperty("engines")
-        public void setEngines(Map<String, Map<String, String>> engines) {
-            this.engines = engines;
-        }
-
-        @JsonProperty("engines")
-        public Map<String, Map<String, String>> getEngines() {
+        public Map<String, Map<String, String>> getEngineConfigurations() {
             return this.engines;
         }
 

@@ -33,7 +33,7 @@ import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
 import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
 import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
 import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
-import org.xlrnet.metadict.web.app.MetadictConfiguration;
+import org.xlrnet.metadict.web.app.MappedJsonConfiguration;
 import org.xlrnet.metadict.web.app.WebModule;
 import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
 import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
@@ -42,7 +42,7 @@ import ru.vyarus.dropwizard.guice.GuiceBundle;
 /**
  * Standalone bootstrap application using dropwizard.
  */
-public class MetadictApplication extends Application<MetadictConfiguration> {
+public class MetadictApplication extends Application<MappedJsonConfiguration> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MetadictApplication.class);
 
@@ -51,14 +51,15 @@ public class MetadictApplication extends Application<MetadictConfiguration> {
     }
 
     @Override
-    public void run(MetadictConfiguration metadictConfiguration, Environment environment) throws Exception {
+    public void run(MappedJsonConfiguration metadictConfiguration, Environment environment) throws Exception {
     }
 
     @Override
-    public void initialize(Bootstrap<MetadictConfiguration> bootstrap) {
+    public void initialize(Bootstrap<MappedJsonConfiguration> bootstrap) {
         bootstrap.addBundle(
-                GuiceBundle.<MetadictConfiguration>builder()
+                GuiceBundle.<MappedJsonConfiguration>builder()
                         .injectorFactory(new GovernatorInjectorFactory())
+                        .bindConfigurationInterfaces()
                         .modules(new WoxikonEngineProvider(),
                                 new HeinzelnisseEngineProvider(),
                                 new LeoEngineProvider(),

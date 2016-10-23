@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.web.app;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
@@ -37,11 +36,12 @@ import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorageProvider;
 import org.xlrnet.metadict.core.services.storage.StorageServiceFactory;
 import org.xlrnet.metadict.storage.mapdb.MapdbStorageProvider;
+import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 
 /**
  * Guice module for the Metadict Web Application.
  */
-public class WebModule extends AbstractModule {
+public class WebModule extends DropwizardAwareModule {
 
     /**
      * Configures a {@link Binder} via the exposed methods.
