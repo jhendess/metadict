@@ -32,7 +32,7 @@
         <version>0.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <artifactId>metadict-web</artifactId>
     <version>0.4.0-SNAPSHOT</version>
@@ -44,6 +44,7 @@
             <groupId>org.xlrnet.metadict</groupId>
             <artifactId>metadict-ui</artifactId>
             <type>war</type>
+            <scope>runtime</scope>
             <version>${metadict.version}</version>
         </dependency>
         <dependency>
@@ -86,14 +87,16 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-        </dependency>
         <!-- ModRewrite for Angular's HTML5 mode -->
         <dependency>
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
+        </dependency>
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- Hamcrest testing -->
         <dependency>
@@ -117,6 +120,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
@@ -130,6 +139,48 @@
                         </overlay>
                     </overlays>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>metadict</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>metadict</finalName>
+                            <descriptors>
+                                <descriptor>assembly-jar.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.xlrnet.metadict.web.MetadictApplication</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>distribution</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>metadict-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>assembly-distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

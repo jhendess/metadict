@@ -1,0 +1,61 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+    <id>distribution</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <!-- <dependencySet>
+                    <outputDirectory>/lib/</outputDirectory>
+                    <excludes>
+                        <exclude>org.xlrnet.metadict:*</exclude>
+                        <exclude>org.xlrnet.metadict.storage:*</exclude>
+                        <exclude>org.xlrnet.metadict.engines:*</exclude>
+                    </excludes>
+                    <useProjectArtifact>false</useProjectArtifact>
+                    <unpack>false</unpack>
+                    <scope>runtime</scope>
+                </dependencySet>-->
+        <dependencySet>
+            <outputDirectory>/assets</outputDirectory>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+            <includes>
+                <include>org.xlrnet.metadict:metadict-ui</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+    <!-- <moduleSets>
+                <moduleSet>
+                &lt;!&ndash; Enable access to all projects in the current multimodule build! &ndash;&gt;
+                <useAllReactorProjects>true</useAllReactorProjects>
+                &lt;!&ndash; Now, select which projects to include in this module-set. &ndash;&gt;
+                <includes>
+                    <include>org.xlrnet.metadict:*</include>
+                    <include>org.xlrnet.metadict.engines:*</include>
+                    <include>org.xlrnet.metadict.storage:*</include>
+                </includes>
+                <excludes>
+                    <exclude>*</exclude>
+                </excludes>
+                <binaries>
+                    <outputDirectory>/bin/</outputDirectory>
+                    <unpack>false</unpack>
+                </binaries>
+            </moduleSet>
+        </moduleSets>-->
+    <files>
+        <file>
+            <source>config-example.yaml</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                target/metadict.jar
+            </source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
+</assembly>

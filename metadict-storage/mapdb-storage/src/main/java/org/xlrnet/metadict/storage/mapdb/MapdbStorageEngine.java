@@ -162,7 +162,7 @@ public class MapdbStorageEngine implements StorageService {
     }
 
     void commit() {
-        this.LOGGER.info("Committing database changes ...");
+        this.LOGGER.debug("Committing database changes ...");
         this.db.commit();
     }
 

@@ -42,21 +42,18 @@
         <module>metadict-web</module>
         <module>metadict-engines</module>
         <module>metadict-storage</module>
-        <module>metadict-assembly</module>
         <module>metadict-ui</module>
     </modules>
 
     <properties>
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        <wildfly.version>8.2.0.Final</wildfly.version>
         <resteasy.version>3.0.9.Final</resteasy.version>
         <jackson.version>2.7.6</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <metadict.version>${project.version}</metadict.version>
         <dropwizard.version>1.0.2</dropwizard.version>
         <weld.version>2.2.8.Final</weld.version>
-        <cdi-api.version>1.2</cdi-api.version>
         <guice.version>4.1.0</guice.version>
         <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
     </properties>
@@ -98,12 +95,7 @@
                 <artifactId>guava</artifactId>
                 <version>18.0</version>
             </dependency>
-            <!-- Jackson Core + Mapper -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
+            <!-- Jackson Databinding -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -112,26 +104,6 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-guava</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <!-- JUnit -->
@@ -148,19 +120,6 @@
                 <version>1.9.5</version>
                 <scope>test</scope>
             </dependency>
-            <!-- CDI Unit -->
-            <dependency>
-                <groupId>org.jglue.cdi-unit</groupId>
-                <artifactId>cdi-unit</artifactId>
-                <version>3.1.2</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- Java EE API (Deprecated?) -->
-            <dependency>
-                <groupId>javax</groupId>
-                <artifactId>javaee-web-api</artifactId>
-                <version>7.0</version>
-            </dependency>
             <!-- ModRewrite for Angular's HTML5 mode -->
             <dependency>
                 <groupId>org.tuckey</groupId>
@@ -172,12 +131,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>1.3</version>
-            </dependency>
-            <!-- CDI -->
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>${cdi-api.version}</version>
             </dependency>
             <!-- Dropwizard -->
             <dependency>
@@ -235,6 +188,11 @@
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>1.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.5.5</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -246,15 +204,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- Skip Wildfly deployment in parent pom-->
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.0.1.Final</version>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -285,7 +234,6 @@
                         <configuration>
                             <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>

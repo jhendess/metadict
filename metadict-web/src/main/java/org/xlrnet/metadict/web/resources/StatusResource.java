@@ -24,9 +24,7 @@
 
 package org.xlrnet.metadict.web.resources;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.main.MetadictCore;
+import org.xlrnet.metadict.core.services.status.SystemStatusService;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -41,22 +39,18 @@ import javax.ws.rs.core.Response;
 @Path("/status")
 public class StatusResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatusResource.class);
-
-    /**
-     * The metadict core.
-     */
-    private final MetadictCore metadictCore;
+    /** Injected system status service. */
+    private final SystemStatusService systemStatusService;
 
     @Inject
-    public StatusResource(MetadictCore metadictCore) {
-        this.metadictCore = metadictCore;
+    public StatusResource(SystemStatusService systemStatusService) {
+        this.systemStatusService = systemStatusService;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAbout() {
-        return Response.ok(this.metadictCore.getSystemStatus()).build();
+        return Response.ok(this.systemStatusService.queryStatus()).build();
     }
 
 }

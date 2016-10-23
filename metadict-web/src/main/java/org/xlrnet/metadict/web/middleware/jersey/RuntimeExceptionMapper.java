@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -43,6 +44,9 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 
     @Override
     public Response toResponse(RuntimeException exception) {
+        if (exception instanceof NotFoundException) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         LOGGER.error("An unexpected internal error occured", exception);
         return Response
                 .serverError()

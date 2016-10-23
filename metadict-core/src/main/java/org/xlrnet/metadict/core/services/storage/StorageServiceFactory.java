@@ -38,8 +38,6 @@ import org.xlrnet.metadict.core.util.CommonUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import java.util.*;
 
@@ -47,7 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Factory for accessing and creating new {@link StorageService} instances. This factory can be used in two ways: either
- * use its CDI {@link javax.enterprise.inject.Produces} mechanism or query the factory manually. When using the CDI
+ * use its Guice {@link com.google.inject.Provides} mechanism or query the factory manually. When using the CDI
  * mechanism, the factory will create a new {@link StorageService} instance based on the storage configuration in the
  * <em>storage.properties</em> file. The created instance will be instantiated only one time (thus acting as a
  * singleton) and return the same element in each injection point. Enforcing the creation of a new instance of the
@@ -55,7 +53,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>
  * To create a new non-persistent dummy storage service, call {@link #createTemporaryStorageService()}.
  */
-@ApplicationScoped
 @Singleton
 public class StorageServiceFactory implements Provider<StorageService> {
 
@@ -142,7 +139,6 @@ public class StorageServiceFactory implements Provider<StorageService> {
      * will be returned on each call.
      */
     @NotNull
-    @Produces
     @DefaultStorageService
     public StorageService get() {
         if (this.defaultStorageService == null) {

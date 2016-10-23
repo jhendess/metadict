@@ -29,14 +29,11 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 
-import javax.enterprise.inject.Default;
-
 /**
  * Simple planning strategy for creating query plans. This strategy creates unoptimized query plans by just passing all
  * requested {@link BilingualDictionary} to the registry. Using this strategy should be
  * avoided, since it might cause a lot overhead while querying.
  */
-@Default
 public class SimpleQueryPlanningStrategy implements QueryPlanningStrategy {
 
     @NotNull

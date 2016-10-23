@@ -39,7 +39,6 @@ import org.xlrnet.metadict.core.services.autotest.AutoTestService;
 import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.*;
 
@@ -49,10 +48,9 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * Class for loading and managing all available {@link SearchEngineProvider}.
  * <p>
- * Since this object is {@link javax.enterprise.context.ApplicationScoped}, only one instance will be running at the
+ * Since this object is {@link Singleton}, only one instance will be running at the
  * same time.
  */
-@ApplicationScoped
 @Singleton
 public class EngineRegistryService {
 

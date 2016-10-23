@@ -27,8 +27,7 @@ package org.xlrnet.metadict.web;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
 import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
 import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
 import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
@@ -39,12 +38,14 @@ import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
 import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import java.util.EnumSet;
+
 /**
  * Standalone bootstrap application using dropwizard.
  */
 public class MetadictApplication extends Application<MappedJsonConfiguration> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadictApplication.class);
 
     public static void main(String[] args) throws Exception {
         new MetadictApplication().run(args);
@@ -52,6 +53,11 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
 
     @Override
     public void run(MappedJsonConfiguration metadictConfiguration, Environment environment) throws Exception {
+        // Configure url rewrite filter
+        FilterRegistration.Dynamic rewrite = environment.servlets()
+                .addFilter("UrlRewriteFilter", new UrlRewriteFilter());
+        rewrite.setInitParameter("confPath", "/urlrewrite.xml");
+        rewrite.addMappingForUrlPatterns(EnumSet.of(DispatcherType.FORWARD, DispatcherType.REQUEST), true, "/*");
     }
 
     @Override

@@ -55,3 +55,60 @@ storage:
       # Enables a mode where all modifications are queued and written into disk on Background Writer Thread.
       #
       enableAsyncWrite: true
+
+#
+# Logging configuration
+#
+logging:
+
+  #
+  # Default logging level for all messages
+  #
+  level: INFO
+
+  #
+  # Additional logger configuration
+  #
+  loggers:
+
+    #
+    # Log internal DEBUG statements - disable in production
+    #
+    org.xlrnet.metadict: DEBUG
+
+  #
+  # Configuration of additional log file appenders
+  #
+  appenders:
+
+    #
+    # Runtime logging to the console
+    #
+    - type: console
+
+    #
+    # File-based logging
+    #
+    - type: file
+
+      #
+      # The file to which current statements will be logged.
+      #
+      currentLogFilename: /var/lib/metadict/logs/metadict.log
+
+      #
+      # When the log file rotates, the archived log will be renamed to this and gzipped. The
+      # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+      # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+      #
+      archivedLogFilenamePattern: /var/lib/metadict/logs/example-%d.log.gz
+
+      #
+      # The number of archived files to keep.
+      #
+      archivedFileCount: 5
+
+      #
+      # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+      #
+      timeZone: UTC

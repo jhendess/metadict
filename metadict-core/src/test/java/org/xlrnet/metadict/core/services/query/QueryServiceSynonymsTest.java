@@ -25,25 +25,14 @@
 package org.xlrnet.metadict.core.services.query;
 
 import com.google.common.collect.Lists;
-import org.jglue.cdiunit.ActivatedAlternatives;
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.CdiRunner;
-import org.jglue.cdiunit.ProducesAlternative;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
-import org.xlrnet.metadict.core.api.query.QueryPlanExecutionStrategy;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
-import org.xlrnet.metadict.core.main.MetadictCore;
-import org.xlrnet.metadict.core.services.autotest.AutoTestService;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
@@ -51,9 +40,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test for merging of synonyms.
  */
-@RunWith(CdiRunner.class)
-@ActivatedAlternatives(NullQueryPlanningStrategy.class)
-@AdditionalClasses({EngineRegistryService.class, AutoTestService.class})
 public class QueryServiceSynonymsTest {
 
     final SynonymGroup synonymGroup1 = ImmutableSynonymGroup.builder()
@@ -95,19 +81,18 @@ public class QueryServiceSynonymsTest {
             .setQueryStep(new BilingualQueryStep())
             .build();
 
-    @Mock
-    @Produces
-    MetadictCore coreMock = Mockito.mock(MetadictCore.class);
-
-    @Inject
     private QueryService queryService;
 
-    @Produces
-    @ProducesAlternative
-    @DefaultExecutionStrategy
-    public QueryPlanExecutionStrategy produceQueryPlanExecutionStrategyMock() {
+    @Before
+    public void setUp() throws Exception {
         Collection<QueryStepResult> resultMock = Lists.newArrayList(this.stepResult1, this.stepResult2);
-        return new QueryPlanExecutionStrategyMock(resultMock);
+        QueryPlanExecutionStrategyMock queryPlanExecutionStrategyMock = new QueryPlanExecutionStrategyMock(resultMock);
+
+        this.queryService = new QueryService(
+                new EngineRegistryService(),
+                new NullQueryPlanningStrategy(),
+                queryPlanExecutionStrategyMock
+        );
     }
 
     @Test

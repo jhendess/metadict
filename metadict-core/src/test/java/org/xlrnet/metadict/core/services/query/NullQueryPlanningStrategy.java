@@ -29,12 +29,9 @@ import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 
-import javax.enterprise.inject.Alternative;
-
 /**
  * Query planning strategy which produces an empty query plan (not null).
  */
-@Alternative
 public class NullQueryPlanningStrategy implements QueryPlanningStrategy {
 
     /**
