@@ -28,14 +28,14 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
-import org.xlrnet.metadict.core.query.QueryPlanExecutionStrategy;
-import org.xlrnet.metadict.core.query.QueryPlanningStrategy;
-import org.xlrnet.metadict.core.storage.DefaultStorageService;
-import org.xlrnet.metadict.core.storage.InMemoryStorageProvider;
-import org.xlrnet.metadict.core.storage.StorageServiceFactory;
-import org.xlrnet.metadict.core.strategies.CachedLinearExecutionStrategy;
-import org.xlrnet.metadict.core.strategies.DefaultExecutionStrategy;
-import org.xlrnet.metadict.core.strategies.SimpleQueryPlanningStrategy;
+import org.xlrnet.metadict.core.api.query.QueryPlanExecutionStrategy;
+import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
+import org.xlrnet.metadict.core.services.query.CachedLinearExecutionStrategy;
+import org.xlrnet.metadict.core.services.query.DefaultExecutionStrategy;
+import org.xlrnet.metadict.core.services.query.SimpleQueryPlanningStrategy;
+import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
+import org.xlrnet.metadict.core.services.storage.InMemoryStorageProvider;
+import org.xlrnet.metadict.core.services.storage.StorageServiceFactory;
 import org.xlrnet.metadict.storage.mapdb.MapdbStorageProvider;
 
 /**

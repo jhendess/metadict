@@ -28,9 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.core.main.EngineRegistryService;
+import org.xlrnet.metadict.core.services.query.EngineRegistryService;
 import org.xlrnet.metadict.web.api.ResponseContainer;
-import org.xlrnet.metadict.web.api.ResponseStatus;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -78,45 +77,29 @@ public class DictionaryResource {
     @Path("/bilingual")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listBilingualDictionaries() {
-        try {
-            return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getSupportedDictionaries())).build();
-        } catch (Exception e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
-        }
+        return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getSupportedDictionaries())).build();
     }
 
     @GET
     @Path("/bilingual/bidirected")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listBidirectedRegisteredDictionaries() {
-        try {
-            return Response.ok(ResponseContainer.fromSuccessful(getBidirectedDictionaries())).build();
-        } catch (Exception e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
-        }
+        return Response.ok(ResponseContainer.fromSuccessful(getBidirectedDictionaries())).build();
     }
 
     @GET
     @Path("/bilingual/unidirected")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listUnidirectedRegisteredDictionaries() {
-        try {
-            return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
-        } catch (Exception e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
-        }
+        return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
     }
 
     @GET
     @Path("/monolingual")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listMonolingualDictionaries() {
-        try {
-            // FIXME: These are actually not monolingual
-            return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
-        } catch (Exception e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
-        }
+        // FIXME: These are actually not monolingual
+        return Response.ok(ResponseContainer.fromSuccessful(getUnidirectedDictionaries())).build();
     }
 
     @NotNull
@@ -130,8 +113,9 @@ public class DictionaryResource {
 
         List<BilingualDictionary> distinctBidirectional = new ArrayList<>(bidirectional.size());
         for (BilingualDictionary bilingualDictionary : bidirectional) {
-            if (!distinctBidirectional.contains(BilingualDictionary.inverse(bilingualDictionary)))
+            if (!distinctBidirectional.contains(BilingualDictionary.inverse(bilingualDictionary))) {
                 distinctBidirectional.add(bilingualDictionary);
+            }
         }
         return distinctBidirectional;
     }

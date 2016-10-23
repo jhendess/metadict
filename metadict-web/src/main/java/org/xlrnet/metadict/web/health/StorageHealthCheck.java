@@ -28,7 +28,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
 import org.xlrnet.metadict.api.storage.StorageService;
-import org.xlrnet.metadict.core.storage.DefaultStorageService;
+import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
 import ru.vyarus.dropwizard.guice.module.installer.feature.health.NamedHealthCheck;
 
 import javax.inject.Inject;

@@ -46,10 +46,11 @@ public class StatusResource {
     /**
      * The metadict core.
      */
-    @Inject
-    private MetadictCore metadictCore;
+    private final MetadictCore metadictCore;
 
-    public StatusResource() {
+    @Inject
+    public StatusResource(MetadictCore metadictCore) {
+        this.metadictCore = metadictCore;
     }
 
     @GET

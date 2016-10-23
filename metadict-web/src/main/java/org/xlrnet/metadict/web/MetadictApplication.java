@@ -52,7 +52,6 @@ public class MetadictApplication extends Application<MetadictConfiguration> {
 
     @Override
     public void run(MetadictConfiguration metadictConfiguration, Environment environment) throws Exception {
-
     }
 
     @Override

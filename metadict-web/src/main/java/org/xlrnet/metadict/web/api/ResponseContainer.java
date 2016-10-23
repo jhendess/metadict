@@ -25,6 +25,8 @@
 package org.xlrnet.metadict.web.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A response container for wrapping any response objects.
@@ -50,16 +52,19 @@ public class ResponseContainer<T> {
         return new ResponseContainer<>(ResponseStatus.OK, null, data);
     }
 
+    @Nullable
     public T getData() {
-        return data;
+        return this.data;
     }
 
+    @Nullable
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
+    @NotNull
     public ResponseStatus getStatus() {
-        return status;
+        return this.status;
     }
 
 

@@ -32,10 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
-import org.xlrnet.metadict.core.aggregation.GroupingType;
-import org.xlrnet.metadict.core.aggregation.OrderType;
-import org.xlrnet.metadict.core.query.QueryResponse;
-import org.xlrnet.metadict.core.query.QueryService;
+import org.xlrnet.metadict.core.api.query.QueryRequest;
+import org.xlrnet.metadict.core.api.query.QueryResponse;
+import org.xlrnet.metadict.core.services.aggregation.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.OrderType;
+import org.xlrnet.metadict.core.services.query.QueryService;
 import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
@@ -101,12 +102,12 @@ public class QueryResource {
      *         handled automatically through the underlying JAX-RS engine.
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.GroupingType} but will only
-     *         be checked case-insensitive. If no value is defined, the single-group strategy will be used.
+     *         one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.GroupingType} but
+     *         will only be checked case-insensitive. If no value is defined, the single-group strategy will be used.
      * @param ordering
      *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
-     *         with one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
-     *         be checked case-insensitive. If no value is defined, the relevance ordering will be used.
+     *         with one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.OrderType} but
+     *         will only be checked case-insensitive. If no value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/query/{dictionaries}/{request}")
@@ -124,6 +125,12 @@ public class QueryResource {
      * grouped and ordered. See the concrete parameter description for more information about the parameters.
      * This method invokes only a one-way query on the core and tries to resolve the internal dictionaries with
      * this preference.
+     * <p/>
+     * Error situations:
+     * <ul>
+     * <li>If an unknown dictionary was requested, a 404 response will be returned.</li>
+     * <li>If the dictionary query is invalid, a 400 response will be returned.</li>
+     * </ul>
      *
      * @param dictionaryString
      *         A comma-separated list of dictionaries to call. Each dictionary's language is separated with a minus
@@ -132,56 +139,51 @@ public class QueryResource {
      *         Example: "de-en,de-no_ny" will issue a query from german to english (i.e. the two identifiers "de" and
      *         "en") and also german to norwegian nynorsk (i.e. the identifier "de" and the dialect "ny" of language
      *         "no").
-     * @param queryRequest
+     * @param queryString
      *         The concrete query string that should be passed to the internal engines. Special URI unescaping is
      *         handled automatically through the underlying JAX-RS engine.
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.GroupingType} but will only
-     *         be checked case-insensitive. If no value is defined, the single-group strategy will be used.
+     *         one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.GroupingType} but
+     *         will only be checked case-insensitive. If no value is defined, the single-group strategy will be used.
      * @param ordering
      *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
-     *         with one of the constants defined in {@link org.xlrnet.metadict.core.aggregation.OrderType} but will only
-     *         be checked case-insensitive. If no value is defined, the relevance ordering will be used.
+     *         with one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.OrderType} but
+     *         will only be checked case-insensitive. If no value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/uniquery/{dictionaries}/{request}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response unidirectionalQuery(@PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryRequest, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
-        return internalExecuteQuery(dictionaryString, queryRequest, grouping, ordering, false);
+    public Response unidirectionalQuery(@PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryString, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
+        return internalExecuteQuery(dictionaryString, queryString, grouping, ordering, false);
     }
 
-    private Response internalExecuteQuery(@NotNull String dictionaryString, @NotNull String queryRequest, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
+    private Response internalExecuteQuery(@NotNull String dictionaryString, @NotNull String queryString, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
         GroupingType groupingType = Enums.getIfPresent(GroupingType.class, StringUtils.stripToEmpty(grouping).toUpperCase()).or(GroupingType.NONE);
         OrderType orderType = Enums.getIfPresent(OrderType.class, StringUtils.stripToEmpty(ordering).toUpperCase()).or(OrderType.RELEVANCE);
         List<BilingualDictionary> dictionaries;
         try {
             dictionaries = BilingualDictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
-        } catch (IllegalArgumentException e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Malformed dictionary query", null)).build();
-        } catch (UnsupportedDictionaryException e) {
-            return Response.ok(new ResponseContainer<>(ResponseStatus.ERROR, "Unsupported dictionary", null)).build();
+        } catch (IllegalArgumentException e) {    // NOSONAR: Logging not necessary
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Malformed dictionary query", null)).build();
+        } catch (UnsupportedDictionaryException e) {    // NOSONAR: Logging not necessary
+            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseContainer<>(ResponseStatus.ERROR, "Unsupported dictionary", null)).build();
         }
 
-        if (dictionaries.size() == 0)
-            return Response.ok(new ResponseContainer<>(ResponseStatus.ERROR, "No matching dictionaries found", null)).build();
-
-        QueryResponse queryResponse;
-        try {
-            queryResponse =
-                    this.queryService.executeQuery(
-                            this.queryService.createNewQueryRequestBuilder()
-                                    .setQueryString(queryRequest)
-                                    .setQueryDictionaries(dictionaries)
-                                    .setAutoDeriveMonolingualLanguages(true)
-                                    .setGroupBy(groupingType)
-                                    .setOrderBy(orderType)
-                                    .build()
-                    );
-        } catch (Exception e) {
-            LOGGER.error("An internal core error occurred", e);
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, "An internal error occurred: " + e.getMessage(), null)).build();
+        if (dictionaries.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseContainer<>(ResponseStatus.ERROR, "No matching dictionaries found", null)).build();
         }
+
+        QueryRequest queryRequest = this.queryService.createNewQueryRequestBuilder()
+                .setQueryString(queryString)
+                .setQueryDictionaries(dictionaries)
+                .setAutoDeriveMonolingualLanguages(true)
+                .setGroupBy(groupingType)
+                .setOrderBy(orderType)
+                .build();
+        QueryResponse queryResponse = this.queryService.executeQuery(
+                queryRequest
+        );
 
         return Response.ok(new ResponseContainer<>(ResponseStatus.OK, null, queryResponse)).build();
     }

@@ -24,11 +24,53 @@
 
 package org.xlrnet.metadict.web.app;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+
+import java.util.Map;
 
 /**
  * Configuration class for standalone deployment using dropwizard.
  */
 public class MetadictConfiguration extends Configuration {
 
+    private StorageConfiguration storage;
+
+    public StorageConfiguration getStorage() {
+        return this.storage;
+    }
+
+    public MetadictConfiguration setStorage(StorageConfiguration storage) {
+        this.storage = storage;
+        return this;
+    }
+
+    private static class StorageConfiguration {
+
+        private Map<String, Map<String, String>> engines;
+
+        private String defaultStorage;
+
+        @JsonProperty("defaultStorage")
+        public String getDefaultStorage() {
+            return this.defaultStorage;
+        }
+
+        @JsonProperty("defaultStorage")
+        public StorageConfiguration setDefaultStorage(String defaultStorage) {
+            this.defaultStorage = defaultStorage;
+            return this;
+        }
+
+        @JsonProperty("engines")
+        public void setEngines(Map<String, Map<String, String>> engines) {
+            this.engines = engines;
+        }
+
+        @JsonProperty("engines")
+        public Map<String, Map<String, String>> getEngines() {
+            return this.engines;
+        }
+
+    }
 }

@@ -29,11 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.EngineDescription;
 import org.xlrnet.metadict.api.engine.FeatureSet;
-import org.xlrnet.metadict.core.autotest.AutoTestReport;
-import org.xlrnet.metadict.core.query.QueryRequest;
-import org.xlrnet.metadict.core.query.QueryRequestBuilder;
-import org.xlrnet.metadict.core.query.QueryResponse;
-import org.xlrnet.metadict.core.query.QueryService;
+import org.xlrnet.metadict.core.api.query.QueryRequest;
+import org.xlrnet.metadict.core.api.query.QueryResponse;
+import org.xlrnet.metadict.core.services.autotest.AutoTestReport;
+import org.xlrnet.metadict.core.services.query.EngineRegistryService;
+import org.xlrnet.metadict.core.services.query.QueryRequestBuilder;
+import org.xlrnet.metadict.core.services.query.QueryService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -83,7 +84,7 @@ public class MetadictCore {
      */
     @NotNull
     public AutoTestReport executeAllAutoTests() {
-        return this.engineRegistryService.getAutoTestManager().runAllRegisteredAutoTests();
+        return this.engineRegistryService.getAutoTestService().runAllRegisteredAutoTests();
     }
 
     @NotNull

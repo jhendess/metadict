@@ -1,0 +1,50 @@
+
+##############################################################################################################
+#                                                                                                            #
+#  This is a sample properties file to explain how the MapDB storage engine for Metadict can be configured.  #
+#  To use MapDB as the default storage, your main storage.properties must be configured accordingly.         #
+#                                                                                                            #
+##############################################################################################################
+
+storage:
+  defaultStorage: mapdb
+
+
+  engines:
+    #
+    # Configuration for MapDB
+    #
+    mapdb:
+
+      #
+      # Set the operation mode for the backend. MapDB can either use a temporary storage or a file based storage.
+      # Valid values:
+      #  - "temporary"  -> Start MapDB with a temporary storage (i.e. inmemory). All stored data will be lost after shutdown.
+      #  - "file"       -> Start MapDB with a file storage. All data will be permanently written to this file and are still
+      #                    available after shutdown. Note, that you have to set the property mapdb.fileName accordingly!
+      #
+      mode: file
+
+      #
+      # Set the path of the file that will be used as data storage. The path can either be absolute or relative. Make sure,
+      # that you have write access to the specified file or booting might fail. It is recommended to use a file name without
+      # an extension to avoid problems.
+      #
+      filepath: /var/lib/metadict/mapdb_data
+
+      #
+      # Set "true" to enable memory mapped files. Memory mapped files may increase the performance significantly but might
+      # lead to crashes when using a 32-bit JVM. You will encounter an OutOfMemoryError when using a 32-bit JVM and data
+      # stores with more than 4gb.
+      #
+      enableMmapFile: true
+
+      #
+      # Set "true" to disable transactions. This makes writes faster, but might lose data if the store crashes.
+      #
+      disableTransactions: false
+
+      #
+      # Enables a mode where all modifications are queued and written into disk on Background Writer Thread.
+      #
+      enableAsyncWrite: true

@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.engines.heinzelnisse;
 
 import org.junit.runners.Parameterized;
-import org.xlrnet.metadict.core.autotest.AbstractAutoSearchEngineIntegrationTest;
+import org.xlrnet.metadict.core.services.autotest.AbstractAutoSearchEngineIntegrationTest;
 
 /**
  * Integration tests for {@link HeinzelnisseEngine}.

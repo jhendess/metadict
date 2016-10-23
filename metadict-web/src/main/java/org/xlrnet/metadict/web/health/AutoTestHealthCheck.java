@@ -24,8 +24,8 @@
 
 package org.xlrnet.metadict.web.health;
 
-import org.xlrnet.metadict.core.autotest.AutoTestManager;
-import org.xlrnet.metadict.core.autotest.AutoTestReport;
+import org.xlrnet.metadict.core.services.autotest.AutoTestReport;
+import org.xlrnet.metadict.core.services.autotest.AutoTestService;
 import ru.vyarus.dropwizard.guice.module.installer.feature.health.NamedHealthCheck;
 
 import javax.inject.Inject;
@@ -36,11 +36,11 @@ import javax.inject.Inject;
  */
 public class AutoTestHealthCheck extends NamedHealthCheck {
 
-    private final AutoTestManager autoTestManager;
+    private final AutoTestService autoTestService;
 
     @Inject
-    AutoTestHealthCheck(AutoTestManager autoTestManager) {
-        this.autoTestManager = autoTestManager;
+    AutoTestHealthCheck(AutoTestService autoTestService) {
+        this.autoTestService = autoTestService;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AutoTestHealthCheck extends NamedHealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        AutoTestReport autoTestResults = this.autoTestManager.runAllRegisteredAutoTests();
+        AutoTestReport autoTestResults = this.autoTestService.runAllRegisteredAutoTests();
         if (autoTestResults.getFailedTests() == 0) {
             return Result.healthy();
         } else {

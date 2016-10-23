@@ -26,9 +26,8 @@ package org.xlrnet.metadict.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.core.main.EngineRegistryService;
+import org.xlrnet.metadict.core.services.query.EngineRegistryService;
 import org.xlrnet.metadict.web.api.ResponseContainer;
-import org.xlrnet.metadict.web.api.ResponseStatus;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -63,12 +62,7 @@ public class AutoTestResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response invokeAllAutoTests() {
-        try {
-            return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getAutoTestManager().runAllRegisteredAutoTests())).build();
-        } catch (Exception e) {
-            LOGGER.error("Executing all auto tests failed", e);
-            return Response.ok(new ResponseContainer<>(ResponseStatus.INTERNAL_ERROR, e.getMessage(), null)).build();
-        }
+        return Response.ok(ResponseContainer.fromSuccessful(this.engineRegistryService.getAutoTestService().runAllRegisteredAutoTests())).build();
     }
 
 }

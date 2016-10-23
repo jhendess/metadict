@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.xlrnet.metadict.core.query.QueryResponse;
+import org.xlrnet.metadict.core.api.query.QueryResponse;
 import org.xlrnet.metadict.web.middleware.jackson.mixins.QueryResponseMixIn;
 
 /**
