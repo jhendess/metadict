@@ -108,6 +108,10 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-assets</artifactId>
+        </dependency>
         <!-- Guice integration for dropwizard -->
         <dependency>
             <groupId>ru.vyarus</groupId>
@@ -127,19 +131,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <configuration>
-                    <overlays>
-                        <!-- Include the external webapp -->
-                        <overlay>
-                            <groupId>org.xlrnet.metadict</groupId>
-                            <artifactId>metadict-ui</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

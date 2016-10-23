@@ -138,6 +138,11 @@
                 <artifactId>dropwizard-core</artifactId>
                 <version>${dropwizard.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-assets</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
             <!-- Guice -->
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -197,7 +202,19 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <!-- Java 8 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+            <!-- Java 8 -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
@@ -206,8 +223,8 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!-- Attach sources -->
             <plugin>
-                <!-- Attach sources -->
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
                 <executions>
@@ -220,8 +237,8 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Attach javadoc -->
             <plugin>
-                <!-- Attach javadoc -->
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.3</version>
                 <executions>

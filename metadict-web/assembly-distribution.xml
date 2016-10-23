@@ -18,14 +18,14 @@
                     <unpack>false</unpack>
                     <scope>runtime</scope>
                 </dependencySet>-->
-        <dependencySet>
-            <outputDirectory>/assets</outputDirectory>
-            <unpack>true</unpack>
-            <scope>runtime</scope>
-            <includes>
-                <include>org.xlrnet.metadict:metadict-ui</include>
-            </includes>
-        </dependencySet>
+        <!--        <dependencySet>
+                    <outputDirectory>/static</outputDirectory>
+                    <unpack>true</unpack>
+                    <scope>runtime</scope>
+                    <includes>
+                        <include>org.xlrnet.metadict:metadict-ui</include>
+                    </includes>
+                </dependencySet>-->
     </dependencySets>
     <!-- <moduleSets>
                 <moduleSet>

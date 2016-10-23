@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
@@ -53,15 +54,18 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
 
     @Override
     public void run(MappedJsonConfiguration metadictConfiguration, Environment environment) throws Exception {
+        // Define default mapping URL pattern for resources
+        environment.jersey().setUrlPattern("/api/*");
         // Configure url rewrite filter
         FilterRegistration.Dynamic rewrite = environment.servlets()
                 .addFilter("UrlRewriteFilter", new UrlRewriteFilter());
-        rewrite.setInitParameter("confPath", "/urlrewrite.xml");
+        rewrite.setInitParameter("confPath", "urlrewrite.xml");
         rewrite.addMappingForUrlPatterns(EnumSet.of(DispatcherType.FORWARD, DispatcherType.REQUEST), true, "/*");
     }
 
     @Override
     public void initialize(Bootstrap<MappedJsonConfiguration> bootstrap) {
+        // Start Guicey container
         bootstrap.addBundle(
                 GuiceBundle.<MappedJsonConfiguration>builder()
                         .injectorFactory(new GovernatorInjectorFactory())
@@ -75,6 +79,10 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
                         .build()
         );
 
+        // Serve static content (i.e. app)
+        bootstrap.addBundle(new AssetsBundle("/static", "/", "index.html"));
+
+        // Install custom Jackson mapping
         JacksonUtils.configureObjectMapper(bootstrap.getObjectMapper());
     }
 }
