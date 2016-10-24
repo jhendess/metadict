@@ -1,1 +1,0 @@
-This is the legacy Metadict webapp. It may be removed any time soon. 
