@@ -92,18 +92,12 @@ public class QueryService {
      */
     @NotNull
     public QueryResponse executeQuery(@NotNull QueryRequest queryRequest) {
-        try {
-            LOGGER.info("Incoming query request {}", queryRequest);
-            return internalExecuteQuery(queryRequest);
-        } catch (Exception e) {
-            LOGGER.error("Query execution for query request {} failed: {}", queryRequest, e);
-            // TODO: Return QueryResponse with error
-            throw new RuntimeException(e);
-        }
+        LOGGER.info("Incoming query request {}", queryRequest);
+        return internalExecuteQuery(queryRequest);
     }
 
     @NotNull
-    protected Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
+    private Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         LOGGER.debug("Executing query plan {} using executor {} ...", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
         Iterable<QueryStepResult> queryStepResults = this.queryPlanExecutionStrategy.executeQueryPlan(queryPlan);
         LOGGER.debug("Executed query plan {} using executor {}.", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
@@ -111,14 +105,14 @@ public class QueryService {
     }
 
     @NotNull
-    protected QueryPlan prepareQueryPlan(@NotNull QueryRequest queryRequest) {
+    private QueryPlan prepareQueryPlan(@NotNull QueryRequest queryRequest) {
         LOGGER.debug("Calculating query plan using {} for request {} ...", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest);
         QueryPlan queryPlan = this.queryPlanningStrategy.calculateQueryPlan(queryRequest, this.engineRegistryService);
         LOGGER.debug("Calculated query plan using {} for request {}: {}", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest, queryPlan);
         return queryPlan;
     }
 
-    protected void validateQueryRequest(@NotNull QueryRequest queryRequest) {
+    private void validateQueryRequest(@NotNull QueryRequest queryRequest) {
         checkNotNull(queryRequest, "Query request may not be null");
         checkNotNull(queryRequest.getQueryString(), "Request string may not be null");
         checkNotNull(queryRequest.getBilingualDictionaries(), "Query dictionary list may not be null");
@@ -129,7 +123,7 @@ public class QueryService {
     }
 
     @NotNull
-    protected Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
         GroupingType groupingType = queryRequest.getQueryGrouping();
 
         LOGGER.debug("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
@@ -154,12 +148,12 @@ public class QueryService {
     }
 
     @NotNull
-    protected List<ExternalContent> collectExternalContent(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private List<ExternalContent> collectExternalContent(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectExternalContent(engineQueryResults);
     }
 
     @NotNull
-    protected List<DictionaryObject> collectSimilarRecommendations(@NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private List<DictionaryObject> collectSimilarRecommendations(@NotNull Iterable<QueryStepResult> engineQueryResults) {
         return QueryUtil.collectSimilarRecommendations(engineQueryResults);
     }
 

@@ -29,6 +29,7 @@ import io.dropwizard.Configuration;
 import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
 import org.xlrnet.metadict.core.api.config.StorageConfiguration;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -36,6 +37,7 @@ import java.util.Map;
  */
 public class MappedJsonConfiguration extends Configuration implements MetadictConfiguration {
 
+    @NotNull
     @JsonProperty("storage")
     private StorageConfigurationImpl storage;
 
@@ -49,6 +51,7 @@ public class MappedJsonConfiguration extends Configuration implements MetadictCo
         @JsonProperty("engines")
         private Map<String, Map<String, String>> engines;
 
+        @NotNull
         @JsonProperty("default")
         private String defaultStorage;
 

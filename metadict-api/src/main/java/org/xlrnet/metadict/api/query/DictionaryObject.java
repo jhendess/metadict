@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.api.query;
 
-import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
@@ -137,7 +136,7 @@ public interface DictionaryObject extends Serializable {
      * @return a list of different meanings this objects may have.
      */
     @NotNull
-    Optional<List<String>> getMeanings();
+    List<String> getMeanings();
 
     /**
      * Returns a list of syllables that this word consists of. Each element of the list represents a single syllable.
@@ -148,7 +147,7 @@ public interface DictionaryObject extends Serializable {
      * @return a list of syllables that this word consists of.
      */
     @NotNull
-    Optional<List<String>> getSyllabification();
+    List<String> getSyllabification();
 
     /**
      * Returns a list of alternately written forms for this entry.
@@ -159,6 +158,6 @@ public interface DictionaryObject extends Serializable {
      * @return a list of alternately written forms for this entry.
      */
     @NotNull
-    Optional<List<String>> getAlternateForms();
+    List<String> getAlternateForms();
 
 }

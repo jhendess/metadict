@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.api.query;
 
-import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
@@ -162,18 +161,7 @@ public class DictionaryObjectBuilder {
         checkNotNull(language, "Language may not be null");
         checkNotNull(generalForm, "General form may not be null");
 
-        Optional<List<String>> optionalMeanings = Optional.absent();
-        Optional<List<String>> optionalSyllabification = Optional.absent();
-        Optional<List<String>> optionalAlternateForms = Optional.absent();
-
-        if (meanings.size() > 0)
-            optionalMeanings = Optional.of(meanings);
-        if (syllabification.size() > 0)
-            optionalSyllabification = Optional.of(syllabification);
-        if (alternateForms.size() > 0)
-            optionalAlternateForms = Optional.of(alternateForms);
-
-        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, optionalMeanings, optionalSyllabification, optionalAlternateForms);
+        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, meanings, syllabification, alternateForms);
     }
 
     /**

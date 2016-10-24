@@ -26,12 +26,12 @@ package org.xlrnet.metadict.api.query;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
+import org.xlrnet.metadict.api.util.CommonUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ImmutableDictionaryObject implements DictionaryObject {
 
-    private static final long serialVersionUID = 742684176144148121L;
+    private static final long serialVersionUID = -2211118352049586591L;
 
     private final Language language;
 
@@ -61,11 +61,11 @@ public class ImmutableDictionaryObject implements DictionaryObject {
 
     private final Map<GrammaticalForm, String> additionalForms;
 
-    private final Optional<List<String>> meanings;
+    private final List<String> meanings;
 
-    private final Optional<List<String>> syllabification;
+    private final List<String> syllabification;
 
-    private final Optional<List<String>> alternateForms;
+    private final List<String> alternateForms;
 
     /**
      * Create a new immutable instance. See {@link DictionaryObject} for more information about the parameters.
@@ -93,7 +93,7 @@ public class ImmutableDictionaryObject implements DictionaryObject {
      * @param alternateForms
      *         Alternate ways of writing this object.
      */
-    ImmutableDictionaryObject(Language language, String generalForm, String description, String abbreviation, String domain, String pronunciation, GrammaticalGender grammaticalGender, Map<GrammaticalForm, String> additionalForms, Optional<List<String>> meanings, Optional<List<String>> syllabification, Optional<List<String>> alternateForms) {
+    ImmutableDictionaryObject(@NotNull  Language language, @NotNull String generalForm, @Nullable String description, @Nullable String abbreviation, @Nullable String domain, @Nullable String pronunciation, @Nullable GrammaticalGender grammaticalGender, @Nullable Map<GrammaticalForm, String> additionalForms, @Nullable List<String> meanings, @Nullable List<String> syllabification, @Nullable List<String> alternateForms) {
         this.language = language;
         this.generalForm = generalForm;
         this.description = description;
@@ -102,9 +102,9 @@ public class ImmutableDictionaryObject implements DictionaryObject {
         this.pronunciation = pronunciation;
         this.grammaticalGender = grammaticalGender;
         this.additionalForms = additionalForms;
-        this.meanings = meanings;
-        this.syllabification = syllabification;
-        this.alternateForms = alternateForms;
+        this.meanings = CommonUtils.emptyIfNull(meanings);
+        this.syllabification = CommonUtils.emptyIfNull(syllabification);
+        this.alternateForms = CommonUtils.emptyIfNull(alternateForms);
     }
 
     /**
@@ -136,8 +136,12 @@ public class ImmutableDictionaryObject implements DictionaryObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ImmutableDictionaryObject)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ImmutableDictionaryObject)) {
+            return false;
+        }
         ImmutableDictionaryObject that = (ImmutableDictionaryObject) o;
         return Objects.equal(language, that.language) &&
                 Objects.equal(generalForm, that.generalForm) &&
@@ -220,19 +224,19 @@ public class ImmutableDictionaryObject implements DictionaryObject {
 
     @NotNull
     @Override
-    public Optional<List<String>> getMeanings() {
+    public List<String> getMeanings() {
         return meanings;
     }
 
     @NotNull
     @Override
-    public Optional<List<String>> getSyllabification() {
+    public List<String> getSyllabification() {
         return syllabification;
     }
 
     @NotNull
     @Override
-    public Optional<List<String>> getAlternateForms() {
+    public List<String> getAlternateForms() {
         return this.alternateForms;
     }
 

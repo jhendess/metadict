@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.api.language;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -283,5 +284,22 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         } else {
             return this.getTarget().getDisplayName().compareTo(bilingualDictionary.getTarget().getDisplayName());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BilingualDictionary)) return false;
+        BilingualDictionary that = (BilingualDictionary) o;
+        return bidirectional == that.bidirectional &&
+                Objects.equal(source, that.source) &&
+                Objects.equal(target, that.target) &&
+                Objects.equal(queryString, that.queryString) &&
+                Objects.equal(queryStringWithDialect, that.queryStringWithDialect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(source, target, bidirectional, queryString, queryStringWithDialect);
     }
 }

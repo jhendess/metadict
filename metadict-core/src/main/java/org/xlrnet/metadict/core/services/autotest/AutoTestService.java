@@ -277,7 +277,7 @@ public class AutoTestService {
             for (Object actualObject : actualObjects) {
                 double similarity = SimilarityUtils.deepFieldSimilarity(expectedEntry, actualObject);
 
-                if (similarity == 1.0) {
+                if (similarity == 1.0) {        // NOSONAR
                     containsEntry = true;
                     break;
                 } else if (similarity > bestSimilarity) {
@@ -285,13 +285,14 @@ public class AutoTestService {
                 }
             }
 
-            if (!containsEntry)
+            if (!containsEntry) {
                 throw new AutoTestAssertionException(expectedEntry, mostSimilar);
+            }
         }
     }
 
     void validateSynonymEntries(Collection<SynonymEntry> expectedSynonymEntries, Collection<SynonymEntry> actualSynonymEntries) throws AutoTestAssertionException {
-        if (expectedSynonymEntries.size() == 0) {
+        if (expectedSynonymEntries.isEmpty()) {
             return;
         }
 
@@ -306,7 +307,7 @@ public class AutoTestService {
                 double similarity = 0.75 * SimilarityUtils.deepFieldSimilarity(expectedBaseObject, actualBaseObject);
                 similarity += 0.25 * SimilarityUtils.fieldSimilarity(expectedSynonymEntry.getBaseEntryType(), actualSynonymEntry.getBaseEntryType());
 
-                if (similarity == 1.0) {
+                if (similarity == 1.0) {        // NOSONAR
                     validateSynonymGroups(expectedSynonymEntry.getSynonymGroups(), actualSynonymEntry.getSynonymGroups());
                     containsEntry = true;
                     break;
@@ -314,14 +315,15 @@ public class AutoTestService {
                     mostSimilarSynonymEntry = actualSynonymEntry;
                 }
             }
-            if (!containsEntry)
+            if (!containsEntry) {
                 throw new AutoTestAssertionException(expectedSynonymEntry, mostSimilarSynonymEntry);
+            }
         }
 
     }
 
     void validateSynonymGroups(Collection<SynonymGroup> expectedSynonymGroups, Collection<SynonymGroup> actualSynonymGroups) throws AutoTestAssertionException {
-        if (expectedSynonymGroups.size() == 0) {
+        if (expectedSynonymGroups.isEmpty()) {
             return;
         }
 
@@ -334,7 +336,7 @@ public class AutoTestService {
             for (SynonymGroup actualSynonymGroup : actualSynonymGroups) {
                 double similarity = SimilarityUtils.deepFieldSimilarity(expectedBaseObject, actualSynonymGroup.getBaseMeaning());
 
-                if (similarity == 1.0) {
+                if (similarity == 1.0) {    // NOSONAR
                     validateActualObjects(expectedSynonymEntry.getSynonyms(), actualSynonymGroup.getSynonyms());
                     containsEntry = true;
                     break;
@@ -343,8 +345,9 @@ public class AutoTestService {
                 }
             }
         }
-        if (!containsEntry)
+        if (!containsEntry) {
             throw new AutoTestAssertionException(expectedSynonymGroups, mostSimilarSynonymGroup);
+        }
     }
 
     void validateTestCase(@NotNull AutoTestCase testCase) {

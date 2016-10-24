@@ -34,22 +34,31 @@ public class ImmutableEngineDescription implements EngineDescription {
 
     private static final long serialVersionUID = -7529741892355637801L;
 
+    /** Name of the author who developed the engine. */
     protected final String authorName;
 
+    /** Link to a website of the author who developed the engine. */
     protected final String authorLink;
 
+    /** Copyright for the engine. */
     protected final String copyright;
 
+    /** License of the engine. */
     protected final String license;
 
+    /** Name of the engine. */
     protected final String engineName;
 
+    /** Link to the website of the engine. */
     protected final String engineLink;
 
+    /** Name of the search backend. */
     protected final String searchBackendName;
 
+    /** Link to the search backend. */
     protected final String searchBackendLink;
 
+    /** Copyright for the search backend. */
     protected final String searchBackendCopyright;
 
     /**
@@ -97,8 +106,8 @@ public class ImmutableEngineDescription implements EngineDescription {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ImmutableEngineDescription)) return false;
+        if (this == o) {return true;}
+        if (!(o instanceof ImmutableEngineDescription)) {return false;}
         ImmutableEngineDescription that = (ImmutableEngineDescription) o;
         return Objects.equal(authorName, that.authorName) &&
                 Objects.equal(authorLink, that.authorLink) &&
@@ -111,38 +120,47 @@ public class ImmutableEngineDescription implements EngineDescription {
                 Objects.equal(searchBackendCopyright, that.searchBackendCopyright);
     }
 
+    @Override
     public String getAuthorLink() {
         return authorLink;
     }
 
+    @Override
     public String getAuthorName() {
         return authorName;
     }
 
+    @Override
     public String getBackendCopyright() {
         return searchBackendCopyright;
     }
 
+    @Override
     public String getBackendLink() {
         return searchBackendLink;
     }
 
+    @Override
     public String getBackendName() {
         return searchBackendName;
     }
 
+    @Override
     public String getCopyright() {
         return copyright;
     }
 
+    @Override
     public String getEngineLink() {
         return engineLink;
     }
 
+    @Override
     public String getEngineName() {
         return engineName;
     }
 
+    @Override
     public String getLicense() {
         return license;
     }
