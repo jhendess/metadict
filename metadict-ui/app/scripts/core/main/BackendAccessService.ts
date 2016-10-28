@@ -23,6 +23,8 @@ module MetadictApp {
 
         private _bilingualQueryAccess: IRestangularElement;
 
+        private _systemStatusAccess: IRestangularElement;
+
         /**
          * @inheritDoc
          */
@@ -44,9 +46,9 @@ module MetadictApp {
          * @param error The error callback which should be called upon a failed request.
          */
         public executeBilingualQuery(dictionaries: string,
-                              requestString: string,
-                              success: SuccessCallback<QueryResponse>,
-                              error: ErrorCallback) {
+                                     requestString: string,
+                                     success: SuccessCallback<QueryResponse>,
+                                     error: ErrorCallback) {
             this._bilingualQueryAccess
                 .one(dictionaries)
                 .one(requestString)
@@ -57,6 +59,20 @@ module MetadictApp {
                 );
         }
 
+        /**
+         * Query the current system status from the backend.
+         *
+         * @param success The success callback which should be called upon successful retrieval.
+         * @param error The error callback which should be called upon a failed request.
+         */
+        public querySystemStatus(success: SuccessCallback<SystemStatus>, error: ErrorCallback) {
+            this._systemStatusAccess
+                .get()
+                .then<ResponseContainer<SystemStatus>>(
+                    this.buildSuccessHandler(success, error),
+                    this.buildErrorHandler(error)
+                );
+        }
 
         /**
          * Generic handler for unwrapping the response container from the backend. Detects backend errors automatically
@@ -98,6 +114,7 @@ module MetadictApp {
         private setupResources() {
             this._bilingualDictionaryAccess = this.Restangular.all("dictionaries/bilingual");
             this._bilingualQueryAccess = this.Restangular.all("query");
+            this._systemStatusAccess = this.Restangular.one("status");
         }
     }
 

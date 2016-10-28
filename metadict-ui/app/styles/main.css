@@ -161,6 +161,11 @@ li.dictionaryList label {
     }
 }
 
+/* Styles for the about-view */
+.systemStatusTable {
+    padding-top: 2em;
+}
+
 /* Styles for monolingual entries */
 
 .monolingualEntry {

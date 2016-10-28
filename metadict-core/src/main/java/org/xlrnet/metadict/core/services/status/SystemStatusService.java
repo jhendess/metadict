@@ -39,6 +39,7 @@ import java.time.Instant;
  */
 @Singleton
 public class SystemStatusService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemStatusService.class);
 
     /** Constant with unknown value. */

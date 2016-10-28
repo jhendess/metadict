@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web.resources;
 
 import org.xlrnet.metadict.core.services.status.SystemStatusService;
+import org.xlrnet.metadict.web.api.ResponseContainer;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -50,7 +51,7 @@ public class StatusResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAbout() {
-        return Response.ok(this.systemStatusService.queryStatus()).build();
+        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
     }
 
 }

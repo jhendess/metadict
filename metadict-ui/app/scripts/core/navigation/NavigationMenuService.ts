@@ -9,7 +9,7 @@ module MetadictApp {
     class NavigationMenuService implements INavigationMenuService {
 
         // @ngInject
-        constructor(private $log : ILogService) {
+        constructor(private $log: ILogService) {
             $log.debug("NavigationMenuService started");
         }
 
@@ -22,19 +22,19 @@ module MetadictApp {
                         "icon": "search",
                         "target": "/search",
                         "loginRequired": false
-                    },
-                    {
-                        "title": "Favorites",
-                        "icon": "star",
-                        "target": "/favorites",
-                        "loginRequired": false
-                    },
-                    {
-                        "title": "Learn",
-                        "icon": "school",
-                        "target": "/trainer",
-                        "loginRequired": false
-                    }
+                    }/*,
+                     {
+                     "title": "Favorites",
+                     "icon": "star",
+                     "target": "/favorites",
+                     "loginRequired": false
+                     },
+                     {
+                     "title": "Learn",
+                     "icon": "school",
+                     "target": "/trainer",
+                     "loginRequired": false
+                     }*/
                 ]
             },
             {
@@ -46,12 +46,12 @@ module MetadictApp {
                         "target": "/account",
                         "loginRequired": true
                     },
-                    {
-                        "title": "Help",
-                        "icon": "help",
-                        "target": "/help",
-                        "loginRequired": false
-                    },
+                    /*{
+                     "title": "Help",
+                     "icon": "help",
+                     "target": "/help",
+                     "loginRequired": false
+                     },*/
                     {
                         "title": "About Metadict",
                         "icon": "info",

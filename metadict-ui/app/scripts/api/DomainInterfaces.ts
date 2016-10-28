@@ -133,4 +133,26 @@ module MetadictApp {
 
         title: string;
     }
+
+    /**
+     * Information about the current backend status like build version, etc.
+     */
+    export interface SystemStatus {
+
+        /** Version of the backend system. */
+        version: string;
+
+        /** SCM revision that was used to build the backend system. */
+        revision: string;
+
+        /** Time when the backend was built. */
+        buildTime: string;
+
+        /** Time when the backend was last started. */
+        startTime: string;
+
+        /** Uptime since the last start of the backend. */
+        uptime: string;
+
+    }
 }

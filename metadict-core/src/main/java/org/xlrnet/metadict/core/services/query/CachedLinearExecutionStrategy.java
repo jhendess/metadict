@@ -115,8 +115,9 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         QueryStepResult queryStepResult = executeQueryStep(currentQueryStep);
 
         // Do not store the result if it failed to avoid cache pollution
-        if (queryStepResult.isFailedStep())
+        if (queryStepResult.isFailedStep()) {
             return queryStepResult;
+        }
 
         try {
             this.storageService.create("QueryCache", queryStepKey, queryStepResult);
