@@ -24,16 +24,16 @@
 
 package org.xlrnet.metadict.core.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class with static utility methods.
@@ -42,20 +42,22 @@ public class CommonUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtils.class);
 
+    /** Valid naming pattern for storage services. */
     private static final Pattern STORAGE_SERVICE_NAME_PATTERN = Pattern.compile("[A-z][A-z0-9\\-]*");
 
-
     /**
-     * Returns the value of a property in a given .properties-File
+     * Returns the value of a property in a given .properties-File or a default value.
      *
      * @param filename
      *         name of the properties file
      * @param propertyName
      *         the property name whose value should be returned
+     * @param defaultValue
+     *         the default value that should be used if the property couldn't be found
      * @return the property value
      */
-    public static String getProperty(String filename, String propertyName) {
-        String result = null;
+    public static String getProperty(String filename, String propertyName, String defaultValue) {
+        String result = defaultValue;
         Properties properties = new Properties();
         try (InputStream propertiesStream = CommonUtils.class.getClassLoader().getResourceAsStream(filename)) {
             if (propertiesStream != null) {
@@ -71,7 +73,20 @@ public class CommonUtils {
     }
 
     /**
-     * Returns all properties in a given .properties-File
+     * Returns the value of a property in a given .properties-File.
+     *
+     * @param filename
+     *         name of the properties file
+     * @param propertyName
+     *         the property name whose value should be returned
+     * @return the property value or null if none could be found
+     */
+    public static String getProperty(String filename, String propertyName) {
+        return getProperty(filename, propertyName, null);
+    }
+
+    /**
+     * Returns all properties in a given .properties-File.
      *
      * @param filename
      *         name of the properties file

@@ -36,6 +36,21 @@
 
     <packaging>pom</packaging>
 
+    <scm>
+        <url>https://github.com/jhendess/metadict</url>
+        <connection>scm:git:https://github.com/jhendess/metadict.git</connection>
+        <developerConnection>scm:git:git@github.com:jhendess/metadict.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <modules>
         <module>metadict-core</module>
         <module>metadict-api</module>
@@ -250,6 +265,28 @@
                         </goals>
                         <configuration>
                             <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Generate build number -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>generate-buildnumber</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                            <buildNumberPropertyName>buildRevision</buildNumberPropertyName>
+                            <revisionOnScmFailure>N.A.</revisionOnScmFailure>
                         </configuration>
                     </execution>
                 </executions>

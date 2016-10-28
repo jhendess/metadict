@@ -6,9 +6,22 @@
 ##############################################################################################################
 
 #
+# General server configuration
+#
+server:
+
+   #
+   # Default application port to listen on
+   #
+   applicationConnectors:
+    - type: http
+      port: 8080
+
+#
 # Configuration of the storage subsystem
 #
 storage:
+
   #
   # Set the name of the default storage backend to use.
   # In case you don't need any persistent storage, the "inmemory" backend can be used. Metadict will refuse to boot

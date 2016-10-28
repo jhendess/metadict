@@ -35,22 +35,26 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * The class {@link SystemStatusService} is a container for several system-related status information like current
- * VERSION and uptime.
+ * Services for providing information about the current system state (versions, etc.).
  */
 @Singleton
 public class SystemStatusService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemStatusService.class);
+
+    /** Constant with unknown value. */
+    private static final String UNKNOWN = "UNKNOWN";
 
     /** The start time of the application. */
     private final static Instant START_TIME = Instant.now();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemStatusService.class);
-
     /** Build time of the application. */
-    private static final String BUILD_TIME = CommonUtils.getProperty("build.properties", "build.timestamp");
+    private static final String BUILD_TIME = CommonUtils.getProperty("build.properties", "build.timestamp", UNKNOWN);
 
-    /** The VERSION of this application. */
-    private static final String VERSION = CommonUtils.getProperty("build.properties", "build.version");
+    /** The version of this application. */
+    private static final String VERSION = CommonUtils.getProperty("build.properties", "build.version", UNKNOWN);
+
+    /** The scm revision of this application. */
+    private static final String REVISION = CommonUtils.getProperty("build.properties", "build.revision", UNKNOWN);
 
     /**
      * Returns the current system status.
@@ -63,7 +67,7 @@ public class SystemStatusService {
 
     @PostConstruct
     private void initialize() {
-        LOGGER.info("Version is {} of build {}.", VERSION, BUILD_TIME);
+        LOGGER.info("Version is {} in revision {} built at {}.", VERSION, REVISION, BUILD_TIME);
     }
 
     @PreDestroy
@@ -71,25 +75,32 @@ public class SystemStatusService {
         LOGGER.info("Shutting down Metadict...");
     }
 
-    static class SystemStatus {
+    /**
+     * Container class with information about the current system status.
+     */
+    public static class SystemStatus {
 
         /** The uptime of the application. */
         private final Duration uptime;
 
-        public SystemStatus(Duration uptime) {
+        SystemStatus(Duration uptime) {
             this.uptime = uptime;
         }
 
-        public static String getVersion() {
-            return SystemStatusService.VERSION;
+        public String getVersion() {
+            return VERSION;
         }
 
-        public static String getBuildTime() {
+        public String getRevision() {
+            return REVISION;
+        }
+
+        public String getBuildTime() {
             return BUILD_TIME;
         }
 
         public Instant getStartTime() {
-            return SystemStatusService.START_TIME;
+            return START_TIME;
         }
 
         public Duration getUptime() {
