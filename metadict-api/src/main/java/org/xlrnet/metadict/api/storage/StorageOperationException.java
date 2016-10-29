@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.api.storage;
 
 import com.google.common.base.MoreObjects;
-import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 
 /**
  * Thrown if an access operation encountered an unexpected state that indicates no backend failure. This includes the
@@ -34,7 +34,7 @@ import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
  * <ul> <li>Trying to create a new value under an already existing key</li> <li>Trying to update a value under a
  * non-existing key</li> </ul>
  */
-public class StorageOperationException extends MetadictRuntimeException {
+public class StorageOperationException extends MetadictTechnicalException {
 
     private static final long serialVersionUID = 3229352284448948928L;
 
@@ -42,11 +42,14 @@ public class StorageOperationException extends MetadictRuntimeException {
 
     private String key;
 
-    public StorageOperationException() {
-    }
-
     public StorageOperationException(String message, String namespace, String key) {
         super(message);
+        this.namespace = namespace;
+        this.key = key;
+    }
+
+    public StorageOperationException(String message, String namespace, String key, Throwable throwable) {
+        super(message, throwable);
         this.namespace = namespace;
         this.key = key;
     }

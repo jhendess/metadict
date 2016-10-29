@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.event.ListenerConfiguration;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.storage.*;
 import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
 import org.xlrnet.metadict.core.api.config.StorageConfiguration;
@@ -237,15 +238,16 @@ public class StorageServiceFactory implements Provider<StorageService> {
             LOGGER.debug("Successfully instantiated new storage service with class '{}' and configuration '{}'", storageEngineProxy.proxiedEngine.getClass().getCanonicalName(), storageConfigurationMap);
             storageEngineProxy.notifyListeners(StorageEventType.POST_CREATE);
             return storageEngineProxy;
-        } catch (Exception e) {
+        } catch (MetadictTechnicalException e) {
             LOGGER.error("Fatal error during storage service instantiation", e);
-            throw e;
+            throw new MetadictRuntimeException(e);
         }
     }
 
     @NotNull
-    private StorageEngineProxy internalInstantiateProxy(@NotNull StorageServiceProvider provider, @NotNull Map<String, String> storageConfigurationMap) {
-        StorageService newStorageService = provider.createNewStorageService(storageConfigurationMap);
+    private StorageEngineProxy internalInstantiateProxy(@NotNull StorageServiceProvider provider, @NotNull Map<String, String> storageConfigurationMap) throws StorageBackendException {
+        StorageService newStorageService = null;
+        newStorageService = provider.createNewStorageService(storageConfigurationMap);
         checkNotNull(newStorageService, "Instantiated storage engine may not be null");
 
         StorageDescription storageDescription = this.storageDescriptionMap.get(provider.getStorageBackendIdentifier());

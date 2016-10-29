@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,24 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.storage;
+package org.xlrnet.metadict.api.exception;
 
 /**
- * Thrown whenever an access to an already shut down storage service is made.
+ * A technical exception that may be thrown during a call to metadict
  */
-public class StorageShutdownException extends StorageBackendException {
+public class MetadictTechnicalException extends Exception {
 
-    private static final long serialVersionUID = 8622035303129943120L;
+    private static final long serialVersionUID = -6829969934536577249L;
 
-    public StorageShutdownException() {
-        super("The storage service has already been shut down - no further access is allowed");
+    public MetadictTechnicalException(String message) {
+        super(message);
+    }
+
+    public MetadictTechnicalException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public MetadictTechnicalException(Throwable cause) {
+        super(cause);
     }
 }

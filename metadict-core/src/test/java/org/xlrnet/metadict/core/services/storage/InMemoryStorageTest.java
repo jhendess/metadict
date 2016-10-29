@@ -29,6 +29,7 @@ import com.google.common.collect.Iterables;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
 import org.xlrnet.metadict.api.storage.StorageService;
 
@@ -230,7 +231,7 @@ public class InMemoryStorageTest implements Serializable {
         this.storageService.update("namespace", "key", this.dummyStorageObject);
     }
 
-    private void fillNamespacesSimply() {
+    private void fillNamespacesSimply() throws StorageOperationException, StorageBackendException {
         this.storageService.create("namespace1", "key", "value");
         this.storageService.create("namespace1", "hugo", "value");
         this.storageService.create("namespace2", "key", "value");

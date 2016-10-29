@@ -96,7 +96,7 @@ public class MapdbStorageProvider implements StorageServiceProvider {
      * map.
      */
     @Override
-    public StorageService createNewStorageService(Map<String, String> configuration) {
+    public StorageService createNewStorageService(Map<String, String> configuration) throws StorageBackendException {
         return this.engineFactory.fromConfiguration(configuration);
     }
 

@@ -85,9 +85,9 @@ logging:
   loggers:
 
     #
-    # Log internal DEBUG statements - disable in production
+    # Log internal TRACE statements during development - disable in production
     #
-    org.xlrnet.metadict: DEBUG
+    org.xlrnet.metadict: TRACE
 
   #
   # Configuration of additional log file appenders

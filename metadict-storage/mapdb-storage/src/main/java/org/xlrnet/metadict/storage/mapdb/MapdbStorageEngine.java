@@ -80,6 +80,7 @@ public class MapdbStorageEngine implements StorageService {
         checkArguments(namespace, key, value);
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
+        this.LOGGER.trace("Create namespace={}, key={}, value={}", namespace, key, value);
 
         if (namespaceMap.containsKey(key)) {
             this.LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
@@ -97,8 +98,10 @@ public class MapdbStorageEngine implements StorageService {
     public <T extends Serializable> T put(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException {
         checkArguments(namespace, key, value);
 
-        internalOpenNamespace(namespace).put(key, value);
-        this.LOGGER.debug("Put new value to key {} in namespace {}", key, namespace);
+        HTreeMap<String, Object> openNamespace = internalOpenNamespace(namespace);
+
+        this.LOGGER.trace("Putting namespace={}, key={}", namespace, key);
+        openNamespace.put(key, value);
 
         return value;
     }
@@ -114,7 +117,15 @@ public class MapdbStorageEngine implements StorageService {
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkArguments(namespace, key);
 
-        return internalOpenNamespace(namespace).remove(namespace, key);
+        HTreeMap<String, Object> openNamespace = internalOpenNamespace(namespace);
+        this.LOGGER.trace("Deleting namespace={}, key={}", namespace, key);
+        boolean removeSuccessful = openNamespace.remove(namespace, key);
+
+        if (!removeSuccessful) {
+            this.LOGGER.trace("Failed to delete namespace={}, key={}", namespace, key);
+        }
+
+        return removeSuccessful;
     }
 
     @Override
@@ -131,13 +142,19 @@ public class MapdbStorageEngine implements StorageService {
 
     @NotNull
     @Override
-    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
+    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, StorageOperationException {
         checkArguments(namespace, key);
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
 
-        T readValue = clazz.cast(namespaceMap.get(key));
-        return Optional.ofNullable(readValue);
+        this.LOGGER.trace("Reading namespace={}, key={}", namespace, key);
+
+        try {
+            T readValue = clazz.cast(namespaceMap.get(key));
+            return Optional.ofNullable(readValue);
+        } catch (ClassCastException e) {
+            throw new StorageOperationException("Reading value failed due to an invalid class cast", namespace, key, e);
+        }
     }
 
     @NotNull
@@ -147,8 +164,11 @@ public class MapdbStorageEngine implements StorageService {
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
 
-        if (!namespaceMap.containsKey(key))
+        this.LOGGER.trace("Put namespace={}, key={}, value={}", namespace, key, newValue);
+
+        if (!namespaceMap.containsKey(key)) {
             throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
+        }
 
         namespaceMap.put(key, newValue);
 
@@ -174,13 +194,15 @@ public class MapdbStorageEngine implements StorageService {
      * @return The internal map for accessing the namespace.
      */
     private HTreeMap<String, Object> internalOpenNamespace(@NotNull String namespace) {
-        if (this.db.exists(namespace))
+        if (this.db.exists(namespace)) {
             return this.db.getHashMap(namespace);
-        this.LOGGER.debug("Opening namespace '{}'", namespace);
+        }
+        this.LOGGER.trace("Creating new namespace={}", namespace);
         DB.HTreeMapMaker mapMaker = this.db.createHashMap(namespace);
 
-        for (Serializer serializer : this.serializers)
+        for (Serializer serializer : this.serializers) {
             mapMaker.valueSerializer(serializer);
+        }
 
         return mapMaker.make();
     }

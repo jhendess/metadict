@@ -33,6 +33,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.api.storage.StorageOperationException;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
 
@@ -52,17 +53,23 @@ public class CachedLinearExecutionStrategyTest {
 
     private static final String QUERY_STRING = "queryString";
 
-    CachedLinearExecutionStrategy executionStrategy;
+    private CachedLinearExecutionStrategy executionStrategy;
 
     @Mock
-    SearchEngine engineMock;
+    private SearchEngine engineMock;
 
     @Mock
-    QueryStepResult stepResultMock;
+    private QueryStepResult stepResultMock;
+
+    @Mock
+    private BilingualQueryResult resultMock;
+
+    private InMemoryStorage storageService;
 
     @Before
     public void setup() {
-        this.executionStrategy = Mockito.spy(new CachedLinearExecutionStrategy(new InMemoryStorage()));
+        this.storageService = Mockito.spy(new InMemoryStorage());
+        this.executionStrategy = Mockito.spy(new CachedLinearExecutionStrategy(this.storageService));
     }
 
     @Test
@@ -117,6 +124,27 @@ public class CachedLinearExecutionStrategyTest {
     }
 
     @Test
+    public void testExecuteQueryPlan_storageThrows() throws Exception {
+        AbstractQueryStep queryStep = getQueryStepMock();
+        QueryPlan queryPlan = new QueryPlan().addQueryStep(queryStep);
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(this.resultMock);
+
+        doThrow(new StorageOperationException("message", "ns", "key")).when(this.storageService).read(any(), any(), any());
+
+        Collection<QueryStepResult> queryStepResults = this.executionStrategy.executeQueryPlan(queryPlan);
+
+        assertEquals(queryStepResults.size(), 1);
+
+        verify(this.storageService).delete(anyString(), anyString());
+        verify(this.executionStrategy).executeQueryStep(queryStep);
+
+        QueryStepResult queryStepResult = queryStepResults.iterator().next();
+
+        assertFalse(queryStepResult.isFailedStep());
+        assertNotNull(this.executionStrategy.queryStepResultCache.getIfPresent(queryStep));
+    }
+
+    @Test
     public void testExecuteQueryStep_returnsNull() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
         when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(null);
@@ -134,9 +162,8 @@ public class CachedLinearExecutionStrategyTest {
     @Test
     public void testExecuteQueryStep_succesful() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
-        BilingualQueryResult resultMock = Mockito.mock(BilingualQueryResult.class);
 
-        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(resultMock);
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenReturn(this.resultMock);
 
         QueryStepResult queryStepResult = this.executionStrategy.executeQueryStep(queryStep);
 
@@ -144,7 +171,7 @@ public class CachedLinearExecutionStrategyTest {
 
         assertFalse(queryStepResult.isFailedStep());
         assertNull(queryStepResult.getErrorMessage());
-        assertEquals(resultMock, queryStepResult.getEngineQueryResult());
+        assertEquals(this.resultMock, queryStepResult.getEngineQueryResult());
         assertEquals(queryStep, queryStepResult.getQueryStep());
     }
 

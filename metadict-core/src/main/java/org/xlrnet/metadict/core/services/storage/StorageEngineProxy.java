@@ -45,16 +45,25 @@ class StorageEngineProxy implements StorageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageEngineProxy.class);
 
+    /** The storage engine that will be proxied by this instance. */
     @NotNull
     protected final StorageService proxiedEngine;
 
+    /** The attached listeners to this proxy. */
     @NotNull
     protected final List<ListenerConfiguration<StorageEventType, StorageEventListener>> listeners;
 
+    /** Indicator whether this engine has already been shutdown. */
     private boolean shutdown = false;
 
+    /** Active timers on this storage engine. */
     private final List<Timer> timers = new ArrayList<>();
 
+    /**
+     * Check if this engine is already shut down.
+     *
+     * @return True if shut down, otherwise false.
+     */
     protected boolean isShutdown() {
         return this.shutdown;
     }
@@ -87,58 +96,103 @@ class StorageEngineProxy implements StorageService {
     @Override
     public long countKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.countKeysInNamespace(namespace);
+
+        try {
+            return this.proxiedEngine.countKeysInNamespace(namespace);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @Override
     public long countNamespaces() throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.countNamespaces();
+
+        try {
+            return this.proxiedEngine.countNamespaces();
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @NotNull
     @Override
     public <T extends Serializable> T create(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException, StorageOperationException {
         checkInternalState();
-        return this.proxiedEngine.create(namespace, key, value);
+
+        try {
+            return this.proxiedEngine.create(namespace, key, value);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @NotNull
     @Override
     public <T extends Serializable> T put(@NotNull String namespace, @NotNull String key, @NotNull T value) throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.put(namespace, key, value);
+
+        try {
+            return this.proxiedEngine.put(namespace, key, value);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @Override
     public boolean containsKey(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.containsKey(namespace, key);
+
+        try {
+            return this.proxiedEngine.containsKey(namespace, key);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @Override
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.delete(namespace, key);
+
+        try {
+            return this.proxiedEngine.delete(namespace, key);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @Override
-    public Iterable<String> listKeysInNamespace(@NotNull String namespace) {
+    public Iterable<String> listKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.listKeysInNamespace(namespace);
+
+        try {
+            return this.proxiedEngine.listKeysInNamespace(namespace);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @Override
     public Iterable<String> listNamespaces() throws StorageBackendException {
         checkInternalState();
-        return this.proxiedEngine.listNamespaces();
+
+        try {
+            return this.proxiedEngine.listNamespaces();
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @NotNull
     @Override
-    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
+    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, StorageOperationException {
         checkInternalState();
-        return this.proxiedEngine.read(namespace, key, clazz);
+
+        try {
+            return this.proxiedEngine.read(namespace, key, clazz);
+        } catch (RuntimeException e) {
+            throw new StorageBackendException(e);
+        }
     }
 
     @NotNull
@@ -157,7 +211,11 @@ class StorageEngineProxy implements StorageService {
      * provided through the core.
      */
     void shutdown() {
-        checkInternalState();
+        try {
+            checkInternalState();
+        } catch (StorageShutdownException e) {
+            LOGGER.warn("Shutdown was already called while trying to shutdown storage engine {}", this.proxiedEngine.getClass().getCanonicalName());
+        }
         LOGGER.info("Shutting down storage engine {} ...", this.proxiedEngine.getClass().getCanonicalName());
         stopTimers();
 
@@ -188,8 +246,9 @@ class StorageEngineProxy implements StorageService {
         }
     }
 
-    private void checkInternalState() {
-        if (this.shutdown)
+    private void checkInternalState() throws StorageShutdownException {
+        if (this.shutdown) {
             throw new StorageShutdownException();
+        }
     }
 }

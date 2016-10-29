@@ -54,7 +54,7 @@ public class MapdbStorageEngineFactory {
 
     private static final String PROPERTY_KEY_ASYNC_WRITE = "enableAsyncWrite";
 
-    public StorageService fromConfiguration(Map<String, String> configuration) {
+    public StorageService fromConfiguration(Map<String, String> configuration) throws StorageBackendException {
         DBMaker dbMaker = createDBMakerInstance(configuration);
 
         String enableMmapFileProperty = configuration.get(PROPERTY_KEY_MMAP);
@@ -79,7 +79,7 @@ public class MapdbStorageEngineFactory {
         return new MapdbStorageEngine(dbMaker);
     }
 
-    private DBMaker createDBMakerInstance(Map<String, String> configuration) {
+    private DBMaker createDBMakerInstance(Map<String, String> configuration) throws StorageBackendException {
         String modeProperty = configuration.get(PROPERTY_KEY_OPERATION_MODE);
         String filepathProperty = configuration.get(PROPERTY_KEY_DB_FILE);
 

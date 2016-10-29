@@ -58,14 +58,12 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);
 
-    /** The storage service to use for storing the cached data. */
+    private static final String STORAGE_KEY_QUERY_CACHE = "QueryCache";
+
+    /** The storage service to use for storing the cached data as a second-level cache. */
     private final StorageService storageService;
 
-    @Inject
-    public CachedLinearExecutionStrategy(@DefaultStorageService StorageService storageService) {
-        this.storageService = storageService;
-    }
-
+    /** First-level inmemory cache for results. */
     Cache<AbstractQueryStep, QueryStepResult> queryStepResultCache = CacheBuilder
             .newBuilder()
             .concurrencyLevel(8)
@@ -73,44 +71,63 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             .maximumSize(8192)
             .build();
 
+    @Inject
+    public CachedLinearExecutionStrategy(@DefaultStorageService StorageService storageService) {
+        this.storageService = storageService;
+    }
+
     @NotNull
     @Override
     public Collection<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
         List<QueryStepResult> queryResults = new ArrayList<>();
 
         for (AbstractQueryStep currentQueryStep : queryPlan.getQueryStepList()) {
-            QueryStepResult queryStepResult = this.queryStepResultCache.getIfPresent(currentQueryStep);
-
-            try {
-                if (queryStepResult == null) {
-                    LOGGER.debug("Local cache miss on query step {}", currentQueryStep);
-                    queryStepResult = this.queryStepResultCache.get(currentQueryStep, () -> accessStorageService(currentQueryStep));
-                } else {
-                    LOGGER.debug("Local cache hit on query step {}", currentQueryStep);
-                }
-            } catch (ExecutionException | UncheckedExecutionException e) {
-                LOGGER.error("Query step {} failed", currentQueryStep, e);
-                queryStepResult = new QueryStepResultBuilder()
-                        .setFailedStep(true)
-                        .setQueryStep(currentQueryStep)
-                        .setErrorMessage(e.getMessage())
-                        .setEngineQueryResult(ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT)
-                        .build();
-            }
-            if (queryStepResult != null && queryStepResult.isFailedStep())
-                this.queryStepResultCache.invalidate(currentQueryStep);
-            queryResults.add(queryStepResult);
+            executeQueryStep(queryResults, currentQueryStep);
         }
 
         return queryResults;
     }
 
-    private QueryStepResult accessStorageService(AbstractQueryStep currentQueryStep) {
-        String queryStepKey = currentQueryStep.toString();
-        Optional<QueryStepResult> storedStepResult = this.storageService.read("QueryCache", queryStepKey, QueryStepResult.class);
+    private void executeQueryStep(List<QueryStepResult> queryResults, AbstractQueryStep currentQueryStep) {
+        QueryStepResult queryStepResult = this.queryStepResultCache.getIfPresent(currentQueryStep);
 
-        if (storedStepResult.isPresent())
+        try {
+            if (queryStepResult == null) {
+                LOGGER.debug("Local cache miss on query step {}", currentQueryStep);
+                queryStepResult = this.queryStepResultCache.get(currentQueryStep, () -> queryStorageService(currentQueryStep));
+            } else {
+                LOGGER.debug("Local cache hit on query step {}", currentQueryStep);
+            }
+        } catch (ExecutionException | UncheckedExecutionException e) {
+            LOGGER.error("Query step {} failed", currentQueryStep, e);
+            queryStepResult = new QueryStepResultBuilder()
+                    .setFailedStep(true)
+                    .setQueryStep(currentQueryStep)
+                    .setErrorMessage(e.getMessage())
+                    .setEngineQueryResult(ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT)
+                    .build();
+        }
+        if (queryStepResult != null && queryStepResult.isFailedStep()) {
+            this.queryStepResultCache.invalidate(currentQueryStep);
+        }
+        queryResults.add(queryStepResult);
+    }
+
+    /**
+     * Query the storage service for a query step result. If the lookup failed due to technical errors or the looked-up
+     * value has no content, the stored data will be deleted and requeried.
+     *
+     * @param currentQueryStep
+     *         The query step for which a lookup should be made.
+     * @return The cached result.
+     */
+    private QueryStepResult queryStorageService(AbstractQueryStep currentQueryStep) {
+        String queryStepKey = currentQueryStep.toString();
+        Optional<QueryStepResult> storedStepResult = readCachedValueFromStorage(queryStepKey);
+
+        if (storedStepResult != null && storedStepResult.isPresent()) {
             return storedStepResult.get();
+        }
 
         QueryStepResult queryStepResult = executeQueryStep(currentQueryStep);
 
@@ -119,15 +136,40 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             return queryStepResult;
         }
 
-        try {
-            this.storageService.create("QueryCache", queryStepKey, queryStepResult);
-        } catch (StorageBackendException b) {
-            LOGGER.error("Internal storage backend error", b);
-        } catch (StorageOperationException o) {
-            LOGGER.debug("Storage backend was updated before results could be created - using own result");
-        }
+        createCachedValueInStorage(queryStepKey, queryStepResult);
 
         return queryStepResult;
+    }
+
+    private Optional<QueryStepResult> readCachedValueFromStorage(String queryStepKey) {
+        Optional<QueryStepResult> storedStepResult = null;
+        try {
+            storedStepResult = this.storageService.read(STORAGE_KEY_QUERY_CACHE, queryStepKey, QueryStepResult.class);
+        } catch (StorageBackendException b) {
+            LOGGER.error("Internal storage backend error while reading a value", b);
+        } catch (StorageOperationException o) {
+            LOGGER.info("Storage backend contained invalid value while reading");
+            deleteCachedValueInStorage(queryStepKey);
+        }
+        return storedStepResult;
+    }
+
+    private void deleteCachedValueInStorage(String queryStepKey) {
+        try {
+            this.storageService.delete(STORAGE_KEY_QUERY_CACHE, queryStepKey);
+        } catch (StorageBackendException e) {
+            LOGGER.error("Internal storage backend error while deleting a value", e);
+        }
+    }
+
+    private void createCachedValueInStorage(String queryStepKey, QueryStepResult queryStepResult) {
+        try {
+            this.storageService.create(STORAGE_KEY_QUERY_CACHE, queryStepKey, queryStepResult);
+        } catch (StorageBackendException b) {
+            LOGGER.error("Internal storage backend error while creating a new value", b);
+        } catch (StorageOperationException o) {
+            LOGGER.debug("Storage backend was updated before results could be created");
+        }
     }
 
     @NotNull

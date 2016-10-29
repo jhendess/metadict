@@ -122,7 +122,7 @@ public class InMemoryStorage implements StorageService {
 
     @NotNull
     @Override
-    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException {
+    public <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, StorageOperationException {
         checkArguments(namespace, key);
 
         if (!this.backingMap.containsKey(namespace, key)) {

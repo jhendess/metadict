@@ -24,17 +24,14 @@
 
 package org.xlrnet.metadict.api.storage;
 
-import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 
 /**
  * Thrown by a storage backend on an internal system error.
  */
-public class StorageBackendException extends MetadictRuntimeException {
+public class StorageBackendException extends MetadictTechnicalException {
 
     private static final long serialVersionUID = -8879647040748488867L;
-
-    public StorageBackendException() {
-    }
 
     public StorageBackendException(String message) {
         super(message);

@@ -155,7 +155,7 @@ public interface StorageService {
      * @throws StorageBackendException
      *         Will be thrown if any backend errors occurred.
      */
-    Iterable<String> listKeysInNamespace(@NotNull String namespace);
+    Iterable<String> listKeysInNamespace(@NotNull String namespace) throws StorageBackendException;
 
     /**
      * Return an {@link Iterable} of Strings with all currently registered namespaces in the store. The definition of
@@ -181,19 +181,19 @@ public interface StorageService {
      *         The key for the new object. Must be a non-empty and non-null string.
      * @param clazz
      *         The target class to which the returned object should be casted. If casting fails, a {@link
-     *         ClassCastException} might be thrown.
+     *         StorageOperationException} might be thrown.
      * @param <T>
      *         The type of the returned object - must be serializable.
      * @return An {@link Optional} that contains the value behind the specified key. If no value could be found, the
-     * returned optional object will be empty. If casting the stored object failed, a {@link ClassCastException} might
-     * be thrown.
+     * returned optional object will be empty. If casting the stored object failed, a {@link StorageOperationException}
+     * might be thrown.
      * @throws StorageBackendException
      *         Will be thrown if any backend errors occurred.
-     * @throws ClassCastException
+     * @throws StorageOperationException
      *         Will be thrown if the found value cannot be casted to the required class.
      */
     @NotNull
-    <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, ClassCastException;
+    <T extends Serializable> Optional<T> read(@NotNull String namespace, @NotNull String key, Class<T> clazz) throws StorageBackendException, StorageOperationException;
 
     /**
      * Update the stored value for a given key in a given namespace. Upon updating, the existing value will be replaced
