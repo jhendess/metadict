@@ -286,7 +286,8 @@
                             <doUpdate>false</doUpdate>
                             <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                             <buildNumberPropertyName>buildRevision</buildNumberPropertyName>
-                            <revisionOnScmFailure>N.A.</revisionOnScmFailure>
+                            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
+                            <shortRevisionLength>7</shortRevisionLength>
                         </configuration>
                     </execution>
                 </executions>
