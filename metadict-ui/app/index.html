@@ -30,6 +30,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
+    <base href="{{clientBasePath}}" target="_blank"/>
+
     <link rel="icon" sizes="128x128" href="images/logo-icon.png">
     <link rel="apple-touch-icon" href="images/logo-icon.png">
 
@@ -39,11 +41,10 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/flag-icon-css/css/flag-icon.min.css" />
     <link rel="stylesheet" href="bower_components/materialize/bin/materialize.css" />
-    <link rel="stylesheet" href="bower_components/roboto-fontface/css/roboto/roboto-fontface.css" />
-    <link rel="stylesheet" href="bower_components/roboto-fontface/css/roboto-condensed/roboto-condensed-fontface.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/roboto-fontface.css">
     <link rel="stylesheet" href="styles/material-icons.css">
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->

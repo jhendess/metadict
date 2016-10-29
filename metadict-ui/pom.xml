@@ -99,8 +99,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <!-- TODO: Make client base path configurable in dropwizard? -->
-                            <arguments>build --clientBasePath=${metadict.clientBasePath}</arguments>
+                            <arguments>build</arguments>
                             <installDirectory>${nodeInstallDirectory}</installDirectory>
                         </configuration>
                     </execution>

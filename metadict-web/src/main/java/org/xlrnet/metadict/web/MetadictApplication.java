@@ -25,7 +25,6 @@
 package org.xlrnet.metadict.web;
 
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
@@ -35,6 +34,7 @@ import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
 import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
 import org.xlrnet.metadict.web.app.MappedJsonConfiguration;
 import org.xlrnet.metadict.web.app.WebModule;
+import org.xlrnet.metadict.web.middleware.bundles.SinglePageAppAssetsBundle;
 import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
 import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
@@ -80,7 +80,7 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
         );
 
         // Serve static content (i.e. app)
-        bootstrap.addBundle(new AssetsBundle("/static", "/", "index.html"));
+        bootstrap.addBundle(new SinglePageAppAssetsBundle("/static", "/"));
 
         // Install custom Jackson mapping
         JacksonUtils.configureObjectMapper(bootstrap.getObjectMapper());

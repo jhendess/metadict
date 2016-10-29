@@ -13,54 +13,54 @@
                     accurate results possible.</p>
 
             </div>
-            <div class="separator" ng-controller="BackendStatusController">
-                <div class="col s12 m6 offset-m3">
-                    <div ng-if="isLoading">
-                        <div class="col s12 m4 center">
-                            <div class="preloader-wrapper active">
-                                <div class="spinner-layer spinner-red-only">
-                                    <div class="circle-clipper left">
-                                        <div class="circle"></div>
-                                    </div>
-                                    <div class="gap-patch">
-                                        <div class="circle"></div>
-                                    </div>
-                                    <div class="circle-clipper right">
-                                        <div class="circle"></div>
-                                    </div>
+        </div>
+        <div class="row" ng-controller="BackendStatusController">
+            <div class="col s12 m8 offset-m2">
+                <div ng-if="isLoading">
+                    <div class="col s12 m4 center">
+                        <div class="preloader-wrapper active">
+                            <div class="spinner-layer spinner-red-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div ng-if="isError">
-                        <p>Unable to communicate with the backend system. Make sure you are online.</p>
-                    </div>
+                <div ng-if="isError">
+                    <p>Unable to communicate with the backend system. Make sure you are online.</p>
+                </div>
 
-                    <div ng-if="!isLoading && !isError" class="systemStatusTable">
-                        <div class="card blue darken-2">
-                            <div class="card-content white-text">
-                                <span class="card-title">Backend status</span>
-                                <div class="row">
-                                    <div class="col s6">Server version:</div>
-                                    <div class="col s6">{{backendStatus.version}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s6">Server revision:</div>
-                                    <div class="col s6">{{backendStatus.revision}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s6">Build time:</div>
-                                    <div class="col s6">{{backendStatus.buildTime}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s6">Start time:</div>
-                                    <div class="col s6">{{backendStatus.startTime}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col s6">Uptime:</div>
-                                    <div class="col s6">{{backendStatus.uptime}}</div>
-                                </div>
+                <div ng-if="!isLoading && !isError" class="systemStatusTable">
+                    <div class="card blue darken-2">
+                        <div class="card-content white-text">
+                            <span class="card-title">Backend status</span>
+                            <div class="row">
+                                <div class="col s6">Server version:</div>
+                                <div class="col s6">{{backendStatus.version}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col s6">Server revision:</div>
+                                <div class="col s6">{{backendStatus.revision}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col s6">Build time:</div>
+                                <div class="col s6">{{backendStatus.buildTime}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col s6">Start time:</div>
+                                <div class="col s6">{{backendStatus.startTime}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col s6">Uptime:</div>
+                                <div class="col s6">{{backendStatus.uptime}}</div>
                             </div>
                         </div>
                     </div>

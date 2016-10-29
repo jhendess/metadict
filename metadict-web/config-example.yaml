@@ -11,11 +11,28 @@
 server:
 
    #
+   # Context path where the main application is available
+   #
+   applicationContextPath: /
+
+   #
+   # Context path under which admin operations can be done
+   #
+   adminContextPath: /
+
+   #
    # Default application port to listen on
    #
    applicationConnectors:
     - type: http
       port: 8080
+
+   #
+   # Default admin port to listen on
+   #
+   adminConnectors:
+   - type: http
+     port: 8081
 
 #
 # Configuration of the storage subsystem

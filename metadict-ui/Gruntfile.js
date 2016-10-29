@@ -32,13 +32,6 @@ module.exports = function (grunt) {
     // Load modRewrite for using angular's html5mode in grunt:serve
     var modRewrite = require('connect-modrewrite');
 
-    // Use "--clientBasePath=/something" to set /something as the angular basepath for html5mode
-    var clientBasePath = grunt.option("clientBasePath");
-
-    if (!clientBasePath || clientBasePath === "") {
-        clientBasePath = "/";
-    }
-
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
 
@@ -170,8 +163,7 @@ module.exports = function (grunt) {
                     data: {
                         config: appConfig.env.dev,
                         pkg: pkg,
-                        revision: "<%= meta.revision %>",
-                        clientBasePath: "/"
+                        revision: "<%= meta.revision %>"
                     }
                 },
                 files: {
@@ -183,8 +175,7 @@ module.exports = function (grunt) {
                     data: {
                         config: appConfig.env.prod,
                         pkg: pkg,
-                        revision: "<%= meta.revision %>",
-                        clientBasePath: clientBasePath
+                        revision: "<%= meta.revision %>"
                     }
                 },
                 files: {
@@ -231,7 +222,10 @@ module.exports = function (grunt) {
         wiredep: {
             app: {
                 src: ['<%= appConfig.paths.app %>/index.html'],
-                ignorePath: /\.\.\//
+                ignorePath: /\.\.\//,
+                exclude: [
+                    'bower_components/roboto-fontface/css/*'
+                ]
             },
             // Configuration for injecting components into Karma config
             test: {
@@ -541,8 +535,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', function (target) {
-        grunt.log.writeln("Using '" + clientBasePath + "' as base path for angular application");
-
         grunt.task.run([
             'clean:dist',
             'wiredep',

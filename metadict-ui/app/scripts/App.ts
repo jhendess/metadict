@@ -50,13 +50,12 @@ module MetadictApp {
         "LocalStorageModule"
     ]);
 
-    let clientBasePath = Config.CLIENT_BASE_PATH;
-    if (clientBasePath.charAt(0) !== "/") {
-        clientBasePath = "/" + clientBasePath;
-    }
+    let basePathElement: JQuery = $("base").first();
 
-    let finalBasePath = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${Config.CLIENT_BASE_PATH}`;
-    $("head").prepend(`<base href="${finalBasePath}" target="_blank"/>`);
+    if (basePathElement.attr("href") === "{{clientBasePath}}") {
+        let finalBasePath = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`;
+        basePathElement.attr("href", finalBasePath);
+    }
 
     metadictModule
         .config(($routeProvider: IRouteProvider) => {
