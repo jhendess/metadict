@@ -52,6 +52,14 @@
             <outputDirectory>/</outputDirectory>
         </file>
         <file>
+            <source>../LICENSE</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>../README.md</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
             <source>
                 target/metadict.jar
             </source>

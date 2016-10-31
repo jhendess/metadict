@@ -1,39 +1,24 @@
 # Metadict
 
 Metadict is a modular meta search engine for dictionaries written in Java. It supports querying multiple
-mono- and bilingual dictionary engines at the same time. Metadict system is primarily based on CDI for detecting
-available search engines and can be used in any CDI-based application.
+mono- and bilingual dictionary engines at the same time.
      
-The default distribution in this repository contains a REST service, a responsive webapp and several search engines.
-Deployment of this configuration is primarily optimized for a Wildfly application server. A standalone version without
-an external application server will follow. 
+The default distribution in this repository contains backend with REST services, a responsive webapp and several search engines.
+You can either use the core and its services in your own application or use the default backend that is distributed by default.
 
-### Deployment
+### Running
 
-Metadict is being developed primarily to run on a Wildfly application server, but could also be modified to run on other
-servers like Tomcat or Glassfish.
-
-To deploy the application directly from maven on a running Wildfly instance, you can issue a call like this:
-
+There is no need for an application server to run Metadict. To run Metadict, extract the distribution package and call:
+  
 ```
-mvn clean package wildfly:deploy \
-            -Dwildfly.username=[USERNAME] \
-            -Dwildfly.password=[PASSWORD] \
-            -Dmetadict-assembly.finalName=metadict-demo
+java -jar metadict.jar server configuration-example.yaml
 ```
 
-Where `[USERNAME]` is the name of the deployment user on the target server and `[PASSWORD]` is the password of the deployment user.
+Afterwards, you can access the webapp at http://localhost:8080/
+
+Note: prior to v0.4.0 Metadict was a .war archive that had to be deployed on a Wildfly application server. This is no longer the case.
 
 ### Configuration
 
-The only thing that can be configured by now is which storage service Metadict will use. Storage services are currently
-only used for allowing a persistent cache mechanism (i.e. cached search results are available after an application
-restart). The default service is configured to be an inmemory HashMap which provides *no* actual persistence.
-
-Configuring the default webapp distribution to use the persistent MapDB storage can be done by editing
-the `storage.properties` file in the `metadict-assembly/properties/mapdb` folder. To build the default distribution with
-this configuration, simply run the Maven build with "mapdb" profile by calling e.g.:
-
-```
-mvn clean package -P mapdb
-```
+You can look at configuration-example.yaml for further hints on what can be configured (primarily affecting storage at the moment).
+Since Metadict runs on dropwizard, you can also configure everything that is described in the official [dropwizard documentation](http://www.dropwizard.io/1.0.2/docs/manual/core.html).
