@@ -114,6 +114,21 @@
         </div>
     </div>
 
+    <!-- Noscript card -->
+    <noscript>
+    <div class="row" data-bind="visible: isError">
+        <div class="col s12 offset-m3 m6 center-block">
+            <div class="card #e53935 red darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">Javascript missing<i class="mdi-alert-error right"></i></span>
+
+                    <p>Metadict needs javascript to run. Please enable javascript and reload the page or switch to a different browser.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </noscript>
+
     <div ng-view ng-cloak>
 
     </div>
