@@ -145,6 +145,17 @@
     </div>
 </footer>
 
+<!-- Modal Structure -->
+<div id="errorModal" class="modal modal-fixed-footer red darken-1 white-text">
+    <div class="modal-content ">
+        <h4>Oh no! :(</h4>
+        <p>An unexpected error occurred. You can try restarting the application and check if the error occurs again. If the error persists, you may open an issue on <a href="https://github.com/jhendess/metadict">Github</a>.</p>
+    </div>
+    <div class="modal-footer red darken-1 white-text">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">Close</a>
+    </div>
+</div>
+
 
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
@@ -168,12 +179,14 @@
 <script src="scripts/api/Constants.js"></script>
 <script src="scripts/api/CoreEvents.js"></script>
 <script src="scripts/core/main/StatusService.js"></script>
+<script src="scripts/core/main/ExceptionHandler.js"></script>
 <script src="scripts/core/main/ClientUpdateService.js"></script>
 <script src="scripts/core/main/BootstrapService.js"></script>
 <script src="scripts/core/main/BackendAccessService.js"></script>
 <script src="scripts/core/main/MainController.js"></script>
 <script src="scripts/core/user/UserService.js"></script>
 <script src="scripts/core/dialogs/BackendStatusController.js"></script>
+<script src="scripts/core/dialogs/ModalPopupService.js"></script>
 <script src="scripts/core/navigation/NavigationMenuService.js"></script>
 <script src="scripts/core/navigation/NavigationMenuDirective.js"></script>
 <script src="scripts/core/navigation/NavigationMenuController.js"></script>

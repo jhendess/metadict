@@ -82,6 +82,9 @@ module MetadictApp {
         .config((RestangularProvider: IRestangularProvider) => {
             RestangularProvider.setBaseUrl(Config.API_URL);
         })
+        .config(($provide: ng.auto.IProvideService) => {
+            $provide.decorator("$exceptionHandler", extendedExceptionHandler);
+        })
         .run((clientUpdateService: ClientUpdateService, bootstrapService: BootstrapService) => {
             clientUpdateService.registerEventHandlers();
             bootstrapService.bootstrapApplication();

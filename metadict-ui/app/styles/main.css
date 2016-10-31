@@ -279,3 +279,12 @@ main {
         display: none;
     }
 }
+
+/* Configure error popup */
+#errorModal {
+    top: 25% !important;
+    height: 35%;
+    max-height: 45%;
+    width: 400px;
+    max-width: 85%;
+}
