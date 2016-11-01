@@ -9,6 +9,7 @@ module MetadictApp {
     declare var $;
 
     export class ModalPopupService {
+        // @ngInject
         constructor(private $log: ILogService) {
             // Initialize all modals
             $("#errorModal").modal({
