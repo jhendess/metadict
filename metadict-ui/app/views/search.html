@@ -80,9 +80,7 @@
                 <tbody data-bind="foreach: $data.resultEntries">
                 <tr ng-repeat="entry in bilingualResultGroup.resultEntries" class="valign-wrapper">
                     <td class="dictionaryObjectCell left">
-                        <dictionary-object success="searchController.successCallback"
-                                           error="searchController.errorCallback"
-                                           entry="entry.source"></dictionary-object>
+                        <dictionary-object entry="entry.source"></dictionary-object>
                     </td>
                     <td class="entryTypeCell center row">
                         <div>
@@ -92,9 +90,7 @@
                         <div>{{formatEntryType(entry.entryType)}}</div>
                     </td>
                     <td class="dictionaryObjectCell right align-right">
-                        <dictionary-object success="searchController.successCallback"
-                                           error="searchController.errorCallback"
-                                           entry="entry.target"></dictionary-object>
+                        <dictionary-object entry="entry.target"></dictionary-object>
                     </td>
                 </tr>
                 </tbody>
@@ -108,8 +104,7 @@
 
             <div class="col s4 m3 l2" ng-repeat="recommendation in queryResponse.similarRecommendations">
                 <span class="flag-icon" ng-class="buildIconClass(recommendation.language)"></span>
-                <a class="underlinedLink black-text" click-query success="searchController.successCallback"
-                   error="searchController.errorCallback">{{recommendation.generalForm}}</a>
+                <a class="underlinedLink black-text">{{recommendation.generalForm}}</a>
             </div>
         </div>
         <!-- External contents -->

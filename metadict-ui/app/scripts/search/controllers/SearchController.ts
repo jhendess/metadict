@@ -11,7 +11,7 @@ module MetadictApp {
 
     declare var Materialize;
 
-    export interface ISearchScope extends ISuccessErrorScope<QueryResponse> {
+    export interface ISearchScope extends IScope {
 
         searchRequest: string;
 
@@ -37,19 +37,21 @@ module MetadictApp {
             this.prepareScope();
             this.registerEvents();
 
-            // Load previously entered query string:
-            $scope.searchRequest = $location.search()[Parameters.QUERY_STRING];
-
-            // Initiate a search request if the query string parameter is set on page load
-            if ($scope.searchRequest) {
-                this.runSearch();
-            }
+            // New searches are started when the queryString in the URL parameter changes
+            $scope.$watch(() => ($location.search()[Parameters.QUERY_STRING]), () => {
+                this.$log.debug("Search parameter changed");
+                // Update the scope variable (in case the request was triggered externally)
+                $scope.searchRequest = $location.search()[Parameters.QUERY_STRING];
+                if ($scope.searchRequest) {
+                    this.searchService.runBilingualQuery($scope.searchRequest, this.successCallback, this.errorCallback);
+                }
+            });
 
             $log.debug("SearchController started");
         }
 
-        public runSearch = () => {
-            let requestString: string = this.$scope.searchRequest;
+        public prepareSearch = (queryString : string) => {
+            let requestString: string = queryString ? queryString : this.$scope.searchRequest;
             let dictionaries: string = this.dictionaryService.getCurrentDictionaryString();
 
             if (!requestString || requestString.length <= 0) {
@@ -61,7 +63,7 @@ module MetadictApp {
                 return;
             }
 
-            this.searchService.runBilingualQuery(requestString, this.successCallback, this.errorCallback);
+            this.searchService.triggerSearch(requestString);
         };
 
         private animateClickQuery = () => {
@@ -83,18 +85,17 @@ module MetadictApp {
             // Update an hidden form field which is used by browser's for creating a custom search URL
             this.$scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE, (event) => {
                 this.$log.debug("Received " + event.name + " event");
-                // This is not the angular way, but seems to be the only way of updating the hidden field for custom searches
+                // This is not the angular way, but seems to be the only way of updating the hidden field for custom
+                // searches
                 $("#dictionaryString").val(this.dictionaryService.getCurrentDictionaryString());
             });
             this.$scope.$on(CoreEvents.INVOKE_CLICK_QUERY, this.animateClickQuery);
         };
 
         private prepareScope() {
-            this.$scope.runSearch = this.runSearch;
+            this.$scope.runSearch = this.prepareSearch;
             this.$scope.buildIconClass = this.dictionaryService.buildIconClass;
             this.$scope.formatEntryType = this.prettyFormattingService.formatEntryType;
-            this.$scope.success = this.successCallback;
-            this.$scope.error = this.errorCallback;
             this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries;
             this.$scope.$watch(
                 () => this.searchService.lastQueryString,

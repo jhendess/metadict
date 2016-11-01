@@ -15,18 +15,14 @@ module MetadictApp {
             $log.debug("ClickQueryDirective started");
         }
 
-        public scope = {
-            success: "=success",
-            error: "=error"
-        };
-
         public restrict = "A";
 
-        public link = (scope: ISuccessErrorScope<QueryResponse>, element: IAugmentedJQuery) => {
+        public link = (scope: IScope, element: IAugmentedJQuery) => {
             element.on("click", () => {
                 let queryString = element.text();
-                scope.$emit(CoreEvents.INVOKE_CLICK_QUERY);
-                this.searchService.runBilingualQuery(queryString, scope.success, scope.error);
+                scope.$apply(() => {
+                    scope.$emit(CoreEvents.INVOKE_CLICK_QUERY, queryString);
+                });
             });
         };
 

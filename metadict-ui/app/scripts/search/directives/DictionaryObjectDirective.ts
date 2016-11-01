@@ -4,9 +4,9 @@
 
 module MetadictApp {
 
-    import ISuccessErrorScope = MetadictApp.ISuccessErrorScope;
+    import IScope = angular.IScope;
 
-    interface IDictionaryObjectDirectiveScope extends ISuccessErrorScope<QueryResponse> {
+    interface IDictionaryObjectDirectiveScope extends IScope {
 
         entry: DictionaryObject;
     }

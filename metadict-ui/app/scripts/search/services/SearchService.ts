@@ -42,10 +42,18 @@ module MetadictApp {
                                  error: ErrorCallback) {
             let dictionaries = this.dictionaryService.getCurrentDictionaryString();
             this.$log.debug(`Invoking search for request string '${requestString}' in dictionaries ${dictionaries} ...`);
-            this.$location.search(Parameters.QUERY_STRING, requestString);
             this.statusService.isSearching = true;
             this.lastQueryString = requestString;
             this.backendAccessService.executeBilingualQuery(dictionaries, requestString, success, error);
+        }
+
+        /**
+         * Trigger a search by changing the requestString parameter to the requested search value. This workaround is necessary
+         * to support correct behaviour of the HTML5 history API.
+         * @param requestString The string that will be searched for.
+         */
+        public triggerSearch(requestString: string) {
+            this.$location.search(Parameters.QUERY_STRING, requestString);
         }
     }
 
