@@ -16,7 +16,7 @@
                 <span class="monolingualEntry-infoTitle">Pronunciation</span>: {{entry.content.pronunciation}}
             </p>
             <ul>
-                <li ng-repeat="meaning in entry.content.meanings">{{meaning}}</li>
+                <li ng-repeat="meaning in entry.content.meanings track by $index">{{meaning}}</li>
             </ul>
 
         </div>
