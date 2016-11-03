@@ -6,6 +6,7 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import ILocationService = angular.ILocationService;
+    import IRootScopeService = angular.IRootScopeService;
 
 
     /**
@@ -13,7 +14,7 @@ module MetadictApp {
      */
     export class SearchService {
         // @ngInject
-        constructor(private $log: ILogService, private backendAccessService: BackendAccessService,
+        constructor(private $log: ILogService, private $rootScope: IRootScopeService, private backendAccessService: BackendAccessService,
                     private dictionaryService: DictionaryService, private $location: ILocationService,
                     private statusService: StatusService) {
             $log.debug("SearchService started");
@@ -48,12 +49,17 @@ module MetadictApp {
         }
 
         /**
-         * Trigger a search by changing the requestString parameter to the requested search value. This workaround is necessary
-         * to support correct behaviour of the HTML5 history API.
+         * Trigger a search by changing the requestString parameter to the requested search value. This workaround is
+         * necessary to support correct behaviour of the HTML5 history API.
          * @param requestString The string that will be searched for.
          */
         public triggerSearch(requestString: string) {
-            this.$location.search(Parameters.QUERY_STRING, requestString);
+            let oldRequest = this.$location.search()[Parameters.QUERY_STRING];
+            if (oldRequest === requestString) {
+                this.$rootScope.$broadcast(SearchEvents.FORCE_SEARCH);
+            } else {
+                this.$location.search(Parameters.QUERY_STRING, requestString);
+            }
         }
     }
 

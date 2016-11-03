@@ -17,7 +17,7 @@ module MetadictApp {
 
         queryResponse: QueryResponse;
 
-        runSearch: Function;
+        prepareSearch: Function;
 
         buildIconClass: Function;
 
@@ -40,17 +40,13 @@ module MetadictApp {
             // New searches are started when the queryString in the URL parameter changes
             $scope.$watch(() => ($location.search()[Parameters.QUERY_STRING]), () => {
                 this.$log.debug("Search parameter changed");
-                // Update the scope variable (in case the request was triggered externally)
-                $scope.searchRequest = $location.search()[Parameters.QUERY_STRING];
-                if ($scope.searchRequest) {
-                    this.searchService.runBilingualQuery($scope.searchRequest, this.successCallback, this.errorCallback);
-                }
+                this.internalRunSearch();
             });
 
             $log.debug("SearchController started");
         }
 
-        public prepareSearch = (queryString : string) => {
+        public prepareSearch = (queryString: string) => {
             let requestString: string = queryString ? queryString : this.$scope.searchRequest;
             let dictionaries: string = this.dictionaryService.getCurrentDictionaryString();
 
@@ -92,8 +88,20 @@ module MetadictApp {
             this.$scope.$on(CoreEvents.INVOKE_CLICK_QUERY, this.animateClickQuery);
         };
 
+        /**
+         * Never call this method directly! Either use {@link SearchController#prepareSearch} or {@link
+            * SearchService#triggerSearch}.
+         */
+        private internalRunSearch = () => {
+            // Update the scope variable (in case the request was triggered externally)
+            this.$scope.searchRequest = this.$location.search()[Parameters.QUERY_STRING];
+            if (this.$scope.searchRequest) {
+                this.searchService.runBilingualQuery(this.$scope.searchRequest, this.successCallback, this.errorCallback);
+            }
+        };
+
         private prepareScope() {
-            this.$scope.runSearch = this.prepareSearch;
+            this.$scope.prepareSearch = this.prepareSearch;
             this.$scope.buildIconClass = this.dictionaryService.buildIconClass;
             this.$scope.formatEntryType = this.prettyFormattingService.formatEntryType;
             this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries;
@@ -104,6 +112,7 @@ module MetadictApp {
             this.$scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE,
                 () => this.$scope.enabledDictionaries = this.dictionaryService.selectedBilingualDictionaries
             );
+            this.$scope.$on(SearchEvents.FORCE_SEARCH, this.internalRunSearch);
         };
     }
 

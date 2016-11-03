@@ -286,5 +286,10 @@ main {
     height: 35%;
     max-height: 45%;
     width: 400px;
+    min-height: 260px;
     max-width: 85%;
+}
+
+#errorModal > .modal-content {
+    padding-bottom: 4px;
 }
