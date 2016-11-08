@@ -1,0 +1,26 @@
+{
+    "lang": "en",
+    "short_name": "Metadict",
+    "name": "Metadict Search Engine",
+    "start_url": "./search",
+    "icons": [{
+        "src": "images/icons/icon_48p.png",
+        "sizes": "48x48"
+    }, {
+        "src": "images/icons/icon_72p.png",
+        "sizes": "72x72"
+    }, {
+        "src": "images/icons/icon_96p.png",
+        "sizes": "96x96"
+    }, {
+        "src": "images/icons/icon_144p.png",
+        "sizes": "144x144"
+    }, {
+        "src": "images/icons/icon_192p.png",
+        "sizes": "192x192"
+    }],
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#1976D2",
+    "background_color": "white"
+}

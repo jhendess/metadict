@@ -41,10 +41,7 @@ module MetadictApp {
     declare var window;
 
     export let metadictModule = angular.module("MetadictApp", [
-        "ngAnimate",
-        "ngCookies",
         "ngRoute",
-        "ngTouch",
         "restangular",
         "ui.materialize",
         "LocalStorageModule"

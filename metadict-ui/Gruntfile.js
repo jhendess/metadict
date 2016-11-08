@@ -289,7 +289,8 @@ module.exports = function (grunt) {
                         '*.{ico,png,txt}',
                         '*.html',
                         'images/**/*.*',
-                        '/fonts/**/*.*'
+                        '/fonts/**/*.*',
+                        'manifest.json'
                     ]
                 }, {
                     expand: true,
@@ -341,8 +342,7 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     '<%= appConfig.paths.dist %>/scripts/**/*.js',
-                    '<%= appConfig.paths.dist %>/styles/**/*.css',
-                    '<%= appConfig.paths.dist %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}'
+                    '<%= appConfig.paths.dist %>/styles/**/*.css'
                 ]
             }
         },

@@ -52,7 +52,7 @@ module MetadictApp {
         };
 
         private resetHeader() {
-            this.img = "images/logo-icon.png";
+            this.img = "images/logo-small.png";
             this.topHeader = "You are not logged in.";
             this.subHeader = "";
         }
