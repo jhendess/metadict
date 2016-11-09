@@ -3,10 +3,7 @@
   "version": "0.0.1-SNAPSHOT",
   "dependencies": {
     "angular": "=1.5.8",
-    "angular-animate": "=1.5.8",
-    "angular-cookies": "=1.5.8",
     "angular-route": "=1.5.8",
-    "angular-touch": "=1.5.8",
     "restangular": "~1.5.1",
     "lodash": "=4.16.2",
     "flag-icon-css": "=2.5.0",
