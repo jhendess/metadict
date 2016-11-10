@@ -22,6 +22,7 @@ module MetadictApp {
                 let queryString = element.text();
                 scope.$apply(() => {
                     scope.$emit(CoreEvents.INVOKE_CLICK_QUERY, queryString);
+                    this.searchService.triggerSearch(queryString);
                 });
             });
         };
