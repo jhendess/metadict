@@ -83,9 +83,9 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
 
         // Transform auto tests into set of arrays
         AutoTestSuite autoTestSuite = searchEngineProvider.getAutoTestSuite();
-        if (autoTestSuite != null)
+        if (autoTestSuite != null) {
             autoTestSuite.forEach(autoTestCase -> testCases.add(new Object[]{searchEngineProvider.newEngineInstance(), autoTestCase}));
-
+        }
         return testCases;
     }
 

@@ -136,6 +136,8 @@ public class LeoEngineProvider extends AbstractSearchEngineProvider {
                                                 .setOutputObject(ImmutableDictionaryObject.builder()
                                                         .setGeneralForm("ein Bankkonto haben")
                                                         .setDescription("bei einer Bank")
+                                                        .setAdditionalForm(GrammaticalTense.PAST_PERFECT, "gehabt")
+                                                        .setAdditionalForm(GrammaticalTense.PAST_TENSE, "hatte")
                                                         .setLanguage(Language.GERMAN)
                                                         .build())
                                                 .build())
