@@ -124,17 +124,18 @@
 
     <!-- Noscript card -->
     <noscript>
-    <div class="row" data-bind="visible: isError">
-        <div class="col s12 offset-m3 m6 center-block">
-            <div class="card #e53935 red darken-1">
-                <div class="card-content white-text">
-                    <span class="card-title">Javascript missing<i class="mdi-alert-error right"></i></span>
+        <div class="row" data-bind="visible: isError">
+            <div class="col s12 offset-m3 m6 center-block">
+                <div class="card #e53935 red darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Javascript missing<i class="mdi-alert-error right"></i></span>
 
-                    <p>Metadict needs javascript to run. Please enable javascript and reload the page or switch to a different browser.</p>
+                        <p>Metadict needs javascript to run. Please enable javascript and reload the page or switch to a
+                            different browser.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </noscript>
 
     <div ng-view ng-cloak>
@@ -157,7 +158,8 @@
 <div id="errorModal" class="modal modal-fixed-footer red darken-1 white-text">
     <div class="modal-content ">
         <h4>Oh no! :(</h4>
-        <p>An unexpected error occurred. You can try restarting the application and check if the error occurs again. If the error persists, you may open an issue on <a href="https://github.com/jhendess/metadict">Github</a>.</p>
+        <p>An unexpected error occurred. You can try restarting the application and check if the error occurs again. If
+            the error persists, you may open an issue on <a href="https://github.com/jhendess/metadict">Github</a>.</p>
     </div>
     <div class="modal-footer red darken-1 white-text">
         <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">Close</a>
@@ -192,6 +194,7 @@
 <script src="scripts/core/user/UserService.js"></script>
 <script src="scripts/core/dialogs/BackendStatusController.js"></script>
 <script src="scripts/core/dialogs/ModalPopupService.js"></script>
+<script src="scripts/core/dialogs/GeneralUiService.js"></script>
 <script src="scripts/core/navigation/NavigationMenuService.js"></script>
 <script src="scripts/core/navigation/NavigationMenuDirective.js"></script>
 <script src="scripts/core/navigation/NavigationMenuController.js"></script>

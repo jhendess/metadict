@@ -82,8 +82,9 @@ module MetadictApp {
         .config(($provide: ng.auto.IProvideService) => {
             $provide.decorator("$exceptionHandler", extendedExceptionHandler);
         })
-        .run((clientUpdateService: ClientUpdateService, bootstrapService: BootstrapService) => {
+        .run((generalUiService: GeneralUiService, clientUpdateService: ClientUpdateService, bootstrapService: BootstrapService) => {
             clientUpdateService.registerEventHandlers();
+            generalUiService.registerEventHandlers()
             bootstrapService.bootstrapApplication();
         });
 }
