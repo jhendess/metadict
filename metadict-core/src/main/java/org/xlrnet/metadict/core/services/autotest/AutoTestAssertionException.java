@@ -33,10 +33,10 @@ public class AutoTestAssertionException extends Exception {
     private static final long serialVersionUID = 7185096601320559944L;
 
     /** The object that was originally expected. */
-    private final Object expectedObject;
+    private transient final Object expectedObject;
 
     /** The object which is most similar to the expected. */
-    private final Object mostSimilar;
+    private transient final Object mostSimilar;
 
     /**
      * Constructs a new exception with the given expected object that should have been inside the actual result set.

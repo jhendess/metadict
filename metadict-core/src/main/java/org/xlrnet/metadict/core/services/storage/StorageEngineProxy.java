@@ -213,7 +213,7 @@ class StorageEngineProxy implements StorageService {
     void shutdown() {
         try {
             checkInternalState();
-        } catch (StorageShutdownException e) {
+        } catch (StorageShutdownException e) {  // NOSONAR: Logging not necessary
             LOGGER.warn("Shutdown was already called while trying to shutdown storage engine {}", this.proxiedEngine.getClass().getCanonicalName());
         }
         LOGGER.info("Shutting down storage engine {} ...", this.proxiedEngine.getClass().getCanonicalName());

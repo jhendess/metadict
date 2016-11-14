@@ -148,7 +148,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         } catch (StorageBackendException b) {
             LOGGER.error("Internal storage backend error while reading a value", b);
         } catch (StorageOperationException o) {
-            LOGGER.info("Storage backend contained invalid value while reading");
+            LOGGER.warn("Storage backend contained invalid value while reading", o);
             deleteCachedValueInStorage(queryStepKey);
         }
         return storedStepResult;
@@ -167,7 +167,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             this.storageService.create(STORAGE_KEY_QUERY_CACHE, queryStepKey, queryStepResult);
         } catch (StorageBackendException b) {
             LOGGER.error("Internal storage backend error while creating a new value", b);
-        } catch (StorageOperationException o) {
+        } catch (StorageOperationException o) {  // NOSONAR: Logging of exception not necessary
             LOGGER.debug("Storage backend was updated before results could be created");
         }
     }
