@@ -481,7 +481,9 @@ module.exports = function (grunt) {
                     patterns: [
                         'dist/scripts/*.js',
                         'dist/styles/*.css',
-                        'dist/fonts/**/*'
+                        'dist/fonts/**/*',
+                        'dist/images/logo-medium.png',
+                        'dist/flags/4x3/*.svg'
                     ]
                 },
                 network: '*'

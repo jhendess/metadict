@@ -265,8 +265,8 @@ main {
 
 /* Let the left sidenav fit inside the main panel on large screens */
 
-@media only screen and (min-width: 1366px) {
-    #menu-left .side-nav {
+@media only screen and (min-width: 1360px) {
+    #menu-left {
         top: 64px;
         height: calc(100% - 64px - 70px)
     }
@@ -274,7 +274,7 @@ main {
 
 /* Disable sidenav-overlay on large screens */
 
-@media only screen and (min-width: 1366px) {
+@media only screen and (min-width: 1360px) {
     #sidenav-overlay {
         z-index: 999;
     }
@@ -296,4 +296,11 @@ main {
 
 #errorModal > .modal-content {
     padding-bottom: 4px;
+}
+
+/* Move the offline indicator a bit down. */
+.offline-ui {
+    top: auto !important;
+    bottom: 0px !important;
+    z-index: 800 !important;
 }

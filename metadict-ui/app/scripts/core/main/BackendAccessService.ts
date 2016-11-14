@@ -4,6 +4,8 @@
 
 module MetadictApp {
 
+    declare var Offline;
+
     import ILogService = angular.ILogService;
     import IRestangularService = restangular.IService;
     import IRestangularElement = restangular.IElement;
@@ -104,6 +106,7 @@ module MetadictApp {
         private buildErrorHandler(errorCallback: ErrorCallback): ErrorCallback {
             return (reason: string) => {
                 // TODO: do system-wide error handling
+                Offline.check();
                 errorCallback(reason);
             };
         }

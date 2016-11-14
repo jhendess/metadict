@@ -4,6 +4,7 @@
 
 module MetadictApp {
 
+    declare var Offline;
     import ILogService = angular.ILogService;
 
     /**
@@ -20,7 +21,21 @@ module MetadictApp {
          */
         public bootstrapApplication() {
             this.dictionaryService.reloadDictionaries();
+            this.setupOfflineHandler();
             this.$log.info("Application started");
+        }
+
+        private setupOfflineHandler() {
+            // TODO: Automatically rerun the latest query (if visible) after a connection has been reestablished
+            Offline.options = {
+                interceptRequests: true,
+                requests: true,
+                checks: {
+                    xhr: {
+                        url: "connection-test"
+                    }
+                }
+            };
         }
     }
 
