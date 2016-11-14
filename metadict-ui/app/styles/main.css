@@ -263,20 +263,24 @@ main {
     }
 }
 
-/* Let the Sidenavs fit inside the main panel on large screens */
+/* Let the left sidenav fit inside the main panel on large screens */
 
-@media only screen and (min-width: 600px) {
-    .side-nav {
+@media only screen and (min-width: 1366px) {
+    #menu-left .side-nav {
         top: 64px;
         height: calc(100% - 64px - 70px)
     }
 }
 
-/* Disable sidenav-overlay on large screenss */
+/* Disable sidenav-overlay on large screens */
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 1366px) {
     #sidenav-overlay {
-        display: none;
+        z-index: 999;
+    }
+
+    #menu-right {
+        z-index: 1000;
     }
 }
 

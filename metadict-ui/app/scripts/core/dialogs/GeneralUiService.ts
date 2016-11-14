@@ -15,6 +15,15 @@ module MetadictApp {
             $log.debug("GeneralUiService started");
         }
 
+        /** Threshold for mobile screen widths. */
+        private static MOBILE_SCREEN_WIDTH_THRESHOLD = 1366;
+
+        /** Height of the header. */
+        private static HEADER_HEIGHT = 64;
+
+        /** Height of the Footer. */
+        private static FOOTER_HEIGHT = 70;
+
         /**
          * Register important UI event handler.
          */
@@ -28,14 +37,18 @@ module MetadictApp {
          * Recalculate the heights of the sidenav elements.
          */
         public updateSidenavs = () => {
+            if (window.innerWidth < GeneralUiService.MOBILE_SCREEN_WIDTH_THRESHOLD) {
+                return;
+            }
+
             const scrollTop = $(window).scrollTop();
             const windowHeight = $(window).height();
             let toBottom = $(document).height() - windowHeight - scrollTop;
-            let newTop = (scrollTop > 64) ? 0 : 64 - scrollTop;
-            let bottomOffset = (toBottom > 70) ? 0 : 70 - toBottom;
+            let newTop = (scrollTop > GeneralUiService.HEADER_HEIGHT) ? 0 : GeneralUiService.HEADER_HEIGHT - scrollTop;
+            let bottomOffset = (toBottom > GeneralUiService.FOOTER_HEIGHT) ? 0 : GeneralUiService.FOOTER_HEIGHT - toBottom;
             let newHeight = windowHeight - newTop - bottomOffset;
-            $(".side-nav").css("top", newTop + "px");
-            $(".side-nav").css("height", newHeight + "px");
+            $("#menu-left").css("top", newTop + "px");
+            $("#menu-left").css("height", newHeight + "px");
         };
 
         private onElementHeightChange(element, callback: Function) {
