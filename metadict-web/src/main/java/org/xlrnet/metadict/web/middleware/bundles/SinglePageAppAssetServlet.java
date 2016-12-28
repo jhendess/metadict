@@ -97,7 +97,7 @@ public class SinglePageAppAssetServlet extends AssetServlet {
 
         try {
             this.indexPageUrl = getResourceUrl(indexResource);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {      // NOSONAR: No logging of exception necessary
             LOGGER.warn("No single page index found");
             return;
         }

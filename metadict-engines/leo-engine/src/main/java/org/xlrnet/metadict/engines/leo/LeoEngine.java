@@ -330,8 +330,7 @@ public class LeoEngine implements SearchEngine {
 
         // Extract language:
         String languageIdentifier = side.attr("lang");
-        if ("ch".equals(languageIdentifier))
-            languageIdentifier = "cn";
+        languageIdentifier = fixLanguageIdentifier(languageIdentifier);
         Language language = Language.getExistingLanguageById(languageIdentifier);
 
         final String[] pluralForm = new String[1];      // Workaround since objects inside lambda should be final
@@ -362,8 +361,9 @@ public class LeoEngine implements SearchEngine {
 
         // Test for abbreviation
         String abbreviation = extractAbbreviationString(fullRepresentation);
-        if (StringUtils.isNotBlank(abbreviation))
+        if (StringUtils.isNotBlank(abbreviation)) {
             dictionaryObjectBuilder.setAbbreviation(abbreviation);
+        }
 
         // Try to detect alternative plural form:
         if (pluralForm[0] == null) {
@@ -382,6 +382,13 @@ public class LeoEngine implements SearchEngine {
                 .build();
     }
 
+    private String fixLanguageIdentifier(String languageIdentifier) {
+        if ("ch".equals(languageIdentifier)) {
+            languageIdentifier = "cn";
+        }
+        return languageIdentifier;
+    }
+
     private boolean isValidDescriptionHtml(String elementHtml) {
         return StringUtils.startsWithIgnoreCase(elementHtml, "<small><i>") && StringUtils.endsWith(elementHtml, "</i></small>")
                 && !StringUtils.containsIgnoreCase(elementHtml, ".:") && !StringUtils.containsIgnoreCase(elementHtml, ".]")
@@ -397,7 +404,9 @@ public class LeoEngine implements SearchEngine {
         Elements sides = similarityNode.getElementsByTag("side");
 
         for (Element side : sides) {
-            Language sideLanguage = Language.getExistingLanguageById(side.attr("lang"));
+            String lang = side.attr("lang");
+            lang = fixLanguageIdentifier(lang);
+            Language sideLanguage = Language.getExistingLanguageById(lang);
 
             for (Element word : side.getElementsByTag("word")) {
                 String wordText = cleanWhitespace(word.text());

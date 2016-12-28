@@ -24,16 +24,16 @@
 
 package org.xlrnet.metadict.core.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class with static utility methods.
@@ -44,6 +44,10 @@ public class CommonUtils {
 
     /** Valid naming pattern for storage services. */
     private static final Pattern STORAGE_SERVICE_NAME_PATTERN = Pattern.compile("[A-z][A-z0-9\\-]*");
+
+    private CommonUtils() {
+
+    }
 
     /**
      * Returns the value of a property in a given .properties-File or a default value.
@@ -67,7 +71,7 @@ public class CommonUtils {
                 LOGGER.error("File {} could not be found", filename);
             }
         } catch (IOException e) {
-            LOGGER.error("Unable to read property field {} ({}: {})", propertyName, e.getClass().getSimpleName(), e.getMessage());
+            LOGGER.warn("Unable to read property field {}", propertyName, e);
         }
         return result;
     }
