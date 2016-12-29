@@ -181,6 +181,12 @@
                 <artifactId>dropwizard-guicey</artifactId>
                 <version>4.0.0</version>
             </dependency>
+            <!-- Guice servlet extension -->
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-servlet</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
             <!-- Version of Hibernate validator must be overwritten to avoid errors with Governator and Dropwizard -->
             <dependency>
                 <groupId>org.hibernate</groupId>

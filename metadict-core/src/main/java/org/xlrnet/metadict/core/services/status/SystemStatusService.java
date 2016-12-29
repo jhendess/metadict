@@ -42,19 +42,29 @@ public class SystemStatusService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemStatusService.class);
 
-    /** Constant with unknown value. */
+    /**
+     * Constant with unknown value.
+     */
     private static final String UNKNOWN = "UNKNOWN";
 
-    /** The start time of the application. */
+    /**
+     * The start time of the application.
+     */
     private final static Instant START_TIME = Instant.now();
 
-    /** Build time of the application. */
+    /**
+     * Build time of the application.
+     */
     private static final String BUILD_TIME = CommonUtils.getProperty("build.properties", "build.timestamp", UNKNOWN);
 
-    /** The version of this application. */
+    /**
+     * The version of this application.
+     */
     private static final String VERSION = CommonUtils.getProperty("build.properties", "build.version", UNKNOWN);
 
-    /** The scm revision of this application. */
+    /**
+     * The scm revision of this application.
+     */
     private static final String REVISION = CommonUtils.getProperty("build.properties", "build.revision", UNKNOWN);
 
     /**
@@ -81,7 +91,9 @@ public class SystemStatusService {
      */
     public static class SystemStatus {
 
-        /** The uptime of the application. */
+        /**
+         * The uptime of the application.
+         */
         private final Duration uptime;
 
         SystemStatus(Duration uptime) {

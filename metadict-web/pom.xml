@@ -121,6 +121,10 @@
             <groupId>com.netflix.governator</groupId>
             <artifactId>governator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -33,6 +33,7 @@ import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
 import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
 import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
 import org.xlrnet.metadict.web.app.MappedJsonConfiguration;
+import org.xlrnet.metadict.web.app.MetadictServletModule;
 import org.xlrnet.metadict.web.app.WebModule;
 import org.xlrnet.metadict.web.middleware.bundles.SinglePageAppAssetsBundle;
 import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
@@ -74,7 +75,8 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
                                 new HeinzelnisseEngineProvider(),
                                 new LeoEngineProvider(),
                                 new OrdbokEngineProvider(),
-                                new WebModule())
+                                new WebModule(),
+                                new MetadictServletModule())
                         .enableAutoConfig(getClass().getPackage().getName())
                         .build()
         );
