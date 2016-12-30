@@ -31,7 +31,7 @@
 
     <groupId>org.xlrnet.metadict</groupId>
     <artifactId>metadict</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0-SNAPSHOT</version>
     <name>Metadict Parent</name>
 
     <packaging>pom</packaging>
