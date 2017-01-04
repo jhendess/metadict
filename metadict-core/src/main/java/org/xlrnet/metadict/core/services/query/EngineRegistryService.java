@@ -60,13 +60,13 @@ public class EngineRegistryService {
 
     Multimap<Language, String> languageEngineNameMap = ArrayListMultimap.create();
 
-    Map<String, EngineDescription> engineDescriptionMap = new HashMap<>();
+    private Map<String, EngineDescription> engineDescriptionMap = new HashMap<>();
 
-    Map<String, FeatureSet> featureSetMap = new HashMap<>();
+    private Map<String, FeatureSet> featureSetMap = new HashMap<>();
 
-    Map<String, SearchEngine> searchEngineMap = new HashMap<>();
+    private Map<String, SearchEngine> searchEngineMap = new HashMap<>();
 
-    List<BilingualDictionary> supportedDictionaryList;
+    private List<BilingualDictionary> supportedDictionaryList;
 
     /** List of available search providers. */
     private Set<SearchEngineProvider> searchProviderInstances;
@@ -241,10 +241,8 @@ public class EngineRegistryService {
      *
      * @param searchEngineProvider
      *         The {@link SearchEngineProvider} that should be registered.
-     * @throws Exception
-     *         may be thrown at any time
      */
-    void registerSearchProvider(@NotNull SearchEngineProvider searchEngineProvider) throws Exception {
+    void registerSearchProvider(@NotNull SearchEngineProvider searchEngineProvider) {
         String canonicalProviderName = searchEngineProvider.getClass().getCanonicalName();
 
         checkState(!this.searchEngineMap.containsKey(canonicalProviderName), "Provider %s is already registered", canonicalProviderName);

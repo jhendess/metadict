@@ -22,20 +22,28 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.api.event;
+package org.xlrnet.metadict.core.services.storage;
+
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 
 /**
- * Generic event listener interface for events in Metadict.
+ * An error to indicate a fatal error while booting the storage subsystem from Metadict. Whenever an such an error is
+ * thrown, the Metadict core should shut down and not continue any booting attempts.
  */
-@FunctionalInterface
-public interface MetadictEventListener<T> {
+public class StorageInitializationException extends MetadictTechnicalException {
 
-    /**
-     * Handler method for the thrown event.
-     *
-     * @param source
-     *         The element that threw the event.
-     */
-    void handleEvent(T source);
+    private static final long serialVersionUID = -3554446165563236820L;
+
+    StorageInitializationException(String message) {
+        super(message);
+    }
+
+    StorageInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    StorageInitializationException(Throwable cause) {
+        super(cause);
+    }
 
 }

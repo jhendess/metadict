@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.web.auth;
 
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
+
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -84,11 +86,10 @@ public class CryptoUtils {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
             PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, keyLength);
             SecretKey key = skf.generateSecret(spec);
-            byte[] res = key.getEncoded();
-            return res;
+            return key.getEncoded();
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e);
+            throw new MetadictRuntimeException(e);
         }
     }
 }

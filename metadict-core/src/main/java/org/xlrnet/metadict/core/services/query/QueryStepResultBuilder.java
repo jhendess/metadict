@@ -51,7 +51,7 @@ public class QueryStepResultBuilder {
      *
      * @return a new object of {@link QueryStepResult}
      */
-    public QueryStepResult build() throws NullPointerException {
+    public QueryStepResult build() {
         checkNotNull(this.queryStep, "Provided query step may not be null");
         checkNotNull(this.engineQueryResult, "Provided query result may not be null");
 

@@ -27,10 +27,14 @@ package org.xlrnet.metadict.engines.woxikon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.api.query.EntryType;
+import org.xlrnet.metadict.api.query.ImmutableBilingualEntry;
+import org.xlrnet.metadict.api.query.ImmutableBilingualQueryResult;
+import org.xlrnet.metadict.api.query.ImmutableDictionaryObject;
 
 /**
  * Provider with a search engine for searching in various dictionaries on {@see <a
@@ -40,13 +44,13 @@ public class WoxikonEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override
-    public AutoTestSuite getAutoTestSuite() throws Exception {
+    public AutoTestSuite getAutoTestSuite() throws MetadictTechnicalException {
         return ImmutableAutoTestSuite.builder()
                 .addAutoTestCase(ImmutableAutoTestCase.builder()
                         .setTestQueryString("essen")
                         .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-en", true))
                         .setExpectedBilingualResults(
-                                (BilingualQueryResult) ImmutableBilingualQueryResult.builder()
+                                ImmutableBilingualQueryResult.builder()
                                         .addBilingualEntry(ImmutableBilingualEntry.builder()
                                                 .setEntryType(EntryType.VERB)
                                                 .setInputObject(ImmutableDictionaryObject.builder()

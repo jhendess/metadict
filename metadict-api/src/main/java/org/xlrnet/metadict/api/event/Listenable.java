@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * Indicates that an object can transport various listeners for specific events.
  */
+@FunctionalInterface
 public interface Listenable<T extends MetadictEventType, L extends MetadictEventListener> {
 
     /**

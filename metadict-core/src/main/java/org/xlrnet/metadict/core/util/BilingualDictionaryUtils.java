@@ -41,7 +41,7 @@ public class BilingualDictionaryUtils {
 
     private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)(,[A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)*");
 
-    public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws IllegalArgumentException, UnsupportedDictionaryException {
+    public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws UnsupportedDictionaryException {
         checkArgument(DICTIONARY_QUERY_PATTERN.matcher(dictionaryQuery).matches(), "Invalid dictionary query");
 
         String[] explodedQuery = StringUtils.split(dictionaryQuery, ",");

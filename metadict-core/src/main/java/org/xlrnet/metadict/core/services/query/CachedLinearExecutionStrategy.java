@@ -30,6 +30,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
@@ -213,7 +214,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
     }
 
     @NotNull
-    private MonolingualQueryResult executeMonolingualQueryStep(@NotNull MonolingualQueryStep step) throws Exception {
+    private MonolingualQueryResult executeMonolingualQueryStep(@NotNull MonolingualQueryStep step) throws MetadictTechnicalException {
         String queryString = step.getQueryString();
         Language requestLanguage = step.getRequestLanguage();
 

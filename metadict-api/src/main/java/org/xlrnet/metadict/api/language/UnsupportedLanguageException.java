@@ -24,11 +24,13 @@
 
 package org.xlrnet.metadict.api.language;
 
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
+
 /**
  * The {@link UnsupportedLanguageException} should always be thrown if an engine is queried with an unsupported type
  * of language.
  */
-public class UnsupportedLanguageException extends Exception {
+public class UnsupportedLanguageException extends MetadictTechnicalException {
 
     private static final long serialVersionUID = 8263164365493564060L;
 
@@ -40,6 +42,6 @@ public class UnsupportedLanguageException extends Exception {
     }
 
     public Language getUnsupportedLanguage() {
-        return unsupportedLanguage;
+        return this.unsupportedLanguage;
     }
 }

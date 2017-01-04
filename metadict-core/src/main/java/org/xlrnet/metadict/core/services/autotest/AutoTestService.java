@@ -66,7 +66,7 @@ public class AutoTestService {
      * @throws IllegalArgumentException
      *         Will be thrown if the given test suite contains illegal values.
      */
-    public void registerAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestSuite autoTestSuite) throws IllegalArgumentException {
+    public void registerAutoTestSuite(@NotNull SearchEngine searchEngine, @NotNull AutoTestSuite autoTestSuite) {
         checkArgument(!this.engineAutoTestSuiteMap.containsKey(searchEngine), "Engine is already registered for auto testing");
 
         for (AutoTestCase testCase : autoTestSuite) {
@@ -194,7 +194,7 @@ public class AutoTestService {
     }
 
     @NotNull
-    ResultData invokeBilingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) throws Exception {
+    ResultData invokeBilingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull BilingualDictionary targetDictionary, @NotNull String requestString, @NotNull BilingualQueryResult expectedResult) {
         BilingualQueryResult queryResult;
         try {
             queryResult = searchEngine.executeBilingualQuery(requestString, targetDictionary.getSource(), targetDictionary.getTarget(), targetDictionary.isBidirectional());
@@ -225,7 +225,7 @@ public class AutoTestService {
     }
 
     @NotNull
-    ResultData invokeMonolingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull Language targetLanguage, @NotNull String requestString, @NotNull MonolingualQueryResult expectedResult) throws Exception {
+    ResultData invokeMonolingualAndValidate(@NotNull SearchEngine searchEngine, @NotNull Language targetLanguage, @NotNull String requestString, @NotNull MonolingualQueryResult expectedResult) {
         MonolingualQueryResult queryResult;
         try {
             queryResult = searchEngine.executeMonolingualQuery(requestString, targetLanguage);

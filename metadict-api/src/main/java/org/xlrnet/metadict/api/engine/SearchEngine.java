@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.api.engine;
 
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
@@ -67,8 +68,8 @@ public interface SearchEngine {
      * @param queryInput
      *         The query string i.e. word that should be looked up.
      * @param inputLanguage
-     *         The input language of the query. This language must be specified as a dictionary's input language of
-     *         this engine.
+     *         The input language of the query. This language must be specified as a dictionary's input language of this
+     *         engine.
      * @param outputLanguage
      *         The expected output language of the query. This language must be specified as the output language of the
      *         same dictionary to which the given inputLanguage belongs.
@@ -76,11 +77,11 @@ public interface SearchEngine {
      *         True, if the engine may search in both directions. I.e. the queryInput can also be seen as the
      *         outputLanguage. The core will set this flag only if the engine declared a dictionary with matching input
      *         and output language. Otherwise the engine will be called for each direction separately.
-     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder}
-     * to build this result list.
+     * @return The results from the search query. You can use an instance of {@link BilingualQueryResultBuilder} to
+     * build this result list.
      */
     @NotNull
-    default BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+    default BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
         throw new UnsupportedOperationException();
     }
 
@@ -100,11 +101,11 @@ public interface SearchEngine {
      * @param queryLanguage
      *         The input language of the query. This language must be specified as a supported monolingual language of
      *         the engine.
-     * @return The results from the search query. You can use an instance of {@link MonolingualQueryResultBuilder}
-     * to build this result list.
+     * @return The results from the search query. You can use an instance of {@link MonolingualQueryResultBuilder} to
+     * build this result list.
      */
     @NotNull
-    default MonolingualQueryResult executeMonolingualQuery(@NotNull String queryInput, @NotNull Language queryLanguage) throws Exception {
+    default MonolingualQueryResult executeMonolingualQuery(@NotNull String queryInput, @NotNull Language queryLanguage) throws MetadictTechnicalException {
         throw new UnsupportedOperationException();
     }
 

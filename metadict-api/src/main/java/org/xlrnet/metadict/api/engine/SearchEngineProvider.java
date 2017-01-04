@@ -27,6 +27,7 @@ package org.xlrnet.metadict.api.engine;
 import com.google.inject.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 
 /**
  * The generic interface for search providers. Implement this interface to make your provider available to the Metadict
@@ -44,7 +45,7 @@ public interface SearchEngineProvider extends Module {
      * @return a set of user-defined automatic test cases.
      */
     @Nullable
-    AutoTestSuite getAutoTestSuite() throws Exception;
+    AutoTestSuite getAutoTestSuite() throws MetadictTechnicalException;
 
     /**
      * Return an {@link EngineDescription} object that contains descriptive i.e. textual information about the

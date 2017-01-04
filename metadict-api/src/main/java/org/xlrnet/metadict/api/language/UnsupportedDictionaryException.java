@@ -24,11 +24,13 @@
 
 package org.xlrnet.metadict.api.language;
 
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
+
 /**
  * The {@link UnsupportedDictionaryException} should always be thrown if an engine is queried with an unsupported type
  * of dictionary.
  */
-public class UnsupportedDictionaryException extends Exception {
+public class UnsupportedDictionaryException extends MetadictTechnicalException {
 
     private static final long serialVersionUID = -5635269869139884252L;
 
@@ -46,14 +48,14 @@ public class UnsupportedDictionaryException extends Exception {
     }
 
     public Language getInLanguage() {
-        return inLanguage;
+        return this.inLanguage;
     }
 
     public Language getOutLanguage() {
-        return outLanguage;
+        return this.outLanguage;
     }
 
     public boolean isAllowBothWay() {
-        return allowBothWay;
+        return this.allowBothWay;
     }
 }

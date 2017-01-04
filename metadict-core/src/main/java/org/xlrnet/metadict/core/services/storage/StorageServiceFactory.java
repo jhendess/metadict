@@ -92,7 +92,7 @@ public class StorageServiceFactory implements Provider<StorageService> {
     }
 
     @PostConstruct
-    public void initialize() {
+    public void initialize() throws MetadictTechnicalException {
         LOGGER.info("Registering storage service providers ...");
         for (StorageServiceProvider storageServiceProvider : this.storageServiceProviders) {
             try {
@@ -161,17 +161,17 @@ public class StorageServiceFactory implements Provider<StorageService> {
         return new InMemoryStorage();
     }
 
-    private void validateStorageProviders() {
+    private void validateStorageProviders() throws MetadictTechnicalException {
         if (this.storageServiceMap.size() == 0) {
             LOGGER.error("No storage service provider could be found - make sure that at least one working provider is available on classpath and try again");
-            throw new StorageInitializationError("No storage service provider could be found");
+            throw new StorageInitializationException("No storage service provider could be found");
         }
 
         this.defaultStorageServiceName = this.storageConfiguration.getDefaultStorage();
 
         if (!this.storageServiceMap.containsKey(this.defaultStorageServiceName)) {
             LOGGER.error("Default storage service provider '{}' could not be found", this.defaultStorageServiceName);
-            throw new Error("Default storage service provider could not be found");
+            throw new StorageInitializationException("Default storage service provider could not be found");
         }
     }
 
@@ -246,7 +246,7 @@ public class StorageServiceFactory implements Provider<StorageService> {
 
     @NotNull
     private StorageEngineProxy internalInstantiateProxy(@NotNull StorageServiceProvider provider, @NotNull Map<String, String> storageConfigurationMap) throws StorageBackendException {
-        StorageService newStorageService = null;
+        StorageService newStorageService;
         newStorageService = provider.createNewStorageService(storageConfigurationMap);
         checkNotNull(newStorageService, "Instantiated storage engine may not be null");
 

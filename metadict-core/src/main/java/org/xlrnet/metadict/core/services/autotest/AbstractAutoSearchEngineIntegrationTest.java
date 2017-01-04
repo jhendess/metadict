@@ -32,6 +32,7 @@ import org.xlrnet.metadict.api.engine.AutoTestCase;
 import org.xlrnet.metadict.api.engine.AutoTestSuite;
 import org.xlrnet.metadict.api.engine.SearchEngine;
 import org.xlrnet.metadict.api.engine.SearchEngineProvider;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ import java.util.List;
  * <p>
  * To write your own test suite, inherit from {@link AbstractAutoSearchEngineIntegrationTest} and implement a static
  * method that returns an {@link Iterable} of {@link Object} arrays. This method must then be annotated with JUnit's
- * {@link org.junit.runners.Parameterized.Parameters} annotation and return the value of {@link
+ * {@link Parameterized.Parameters} annotation and return the value of {@link
  * #prepareProvider(SearchEngineProvider)}. Give a new instance of {@link SearchEngineProvider} as the parameter of this
  * method and your test case should be runnable.
  * <p>
@@ -72,7 +73,7 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
 
     private AutoTestService autoTestService;
 
-    public static Iterable<Object[]> prepareProvider(SearchEngineProvider searchEngineProvider) throws Exception {
+    public static Iterable<Object[]> prepareProvider(SearchEngineProvider searchEngineProvider) throws MetadictTechnicalException {
         List<Object[]> testCases = new ArrayList<>();
 
         // Initialize internal dictionary configuration:
@@ -82,7 +83,8 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
         searchEngineProvider.getEngineDescription();
 
         // Transform auto tests into set of arrays
-        AutoTestSuite autoTestSuite = searchEngineProvider.getAutoTestSuite();
+        AutoTestSuite autoTestSuite = null;
+        autoTestSuite = searchEngineProvider.getAutoTestSuite();
         if (autoTestSuite != null) {
             autoTestSuite.forEach(autoTestCase -> testCases.add(new Object[]{searchEngineProvider.newEngineInstance(), autoTestCase}));
         }
@@ -95,11 +97,11 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
     }
 
     @Test
-    public void runAutoTest() throws Exception {
+    public void runAutoTest() throws AutoTestException {
         internalRunAutoTestCase();
     }
 
-    void internalRunAutoTestCase() throws Exception {
+    void internalRunAutoTestCase() throws AutoTestException {
         AutoTestReport autoTestResults = this.autoTestService.runExternalAutoTestCase(this.searchEngine, this.testCase);
 
         for (AutoTestResult autoTestResult : autoTestResults.getTestResults()) {
@@ -114,7 +116,7 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
                     System.err.println("Most similar object: " + testAssertionException.getMostSimilarObject());
                 }
 
-                throw autoTestResult.getThrownException().get();
+                throw new AutoTestException(autoTestResult.getThrownException().get());
             }
         }
     }

@@ -34,10 +34,12 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -103,13 +105,18 @@ public class WoxikonEngine implements SearchEngine {
 
     @NotNull
     @Override
-    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
         Language targetLanguage = findTargetLanguage(inputLanguage, outputLanguage);
-        URL targetUrl = buildTargetUrl(queryInput, targetLanguage);
+        URL targetUrl;
 
-        Document doc = Jsoup.parse(targetUrl, TIMEOUT_MILLIS);
-
-        return processBilingualDocument(queryInput, doc, targetLanguage);
+        try {
+            targetUrl = buildTargetUrl(queryInput, targetLanguage);
+            Document doc = Jsoup.parse(targetUrl, TIMEOUT_MILLIS);
+            return processBilingualDocument(queryInput, doc, targetLanguage);
+        } catch (IOException e) {
+            LOGGER.error("Fetching response from backend failed", e);
+            throw new MetadictTechnicalException(e);
+        }
     }
 
     private BilingualQueryResult processBilingualDocument(@NotNull String queryInput, @NotNull Document doc, @NotNull Language targetLanguage) {
@@ -128,7 +135,7 @@ public class WoxikonEngine implements SearchEngine {
                 .select("tr")
                 .stream()
                 .filter(e -> e.getElementsByTag("th").size() == 0)
-        .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         if (synonymNodes.size() == 0) {
             LOGGER.debug("No synonym entries found");

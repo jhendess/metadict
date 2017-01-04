@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.core.services.autotest;
 
-import com.google.common.base.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.AutoTestCase;
@@ -32,9 +31,11 @@ import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.query.EngineQueryResult;
 import org.xlrnet.metadict.core.services.query.EngineRegistryService;
 
+import java.util.Optional;
+
 /**
  * The {@link AutoTestResult} provides information about the test result of a single {@link
- * org.xlrnet.metadict.api.engine.AutoTestCase}.
+ * AutoTestCase}.
  */
 public class AutoTestResult {
 
@@ -46,7 +47,7 @@ public class AutoTestResult {
 
     private final AutoTestCase testCase;
 
-    private final Optional<Exception> thrownException;
+    private final Exception thrownException;
 
     private final boolean isSuccessful;
 
@@ -55,16 +56,16 @@ public class AutoTestResult {
         this.canonicalEngineName = canonicalEngineName;
         this.executionTime = executionTime;
         this.testCase = testCase;
-        this.thrownException = Optional.absent();
+        this.thrownException = null;
         this.isSuccessful = true;
     }
 
     private AutoTestResult(@NotNull String canonicalEngineName, long executionTime, @NotNull AutoTestCase testCase, @Nullable Exception thrownException, @Nullable EngineQueryResult actualEngineQueryResult) {
-        this.actualEngineQueryResult = Optional.fromNullable(actualEngineQueryResult);
+        this.actualEngineQueryResult = java.util.Optional.ofNullable(actualEngineQueryResult);
         this.canonicalEngineName = canonicalEngineName;
         this.executionTime = executionTime;
         this.testCase = testCase;
-        this.thrownException = Optional.fromNullable(thrownException);
+        this.thrownException = thrownException;
         this.isSuccessful = false;
     }
 
@@ -113,7 +114,7 @@ public class AutoTestResult {
      * @return an optional with the actual engine query result if any was provided.
      */
     @NotNull
-    public Optional<EngineQueryResult> getActualEngineQueryResult() {
+    public java.util.Optional<EngineQueryResult> getActualEngineQueryResult() {
         return this.actualEngineQueryResult;
     }
 
@@ -162,7 +163,7 @@ public class AutoTestResult {
      */
     @NotNull
     public Optional<Exception> getThrownException() {
-        return this.thrownException;
+        return Optional.ofNullable(this.thrownException);
     }
 
     /**

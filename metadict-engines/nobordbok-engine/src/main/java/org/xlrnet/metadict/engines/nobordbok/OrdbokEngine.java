@@ -37,6 +37,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.language.UnsupportedLanguageException;
 import org.xlrnet.metadict.api.query.*;
@@ -68,12 +69,18 @@ public class OrdbokEngine implements SearchEngine {
 
     @NotNull
     @Override
-    public MonolingualQueryResult executeMonolingualQuery(@NotNull String queryString, @NotNull Language queryLanguage) throws Exception {
+    public MonolingualQueryResult executeMonolingualQuery(@NotNull String queryString, @NotNull Language queryLanguage) throws MetadictTechnicalException {
         if (!(Language.NORWEGIAN_BOKMÅL.equals(queryLanguage) || Language.NORWEGIAN_NYNORSK.equals(queryLanguage) || Language.NORWEGIAN.equals(queryLanguage))) {
             throw new UnsupportedLanguageException(queryLanguage);
         }
 
-        Document document = fetchResponse(queryString, queryLanguage);
+        Document document;
+        try {
+            document = fetchResponse(queryString, queryLanguage);
+        } catch (IOException e) {
+            LOGGER.error("Fetching response from backend failed", e);
+            throw new MetadictTechnicalException(e);
+        }
 
         return processDocument(document);
     }
@@ -149,8 +156,7 @@ public class OrdbokEngine implements SearchEngine {
         for (int i = 1; i < tableRows.size(); i++) {
             Element tableRow = tableRows.get(i);
             Optional<MonolingualEntry> entry = processTableRow(tableRow, language);
-            if (entry.isPresent())
-                resultBuilder.addMonolingualEntry(entry.get());
+            entry.ifPresent(resultBuilder::addMonolingualEntry);
         }
     }
 

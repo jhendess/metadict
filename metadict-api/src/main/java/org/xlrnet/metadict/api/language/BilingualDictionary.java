@@ -116,11 +116,13 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         checkNotNull(output);
 
         StringBuilder idBuilder = new StringBuilder().append(input.getIdentifier());
-        if (StringUtils.isNotEmpty(input.getDialect()))
+        if (StringUtils.isNotEmpty(input.getDialect())) {
             idBuilder.append("_").append(input.getDialect());
+        }
         idBuilder.append("-").append(output.getIdentifier());
-        if (StringUtils.isNotEmpty(output.getDialect()))
+        if (StringUtils.isNotEmpty(output.getDialect())) {
             idBuilder.append("_").append(output.getDialect());
+        }
         return idBuilder.toString();
     }
 
@@ -176,9 +178,10 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      *         Will be thrown if the given dictionary query is invalid.
      */
     @NotNull
-    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws IllegalArgumentException, UnsupportedDictionaryException {
-        if (!isValidDictionaryQuery(queryString))
+    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws UnsupportedDictionaryException {
+        if (!isValidDictionaryQuery(queryString)) {
             throw new IllegalArgumentException("Illegal dictionary query string: " + queryString);
+        }
 
         if (bidirectional) {
             if (instanceMap.containsKey("<>" + queryString)) {
@@ -195,8 +198,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
                             Language.getExistingLanguageById(languages[1]),
                             true);
             }
-        } else
+        } else {
             return instanceMap.get(queryString);
+        }
     }
 
     /**
@@ -234,7 +238,7 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      */
     @NotNull
     public Language getSource() {
-        return source;
+        return this.source;
     }
 
     /**
@@ -244,17 +248,17 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      */
     @NotNull
     public Language getTarget() {
-        return target;
+        return this.target;
     }
 
     @NotNull
     public String getQueryString() {
-        return queryString;
+        return this.queryString;
     }
 
     @NotNull
     public String getQueryStringWithDialect() {
-        return queryStringWithDialect;
+        return this.queryStringWithDialect;
     }
 
     /**
@@ -265,15 +269,15 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * @return whether the dictionary supports a direct bidirectional search.
      */
     public boolean isBidirectional() {
-        return bidirectional;
+        return this.bidirectional;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("source", source)
-                .add("target", target)
-                .add("bidirectional", bidirectional)
+                .add("source", this.source)
+                .add("target", this.target)
+                .add("bidirectional", this.bidirectional)
                 .toString();
     }
 
@@ -291,15 +295,15 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         if (this == o) return true;
         if (!(o instanceof BilingualDictionary)) return false;
         BilingualDictionary that = (BilingualDictionary) o;
-        return bidirectional == that.bidirectional &&
-                Objects.equal(source, that.source) &&
-                Objects.equal(target, that.target) &&
-                Objects.equal(queryString, that.queryString) &&
-                Objects.equal(queryStringWithDialect, that.queryStringWithDialect);
+        return this.bidirectional == that.bidirectional &&
+                Objects.equal(this.source, that.source) &&
+                Objects.equal(this.target, that.target) &&
+                Objects.equal(this.queryString, that.queryString) &&
+                Objects.equal(this.queryStringWithDialect, that.queryStringWithDialect);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(source, target, bidirectional, queryString, queryStringWithDialect);
+        return Objects.hashCode(this.source, this.target, this.bidirectional, this.queryString, this.queryStringWithDialect);
     }
 }

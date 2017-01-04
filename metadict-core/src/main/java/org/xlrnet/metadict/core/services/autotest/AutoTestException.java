@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,13 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.storage;
+package org.xlrnet.metadict.core.services.autotest;
 
 /**
- * An error to indicate a fatal error while booting the storage subsystem from Metadict. Whenever an such an error is
- * thrown, the Metadict core should shut down and not continue any booting attempts.
+ * A wrapper for an exception that was thrown during autotests.
  */
-public class StorageInitializationError extends Error {
+public class AutoTestException extends Exception {
 
-    private static final long serialVersionUID = 7659265473741012032L;
-
-    StorageInitializationError(String message) {
-        super(message);
+    public AutoTestException(Exception e) {
     }
-
-    StorageInitializationError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    StorageInitializationError(Throwable cause) {
-        super(cause);
-    }
-
-
 }

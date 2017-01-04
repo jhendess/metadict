@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.util;
 
 import org.jetbrains.annotations.Nullable;
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -93,23 +94,28 @@ public class SimilarityUtils {
     }
 
     private static SimilarityStatistics calculateFieldSimilarity(@Nullable Object object1, @Nullable Object object2, boolean invokeRecursively, @Nullable Stack<Object> recursiveStack) {
-        if (object1 == null && object2 == null)
+        if (object1 == null && object2 == null) {
             return ONE;
-
-        if (object1 == null || object2 == null)
+        }
+        if (object1 == null || object2 == null) {
             return ZERO;
+        }
 
-        if (object1 instanceof Object[] || object2 instanceof Object[])
+        if (object1 instanceof Object[] || object2 instanceof Object[]) {
             throw new IllegalArgumentException("Arrays cannot be compared");
+        }
 
-        if (object1 instanceof Number || object2 instanceof Number)
+        if (object1 instanceof Number || object2 instanceof Number) {
             return Objects.equals(object1, object2) ? ONE : ZERO;
+        }
 
-        if (object1 instanceof Boolean || object2 instanceof Boolean)
+        if (object1 instanceof Boolean || object2 instanceof Boolean) {
             return Objects.equals(object1, object2) ? ONE : ZERO;
+        }
 
-        if (object1 instanceof CharSequence || object2 instanceof CharSequence)
+        if (object1 instanceof CharSequence || object2 instanceof CharSequence) {
             return Objects.equals(object1, object2) ? ONE : ZERO;
+        }
 
         Map<String, Object> fieldValueMap1 = getFieldNamesAndValues(object1);
         Map<String, Object> fieldValueMap2 = getFieldNamesAndValues(object2);
@@ -117,13 +123,18 @@ public class SimilarityUtils {
         double equalFieldValues = 0, sameFieldNames = 0;
 
         for (Map.Entry<String, Object> entry : fieldValueMap1.entrySet()) {
+            if ("$jacocoData".equals(entry.getKey())) {
+                // Skip fields created by jacoco
+                continue;
+            }
             String key = entry.getKey();
             Object value1 = entry.getValue();
             Object value2 = fieldValueMap2.get(key);
 
             if (fieldValueMap2.containsKey(key)) {
-                if (!invokeRecursively)
+                if (!invokeRecursively) {
                     sameFieldNames++;
+                }
 
                 if (invokeRecursively) {
                     SimilarityStatistics similarityStatistics;
@@ -151,7 +162,7 @@ public class SimilarityUtils {
         return new SimilarityStatistics(sameFieldNames, equalFieldValues);
     }
 
-    private static Map<String, Object> getFieldNamesAndValues(final Object valueObj) throws IllegalArgumentException {
+    private static Map<String, Object> getFieldNamesAndValues(final Object valueObj) {
         Class clazz = valueObj.getClass();
         Map<String, Object> fieldMap = new HashMap<>();
         Field[] valueObjFields = clazz.getDeclaredFields();
@@ -163,7 +174,7 @@ public class SimilarityUtils {
                 Object fieldObject = valueObjField.get(valueObj);
                 fieldMap.put(fieldName, fieldObject);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new MetadictRuntimeException(e);
             }
         }
         return fieldMap;
@@ -181,7 +192,7 @@ public class SimilarityUtils {
         }
 
         public double getRatio() {
-            return (sameFieldNames > 0) ? (equalFieldValues / sameFieldNames) : 0;
+            return (this.sameFieldNames > 0) ? (this.equalFieldValues / this.sameFieldNames) : 0;
         }
 
     }

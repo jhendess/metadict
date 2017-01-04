@@ -106,82 +106,86 @@ public class ImmutableEngineDescription implements EngineDescription {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (!(o instanceof ImmutableEngineDescription)) {return false;}
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ImmutableEngineDescription)) {
+            return false;
+        }
         ImmutableEngineDescription that = (ImmutableEngineDescription) o;
-        return Objects.equal(authorName, that.authorName) &&
-                Objects.equal(authorLink, that.authorLink) &&
-                Objects.equal(copyright, that.copyright) &&
-                Objects.equal(license, that.license) &&
-                Objects.equal(engineName, that.engineName) &&
-                Objects.equal(engineLink, that.engineLink) &&
-                Objects.equal(searchBackendName, that.searchBackendName) &&
-                Objects.equal(searchBackendLink, that.searchBackendLink) &&
-                Objects.equal(searchBackendCopyright, that.searchBackendCopyright);
+        return Objects.equal(this.authorName, that.authorName) &&
+                Objects.equal(this.authorLink, that.authorLink) &&
+                Objects.equal(this.copyright, that.copyright) &&
+                Objects.equal(this.license, that.license) &&
+                Objects.equal(this.engineName, that.engineName) &&
+                Objects.equal(this.engineLink, that.engineLink) &&
+                Objects.equal(this.searchBackendName, that.searchBackendName) &&
+                Objects.equal(this.searchBackendLink, that.searchBackendLink) &&
+                Objects.equal(this.searchBackendCopyright, that.searchBackendCopyright);
     }
 
     @Override
     public String getAuthorLink() {
-        return authorLink;
+        return this.authorLink;
     }
 
     @Override
     public String getAuthorName() {
-        return authorName;
+        return this.authorName;
     }
 
     @Override
     public String getBackendCopyright() {
-        return searchBackendCopyright;
+        return this.searchBackendCopyright;
     }
 
     @Override
     public String getBackendLink() {
-        return searchBackendLink;
+        return this.searchBackendLink;
     }
 
     @Override
     public String getBackendName() {
-        return searchBackendName;
+        return this.searchBackendName;
     }
 
     @Override
     public String getCopyright() {
-        return copyright;
+        return this.copyright;
     }
 
     @Override
     public String getEngineLink() {
-        return engineLink;
+        return this.engineLink;
     }
 
     @Override
     public String getEngineName() {
-        return engineName;
+        return this.engineName;
     }
 
     @Override
     public String getLicense() {
-        return license;
+        return this.license;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(authorName, authorLink, copyright, license, engineName, engineLink, searchBackendName, searchBackendLink, searchBackendCopyright);
+        return Objects.hashCode(this.authorName, this.authorLink, this.copyright, this.license, this.engineName, this.engineLink, this.searchBackendName, this.searchBackendLink, this.searchBackendCopyright);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("authorName", authorName)
-                .add("authorLink", authorLink)
-                .add("copyright", copyright)
-                .add("license", license)
-                .add("engineName", engineName)
-                .add("engineLink", engineLink)
-                .add("searchBackendName", searchBackendName)
-                .add("searchBackendLink", searchBackendLink)
-                .add("searchBackendCopyright", searchBackendCopyright)
+                .add("authorName", this.authorName)
+                .add("authorLink", this.authorLink)
+                .add("copyright", this.copyright)
+                .add("license", this.license)
+                .add("engineName", this.engineName)
+                .add("engineLink", this.engineLink)
+                .add("searchBackendName", this.searchBackendName)
+                .add("searchBackendLink", this.searchBackendLink)
+                .add("searchBackendCopyright", this.searchBackendCopyright)
                 .toString();
     }
 }

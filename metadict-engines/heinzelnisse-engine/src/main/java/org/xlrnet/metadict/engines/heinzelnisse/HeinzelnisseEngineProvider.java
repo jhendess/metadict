@@ -27,6 +27,7 @@ package org.xlrnet.metadict.engines.heinzelnisse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.engine.*;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
 
@@ -37,7 +38,7 @@ public class HeinzelnisseEngineProvider extends AbstractSearchEngineProvider {
 
     @Nullable
     @Override
-    public AutoTestSuite getAutoTestSuite() throws Exception {
+    public AutoTestSuite getAutoTestSuite() throws MetadictTechnicalException {
         return ImmutableAutoTestSuite.builder()
                 .addAutoTestCase(ImmutableAutoTestCase.builder()
                         .setTestQueryString("haus")

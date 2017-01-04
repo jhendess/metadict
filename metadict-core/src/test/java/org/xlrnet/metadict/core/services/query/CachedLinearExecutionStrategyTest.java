@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
@@ -178,7 +179,7 @@ public class CachedLinearExecutionStrategyTest {
     @Test
     public void testExecuteQueryStep_throwsException() throws Exception {
         AbstractQueryStep queryStep = getQueryStepMock();
-        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenThrow(new Exception("Exception"));
+        when(this.engineMock.executeBilingualQuery(anyString(), any(Language.class), any(Language.class), anyBoolean())).thenThrow(new MetadictTechnicalException("Exception"));
 
         QueryStepResult queryStepResult = this.executionStrategy.executeQueryStep(queryStep);
 

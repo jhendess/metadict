@@ -36,11 +36,13 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.GrammaticalNumber;
 import org.xlrnet.metadict.api.language.GrammaticalTense;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneOffset;
@@ -65,7 +67,7 @@ public class LeoEngine implements SearchEngine {
             .put("verb", EntryType.VERB)
             .put("phrase", EntryType.PHRASE)
             .put("example", EntryType.EXAMPLE)
-                    // TODO: Pronouns?
+            // TODO: Pronouns?
             .build();
 
     private static final Map<String, String> DEFAULT_QUERY_DATA = ImmutableMap.<String, String>builder()
@@ -96,9 +98,15 @@ public class LeoEngine implements SearchEngine {
 
     @NotNull
     @Override
-    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
         Connection targetConnection = buildTargetConnection(queryInput, inputLanguage, outputLanguage);
-        Document doc = targetConnection.get();
+        Document doc;
+        try {
+            doc = targetConnection.get();
+        } catch (IOException e) {
+            LOGGER.error("Fetching response from backend failed", e);
+            throw new MetadictTechnicalException(e);
+        }
 
         BilingualQueryResultBuilder builder = processDocument(doc);
 

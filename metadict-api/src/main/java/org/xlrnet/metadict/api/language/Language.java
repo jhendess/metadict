@@ -160,7 +160,7 @@ public class Language implements Serializable {
      * @return A {@link Language} object with the given identifier.
      */
     @NotNull
-    public static Language forSimpleLanguage(String identifier, String displayName) throws IllegalArgumentException {
+    public static Language forSimpleLanguage(String identifier, String displayName) {
         checkNotNull(identifier, "Language identifier may not be null");
         checkNotNull(displayName, "Display name may not be null");
         checkArgument(isValidIdentifier(identifier), "Invalid language identifier: %s", identifier);
@@ -236,7 +236,7 @@ public class Language implements Serializable {
      */
     @Nullable
     public String getDialect() {
-        return dialect;
+        return this.dialect;
     }
 
     /**
@@ -247,7 +247,7 @@ public class Language implements Serializable {
      */
     @Nullable
     public String getDialectDisplayName() {
-        return dialectDisplayName;
+        return this.dialectDisplayName;
     }
 
     /**
@@ -258,7 +258,7 @@ public class Language implements Serializable {
      */
     @NotNull
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     /**
@@ -269,14 +269,14 @@ public class Language implements Serializable {
      */
     @NotNull
     public String getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("identifier", identifier)
-                .add("dialect", dialect)
+                .add("identifier", this.identifier)
+                .add("dialect", this.dialect)
                 .toString();
     }
 }
