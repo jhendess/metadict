@@ -27,6 +27,7 @@ package org.xlrnet.metadict.web;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthBundle;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
 import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
 import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
@@ -43,6 +44,7 @@ import ru.vyarus.dropwizard.guice.GuiceBundle;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
+import java.util.Locale;
 
 /**
  * Standalone bootstrap application using dropwizard.
@@ -50,6 +52,7 @@ import java.util.EnumSet;
 public class MetadictApplication extends Application<MappedJsonConfiguration> {
 
     public static void main(String[] args) throws Exception {
+        Locale.setDefault(Locale.ENGLISH);  // Reset the locale VM-wide
         new MetadictApplication().run(args);
     }
 
@@ -80,6 +83,9 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
                         .enableAutoConfig(getClass().getPackage().getName())
                         .build()
         );
+
+        // Enable JWT cookie authentication
+        bootstrap.addBundle(JwtCookieAuthBundle.getDefault());
 
         // Serve static content (i.e. app)
         bootstrap.addBundle(new SinglePageAppAssetsBundle("/static", "/"));

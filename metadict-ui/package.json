@@ -2,7 +2,7 @@
     "name": "metadict-ui",
     "version": "0.5.0-SNAPSHOT",
     "license": "MIT",
-    "description": "Angular Webapp for Metdacit",
+    "description": "Angular Webapp for Metadict",
     "scripts": {
         "test": "grunt test:dist"
     },

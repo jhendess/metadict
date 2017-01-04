@@ -1,0 +1,77 @@
+
+##############################################################################################################
+#                                                                                                            #
+# Configuration file for metadict integration tests.                                                         #
+#                                                                                                            #
+##############################################################################################################
+
+#
+# General server configuration
+#
+server:
+
+   #
+   # Context path where the main application is available
+   #
+   applicationContextPath: /
+
+   #
+   # Context path under which admin operations can be done
+   #
+   adminContextPath: /
+
+   #
+   # Default application port to listen on
+   #
+   applicationConnectors:
+    - type: http
+      port: 14268
+
+   #
+   # Default admin port to listen on
+   #
+   adminConnectors:
+   - type: http
+     port: 14269
+
+#
+# Configuration of the storage subsystem
+#
+storage:
+
+  #
+  # Set the name of the default storage backend to use.
+  # In case you don't need any persistent storage, the "inmemory" backend can be used. Metadict will refuse to boot
+  # when no storage is configured.
+  #
+  default: inmemory
+
+#
+# Logging configuration
+#
+logging:
+
+  #
+  # Default logging level for all messages
+  #
+  level: INFO
+
+  #
+  # Additional logger configuration
+  #
+  loggers:
+
+    #
+    # Log internal TRACE statements during development - disable in production
+    #
+    org.xlrnet.metadict: TRACE
+
+  #
+  # Configuration of additional log file appenders
+  #
+  appenders:
+
+    #
+    # Runtime logging to the console
+    #
+    - type: console

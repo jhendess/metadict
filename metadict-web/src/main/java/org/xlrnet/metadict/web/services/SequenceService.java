@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,21 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.services;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
-
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.UUID;
 
 /**
- * REST service for querying the current system status.
+ * Service for obtaining sequence and incrementing sequence ids.
  */
-@Path("/status")
-public class StatusResource {
+public class SequenceService {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
-
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    /**
+     * Generates a new unique UUID.
+     *
+     * @return a new random UUID.
+     */
+    public String newUUIDString() {
+        return UUID.randomUUID().toString();
     }
 }

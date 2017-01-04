@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,46 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.api;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.web.auth.constraints.ValidPassword;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
- * REST service for querying the current system status.
+ * Credentials used for logging in to a webservice.
  */
-@Path("/status")
-public class StatusResource {
+public class Credentials {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    @NotEmpty
+    @JsonProperty
+    @Size(min = ValidPassword.MINIMUM_PASSWORD_LENGTH, max = ValidPassword.MAXIMUM_PASSWORD_LENGTH)
+    @Pattern(regexp = "[A-Za-z0-9_]+")
+    private String name;
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
+    @NotEmpty
+    @JsonProperty
+    private String password;
+
+    public Credentials() {
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    public Credentials(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
+    @NotNull
+    public String getPassword() {
+        return password;
     }
 }

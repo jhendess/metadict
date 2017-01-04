@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,28 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.middleware.jersey;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * REST service for querying the current system status.
+ * Custom exception mapper which returs an HTTP 400 response if an internal JSON mapping error occurred (indicates bad
+ * request from client).
  */
-@Path("/status")
-public class StatusResource {
+@Provider
+public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingException> {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonMappingExceptionMapper.class);
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    @Override
+    public Response toResponse(JsonMappingException exception) {
+        LOGGER.info("Received request with invalid request data ({})", exception.getMessage());
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

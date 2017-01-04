@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.auth;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.xlrnet.metadict.api.auth.Role;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.io.Serializable;
 
 /**
- * REST service for querying the current system status.
+ * User roles for metadict web application.
  */
-@Path("/status")
-public class StatusResource {
+public enum UserRole implements Role, Serializable {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    ADMIN(Roles.ADMIN_ROLE_ID);
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
+    private final String roleId;
+
+    UserRole(final String roleId) {
+        this.roleId = roleId;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    @Override
+    public String getId() {
+        return roleId;
     }
 }

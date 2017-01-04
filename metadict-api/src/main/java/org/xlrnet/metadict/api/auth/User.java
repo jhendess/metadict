@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,40 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.api.auth;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * REST service for querying the current system status.
+ * Representation of a user account on metadict. User accounts are used to identify an individual that is using
  */
-@Path("/status")
-public class StatusResource {
+public interface User extends Serializable {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    /**
+     * Returns the internal unique identifier of this user. This may be a technical key and should never be shown to the
+     * end user.
+     *
+     * @return the internal unique identifer of this user.
+     */
+    @NotNull
+    String getId();
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
-    }
+    /**
+     * Returns the externally displayed name of this user. The name may be changed anytime.
+     *
+     * @return the externally displayed name of this user.
+     */
+    @NotNull
+    String getName();
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
-    }
+    /**
+     * Returns a list of roles which are granted to this user.
+     *
+     * @return a list of roles which are granted to this user.
+     */
+    @NotNull
+    List<Role> getRoles();
 }

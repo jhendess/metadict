@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,34 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.auth;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.auth.Role;
+import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.services.SequenceService;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
- * REST service for querying the current system status.
+ * Factory for creating new {@link org.xlrnet.metadict.api.auth.User} objects.
  */
-@Path("/status")
-public class StatusResource {
+public class UserFactory {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    private final SequenceService sequenceService;
+
+    private static final List<Role> DEFAULT_ROLES = ImmutableList.of();
 
     @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
+    public UserFactory(SequenceService sequenceService) {
+        this.sequenceService = sequenceService;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    @NotNull
+    public User newDefaultUser(@NotNull String username) {
+        String uuid = sequenceService.newUUIDString();
+        return new BasicUser(uuid, username, DEFAULT_ROLES);
     }
 }

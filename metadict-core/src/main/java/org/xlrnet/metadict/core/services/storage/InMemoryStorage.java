@@ -56,12 +56,12 @@ public class InMemoryStorage implements StorageService {
 
     @Override
     public long countKeysInNamespace(@NotNull String namespace) throws StorageBackendException {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long countNamespaces() throws StorageBackendException {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
@@ -74,7 +74,7 @@ public class InMemoryStorage implements StorageService {
             LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
             throw new StorageOperationException("Creation failed: key already exists", namespace, key);
         } else {
-            LOGGER.debug("Created key {} in namespace {}", key, namespace);
+            LOGGER.trace("Created key {} in namespace {}", key, namespace);
             this.backingMap.put(namespace, key, cloneValue(value));
         }
 
@@ -117,7 +117,7 @@ public class InMemoryStorage implements StorageService {
 
     @Override
     public Iterable<String> listNamespaces() throws StorageBackendException {
-        return null;
+        throw new UnsupportedOperationException("listNamespaces() is not supported");
     }
 
     @NotNull
@@ -146,6 +146,13 @@ public class InMemoryStorage implements StorageService {
         this.backingMap.put(namespace, key, cloneValue(newValue));
 
         return newValue;
+    }
+
+    /**
+     * Resets all content in the inmemory storage. This method should never be called publicly.
+     */
+    public void reset() {
+        backingMap.clear();
     }
 
     /**

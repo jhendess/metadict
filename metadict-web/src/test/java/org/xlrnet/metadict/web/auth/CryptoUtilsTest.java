@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,38 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.auth;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Test;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.Objects;
 
-/**
- * REST service for querying the current system status.
- */
-@Path("/status")
-public class StatusResource {
+import static junit.framework.TestCase.*;
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+public class CryptoUtilsTest {
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
+    private static final char[] TEST_PASSWORD = "SOME_PASSWORD".toCharArray();
+
+    private static final byte[] TEST_SALT = "SOME_SALT".getBytes();
+
+    @Test
+    public void generateSalt() throws Exception {
+        byte salt[] = CryptoUtils.generateSalt(32);
+        assertNotNull(salt);
+        assertEquals(32, salt.length);
+
+        assertTrue(ArrayUtils.isNotEmpty(salt));
+
+        byte salt2[] = CryptoUtils.generateSalt(32);
+
+        assertFalse("Two salts may not be equal", Objects.deepEquals(salt, salt2));
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    @Test
+    public void hashPassword() throws Exception {
+        byte[] bytes = CryptoUtils.hashPassword(TEST_PASSWORD, TEST_SALT, CryptoUtils.DEFAULT_ITERATIONS, CryptoUtils.DEFAULT_KEYLENGTH);
+        assertNotNull(bytes);
+        assertTrue("Hash may not be empty", ArrayUtils.isNotEmpty(bytes));
     }
 }

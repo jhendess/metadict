@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.auth.constraints;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
- * REST service for querying the current system status.
+ * Custom validator for {@link ValidPassword} constraint.
  */
-@Path("/status")
-public class StatusResource {
+public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidPasswordValidator.class);
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
+    @Override
+    public void initialize(ValidPassword constraintAnnotation) {
+        /// No validation necessary
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        // TODO: Add password validation logic
+        return true;
     }
 }

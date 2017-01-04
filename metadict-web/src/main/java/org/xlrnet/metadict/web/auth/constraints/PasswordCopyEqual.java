@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,30 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web.auth.constraints;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
-import org.xlrnet.metadict.web.api.ResponseContainer;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * REST service for querying the current system status.
+ * Validation constraint makes sure that both the password and its duplicate in {@link
+ * org.xlrnet.metadict.web.auth.RegistrationRequestData} are equal.
  */
-@Path("/status")
-public class StatusResource {
+@Target({TYPE})
+@Retention(RUNTIME)
+@Constraint(validatedBy = PasswordCopyEqualValidator.class)
+@Documented
+public @interface PasswordCopyEqual {
 
-    /** Injected system status service. */
-    private final SystemStatusService systemStatusService;
+    String message() default "password and passwordCopy must be equal";
 
-    @Inject
-    public StatusResource(SystemStatusService systemStatusService) {
-        this.systemStatusService = systemStatusService;
-    }
+    Class<?>[] groups() default {};
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbout() {
-        return Response.ok(ResponseContainer.fromSuccessful(this.systemStatusService.queryStatus())).build();
-    }
+    Class<? extends Payload>[] payload() default {};
 }
