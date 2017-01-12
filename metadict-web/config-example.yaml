@@ -44,7 +44,7 @@ storage:
   # In case you don't need any persistent storage, the "inmemory" backend can be used. Metadict will refuse to boot
   # when no storage is configured.
   #
-  default: mapdb
+  default: inmemory
 
   engines:
 
