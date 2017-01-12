@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
-import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.engines.heinzelnisse.entities.HeinzelResponse;
@@ -82,37 +81,28 @@ public class HeinzelnisseEngine implements SearchEngine {
 
     @NotNull
     @Override
-    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
-        boolean queryGerman = false, queryNorwegian = false;
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+        boolean queryGerman = false;
+        boolean queryNorwegian = false;
         String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
 
-        switch (requestedDictionary) {
-            case "de-no":
-                if (Language.NORWEGIAN.equals(outputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(outputLanguage)) {
-                    if (allowBothWay)
-                        queryNorwegian = true;
-                    queryGerman = true;
-                }
-                break;
-            case "no-de":
-                if (Language.NORWEGIAN.equals(inputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(inputLanguage)) {
-                    if (allowBothWay)
-                        queryGerman = true;
-                    queryNorwegian = true;
-                }
-                break;
+        if (requestedDictionary.equals("de-no")) {
+            if (Language.NORWEGIAN.equals(outputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(outputLanguage)) {
+                queryNorwegian = allowBothWay;
+                queryGerman = true;
+            }
+        } else if (requestedDictionary.equals("no-de")) {
+            if (Language.NORWEGIAN.equals(inputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(inputLanguage)) {
+                queryGerman = allowBothWay;
+                queryNorwegian = true;
+            }
         }
 
         if (!queryGerman && !queryNorwegian) {
             throw new UnsupportedDictionaryException(inputLanguage, outputLanguage, allowBothWay);
         }
 
-        try {
-            return runQuery(queryInput, queryGerman, queryNorwegian);
-        } catch (IOException e) {
-            LOGGER.error("Fetching response from backend failed", e);
-            throw new MetadictTechnicalException(e);
-        }
+        return runQuery(queryInput, queryGerman, queryNorwegian);
     }
 
     /**
@@ -136,7 +126,7 @@ public class HeinzelnisseEngine implements SearchEngine {
      * @param builder
      *         The target builder to write into.
      */
-    void extractOtherInformation(@NotNull String otherInformation, @NotNull DictionaryObjectBuilder builder) {
+    protected void extractOtherInformation(@NotNull String otherInformation, @NotNull DictionaryObjectBuilder builder) {
         // Try to extract plural forms
         if (StringUtils.startsWith(otherInformation, "Plural:") || StringUtils.startsWith(otherInformation, "fl.:")) {
             String pluralForm = StringUtils.substringAfter(otherInformation, ":");
@@ -185,7 +175,7 @@ public class HeinzelnisseEngine implements SearchEngine {
 
     @NotNull
     private String buildTargetUrl(@NotNull String searchRequest, boolean onlyExactResults, boolean queryGerman, boolean queryNorwegian) throws UnsupportedEncodingException {
-        StringBuilder targetUrlBuilder = new StringBuilder("http://www.heinzelnisse.info/searchResults?searchItem=")
+        StringBuilder targetUrlBuilder = new StringBuilder("https://www.heinzelnisse.info/searchResults?searchItem=")
                 .append(URLEncoder.encode(searchRequest, "UTF-8"))
                 .append("&dictExactSearch=");
 
@@ -212,7 +202,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     @NotNull
     private URLConnection buildUrlConnection(@NotNull URL url) throws IOException {
         URLConnection connection = url.openConnection();
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 4 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("X-Requested-With", "XMLHttpRequest");
         connection.setRequestProperty("Referrer", "http://www.heinzelnisse.info/app");
@@ -318,7 +308,8 @@ public class HeinzelnisseEngine implements SearchEngine {
         String targetUrl = buildTargetUrl(searchRequest, onlyExactResults, queryGerman, queryNorwegian);
         URL url = new URL(targetUrl);
         URLConnection connection = buildUrlConnection(url);
-        return this.heinzelReader.readValue(connection.getInputStream());
+        LOGGER.trace("Fetching response from {}", url.toString());
+        return heinzelReader.readValue(connection.getInputStream());
     }
 
     private void processResponse(@NotNull HeinzelResponse heinzelResponse, @NotNull BilingualQueryResultBuilder resultBuilder, boolean queryGerman, boolean queryNorwegian) {
