@@ -29,7 +29,7 @@
     <parent>
         <artifactId>storage-parent</artifactId>
         <groupId>org.xlrnet.metadict.storage</groupId>
-        <version>0.4.0</version>
+        <version>0.4.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
