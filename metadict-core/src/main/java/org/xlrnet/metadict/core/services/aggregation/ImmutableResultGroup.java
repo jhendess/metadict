@@ -36,6 +36,8 @@ import java.util.List;
  */
 public class ImmutableResultGroup implements ResultGroup {
 
+    private static final long serialVersionUID = -2139236060348878775L;
+
     private final String groupIdentifier;
 
     private final List<ResultEntry> resultEntries;

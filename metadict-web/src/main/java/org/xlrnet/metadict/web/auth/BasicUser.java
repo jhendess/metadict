@@ -59,42 +59,46 @@ public class BasicUser implements User {
     @NotNull
     @Override
     public String getId() {
-        return id;
+        return this.id;
     }
 
     @NotNull
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @NotNull
     @Override
     public List<Role> getRoles() {
-        return UnmodifiableList.decorate(roles);
+        return UnmodifiableList.decorate(this.roles);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BasicUser)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BasicUser)) {
+            return false;
+        }
         BasicUser basicUser = (BasicUser) o;
-        return Objects.equal(id, basicUser.id) &&
-                Objects.equal(name, basicUser.name) &&
-                Objects.equal(roles, basicUser.roles);
+        return Objects.equal(this.id, basicUser.id) &&
+                Objects.equal(this.name, basicUser.name) &&
+                Objects.equal(this.roles, basicUser.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, roles);
+        return Objects.hashCode(this.id, this.name, this.roles);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("name", name)
-                .add("roles", roles)
+                .add("id", this.id)
+                .add("name", this.name)
+                .add("roles", this.roles)
                 .toString();
     }
 }

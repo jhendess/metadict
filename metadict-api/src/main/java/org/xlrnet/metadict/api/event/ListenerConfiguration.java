@@ -26,13 +26,17 @@ package org.xlrnet.metadict.api.event;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Generic configuration container for {@link MetadictEventListener}. Each listener must be wrapped inside this
  * container for correct detection by the core.
  */
-public class ListenerConfiguration<T extends MetadictEventType, L extends MetadictEventListener> {
+public class ListenerConfiguration<T extends MetadictEventType, L extends MetadictEventListener> implements Serializable {
+
+    private static final long serialVersionUID = -8760321598750563430L;
 
     final long intervalSeconds;
 
@@ -84,14 +88,14 @@ public class ListenerConfiguration<T extends MetadictEventType, L extends Metadi
     }
 
     public T getEventType() {
-        return eventType;
+        return this.eventType;
     }
 
     public L getEventListener() {
-        return eventListener;
+        return this.eventListener;
     }
 
     public long getIntervalSeconds() {
-        return intervalSeconds;
+        return this.intervalSeconds;
     }
 }

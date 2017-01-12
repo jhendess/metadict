@@ -222,7 +222,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
     }
 
     @NotNull
-    private BilingualQueryResult executeBilingualQueryStep(@NotNull BilingualQueryStep step) throws Exception {
+    private BilingualQueryResult executeBilingualQueryStep(@NotNull BilingualQueryStep step) throws MetadictTechnicalException {
         String queryString = step.getQueryString();
         Language inputLanguage = step.getInputLanguage();
         Language outLanguage = step.getOutputLanguage();

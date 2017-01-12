@@ -24,13 +24,14 @@
 
 package org.xlrnet.metadict.core.api.aggegation;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * The {@link ResultGroup} is used to group {@link ResultEntry} objects according to a specified method like e.g. the
  * type of the entry.
  */
-public interface ResultGroup extends Iterable<ResultEntry> {
+public interface ResultGroup extends Iterable<ResultEntry>, Serializable {
 
     /**
      * Returns a string representation of the group identifier. For example if the group is based on entry types the

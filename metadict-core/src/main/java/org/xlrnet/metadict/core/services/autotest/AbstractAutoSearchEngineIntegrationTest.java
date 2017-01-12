@@ -83,7 +83,7 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
         searchEngineProvider.getEngineDescription();
 
         // Transform auto tests into set of arrays
-        AutoTestSuite autoTestSuite = null;
+        AutoTestSuite autoTestSuite;
         autoTestSuite = searchEngineProvider.getAutoTestSuite();
         if (autoTestSuite != null) {
             autoTestSuite.forEach(autoTestCase -> testCases.add(new Object[]{searchEngineProvider.newEngineInstance(), autoTestCase}));
@@ -92,7 +92,7 @@ public abstract class AbstractAutoSearchEngineIntegrationTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.autoTestService = new AutoTestService();
     }
 

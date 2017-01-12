@@ -1,5 +1,7 @@
 # Metadict
 
+![Build Status](https://apps.xlrnet.org/teamcity/app/rest/builds/buildType:(id:Metadict_Autodeploy)/statusIcon) ![Quality Gate Status](https://apps.xlrnet.org/sonarqube/api/badges/gate?key=Metadict) ![Coverage](https://apps.xlrnet.org/sonarqube/api/badges/measure?key=Metadict&metric=coverage)
+
 Metadict is a modular meta search engine for dictionaries written in Java. It supports querying multiple
 mono- and bilingual dictionary engines at the same time.
      
