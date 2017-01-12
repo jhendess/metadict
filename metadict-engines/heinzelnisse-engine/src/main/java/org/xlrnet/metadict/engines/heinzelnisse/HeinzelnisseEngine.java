@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.engine.SearchEngine;
+import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.engines.heinzelnisse.entities.HeinzelResponse;
@@ -81,7 +82,7 @@ public class HeinzelnisseEngine implements SearchEngine {
 
     @NotNull
     @Override
-    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws Exception {
+    public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
         boolean queryGerman = false;
         boolean queryNorwegian = false;
         String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
@@ -102,7 +103,12 @@ public class HeinzelnisseEngine implements SearchEngine {
             throw new UnsupportedDictionaryException(inputLanguage, outputLanguage, allowBothWay);
         }
 
-        return runQuery(queryInput, queryGerman, queryNorwegian);
+        try {
+            return runQuery(queryInput, queryGerman, queryNorwegian);
+        } catch (IOException e) {
+            LOGGER.error("Fetching response from backend failed", e);
+            throw new MetadictTechnicalException(e);
+        }
     }
 
     /**
