@@ -33,18 +33,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.xlrnet.metadict.engines</groupId>
-    <artifactId>engine-parent</artifactId>
-    <name>Metadict Engines Parent</name>
+    <groupId>org.xlrnet.metadict</groupId>
+    <artifactId>metadict-engines</artifactId>
+    <name>Metadict Engines</name>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>leo-engine</module>
-        <module>heinzelnisse-engine</module>
-        <module>nobordbok-engine</module>
-        <module>woxikon-engine</module>
-    </modules>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Metadict API -->
@@ -68,6 +61,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <!-- jsoup HTML parser library @ http://jsoup.org/ -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
         </dependency>
         <!-- JUnit -->
         <dependency>

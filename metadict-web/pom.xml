@@ -58,28 +58,8 @@
             <version>${metadict.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.xlrnet.metadict.engines</groupId>
-            <artifactId>woxikon-engine</artifactId>
-            <version>${metadict.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xlrnet.metadict.engines</groupId>
-            <artifactId>nobordbok-engine</artifactId>
-            <version>${metadict.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xlrnet.metadict.engines</groupId>
-            <artifactId>leo-engine</artifactId>
-            <version>${metadict.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xlrnet.metadict.engines</groupId>
-            <artifactId>heinzelnisse-engine</artifactId>
-            <version>${metadict.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xlrnet.metadict.storage</groupId>
-            <artifactId>mapdb-storage</artifactId>
+            <groupId>org.xlrnet.metadict</groupId>
+            <artifactId>metadict-engines</artifactId>
             <version>${metadict.version}</version>
         </dependency>
         <!-- Logback -->

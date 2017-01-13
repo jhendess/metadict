@@ -56,7 +56,6 @@
         <module>metadict-api</module>
         <module>metadict-web</module>
         <module>metadict-engines</module>
-        <module>metadict-storage</module>
         <module>metadict-ui</module>
     </modules>
 
@@ -215,6 +214,11 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.8.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
