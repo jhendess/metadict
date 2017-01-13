@@ -78,7 +78,7 @@ public class HeinzelnisseEngine implements SearchEngine {
 
     private static final String WIKI_BASE_URL = "http://www.heinzelnisse.info/wiki/";
 
-    private final ObjectReader heinzelReader = new ObjectMapper().reader(HeinzelResponse.class);
+    private final ObjectReader heinzelReader = new ObjectMapper().readerFor(HeinzelResponse.class);
 
     @NotNull
     @Override
@@ -87,17 +87,16 @@ public class HeinzelnisseEngine implements SearchEngine {
         boolean queryNorwegian = false;
         String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
 
-        if (requestedDictionary.equals("de-no")) {
+        if ("de-no".equals(requestedDictionary)) {
             if (Language.NORWEGIAN.equals(outputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(outputLanguage)) {
                 queryNorwegian = allowBothWay;
                 queryGerman = true;
             }
-        } else if (requestedDictionary.equals("no-de")) {
-            if (Language.NORWEGIAN.equals(inputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(inputLanguage)) {
+        } else if ("no-de".equals(requestedDictionary)
+                && (Language.NORWEGIAN.equals(inputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(inputLanguage))) {
                 queryGerman = allowBothWay;
                 queryNorwegian = true;
             }
-        }
 
         if (!queryGerman && !queryNorwegian) {
             throw new UnsupportedDictionaryException(inputLanguage, outputLanguage, allowBothWay);
@@ -132,7 +131,7 @@ public class HeinzelnisseEngine implements SearchEngine {
      * @param builder
      *         The target builder to write into.
      */
-    protected void extractOtherInformation(@NotNull String otherInformation, @NotNull DictionaryObjectBuilder builder) {
+    void extractOtherInformation(@NotNull String otherInformation, @NotNull DictionaryObjectBuilder builder) {
         // Try to extract plural forms
         if (StringUtils.startsWith(otherInformation, "Plural:") || StringUtils.startsWith(otherInformation, "fl.:")) {
             String pluralForm = StringUtils.substringAfter(otherInformation, ":");
@@ -251,8 +250,9 @@ public class HeinzelnisseEngine implements SearchEngine {
      */
     private void extractArticleInformation(@NotNull String article, @NotNull DictionaryObjectBuilder builder) {
         GrammaticalGender gender = GRAMMATICAL_GENDER_MAP.get(article);
-        if (gender != null)
+        if (gender != null) {
             builder.setGrammaticalGender(gender);
+        }
     }
 
     private void extractComparisonForms(@NotNull String otherInformation, @NotNull DictionaryObjectBuilder builder) {
@@ -308,7 +308,7 @@ public class HeinzelnisseEngine implements SearchEngine {
      * @param queryNorwegian
      *         True, if Norwegian -> German shall be searched.
      * @return the parsed result as an {@link HeinzelResponse}.
-     * @throws IOException
+     * @throws IOException will be thrown if fetching the response failed
      */
     private HeinzelResponse fetchResponse(@NotNull String searchRequest, boolean onlyExactResults, boolean queryGerman, boolean queryNorwegian) throws IOException {
         String targetUrl = buildTargetUrl(searchRequest, onlyExactResults, queryGerman, queryNorwegian);
@@ -318,7 +318,7 @@ public class HeinzelnisseEngine implements SearchEngine {
         return heinzelReader.readValue(connection.getInputStream());
     }
 
-    private void processResponse(@NotNull HeinzelResponse heinzelResponse, @NotNull BilingualQueryResultBuilder resultBuilder, boolean queryGerman, boolean queryNorwegian) {
+    private void processResponse(@NotNull HeinzelResponse heinzelResponse, @NotNull BilingualQueryResultBuilder resultBuilder) {
         // Extract german -> norwegian translations
         for (TranslationEntry entry : heinzelResponse.getGermanTranslations()) {
             processTranslationEntry(entry, resultBuilder, true);
@@ -369,9 +369,8 @@ public class HeinzelnisseEngine implements SearchEngine {
         BilingualQueryResultBuilder resultBuilder = ImmutableBilingualQueryResult.builder();
 
         HeinzelResponse fullResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);
-        //HeinzelResponse exactResponse = fetchResponse(queryInput, false, queryGerman, queryNorwegian);
 
-        processResponse(fullResponse, resultBuilder, queryGerman, queryNorwegian);
+        processResponse(fullResponse, resultBuilder);
 
         return resultBuilder.build();
     }

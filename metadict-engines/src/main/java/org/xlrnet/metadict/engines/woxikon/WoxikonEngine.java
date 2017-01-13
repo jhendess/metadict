@@ -137,7 +137,7 @@ public class WoxikonEngine implements SearchEngine {
                 .filter(e -> e.getElementsByTag("th").size() == 0)
                 .collect(Collectors.toList());
 
-        if (synonymNodes.size() == 0) {
+        if (synonymNodes.isEmpty()) {
             LOGGER.debug("No synonym entries found");
             return;
         }
@@ -177,17 +177,9 @@ public class WoxikonEngine implements SearchEngine {
 
         for (Element node : alternativeNodes) {
             // If the next node is a flagicon, try to determine the language for the next entries from the class name
-            if (node.tagName().equals("span") && node.hasClass("flagicon")) {
-                Set<String> classNames = node.classNames();
-                classNames.remove("flagicon");
-                for (String className : classNames) {
-                    Language candidate = Language.getExistingLanguageById(className);
-                    if (candidate != null) {
-                        currentLanguage = candidate;
-                        break;
-                    }
-                }
-            } else if (node.tagName().equals("a")) {
+            if ("span".equals(node.tagName()) && node.hasClass("flagicon")) {
+                currentLanguage = determineLanguageFromElement(currentLanguage, node);
+            } else if ("a".equals(node.tagName())) {
                 String recommendationText = node.text();
 
                 DictionaryObjectBuilder objectBuilder = ImmutableDictionaryObject.builder();
@@ -196,6 +188,19 @@ public class WoxikonEngine implements SearchEngine {
                 resultBuilder.addSimilarRecommendation(objectBuilder.build());
             }
         }
+    }
+
+    private Language determineLanguageFromElement(Language currentLanguage, Element node) {
+        Set<String> classNames = node.classNames();
+        classNames.remove("flagicon");
+        for (String className : classNames) {
+            Language candidate = Language.getExistingLanguageById(className);
+            if (candidate != null) {
+                currentLanguage = candidate;
+                break;
+            }
+        }
+        return currentLanguage;
     }
 
     private void processTranslationTable(@NotNull String queryString, @NotNull Document document, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage, @NotNull Language targetLanguage) {
@@ -213,12 +218,12 @@ public class WoxikonEngine implements SearchEngine {
                     .forEach(e -> processEntry(queryString, e, resultBuilder, sourceLanguage, targetLanguage));
             // Extract synonyms
             Elements synonymTableCandidates = document.getElementsByClass("dictionary-synonyms-table");
-            if (synonymTableCandidates.size() > 0) {
+            if (!synonymTableCandidates.isEmpty()) {
                 extractBilingualSynonyms(queryString, synonymTableCandidates.get(0), resultBuilder, sourceLanguage);
             }
 
         } else {
-            LOGGER.debug("Translation table for {} -> {} with query \"{}\" is null", languageIdentifier, targetLanguage.getIdentifier(), queryString);
+            LOGGER.trace("Translation table for {} -> {} with query \"{}\" is null", languageIdentifier, targetLanguage.getIdentifier(), queryString);
         }
     }
 
@@ -274,8 +279,9 @@ public class WoxikonEngine implements SearchEngine {
             description = StringUtils.removeStart(description, DESCRIPTION_BEGIN);
             description = StringUtils.removeEnd(description, DESCRIPTION_END);
 
-            if (!StringUtils.equalsIgnoreCase(description, queryString))    // Set description only if it is different from request string
+            if (!StringUtils.equalsIgnoreCase(description, queryString)) {   // Set description only if it is different from request string
                 objectBuilder.setDescription(StringUtils.strip(description));
+            }
         }
     }
 
@@ -283,23 +289,25 @@ public class WoxikonEngine implements SearchEngine {
         Element genderNode = element.getElementsByClass(CLASS_GENDER).first();
         if (genderNode != null) {
             String gender = genderNode.text();
-            if (GENDER_MAP.containsKey(gender))
+            if (GENDER_MAP.containsKey(gender)) {
                 objectBuilder.setGrammaticalGender(GENDER_MAP.get(gender));
+            }
         }
     }
 
     private EntryType detectEntryType(@NotNull Element element) {
         Elements wordTypeNodes = element.getElementsByClass(CLASS_WORDTYPE);
 
-        if (wordTypeNodes.size() < 1) {
+        if (wordTypeNodes.isEmpty()) {
             LOGGER.debug("No wordType node found - defaulting to {}", EntryType.UNKNOWN);
             return EntryType.UNKNOWN;
         }
 
         EntryType entryType = ENTRY_TYPE_MAP.getOrDefault(wordTypeNodes.first().text(), EntryType.UNKNOWN);
 
-        if (entryType == EntryType.UNKNOWN)
+        if (entryType == EntryType.UNKNOWN) {
             LOGGER.debug("Unable to resolve entry type \"{}\"", entryType);
+        }
 
         return entryType;
     }
@@ -317,10 +325,9 @@ public class WoxikonEngine implements SearchEngine {
      */
     @NotNull
     private Language findTargetLanguage(@NotNull Language inputLanguage, @NotNull Language outputLanguage) {
-
-        if (Language.GERMAN.equals(inputLanguage))
+        if (Language.GERMAN.equals(inputLanguage)) {
             return outputLanguage;
-        else if (Language.GERMAN.equals(outputLanguage)) {
+        } else if (Language.GERMAN.equals(outputLanguage)) {
             return inputLanguage;
         } else {
             throw new IllegalArgumentException("Expected at least one language to be german - got " + inputLanguage.getIdentifier() + " and " + outputLanguage.getDisplayName());
@@ -329,8 +336,9 @@ public class WoxikonEngine implements SearchEngine {
 
     @NotNull
     private URL buildTargetUrl(@NotNull String queryString, @NotNull Language language) throws UnsupportedEncodingException, MalformedURLException {
-        if (!BASE_URL_PER_LANGUAGE.containsKey(language))
+        if (!BASE_URL_PER_LANGUAGE.containsKey(language)) {
             throw new IllegalArgumentException("Unsupported language request: " + language.toString());
+        }
 
         String encodedQueryString = URLEncoder.encode(queryString, "UTF-8");
         return new URL(BASE_URL + BASE_URL_PER_LANGUAGE.get(language) + "/" + encodedQueryString + ".php");

@@ -91,7 +91,7 @@ public class OrdbokEngine implements SearchEngine {
                 .append(URLEncoder.encode(searchRequest, "UTF-8"))
                 .append("&");
 
-        if (queryBokmaal & queryNynorsk) {
+        if (queryBokmaal && queryNynorsk) {
             targetUrlBuilder.append("begge=+&ordbok=begge");
         } else if (queryBokmaal) {
             targetUrlBuilder.append("bokmaal=+&ordbok=bokmaal");
@@ -119,10 +119,12 @@ public class OrdbokEngine implements SearchEngine {
     private Document fetchResponse(@NotNull String queryString, @NotNull Language queryLanguage) throws IOException {
         boolean queryBokmaal = false, queryNynorsk = false;
 
-        if (queryLanguage.equals(Language.NORWEGIAN_BOKMÅL) || queryLanguage.equals(Language.NORWEGIAN))
+        if (queryLanguage.equals(Language.NORWEGIAN_BOKMÅL) || queryLanguage.equals(Language.NORWEGIAN)) {
             queryBokmaal = true;
-        if (queryLanguage.equals(Language.NORWEGIAN_NYNORSK) || queryLanguage.equals(Language.NORWEGIAN))
+        }
+        if (queryLanguage.equals(Language.NORWEGIAN_NYNORSK) || queryLanguage.equals(Language.NORWEGIAN)) {
             queryNynorsk = true;
+        }
 
         String targetUrl = buildTargetUrl(queryString, queryBokmaal, queryNynorsk);
         URL url = new URL(targetUrl);
@@ -137,10 +139,12 @@ public class OrdbokEngine implements SearchEngine {
         Element bokmaalTable = document.getElementById("byttutBM");
         Element nynorskTable = document.getElementById("byttutNN");
 
-        if (bokmaalTable != null)
+        if (bokmaalTable != null) {
             processTable(bokmaalTable, Language.NORWEGIAN_BOKMÅL, resultBuilder);
-        if (nynorskTable != null)
+        }
+        if (nynorskTable != null) {
             processTable(nynorskTable, Language.NORWEGIAN_NYNORSK, resultBuilder);
+        }
 
         return resultBuilder.build();
     }
@@ -180,8 +184,9 @@ public class OrdbokEngine implements SearchEngine {
 
         // Get meanings
         Elements meaningCandidates = tableRow.select(".artikkelinnhold > .utvidet > .tyding");
-        if (meaningCandidates.size() == 0)
+        if (meaningCandidates.isEmpty()) {
             meaningCandidates = tableRow.select(".artikkelinnhold > .utvidet");
+        }
         meaningCandidates
                 .forEach(e -> {
                     String meaning = e.childNodes()
@@ -193,16 +198,18 @@ public class OrdbokEngine implements SearchEngine {
                                     && !((Element) node).hasClass("artikkelinnhold")
                                     && !((Element) node).hasClass("kompakt")))
                             .map((Node n) -> {
-                                if (n instanceof Element)
+                                if (n instanceof Element) {
                                     return ((Element) n).text();
-                                else
+                                } else {
                                     return n.toString();
+                                }
                             })
                             .collect(Collectors.joining());
                     meaning = StringEscapeUtils.unescapeHtml4(meaning);
                     meaning = StringUtils.strip(meaning);
-                    if (StringUtils.isNotBlank(meaning))
+                    if (StringUtils.isNotBlank(meaning)) {
                         objectBuilder.addMeaning(meaning);
+                    }
                 });
 
         entryBuilder.setContent(objectBuilder.build());
@@ -226,18 +233,19 @@ public class OrdbokEngine implements SearchEngine {
     private EntryType resolveEntryTypeWithWordClass(@NotNull String wordClass) {
         EntryType entryType = EntryType.UNKNOWN;
 
-        if (ENTRY_TYPE_MAP.containsKey(wordClass))
+        if (ENTRY_TYPE_MAP.containsKey(wordClass)) {
             entryType = ENTRY_TYPE_MAP.get(wordClass);
-        else if (StringUtils.startsWithIgnoreCase(wordClass, "a"))
+        } else if (StringUtils.startsWithIgnoreCase(wordClass, "a")) {
             entryType = EntryType.ADJECTIVE;
-        else if (StringUtils.startsWithIgnoreCase(wordClass, "m"))
+        } else if (StringUtils.startsWithIgnoreCase(wordClass, "m")) {
             entryType = EntryType.NOUN;
-        else if (StringUtils.startsWithIgnoreCase(wordClass, "f"))
+        } else if (StringUtils.startsWithIgnoreCase(wordClass, "f")) {
             entryType = EntryType.NOUN;
-        else if (StringUtils.startsWithIgnoreCase(wordClass, "n"))
+        } else if (StringUtils.startsWithIgnoreCase(wordClass, "n")) {
             entryType = EntryType.NOUN;
-        else if (StringUtils.startsWithIgnoreCase(wordClass, "v"))
+        } else if (StringUtils.startsWithIgnoreCase(wordClass, "v")) {
             entryType = EntryType.VERB;
+        }
 
         return entryType;
     }

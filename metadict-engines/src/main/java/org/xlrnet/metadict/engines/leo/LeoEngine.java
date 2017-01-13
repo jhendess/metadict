@@ -124,7 +124,9 @@ public class LeoEngine implements SearchEngine {
      */
     private String alternativeExtractPluralString(String inputString) {
         int pluralIndex = StringUtils.indexOfIgnoreCase(inputString, "pl.:");
-        if (pluralIndex < 0) return null;
+        if (pluralIndex < 0) {
+            return null;
+        }
         String pluralSubstring = StringUtils.substring(inputString, pluralIndex + 4);
         String substringTrim = StringUtils.substringBefore(pluralSubstring, "-");
         return cleanWhitespace(substringTrim);
@@ -134,8 +136,9 @@ public class LeoEngine implements SearchEngine {
         String targetDictionary = resolveDictionaryConfig(inputLanguage, outputLanguage);
         if (targetDictionary == null) {
             targetDictionary = resolveDictionaryConfig(outputLanguage, inputLanguage);
-            if (targetDictionary == null)
+            if (targetDictionary == null) {
                 throw new IllegalArgumentException("No suitable dictionary configuration found - this might be an internal metadict error");
+            }
         }
 
         return Jsoup.connect("https://dict.leo.org/dictQuery/m-vocab/" + targetDictionary + "/query.xml")
@@ -158,8 +161,9 @@ public class LeoEngine implements SearchEngine {
     @Nullable
     private String extractAbbreviationString(String representation) {
         String substring = StringUtils.substringBetween(representation, "[abbr.:", "]");
-        if (substring != null)
+        if (substring != null) {
             return cleanWhitespace(substring);
+        }
         return null;
     }
 
@@ -175,8 +179,9 @@ public class LeoEngine implements SearchEngine {
     @Nullable
     private String extractDomainString(String representation) {
         String substring = StringUtils.substringAfterLast(representation, "[");
-        if (substring != null)
+        if (substring != null) {
             return StringUtils.substringBefore(substring, "]");
+        }
         return null;
     }
 
@@ -229,10 +234,10 @@ public class LeoEngine implements SearchEngine {
     }
 
     /**
-     * Process the all links to the leo.org forums and provide them as external content.
+     * Process all links to the leo.org forums and provide them as external content.
      *
-     * @param forumLinkNode
-     * @param resultBuilder
+     * @param forumLinkNode The node which contains the forum link.
+     * @param resultBuilder The builder for the bilingual query result.
      */
     private void processForumLinks(@Nullable Element forumLinkNode, @NotNull BilingualQueryResultBuilder resultBuilder) {
         if (forumLinkNode == null) {
@@ -242,11 +247,11 @@ public class LeoEngine implements SearchEngine {
 
         ExternalContentBuilder builder = ImmutableExternalContent.builder();
 
-
+        // TODO: Rewrite this for loop - it seems to be very strangely written (but works)
         for (Iterator<Element> iterator = forumLinkNode.getAllElements().iterator(); iterator.hasNext(); ) {
             Element linkNode = iterator.next();
 
-            if (StringUtils.equals(linkNode.tag().getName(), "link")) {
+            if ("link".equals(linkNode.tag().getName())) {
                 builder = ImmutableExternalContent.builder();
                 String link = linkNode.attr("href");
 
@@ -258,18 +263,18 @@ public class LeoEngine implements SearchEngine {
                         LOGGER.warn("Illegal URL for forum entry", e);
                     }
                 } else {
-                    LOGGER.warn("Skipping link node with empty href attribute");
+                    LOGGER.trace("Skipping link node with empty href attribute");
                     continue;
                 }
             }
 
-            if (StringUtils.equals(linkNode.tag().getName(), "subject")) {
+            if ("subject".equals(linkNode.tag().getName())) {
                 String subject = linkNode.text();
                 linkNode = iterator.next();
                 if (StringUtils.isNotBlank(subject)) {
                     builder.setTitle("leo.org forum: " + subject);
                 } else {
-                    LOGGER.warn("Skipping blank subject node");
+                    LOGGER.trace("Skipping blank subject node");
                     continue;
                 }
             }
@@ -290,10 +295,6 @@ public class LeoEngine implements SearchEngine {
     /**
      * Process the content contents of a single entry node. The entry node is the root-node for a single dictionary
      * entry.
-     *
-     * @param entryNode
-     * @param resultBuilder
-     * @param fallbackEntryType
      */
     private void processEntryNode(@NotNull Element entryNode, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull EntryType fallbackEntryType) {
         // Try to determine the entry type again
@@ -301,8 +302,9 @@ public class LeoEngine implements SearchEngine {
         Element category = entryNode.getElementsByTag("category").first();
         if (category != null) {
             entryType = resolveSectionType(category.attr("type"));
-            if (entryType == EntryType.UNKNOWN)
+            if (entryType == EntryType.UNKNOWN) {
                 entryType = fallbackEntryType;
+            }
         }
 
         // Process each side separately
@@ -352,8 +354,9 @@ public class LeoEngine implements SearchEngine {
                     String elementHtml = element.outerHtml();
                     if (StringUtils.startsWithIgnoreCase(elementText, "pl.:")) {
                         pluralForm[0] = StringUtils.substringAfter(elementText, ".:");
-                        if (StringUtils.isNotBlank(pluralForm[0]))
+                        if (StringUtils.isNotBlank(pluralForm[0])) {
                             dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, cleanWhitespace(pluralForm[0]));
+                        }
                     } else if (isValidDescriptionHtml(elementHtml)) {
                         elementText = StringUtils.strip(elementText, "-");
                         dictionaryObjectBuilder.setDescription(cleanWhitespace(elementText));
@@ -364,8 +367,9 @@ public class LeoEngine implements SearchEngine {
 
         // Test for domain specific content:
         String domain = extractDomainString(fullRepresentation);
-        if (StringUtils.isNotBlank(domain))
+        if (StringUtils.isNotBlank(domain)) {
             dictionaryObjectBuilder.setDomain(domain);
+        }
 
         // Test for abbreviation
         String abbreviation = extractAbbreviationString(fullRepresentation);
@@ -376,8 +380,9 @@ public class LeoEngine implements SearchEngine {
         // Try to detect alternative plural form:
         if (pluralForm[0] == null) {
             pluralForm[0] = alternativeExtractPluralString(fullRepresentation);
-            if (StringUtils.isNotBlank(pluralForm[0]))
+            if (StringUtils.isNotBlank(pluralForm[0])) {
                 dictionaryObjectBuilder.setAdditionalForm(GrammaticalNumber.PLURAL, pluralForm[0]);
+            }
         }
 
         // Process additional forms (e.g. verb tenses):
@@ -391,10 +396,7 @@ public class LeoEngine implements SearchEngine {
     }
 
     private String fixLanguageIdentifier(String languageIdentifier) {
-        if ("ch".equals(languageIdentifier)) {
-            languageIdentifier = "cn";
-        }
-        return languageIdentifier;
+        return "ch".equals(languageIdentifier) ? "cn" : languageIdentifier;
     }
 
     private boolean isValidDescriptionHtml(String elementHtml) {
@@ -438,8 +440,9 @@ public class LeoEngine implements SearchEngine {
                     LOGGER.warn("Tenses array {} has unexpected length {} instead of 2", tensesArray, tensesArray.length);
                 }
                 dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_TENSE, cleanWhitespace(tensesArray[0]));
-                if (tensesArray.length >= 2)
+                if (tensesArray.length >= 2) {
                     dictionaryObjectBuilder.setAdditionalForm(GrammaticalTense.PAST_PERFECT, cleanWhitespace(tensesArray[1]));
+                }
             }
         }
     }
@@ -448,9 +451,6 @@ public class LeoEngine implements SearchEngine {
      * Resolve the internal query configuration for the leo.org backend. Currently supported: <ul> <li>German -
      * English</li> <li>German - French</li> <li>German - Spanish</li> <li>German - Italian</li> <li>German -
      * Chinese</li> <li>German - Russian</li> </ul>
-     *
-     * @param inputLanguage
-     * @param outputLanguage
      */
     private String resolveDictionaryConfig(Language inputLanguage, Language outputLanguage) {
         switch (inputLanguage.getIdentifier()) {
