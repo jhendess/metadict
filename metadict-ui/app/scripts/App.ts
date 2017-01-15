@@ -1,7 +1,6 @@
 ///<reference path="../../typings/index.d.ts" />
 ///<reference path="api/CoreInterfaces.ts"/>
 ///<reference path="api/DomainInterfaces.ts"/>
-///<reference path="api/CoreServices.ts"/>
 ///<reference path="Config.ts"/>
 
 

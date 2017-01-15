@@ -8,6 +8,9 @@ module MetadictApp {
         [index: string]: T;
     }
 
+    export type SuccessCallback<T> = (data: T) => any;
+    export type ErrorCallback = (responseStatus: ResponseStatus, reason: any) => any;
+
     /**
      * The navigation entry for a single page.
      */

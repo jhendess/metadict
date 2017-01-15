@@ -15,7 +15,7 @@
         <ul>
             <li ng-repeat="page in section.pages" class="navigationTarget"
                 ng-if="nav.isDisplayed(page)">
-                <a ng-href="{{ nav.prependBasePath(page.target) }}" class="waves-effect">
+                <a ng-href="{{ prependBasePath(page.target) }}" class="waves-effect">
                     <i class="material-icons inline align-middle">{{ page.icon }}</i>
                     <span class="align-middle nav-title">{{ page.title }}</span>
                 </a>

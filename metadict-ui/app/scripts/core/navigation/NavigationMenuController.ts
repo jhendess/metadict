@@ -21,14 +21,10 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $scope: IScope, private $log: ILogService, private userService: UserService,
-                    private navigationMenuService: INavigationMenuService) {
+                    private navigationMenuService: NavigationMenuService) {
             this.setupWatchers();
 
             $log.debug("NavigationMenuController started");
-        }
-
-        public prependBasePath(target: string) {
-            return Config.CLIENT_BASE_PATH + (target !== undefined && target.indexOf("/") === 0) ? target.substr(1) : target;
         }
 
         public isLoggedIn(): boolean {

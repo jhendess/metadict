@@ -6,7 +6,7 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
 
-    class NavigationMenuService implements INavigationMenuService {
+    export class NavigationMenuService {
 
         // @ngInject
         constructor(private $log: ILogService) {
@@ -75,6 +75,10 @@ module MetadictApp {
 
         public getSections(): Array<NavigationSection> {
             return this.sections;
+        }
+
+        public prependBasePath(target: string) {
+            return Config.CLIENT_BASE_PATH + (target !== undefined && target.indexOf("/") === 0) ? target.substr(1) : target;
         }
     }
 

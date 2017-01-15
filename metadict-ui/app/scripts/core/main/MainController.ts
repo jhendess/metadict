@@ -14,6 +14,12 @@ module MetadictApp {
     export interface IMainScope extends IScope {
 
         statusService: StatusService;
+
+        /**
+         * Function which prepands the current base path of the application in front of a URL.
+         * @param target The target to which the base path should be prepended.
+         */
+        prependBasePath: (target: string) => string;
     }
 
     /**
@@ -35,9 +41,10 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $scope: IMainScope, private $log: ILogService, private statusService: StatusService,
-                    private $rootScope: IRootScopeService) {
+                    private $rootScope: IRootScopeService, private navigationMenuService: NavigationMenuService) {
             this.checkFinishedUpdate();
             $scope.statusService = statusService;
+            $scope.prependBasePath = this.navigationMenuService.prependBasePath;
             $log.debug("MainController started");
         }
 
