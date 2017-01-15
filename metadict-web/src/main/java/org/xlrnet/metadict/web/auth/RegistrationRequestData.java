@@ -54,7 +54,7 @@ public class RegistrationRequestData {
     @JsonProperty
     @ValidPassword
     @Size(min = ValidPassword.MINIMUM_PASSWORD_LENGTH, max = ValidPassword.MAXIMUM_PASSWORD_LENGTH)
-    private String passwordCopy;
+    private String confirmPassword;
 
     public String getName() {
         return name;
@@ -64,8 +64,8 @@ public class RegistrationRequestData {
         return password;
     }
 
-    public String getPasswordCopy() {
-        return passwordCopy;
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
 
     public RegistrationRequestData setName(String name) {
@@ -78,8 +78,8 @@ public class RegistrationRequestData {
         return this;
     }
 
-    public RegistrationRequestData setPasswordCopy(String passwordCopy) {
-        this.passwordCopy = passwordCopy;
+    public RegistrationRequestData setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
         return this;
     }
 }

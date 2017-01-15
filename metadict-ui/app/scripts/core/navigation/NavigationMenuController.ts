@@ -39,6 +39,14 @@ module MetadictApp {
             return this.navigationMenuService.getSections();
         }
 
+        /**
+         * Checks if the given {@link NavigationPage} may be rendered.
+         */
+        public isDisplayed(page: NavigationPage): boolean {
+            return (this.isLoggedIn() && page.loginRequired)
+                || (!this.isLoggedIn() && (page.notLoggedIn || !page.loginRequired));
+        }
+
         private setupWatchers() {
             this.$scope.$watch(this.userService.isUserLoggedIn, () => {
                 if (this.userService.isUserLoggedIn()) {

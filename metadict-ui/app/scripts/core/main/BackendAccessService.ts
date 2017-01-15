@@ -27,6 +27,8 @@ module MetadictApp {
 
         private _systemStatusAccess: IRestangularElement;
 
+        private _registrationAccess: IRestangularElement;
+
         /**
          * @inheritDoc
          */
@@ -77,6 +79,21 @@ module MetadictApp {
         }
 
         /**
+         *
+         * @param user
+         * @param success
+         * @param error
+         */
+        public registerNewUser(user: RegistrationData, success: SuccessCallback<any>, error: ErrorCallback) {
+            this._registrationAccess
+                .post(user)
+                .then<ResponseContainer<any>>(
+                    this.buildSuccessHandler(success, error),
+                    this.buildErrorHandler(error)
+                )
+        }
+
+        /**
          * Generic handler for unwrapping the response container from the backend. Detects backend errors automatically
          * and will notify both the internal error registry and invoke a custom {@link ErrorCallback} for the client.
          *
@@ -89,25 +106,35 @@ module MetadictApp {
         private buildSuccessHandler<T>(successCallback: SuccessCallback<T>,
                                        errorCallback: ErrorCallback): (responseContainer: ResponseContainer<T>) => ResponseContainer<T> {
             return (responseContainer: ResponseContainer<T>): ResponseContainer<T> => {
-                let responseStatus = responseContainer.status;
-                this.$log.debug(`Received response with status ${responseStatus}`);
+                let responseStatus = ResponseStatus[responseContainer.status];
+                this.$log.debug(`Received response with status ${ResponseStatus[responseStatus]}`);
                 this.$log.debug(responseContainer.data);
 
                 if (responseStatus === ResponseStatus.OK) {
                     successCallback(responseContainer.data);
                 } else {
                     // TODO: do system-wide error handling
-                    errorCallback(responseContainer.message);
+                    errorCallback(responseStatus, responseContainer.message);
                 }
                 return responseContainer;
             };
         }
 
-        private buildErrorHandler(errorCallback: ErrorCallback): ErrorCallback {
-            return (reason: string) => {
+        /**
+         * Builds an restangular-compatible error handler which wraps the internal Metadict error callback.
+         * @param errorCallback The internal callback to wrap.
+         * @returns {(reason:string)=>undefined}              A restangular-compatible error callback.
+         */
+        private buildErrorHandler(errorCallback: ErrorCallback): (reason: any) => any {
+            return (reason: any) => {
+                let responseContainer = <ResponseContainer<any>> reason.data;
                 // TODO: do system-wide error handling
                 Offline.check();
-                errorCallback(reason);
+                if (responseContainer != null) {
+                    errorCallback(ResponseStatus[responseContainer.status], responseContainer.message);
+                } else {
+                    errorCallback(ResponseStatus.ERROR, reason);
+                }
             };
         }
 
@@ -118,6 +145,7 @@ module MetadictApp {
             this._bilingualDictionaryAccess = this.Restangular.all("dictionaries/bilingual");
             this._bilingualQueryAccess = this.Restangular.all("query");
             this._systemStatusAccess = this.Restangular.one("status");
+            this._registrationAccess = this.Restangular.all("register");
         }
     }
 

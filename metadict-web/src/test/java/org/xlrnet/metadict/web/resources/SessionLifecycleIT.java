@@ -69,7 +69,7 @@ public class SessionLifecycleIT {
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), sessionBeforeGet.getStatus());
 
         // Register new user:
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
         Response registrationResponse = target.path("/register").request().post(Entity.json(registrationRequestData));
         assertEquals("User registration failed", Response.Status.ACCEPTED.getStatusCode(), registrationResponse.getStatus());
 

@@ -43,7 +43,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface PasswordCopyEqual {
 
-    String message() default "password and passwordCopy must be equal";
+    String message() default "password and the confirmation must be equal";
 
     Class<?>[] groups() default {};
 

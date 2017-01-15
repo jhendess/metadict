@@ -27,6 +27,8 @@ package org.xlrnet.metadict.web.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.xlrnet.metadict.web.api.ResponseStatus;
 import org.xlrnet.metadict.web.auth.RegistrationRequestData;
 import org.xlrnet.metadict.web.auth.UserService;
 
@@ -64,7 +66,7 @@ public class RegistrationResource {
      *         The registration request.
      * @return Either a response with {@link javax.ws.rs.core.Response.Status#ACCEPTED} if the registration was
      * successful or either 422 if any validation errors occurredor {@link javax.ws.rs.core.Response.Status#CONFLICT} if
-     * the user already exists. If the registration was successful, the user will also be logged automatically.
+     * the user already exists. If the registration was successful, the user will also be logged in automatically.
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,12 +76,12 @@ public class RegistrationResource {
         Response.ResponseBuilder responseBuilder;
 
         if (!newUser.isPresent()) {
-            responseBuilder = Response.status(Response.Status.CONFLICT);
+            responseBuilder = Response.status(Response.Status.CONFLICT).entity(ResponseContainer.withStatus(ResponseStatus.DUPLICATE));
         } else {
             Optional<User> user = userService.authenticateWithPassword(registrationRequestData.getName(),
                     registrationRequestData.getPassword());
-            if (Objects.equals(newUser.get(), user.get())) {
-                responseBuilder = Response.accepted();
+            if (user.isPresent() && Objects.equals(newUser.get(), user.get())) {
+                responseBuilder = Response.accepted(ResponseContainer.withStatus(ResponseStatus.OK));
             } else {
                 // This should never happen
                 responseBuilder = Response.serverError();

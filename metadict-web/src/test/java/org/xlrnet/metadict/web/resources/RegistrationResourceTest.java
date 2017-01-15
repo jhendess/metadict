@@ -103,7 +103,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testOnlyPasswordDuplicate() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setConfirmPassword(TEST_PASSWORD);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -111,7 +111,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testMissingUsername() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setPassword(TEST_PASSWORD).setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -127,7 +127,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testWrongDuplicate() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setPassword(TEST_PASSWORD).setName(TEST_PASSWORD).setPasswordCopy(TEST_USERNAME);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setPassword(TEST_PASSWORD).setName(TEST_PASSWORD).setConfirmPassword(TEST_USERNAME);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -135,7 +135,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testPasswordTooShort() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TOO_SHORT_VALUE).setPasswordCopy(TOO_SHORT_VALUE);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TOO_SHORT_VALUE).setConfirmPassword(TOO_SHORT_VALUE);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -143,7 +143,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testPasswordTooLong() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TOO_LONG_VALUE).setPasswordCopy(TOO_LONG_VALUE);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TOO_LONG_VALUE).setConfirmPassword(TOO_LONG_VALUE);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -151,7 +151,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testUsernameIllegalCharacter() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(ILLEGAL_USERNAME).setPassword(TEST_PASSWORD).setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(ILLEGAL_USERNAME).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -159,7 +159,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testUsernameTooShort() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TOO_SHORT_VALUE).setPassword(TEST_PASSWORD).setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TOO_SHORT_VALUE).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -167,7 +167,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testUsernameTooLong() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TOO_SHORT_VALUE).setPassword(TOO_LONG_VALUE).setPasswordCopy(TOO_LONG_VALUE);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TOO_SHORT_VALUE).setPassword(TOO_LONG_VALUE).setConfirmPassword(TOO_LONG_VALUE);
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
@@ -176,7 +176,7 @@ public class RegistrationResourceTest {
 
     @Test
     public void testSuccessful() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setPasswordCopy(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
         Response post = performRequest(registrationRequestData);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), post.getStatus());

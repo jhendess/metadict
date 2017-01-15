@@ -5,7 +5,7 @@
 module MetadictApp {
 
     export type SuccessCallback<T> = (data: T) => any;
-    export type ErrorCallback = (reason: any) => any;
+    export type ErrorCallback = (responseStatus: ResponseStatus, reason: any) => any;
 
     export interface INavigationMenuService {
         getSections() : Array<NavigationSection>;

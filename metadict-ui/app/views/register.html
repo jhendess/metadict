@@ -1,0 +1,59 @@
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+
+        <h1 class="header center red-text lighten-1">Metadict <span
+                class="hide-on-small-and-down">Search Engine</span>
+        </h1>
+        <br class="hide-on-small-and-down">
+
+    </div>
+</div>
+
+<div class="container" ng-controller="RegistrationController as registrationController">
+    <div class="section">
+        <form name="registrationForm" ng-submit="registrationController.register()" autocomplete="off">
+            <div class="row">
+                <div class="input-field col offset-m4 m4 s12">
+                    <input id="name" name="name" type="text" class="validate" ng-model="user.name"
+                           ng-minlength="6" ng-maxlength="32" required ng-disabled="registering">
+                    <label for="name">User Name</label>
+                </div>
+                <div class="input-field col offset-m4 m4 s12">
+                    <input id="password" name="password" type="password" class="validate" ng-model="user.password"
+                           ng-minlength="6" ng-maxlength="32" required ng-disabled="registering">
+                    <label for="password">Password</label>
+                </div>
+                <div class="input-field col offset-m4 m4 s12">
+                    <input name="confirmPassword" id="confirmPassword" type="password" class="validate"
+                           ng-model="user.confirmPassword" compare-to="registrationForm.password" required
+                           ng-disabled="registering">
+                    <label for="confirmPassword">Confirm password</label>
+                </div>
+            </div>
+
+            <div class="row center" style="color:maroon" role="alert">
+                <div ng-messages="registrationForm.name.$error">
+                    <div ng-message="required">Please select a user name</div>
+                    <div ng-message="minlength">The user name must be at least 6 characters long</div>
+                    <div ng-message="maxlength">The user name is too long</div>
+                </div>
+                <div ng-messages="registrationForm.password.$error">
+                    <div ng-message="required">Please select a password</div>
+                    <div ng-message="minlength">The password must be at least 6 characters long</div>
+                    <div ng-message="maxlength">The password is too long</div>
+                </div>
+                <div ng-messages="registrationForm.confirmPassword.$error">
+                    <div ng-message="compareTo">Both passwords must match</div>
+                </div>
+                <div ng-if="duplicateUserName">The name {{ duplicateUserName }} is already in use.</div>
+                <div ng-if="registrationFailed">The registration failed. Please try again later.</div>
+            </div>
+
+            <div class="row">
+                <button class="col offset-m5 m2 offset-s2 s8 btn waves-effect waves-light #0091ea light-blue accent-4"
+                        ng-disabled="registering" type="submit">Register<i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

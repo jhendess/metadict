@@ -78,29 +78,32 @@ public class UserService {
         checkNotNull(unhashedPassword, "Password may not be null");
 
         User user = null;
-        Optional<User> userDataByName = findUserDataByName(username);
 
         // Lock user account creation to avoid race conditions
-        createUserLock.lock();
+        createUserLock.lock(); // TODO: Replace this with a more stable solution which supports better concurrency
 
-        if (!userDataByName.isPresent()) {
-            LOGGER.info("Creating new user {}", username);
+        try {
+            Optional<User> userDataByName = findUserDataByName(username);
 
-            byte[] salt = CryptoUtils.generateSalt(CryptoUtils.DEFAULT_SALT_LENGTH);
-            byte[] hashedPassword = hashPassword(unhashedPassword, salt);
+            if (!userDataByName.isPresent()) {
+                LOGGER.info("Creating new user {}", username);
 
-            BasicAuthData basicAuthData = new BasicAuthData(hashedPassword, salt);
-            user = userFactory.newDefaultUser(username);
+                byte[] salt = CryptoUtils.generateSalt(CryptoUtils.DEFAULT_SALT_LENGTH);
+                byte[] hashedPassword = hashPassword(unhashedPassword, salt);
 
-            try {
-                storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
-                storageService.create(GENERAL_USER_NAMESPACE, username, user);
-                LOGGER.info("Created new user {}", username);
-            } catch (StorageBackendException | StorageOperationException e) {
-                LOGGER.error("Unexpected error while creating new user", e);
-            } finally {
-                createUserLock.unlock();
+                BasicAuthData basicAuthData = new BasicAuthData(hashedPassword, salt);
+                user = userFactory.newDefaultUser(username);
+
+                try {
+                    storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
+                    storageService.create(GENERAL_USER_NAMESPACE, username, user);
+                    LOGGER.info("Created new user {}", username);
+                } catch (StorageBackendException | StorageOperationException e) {
+                    LOGGER.error("Unexpected error while creating new user", e);
+                }
             }
+        } finally {
+            createUserLock.unlock();
         }
 
         return Optional.ofNullable(user);

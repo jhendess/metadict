@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,21 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.api;
+package org.xlrnet.metadict.web.middleware.jersey;
+
+import javax.ws.rs.NotAllowedException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * The {@link ResponseStatus} represents different status codes that can be returned for a request.
+ * Exception mapper which returns a 405 response if the request method was not allowed.
  */
-public enum ResponseStatus {
+@Provider
+public class NotAllowedExceptionMapper implements ExceptionMapper<NotAllowedException> {
 
-    /**
-     * The query executed successfully in the Metadict core.
-     */
-    OK,
-
-    /**
-     * The query failed for a reason that was not caused by the Metadict core.
-     */
-    ERROR,
-
-    /**
-     * An internal error occurred in the Metadict core.
-     */
-    INTERNAL_ERROR,
-
-    /**
-     * A malformed query was received. This does not indicate an error in the Metadict core.
-     */
-    MALFORMED_QUERY,
-
-    /**
-     * A resource with the same id already exists.
-     */
-    DUPLICATE
-
+    @Override
+    public Response toResponse(NotAllowedException exception) {
+        return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+    }
 }

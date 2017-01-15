@@ -49,8 +49,6 @@ public class RateControlService {
      *
      * @param requestContext
      *         The client's request context.
-     * @param resourceId
-     *         Any resource id for which the rate limit should be verified.
      */
     public boolean checkRateLimit(RequestContext requestContext) {
         String clientSpecificRequestKey = requestContext.getClientIdentifier() + "_+_" + requestContext.getResourceId();
@@ -58,6 +56,9 @@ public class RateControlService {
         RateLimiter rateLimiter;
         if ("session".equals(requestContext.getResourceId())) {
             rateLimiterMapLong.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(10 * CALLS_PER_SECOND));
+            rateLimiter = rateLimiterMapLong.get(clientSpecificRequestKey);
+        } else if ("register".equals(requestContext.getResourceId())) {
+            rateLimiterMapLong.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(2 * CALLS_PER_SECOND));
             rateLimiter = rateLimiterMapLong.get(clientSpecificRequestKey);
         } else {
             rateLimiterMap.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(CALLS_PER_SECOND));

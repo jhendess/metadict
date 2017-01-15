@@ -48,8 +48,26 @@ public class ResponseContainer<T> {
         this.data = data;
     }
 
-    public static ResponseContainer<Object> fromSuccessful(Object data) {
+    /**
+     * Creates a new response container with status {@link ResponseStatus#OK} and a given data object.
+     *
+     * @param data
+     *         The data object to return.
+     * @return A constructed response container object.
+     */
+    public static ResponseContainer<Object> fromSuccessful(@NotNull Object data) {
         return new ResponseContainer<>(ResponseStatus.OK, null, data);
+    }
+
+    /**
+     * Creates a new empty response container with a given status.
+     *
+     * @param status
+     *         The status to set in the new container.
+     * @return A constructed response container object.
+     */
+    public static ResponseContainer<Object> withStatus(@NotNull ResponseStatus status) {
+        return new ResponseContainer<>(status, null, null);
     }
 
     @Nullable

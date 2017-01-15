@@ -31,11 +31,11 @@ module MetadictApp {
 
         private _selectedDictionaryIds: string[] = [];
 
-        private reloadErrorCallback = (reason: string) => {
+        private reloadErrorCallback = (responseStatus: ResponseStatus, reason: string) => {
             this._dictionaryListLoading = false;
             // TODO: Error handling?
             this.$log.error("Updating dictionary list failed");
-            this.$log.error(reason);
+            this.$log.error(responseStatus, reason);
         };
 
         private reloadSuccessCallback = (dictionaries: BilingualDictionary[]) => {

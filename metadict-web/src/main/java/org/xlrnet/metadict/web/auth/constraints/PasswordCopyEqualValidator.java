@@ -42,6 +42,6 @@ public class PasswordCopyEqualValidator implements ConstraintValidator<PasswordC
 
     @Override
     public boolean isValid(RegistrationRequestData value, ConstraintValidatorContext context) {
-        return value != null && StringUtils.equals(value.getPassword(), value.getPasswordCopy());
+        return value != null && StringUtils.equals(value.getPassword(), value.getConfirmPassword());
     }
 }

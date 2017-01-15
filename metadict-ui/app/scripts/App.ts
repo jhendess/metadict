@@ -38,10 +38,11 @@ module MetadictApp {
     import IRestangularProvider = restangular.IProvider;
     import ILocationProvider = angular.ILocationProvider;
 
-    declare var window;
+    declare let window;
 
     export let metadictModule = angular.module("MetadictApp", [
         "ngRoute",
+        "ngMessages",
         "restangular",
         "ui.materialize",
         "LocalStorageModule"
@@ -67,8 +68,10 @@ module MetadictApp {
                 templateUrl: "views/favorites.html"
             }).when("/about", {
                 templateUrl: "views/about.html"
-            }).when("/help", {
-                templateUrl: "views/help.html"
+            }).when("/login", {
+                templateUrl: "views/login.html"
+            }).when("/register", {
+                templateUrl: "views/register.html"
             }).otherwise({
                 redirectTo: "/search"
             });

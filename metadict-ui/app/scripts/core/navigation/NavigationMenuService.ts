@@ -21,7 +21,8 @@ module MetadictApp {
                         "title": "Lookup dictionary",
                         "icon": "search",
                         "target": "/search",
-                        "loginRequired": false
+                        "loginRequired": false,
+                        "notLoggedIn": false
                     }/*,
                      {
                      "title": "Favorites",
@@ -44,25 +45,29 @@ module MetadictApp {
                         "title": "Account settings",
                         "icon": "settings",
                         "target": "/account",
-                        "loginRequired": true
+                        "loginRequired": true,
+                        "notLoggedIn": false
                     },
-                    /*{
-                     "title": "Help",
-                     "icon": "help",
-                     "target": "/help",
-                     "loginRequired": false
-                     },*/
+                    {
+                        "title": "Register / Login",
+                        "icon": "person",
+                        "target": "/login",
+                        "loginRequired": false,
+                        "notLoggedIn": true
+                    },
                     {
                         "title": "About Metadict",
                         "icon": "info",
                         "target": "/about",
-                        "loginRequired": false
+                        "loginRequired": false,
+                        "notLoggedIn": false
                     },
                     {
                         "title": "Logout",
                         "icon": "exit_to_app",
                         "target": "/logout",
-                        "loginRequired": true
+                        "loginRequired": true,
+                        "notLoggedIn": false
                     }
                 ]
             }
