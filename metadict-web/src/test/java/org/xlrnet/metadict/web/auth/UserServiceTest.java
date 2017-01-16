@@ -54,12 +54,12 @@ public class UserServiceTest {
     public void setup() {
         this.storageService = spy(new InMemoryStorage());
         this.userFactory = new UserFactory(new SequenceService());
-        this.userService = spy(new UserService(storageService, userFactory));
+        this.userService = spy(new UserService(this.storageService, this.userFactory));
     }
 
     @Test
     public void testCreateNewUserWithPassword() throws Exception {
-        Optional<User> newUserWithPassword = userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> newUserWithPassword = this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
 
         assertTrue(newUserWithPassword.isPresent());
         User user = newUserWithPassword.get();
@@ -72,19 +72,19 @@ public class UserServiceTest {
 
     @Test
     public void testCreateNewUserWithPassword_existing() throws Exception {
-        Optional<User> existingUser = Optional.of(userFactory.newDefaultUser(TEST_USER_NAME));
-        doReturn(existingUser).when(userService).findUserDataByName(TEST_USER_NAME);
+        Optional<User> existingUser = Optional.of(this.userFactory.newDefaultUser(TEST_USER_NAME));
+        doReturn(existingUser).when(this.userService).findUserDataByName(TEST_USER_NAME);
 
-        Optional<User> newUser = userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> newUser = this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
         assertFalse("New user must be non-existing", newUser.isPresent());
-        verify(storageService, never()).create(anyString(), anyString(), anyString());
-        verify(storageService, never()).put(anyString(), anyString(), anyString());
+        verify(this.storageService, never()).create(anyString(), anyString(), anyString());
+        verify(this.storageService, never()).put(anyString(), anyString(), anyString());
     }
 
     @Test
     public void testAuthenticateWithPassword_correct() throws Exception {
         prepareAuthDataMock();
-        Optional<User> user = userService.authenticateWithPassword(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> user = this.userService.authenticateWithPassword(TEST_USER_NAME, TEST_PASSWORD);
 
         assertTrue("User should be present but isn't (i.e. password check doesn't work)", user.isPresent());
     }
@@ -92,33 +92,33 @@ public class UserServiceTest {
     @Test
     public void testAuthenticateWithPassword_wrong() throws Exception {
         prepareAuthDataMock();
-        Optional<User> user = userService.authenticateWithPassword(TEST_USER_NAME, "Some_Wrong_Password");
+        Optional<User> user = this.userService.authenticateWithPassword(TEST_USER_NAME, "Some_Wrong_Password");
 
         assertFalse("User shouldn't be present but is (i.e. password check doesn't work)", user.isPresent());
     }
 
     @Test
     public void testHasRole_false() throws Exception {
-        User user = userFactory.newDefaultUser(TEST_USER_NAME);
-        boolean b = userService.hasRole(user, Roles.ADMIN_ROLE_ID);
+        User user = this.userFactory.newDefaultUser(TEST_USER_NAME);
+        boolean b = this.userService.hasRole(user, Roles.ADMIN_ROLE_ID);
         assertFalse("New user may not have role " + Roles.ADMIN_ROLE_ID, b);
     }
 
     @Test
     public void testHasRole_true() throws Exception {
         User user = new BasicUser("", TEST_USER_NAME, ImmutableList.of(UserRole.ADMIN));
-        boolean b = userService.hasRole(user, Roles.ADMIN_ROLE_ID);
+        boolean b = this.userService.hasRole(user, Roles.ADMIN_ROLE_ID);
         assertTrue("User must have role " + Roles.ADMIN_ROLE_ID + " but hasn't", b);
     }
 
     private void prepareAuthDataMock() throws org.xlrnet.metadict.api.storage.StorageBackendException, org.xlrnet.metadict.api.storage.StorageOperationException {
-        byte[] salt = CryptoUtils.generateSalt(CryptoUtils.DEFAULT_SALT_LENGTH);
-        byte[] hashedPassword = userService.hashPassword(TEST_PASSWORD, salt);
+        byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
+        byte[] hashedPassword = this.userService.hashPassword(TEST_PASSWORD, salt);
         Optional<BasicAuthData> authData = Optional.of(new BasicAuthData(hashedPassword, salt));
-        Optional<User> user = Optional.of(userFactory.newDefaultUser(TEST_USER_NAME));
+        Optional<User> user = Optional.of(this.userFactory.newDefaultUser(TEST_USER_NAME));
 
 
-        doReturn(authData).when(storageService).read(UserService.BASIC_AUTH_NAMESPACE, TEST_USER_NAME, BasicAuthData.class);
-        doReturn(authData).when(storageService).read(UserService.GENERAL_USER_NAMESPACE, TEST_USER_NAME, User.class);
+        doReturn(authData).when(this.storageService).read(UserService.BASIC_AUTH_NAMESPACE, TEST_USER_NAME, BasicAuthData.class);
+        doReturn(authData).when(this.storageService).read(UserService.GENERAL_USER_NAMESPACE, TEST_USER_NAME, User.class);
     }
 }

@@ -12,7 +12,7 @@ module MetadictApp {
      */
     export class BootstrapService {
         // @ngInject
-        constructor(private $log: ILogService, private dictionaryService: DictionaryService) {
+        constructor(private $log: ILogService, private dictionaryService: DictionaryService, private userService: UserService) {
             $log.debug("BootstrapService started");
         }
 
@@ -22,6 +22,7 @@ module MetadictApp {
         public bootstrapApplication() {
             this.dictionaryService.reloadDictionaries();
             this.setupOfflineHandler();
+            this.checkLoginStatus();
             this.$log.info("Application started");
         }
 
@@ -36,6 +37,11 @@ module MetadictApp {
                     }
                 }
             };
+        }
+
+        private checkLoginStatus() {
+            this.$log.debug("Checking session state...");
+            this.userService.checkLoginStatus();
         }
     }
 

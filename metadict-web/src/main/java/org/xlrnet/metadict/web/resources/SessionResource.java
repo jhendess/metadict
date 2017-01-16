@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.web.api.Credentials;
+import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.auth.UserService;
 
 import javax.inject.Inject;
@@ -66,7 +67,7 @@ public class SessionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context ContainerRequestContext requestContext, @NotNull @Valid Credentials credentials) {
         DefaultJwtCookiePrincipal principal = null;
-        Optional<User> user = userService.authenticateWithPassword(credentials.getName(), credentials.getPassword());
+        Optional<User> user = this.userService.authenticateWithPassword(credentials.getName(), credentials.getPassword());
 
         // TODO: Refactor the login logic into a service and move it to RequestContext
         if (user.isPresent()) {
@@ -84,7 +85,7 @@ public class SessionResource {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         } else {
             LOGGER.info("User {} started a new session", principal.getName());
-            return Response.ok().build();
+            return Response.ok(ResponseContainer.fromSuccessful(principal)).build();
         }
     }
 
@@ -97,6 +98,6 @@ public class SessionResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response testAuthenticatedResource(@Auth DefaultJwtCookiePrincipal principal) {
-        return Response.ok(principal).build();
+        return Response.ok(ResponseContainer.fromSuccessful(principal)).build();
     }
 }

@@ -11,7 +11,7 @@
 
 <div class="container" ng-controller="RegistrationController as registrationController">
     <div class="section">
-        <form name="registrationForm" ng-submit="registrationController.register()" autocomplete="off">
+        <form name="registrationForm" ng-submit="registrationController.register()" autocomplete="off" novalidate>
             <div class="row">
                 <div class="input-field col offset-m4 m4 s12">
                     <input id="name" name="name" type="text" class="validate" ng-model="user.name"
@@ -51,7 +51,7 @@
 
             <div class="row">
                 <button class="col offset-m5 m2 offset-s2 s8 btn waves-effect waves-light #0091ea light-blue accent-4"
-                        ng-disabled="registering" type="submit">Register<i class="material-icons right">send</i>
+                        ng-disabled="registering" type="submit">Register
                 </button>
             </div>
         </form>

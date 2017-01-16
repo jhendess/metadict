@@ -29,6 +29,8 @@ module MetadictApp {
 
         private _registrationAccess: IRestangularElement;
 
+        private _sessionAccess: IRestangularElement;
+
         /**
          * @inheritDoc
          */
@@ -90,7 +92,39 @@ module MetadictApp {
                 .then<ResponseContainer<any>>(
                     this.buildSuccessHandler(success, error),
                     this.buildErrorHandler(error)
-                )
+                );
+        }
+
+        /**
+         * Performs a request to the backend session resource to check if a user is currently logged in.
+         *
+         * @param successCallback Callback which will be invoked if the user is logged on.
+         * @param errorCallback Callback which will be invokd on a error.
+         */
+        public getSessionInfo(successCallback: SuccessCallback<UserSession>, errorCallback: ErrorCallback) {
+            this.Restangular
+                .one("session")
+                .get()
+                .then<ResponseContainer<UserSession>>(
+                    this.buildSuccessHandler(successCallback, errorCallback),
+                    this.buildErrorHandler(errorCallback)
+                );
+        }
+
+        /**
+         * Authenticates with given user data.
+         *
+         * @param authenticationRequest The credentials which will be used for logging in.
+         * @param successCallback Callback which will be invoked if the user is logged on.
+         * @param errorCallback Callback which will be invokd on a error.
+         */
+        public authenticate(authenticationRequest: Credentials, successCallback: SuccessCallback<UserSession>, errorCallback: ErrorCallback) {
+            this._sessionAccess
+                .post(authenticationRequest)
+                .then<ResponseContainer<UserSession>>(
+                    this.buildSuccessHandler(successCallback, errorCallback),
+                    this.buildErrorHandler(errorCallback)
+                );
         }
 
         /**
@@ -123,7 +157,7 @@ module MetadictApp {
         /**
          * Builds an restangular-compatible error handler which wraps the internal Metadict error callback.
          * @param errorCallback The internal callback to wrap.
-         * @returns {(reason:string)=>undefined}              A restangular-compatible error callback.
+         * @returns {(reason:string)=>undefined} A restangular-compatible error callback.
          */
         private buildErrorHandler(errorCallback: ErrorCallback): (reason: any) => any {
             return (reason: any) => {
@@ -146,6 +180,7 @@ module MetadictApp {
             this._bilingualQueryAccess = this.Restangular.all("query");
             this._systemStatusAccess = this.Restangular.one("status");
             this._registrationAccess = this.Restangular.all("register");
+            this._sessionAccess = this.Restangular.all("session");
         }
     }
 

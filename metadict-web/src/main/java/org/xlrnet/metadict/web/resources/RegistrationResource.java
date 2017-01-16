@@ -34,6 +34,7 @@ import org.xlrnet.metadict.web.auth.UserService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -65,20 +66,20 @@ public class RegistrationResource {
      * @param registrationRequestData
      *         The registration request.
      * @return Either a response with {@link javax.ws.rs.core.Response.Status#ACCEPTED} if the registration was
-     * successful or either 422 if any validation errors occurredor {@link javax.ws.rs.core.Response.Status#CONFLICT} if
-     * the user already exists. If the registration was successful, the user will also be logged in automatically.
+     * successful or either 422 if any validation errors occurred or {@link javax.ws.rs.core.Response.Status#CONFLICT}
+     * if the user already exists. If the registration was successful, the user will also be logged in automatically.
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response register(@Valid RegistrationRequestData registrationRequestData) {
-        Optional<User> newUser = userService.createNewUser(registrationRequestData.getName(), registrationRequestData.getPassword());
+    public Response register(@Valid @NotNull RegistrationRequestData registrationRequestData) {
+        Optional<User> newUser = this.userService.createNewUser(registrationRequestData.getName(), registrationRequestData.getPassword());
         Response.ResponseBuilder responseBuilder;
 
         if (!newUser.isPresent()) {
             responseBuilder = Response.status(Response.Status.CONFLICT).entity(ResponseContainer.withStatus(ResponseStatus.DUPLICATE));
         } else {
-            Optional<User> user = userService.authenticateWithPassword(registrationRequestData.getName(),
+            Optional<User> user = this.userService.authenticateWithPassword(registrationRequestData.getName(),
                     registrationRequestData.getPassword());
             if (user.isPresent() && Objects.equals(newUser.get(), user.get())) {
                 responseBuilder = Response.accepted(ResponseContainer.withStatus(ResponseStatus.OK));

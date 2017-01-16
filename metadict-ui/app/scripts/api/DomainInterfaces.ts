@@ -155,4 +155,40 @@ module MetadictApp {
         uptime: string;
 
     }
+
+    /**
+     * Contains information about the current active user session.
+     */
+    export interface UserSession {
+        /** Name of the logged in user. */
+        name: string;
+    }
+
+    /**
+     * Credentials used for logging in on the Metadict backend.
+     */
+    export interface Credentials {
+        /** Login name. */
+        name: string;
+        /** Password for logging in. */
+        password: string;
+    }
+
+    /**
+     * Interface which contains a registration request to the Metadict server.
+     */
+    export interface RegistrationData {
+        /**
+         * The username which should be used for registration.
+         */
+        name: string;
+        /**
+         * The password for logging in.
+         */
+        password: string;
+        /**
+         * The confirmation of the password.
+         */
+        confirmPassword: string;
+    }
 }

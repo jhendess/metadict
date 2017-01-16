@@ -39,13 +39,13 @@ public class CryptoUtilsTest {
 
     @Test
     public void generateSalt() throws Exception {
-        byte salt[] = CryptoUtils.generateSalt(32);
+        byte salt[] = CryptoUtils.generateRandom(32);
         assertNotNull(salt);
         assertEquals(32, salt.length);
 
         assertTrue(ArrayUtils.isNotEmpty(salt));
 
-        byte salt2[] = CryptoUtils.generateSalt(32);
+        byte salt2[] = CryptoUtils.generateRandom(32);
 
         assertFalse("Two salts may not be equal", Objects.deepEquals(salt, salt2));
     }

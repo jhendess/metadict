@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.web.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import javax.validation.constraints.Size;
 /**
  * Credentials used for logging in to a webservice.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Credentials {
 
     @NotEmpty
@@ -57,11 +59,11 @@ public class Credentials {
 
     @NotNull
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @NotNull
     public String getPassword() {
-        return password;
+        return this.password;
     }
 }

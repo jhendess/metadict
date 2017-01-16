@@ -40,17 +40,19 @@ module MetadictApp {
          */
         public isDisplayed(page: NavigationPage): boolean {
             return (this.isLoggedIn() && page.loginRequired)
-                || (!this.isLoggedIn() && (page.notLoggedIn || !page.loginRequired));
+                || (!this.isLoggedIn() && page.notLoggedIn)
+                || (!page.loginRequired && !page.notLoggedIn);
         }
 
         private setupWatchers() {
-            this.$scope.$watch(this.userService.isUserLoggedIn, () => {
-                if (this.userService.isUserLoggedIn()) {
-                    this.img = this.userService.loggedInUser.img;
-                    this.topHeader = this.userService.loggedInUser.fullname;
-                    this.subHeader = this.userService.loggedInUser.email;
+            let self = this;
+            this.$scope.$watch(self.userService.isUserLoggedIn, () => {
+                if (self.userService.loggedInUser) {
+                    // this.img = this.userService.loggedInUser.img;
+                    self.topHeader = self.userService.loggedInUser.name;
+                    // this.subHeader = this.userService.loggedInUser.email;
                 } else {
-                    this.resetHeader();
+                    self.resetHeader();
                 }
             });
         };

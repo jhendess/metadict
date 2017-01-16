@@ -34,10 +34,10 @@ module MetadictApp {
 
     export interface User {
 
-        email: string;
+        email?: string;
 
-        img: string;
+        img?: string;
 
-        fullname: string;
+        name: string;
     }
 }

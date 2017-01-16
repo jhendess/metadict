@@ -6,29 +6,31 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
-    import Config = MetadictApp.Config;
     import IFormController = angular.IFormController;
+    import ILocationService = angular.ILocationService;
+
+    declare let Materialize;
 
     interface IRegistrationScope extends IScope {
         /** The registration request data. */
-        user: RegistrationData,
+        user: RegistrationData;
         /** Indicates a running registration process. */
-        registering: boolean,
+        registering: boolean;
         /** Flag to indicate a failed registration. */
-        registrationFailed: boolean
+        registrationFailed: boolean;
         /** If the user already exists, use this field to indicate the duplicate name. */
-        duplicateUserName: string,
+        duplicateUserName: string;
         /** Form used for validation. */
-        registrationForm: IFormController
+        registrationForm: IFormController;
     }
 
     /**
      * Controller for handling the left navigation menu.
      */
     class RegistrationController {
-        //@ngInject
-        constructor(private $scope: IRegistrationScope, private userService: UserService, private $log: ILogService) {
-            $log.debug("RegistrationController started")
+        // @ngInject
+        constructor(private $scope: IRegistrationScope, private userService: UserService, private $location: ILocationService, private $log: ILogService) {
+            $log.debug("RegistrationController started");
         }
 
         /**
@@ -48,7 +50,7 @@ module MetadictApp {
 
         private registrationSuccessHandler: SuccessCallback<any> = (response: any) => {
             this.$log.debug("Registered new user successfully");
-            this.$scope.registering = false;
+            this.userService.login(this.$scope.user, this.afterLoginHandler, this.registrationErrorHandler);
         };
 
         private registrationErrorHandler: ErrorCallback = (responseStatus: ResponseStatus, errorMessage: string) => {
@@ -60,7 +62,13 @@ module MetadictApp {
                 this.$scope.duplicateUserName = null;
                 this.$scope.registrationFailed = true;
             }
-        }
+        };
+
+        private afterLoginHandler: SuccessCallback<UserSession> = (response: UserSession) => {
+            this.$scope.registering = false;
+            this.$location.path("/search");     // TODO: Display a welcome popup for a new registration
+            Materialize.toast(`Welcome ${response.name}!`, 4000);
+        };
     }
 
     metadictModule.controller("RegistrationController", RegistrationController);

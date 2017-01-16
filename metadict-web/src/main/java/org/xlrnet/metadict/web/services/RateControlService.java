@@ -36,11 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class RateControlService {
 
-    private static final double CALLS_PER_SECOND = 4.0;     // FIXME: Just temporarily increased for ITs
+    private static final double CALLS_PER_SECOND = 1.0;     // FIXME: Just temporarily increased for ITs
 
     private final ConcurrentHashMap<String, RateLimiter> rateLimiterMap = new ConcurrentHashMap<>();
-
-    private final ConcurrentHashMap<String, RateLimiter> rateLimiterMapLong = new ConcurrentHashMap<>();
 
     /**
      * Checks if the client belonging to the given {@link RequestContext} has exaggerated the rate limit for a given
@@ -52,18 +50,12 @@ public class RateControlService {
      */
     public boolean checkRateLimit(RequestContext requestContext) {
         String clientSpecificRequestKey = requestContext.getClientIdentifier() + "_+_" + requestContext.getResourceId();
-        // TODO: Refactor this if-construct to a cleaner solution
-        RateLimiter rateLimiter;
-        if ("session".equals(requestContext.getResourceId())) {
-            rateLimiterMapLong.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(10 * CALLS_PER_SECOND));
-            rateLimiter = rateLimiterMapLong.get(clientSpecificRequestKey);
-        } else if ("register".equals(requestContext.getResourceId())) {
-            rateLimiterMapLong.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(2 * CALLS_PER_SECOND));
-            rateLimiter = rateLimiterMapLong.get(clientSpecificRequestKey);
-        } else {
-            rateLimiterMap.computeIfAbsent(clientSpecificRequestKey, (c) -> RateLimiter.create(CALLS_PER_SECOND));
-            rateLimiter = rateLimiterMap.get(clientSpecificRequestKey);
+        boolean allowRequest = true;
+        if ("query".equals(requestContext.getResourceId())) {
+            this.rateLimiterMap.computeIfAbsent(clientSpecificRequestKey, c -> RateLimiter.create(CALLS_PER_SECOND));
+            RateLimiter rateLimiter = this.rateLimiterMap.get(clientSpecificRequestKey);
+            allowRequest = rateLimiter.tryAcquire();
         }
-        return rateLimiter.tryAcquire();
+        return allowRequest;
     }
 }

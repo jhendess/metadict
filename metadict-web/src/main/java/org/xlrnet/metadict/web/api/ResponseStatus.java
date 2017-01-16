@@ -52,6 +52,11 @@ public enum ResponseStatus {
     /**
      * A resource with the same id already exists.
      */
-    DUPLICATE
+    DUPLICATE,
+
+    /**
+     * User not authorized.
+     */
+    UNAUTHORIZED
 
 }

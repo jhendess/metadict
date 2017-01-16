@@ -14,25 +14,30 @@ module MetadictApp {
          */
         OK,
 
-        /**
-         * The query failed for a reason that was not caused by the Metadict core.
-         */
+            /**
+             * The query failed for a reason that was not caused by the Metadict core.
+             */
         ERROR,
 
-        /**
-         * An internal error occurred in the Metadict core.
-         */
+            /**
+             * An internal error occurred in the Metadict core.
+             */
         INTERNAL_ERROR,
 
-        /**
-         * A malformed query was received. This does not indicate an error in the Metadict core.
-         */
+            /**
+             * A malformed query was received. This does not indicate an error in the Metadict core.
+             */
         MALFORMED_QUERY,
 
             /**
              * A resource with the same id already exists.
              */
-        DUPLICATE
+        DUPLICATE,
+
+            /**
+             * User not authorized.
+             */
+        UNAUTHORIZED
     }
 
     /**

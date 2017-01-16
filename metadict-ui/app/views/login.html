@@ -9,25 +9,39 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" ng-controller="LoginController as loginController">
     <div class="section">
-        <form>
+        <form name="loginForm" ng-submit="loginController.login()">
             <div class="row">
                 <div class="input-field col offset-m4 m4 s12">
-                    <input id="user_name" type="text" class="validate">
-                    <label for="user_name">User Name</label>
+                    <input id="name" name="name" type="text" class="validate" ng-model="user.name"
+                           ng-disabled="loggingIn">
+                    <label for="name">User Name</label>
                 </div>
                 <div class="input-field col offset-m4 m4 s12">
-                    <input id="password" type="password" class="validate">
+                    <input id="password" name="password" type="password" class="validate" ng-model="user.password"
+                           ng-disabled="loggingIn">
                     <label for="password">Password</label>
                 </div>
             </div>
+
+            <div class="row center" style="color:maroon" role="alert">
+                <div ng-messages="loginForm.name.$error">
+                    <div ng-message="required">Please enter a user name</div>
+                </div>
+                <div ng-messages="loginForm.password.$error">
+                    <div ng-message="required">Please enter a password</div>
+                </div>
+                <div ng-if="loginFailed">Login failed. Check username and password.</div>
+            </div>
+
             <div class="row">
                 <button class="col offset-m5 m2 offset-s2 s8 btn waves-effect waves-light #0091ea light-blue accent-4"
-                        type="submit">Login<i class="material-icons right">send</i></button>
+                        type="submit">Login
+                </button>
             </div>
             <div class="row">
-                <a class="col offset-m5 m2 offset-s2 s8 waves-effect waves-teal btn-flat"
+                <a class="col offset-m5 m2 offset-s2 s8 waves-effect waves-teal btn-flat center"
                    ng-href="{{ prependBasePath('/register') }}" type="submit">Register</a>
             </div>
         </form>

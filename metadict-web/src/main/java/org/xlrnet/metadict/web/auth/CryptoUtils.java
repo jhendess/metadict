@@ -49,7 +49,7 @@ public class CryptoUtils {
     public static final int DEFAULT_ITERATIONS = 50;
 
     /**
-     * The default length for a salt.
+     * The default length of a salt.
      */
     public static final int DEFAULT_SALT_LENGTH = 32;
 
@@ -62,7 +62,7 @@ public class CryptoUtils {
      *         Length of the salt to generate
      * @return The generated salt.
      */
-    public static byte[] generateSalt(int length) {
+    public static byte[] generateRandom(int length) {
         byte[] salt = new byte[length];
         SECURE_RANDOM.nextBytes(salt);
         return salt;

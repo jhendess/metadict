@@ -88,15 +88,15 @@ public class UserService {
             if (!userDataByName.isPresent()) {
                 LOGGER.info("Creating new user {}", username);
 
-                byte[] salt = CryptoUtils.generateSalt(CryptoUtils.DEFAULT_SALT_LENGTH);
+                byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
                 byte[] hashedPassword = hashPassword(unhashedPassword, salt);
 
                 BasicAuthData basicAuthData = new BasicAuthData(hashedPassword, salt);
-                user = userFactory.newDefaultUser(username);
+                user = this.userFactory.newDefaultUser(username);
 
                 try {
-                    storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
-                    storageService.create(GENERAL_USER_NAMESPACE, username, user);
+                    this.storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
+                    this.storageService.create(GENERAL_USER_NAMESPACE, username, user);
                     LOGGER.info("Created new user {}", username);
                 } catch (StorageBackendException | StorageOperationException e) {
                     LOGGER.error("Unexpected error while creating new user", e);
@@ -127,7 +127,7 @@ public class UserService {
         Optional<User> user = Optional.empty();
 
         try {
-            Optional<BasicAuthData> hashedData = storageService.read(BASIC_AUTH_NAMESPACE, username, BasicAuthData.class);
+            Optional<BasicAuthData> hashedData = this.storageService.read(BASIC_AUTH_NAMESPACE, username, BasicAuthData.class);
             if (hashedData.isPresent()) {
                 BasicAuthData basicAuthData = hashedData.get();
                 byte[] hashPassword = hashPassword(unhashedPassword, basicAuthData.getSalt());
@@ -180,7 +180,7 @@ public class UserService {
         checkNotNull(username);
 
         try {
-            Optional<User> read = storageService.read(GENERAL_USER_NAMESPACE, username, User.class);
+            Optional<User> read = this.storageService.read(GENERAL_USER_NAMESPACE, username, User.class);
             return read;
         } catch (StorageBackendException | StorageOperationException e) {
             LOGGER.error("An unexpected error occurred while trying to read user data", e);

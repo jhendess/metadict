@@ -46,6 +46,7 @@ public class MappedJsonConfiguration extends Configuration implements MetadictCo
         return this.storage;
     }
 
+
     private static class StorageConfigurationImpl implements StorageConfiguration {
 
         @JsonProperty("engines")
