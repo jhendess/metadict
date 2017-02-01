@@ -74,7 +74,7 @@ public class SessionLifecycleIT {
         assertEquals("User registration failed", Response.Status.ACCEPTED.getStatusCode(), registrationResponse.getStatus());
 
         // Login:
-        Credentials credentials = new Credentials(TEST_USERNAME, TEST_PASSWORD);
+        Credentials credentials = new Credentials(TEST_USERNAME, TEST_PASSWORD, false);
         Response loginResponse = target.path("/session").request().post(Entity.json(credentials));
         assertEquals("User login failed", Response.Status.OK.getStatusCode(), loginResponse.getStatus());
 

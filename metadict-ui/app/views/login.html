@@ -13,19 +13,24 @@
     <div class="section">
         <form name="loginForm" ng-submit="loginController.login()">
             <div class="row">
-                <div class="input-field col offset-m4 m4 s12">
+                <div class="col offset-m4 m4 s12 input-field">
                     <input id="name" name="name" type="text" class="validate" ng-model="user.name"
                            ng-disabled="loggingIn">
                     <label for="name">User Name</label>
                 </div>
-                <div class="input-field col offset-m4 m4 s12">
+                <div class="col offset-m4 m4 s12 input-field ">
                     <input id="password" name="password" type="password" class="validate" ng-model="user.password"
                            ng-disabled="loggingIn">
                     <label for="password">Password</label>
                 </div>
+                <div class="col offset-m4 m4 s12 center-align">
+                    <input type="checkbox" class="filled-in" id="stayLoggedInBox"
+                           ng-model="user.stayLoggedIn"/>
+                    <label for="stayLoggedInBox">Stay logged in</label>
+                </div>
             </div>
 
-            <div class="row center" style="color:maroon" role="alert">
+            <div class="row center validationMessageBox" role="alert">
                 <div ng-messages="loginForm.name.$error">
                     <div ng-message="required">Please enter a user name</div>
                 </div>

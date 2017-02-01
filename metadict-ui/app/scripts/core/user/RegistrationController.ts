@@ -50,7 +50,12 @@ module MetadictApp {
 
         private registrationSuccessHandler: SuccessCallback<any> = (response: any) => {
             this.$log.debug("Registered new user successfully");
-            this.userService.login(this.$scope.user, this.afterLoginHandler, this.registrationErrorHandler);
+            let credentials: Credentials = {
+                name: this.$scope.user.name,
+                password: this.$scope.user.password,
+                stayLoggedIn: true
+            };
+            this.userService.login(credentials, this.afterLoginHandler, this.registrationErrorHandler);
         };
 
         private registrationErrorHandler: ErrorCallback = (responseStatus: ResponseStatus, errorMessage: string) => {

@@ -26,9 +26,11 @@ package org.xlrnet.metadict.web.app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthConfiguration;
 import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
 import org.xlrnet.metadict.core.api.config.StorageConfiguration;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -37,9 +39,22 @@ import java.util.Map;
  */
 public class MappedJsonConfiguration extends Configuration implements MetadictConfiguration {
 
+    @Valid
+    @NotNull
+    private JwtCookieAuthConfiguration jwtCookieAuth = new JwtCookieAuthConfiguration();
+
     @NotNull
     @JsonProperty("storage")
     private StorageConfigurationImpl storage;
+
+    /**
+     * Returns the configuration for JWT cookie authentication.
+     *
+     * @return the configuration for JWT cookie authentication.
+     */
+    public JwtCookieAuthConfiguration getJwtCookieAuth() {
+        return jwtCookieAuth;
+    }
 
     @Override
     public StorageConfigurationImpl getStorageConfiguration() {

@@ -172,6 +172,8 @@ module MetadictApp {
         name: string;
         /** Password for logging in. */
         password: string;
+        /** Flag which indicates if the user session should be long-running. */
+        stayLoggedIn: boolean
     }
 
     /**

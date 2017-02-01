@@ -78,6 +78,9 @@ public class SessionResource {
             }
 
             principal = new DefaultJwtCookiePrincipal(credentials.getName(), false, roles, null);
+            if (credentials.isStayLoggedIn()) {
+                principal.setPresistent(true);
+            }
             principal.addInContext(requestContext);
         }
 

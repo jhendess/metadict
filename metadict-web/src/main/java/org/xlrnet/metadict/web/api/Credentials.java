@@ -49,12 +49,19 @@ public class Credentials {
     @JsonProperty
     private String password;
 
+    private boolean stayLoggedIn;
+
     public Credentials() {
     }
 
-    public Credentials(String name, String password) {
+    public Credentials(String name, String password, boolean stayLoggedIn) {
         this.name = name;
         this.password = password;
+    }
+
+    @NotNull
+    public boolean isStayLoggedIn() {
+        return stayLoggedIn;
     }
 
     @NotNull

@@ -87,6 +87,31 @@ storage:
       enableAsyncWrite: true
 
 #
+# JWT cookie authentication
+#
+jwtCookieAuth:
+
+  #
+  # Secret seed that will be used for signing the cookie. If no seed is specified, a random seed will be generated at startup.
+  #
+  secretSeed: null
+
+  #
+  # Indicates if the 'secure' flag must be set on cookies.
+  #
+  httpsOnlyCookie: false
+
+  #
+  # Duration of volatile cookies (in ISO 8601 format).
+  #
+  sessionExpiryVolatile: PT30m
+
+  #
+  # Duration of persistent cookies (in ISO 8601 format).
+  #
+  sessionExpiryPersistent: P7d
+
+#
 # Logging configuration
 #
 logging:

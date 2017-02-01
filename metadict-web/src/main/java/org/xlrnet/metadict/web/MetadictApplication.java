@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web;
 
 import io.dropwizard.Application;
+import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthBundle;
@@ -85,7 +86,9 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
         );
 
         // Enable JWT cookie authentication
-        bootstrap.addBundle(JwtCookieAuthBundle.getDefault());
+        bootstrap.addBundle(JwtCookieAuthBundle.getDefault().withConfigurationSupplier(
+                (Configuration c) -> ((MappedJsonConfiguration) c).getJwtCookieAuth())
+        );
 
         // Serve static content (i.e. app)
         bootstrap.addBundle(new SinglePageAppAssetsBundle("/static", "/"));

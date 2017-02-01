@@ -304,3 +304,13 @@ main {
     bottom: 0px !important;
     z-index: 800 !important;
 }
+
+/** Change default color for checkboxes. */
+input[type="checkbox"].filled-in:checked + label:after {
+    border: 2px solid #0091ea;
+    background-color: #0091ea;
+}
+
+.validationMessageBox {
+    color: maroon;;
+}

@@ -28,6 +28,9 @@ module MetadictApp {
     class LoginController {
         // @ngInject
         constructor(private $scope: IRegistrationScope, private userService: UserService, private $location: ILocationService, private $log: ILogService) {
+            $scope.user = <Credentials>{
+                stayLoggedIn: true
+            };
             $log.debug("LoginController started");
         }
 
