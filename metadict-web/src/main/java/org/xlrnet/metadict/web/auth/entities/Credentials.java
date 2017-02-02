@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.api;
+package org.xlrnet.metadict.web.auth.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,6 +57,7 @@ public class Credentials {
     public Credentials(String name, String password, boolean stayLoggedIn) {
         this.name = name;
         this.password = password;
+        this.stayLoggedIn = stayLoggedIn;
     }
 
     @NotNull

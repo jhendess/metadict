@@ -26,8 +26,8 @@ package org.xlrnet.metadict.web.middleware.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.web.app.RequestContext;
-import org.xlrnet.metadict.web.services.RateControlService;
+import org.xlrnet.metadict.web.middleware.app.RequestContext;
+import org.xlrnet.metadict.web.middleware.services.RateControlService;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;

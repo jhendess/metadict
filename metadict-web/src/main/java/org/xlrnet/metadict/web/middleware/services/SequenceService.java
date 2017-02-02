@@ -22,39 +22,21 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.app;
+package org.xlrnet.metadict.web.middleware.services;
 
-
-import com.google.inject.servlet.RequestScoped;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
-
+import java.util.UUID;
 
 /**
- * Creates a new {@link RequestContext} object for the active request.
+ * Service for obtaining sequence and incrementing sequence ids.
  */
-@RequestScoped
-public class RequestContextProvider implements Provider<RequestContext> {
-
-    @Inject
-    private HttpServletRequest request;
+public class SequenceService {
 
     /**
-     * Creates a {@link RequestContext} for the current request.
+     * Generates a new unique UUID.
      *
-     * @return An initialized {@link RequestContext}.
+     * @return a new random UUID.
      */
-    @Override
-    public RequestContext get() {
-        RequestContext requestContext = new RequestContext();
-        requestContext.setClientIdentifier(request.getRemoteAddr());
-        String pathInfo = request.getPathInfo();
-        String resourceId = StringUtils.countMatches(pathInfo, "/") > 1 ? StringUtils.substring(pathInfo, 0, pathInfo.indexOf("/", 1)) : pathInfo;
-        resourceId = StringUtils.substringAfter(resourceId, "/");
-        requestContext.setResourceId(resourceId);
-        return requestContext;
+    public String newUUIDString() {
+        return UUID.randomUUID().toString();
     }
 }

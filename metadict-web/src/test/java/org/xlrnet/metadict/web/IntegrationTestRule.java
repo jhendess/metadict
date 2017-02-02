@@ -31,7 +31,7 @@ import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.rules.ExternalResource;
-import org.xlrnet.metadict.web.app.MappedJsonConfiguration;
+import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 
 import java.net.URI;
 

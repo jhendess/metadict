@@ -5,6 +5,7 @@
 module MetadictApp {
 
     import ILogService = angular.ILogService;
+
     interface IMonolingualEntryDirectiveScope {
 
         entry: MonolingualEntry;

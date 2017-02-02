@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +35,9 @@ import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageOperationException;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
+import org.xlrnet.metadict.web.auth.entities.BasicAuthData;
+import org.xlrnet.metadict.web.auth.entities.UserFactory;
+import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
 import javax.inject.Inject;
 import java.util.Arrays;

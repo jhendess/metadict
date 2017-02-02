@@ -22,19 +22,34 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.entities;
+
+import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.auth.Role;
+import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.middleware.services.SequenceService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
- * Class with naming constants for all roles.
+ * Factory for creating new {@link org.xlrnet.metadict.api.auth.User} objects.
  */
-public final class Roles {
+public class UserFactory {
 
-    /**
-     * ID of the admin role.
-     */
-    public final static String ADMIN_ROLE_ID = "ADMIN";
+    private final SequenceService sequenceService;
 
-    private Roles() {
+    private static final List<Role> DEFAULT_ROLES = ImmutableList.of();
 
+    @Inject
+    public UserFactory(SequenceService sequenceService) {
+        this.sequenceService = sequenceService;
+    }
+
+    @NotNull
+    public User newDefaultUser(@NotNull String username) {
+        String uuid = sequenceService.newUUIDString();
+        return new BasicUser(uuid, username, DEFAULT_ROLES);
     }
 }

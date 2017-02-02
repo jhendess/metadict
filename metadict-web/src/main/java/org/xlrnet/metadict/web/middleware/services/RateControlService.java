@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.services;
+package org.xlrnet.metadict.web.middleware.services;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.xlrnet.metadict.web.app.RequestContext;
+import org.xlrnet.metadict.web.middleware.app.RequestContext;
 
 import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class RateControlService {
 
-    private static final double CALLS_PER_SECOND = 1.0;     // FIXME: Just temporarily increased for ITs
+    private static final double CALLS_PER_SECOND = 1.0;
 
     private final ConcurrentHashMap<String, RateLimiter> rateLimiterMap = new ConcurrentHashMap<>();
 

@@ -22,38 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.entities;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.Test;
+/**
+ * Class with naming constants for all roles.
+ */
+public final class Roles {
 
-import java.util.Objects;
+    /**
+     * ID of the admin role.
+     */
+    public final static String ADMIN_ROLE_ID = "ADMIN";
 
-import static junit.framework.TestCase.*;
+    private Roles() {
 
-public class CryptoUtilsTest {
-
-    private static final char[] TEST_PASSWORD = "SOME_PASSWORD".toCharArray();
-
-    private static final byte[] TEST_SALT = "SOME_SALT".getBytes();
-
-    @Test
-    public void generateSalt() throws Exception {
-        byte salt[] = CryptoUtils.generateRandom(32);
-        assertNotNull(salt);
-        assertEquals(32, salt.length);
-
-        assertTrue(ArrayUtils.isNotEmpty(salt));
-
-        byte salt2[] = CryptoUtils.generateRandom(32);
-
-        assertFalse("Two salts may not be equal", Objects.deepEquals(salt, salt2));
-    }
-
-    @Test
-    public void hashPassword() throws Exception {
-        byte[] bytes = CryptoUtils.hashPassword(TEST_PASSWORD, TEST_SALT, CryptoUtils.DEFAULT_ITERATIONS, CryptoUtils.DEFAULT_KEYLENGTH);
-        assertNotNull(bytes);
-        assertTrue("Hash may not be empty", ArrayUtils.isNotEmpty(bytes));
     }
 }

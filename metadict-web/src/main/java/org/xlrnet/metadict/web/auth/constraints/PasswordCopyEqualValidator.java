@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.web.auth.constraints;
 
 import org.apache.commons.lang3.StringUtils;
-import org.xlrnet.metadict.web.auth.RegistrationRequestData;
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

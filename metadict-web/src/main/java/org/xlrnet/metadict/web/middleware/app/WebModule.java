@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.app;
+package org.xlrnet.metadict.web.middleware.app;
 
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
@@ -44,7 +44,7 @@ import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 public class WebModule extends DropwizardAwareModule {
 
     /**
-     * Configures a {@link Binder} via the exposed methods.
+     * Configures a {@link Multibinder} via the exposed methods.
      */
     @Override
     protected void configure() {

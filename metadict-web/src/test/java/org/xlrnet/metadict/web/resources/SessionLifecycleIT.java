@@ -32,9 +32,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.web.MetadictApplication;
-import org.xlrnet.metadict.web.api.Credentials;
-import org.xlrnet.metadict.web.app.MappedJsonConfiguration;
-import org.xlrnet.metadict.web.auth.RegistrationRequestData;
+import org.xlrnet.metadict.web.auth.entities.Credentials;
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;

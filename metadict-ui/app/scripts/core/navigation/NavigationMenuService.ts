@@ -41,13 +41,13 @@ module MetadictApp {
             {
                 "title": "More",
                 "pages": [
-                    {
+                    /*{
                         "title": "Account settings",
                         "icon": "settings",
                         "target": "/account",
                         "loginRequired": true,
                         "notLoggedIn": false
-                    },
+                     },*/
                     {
                         "title": "Register / Login",
                         "icon": "person",
@@ -60,13 +60,6 @@ module MetadictApp {
                         "icon": "info",
                         "target": "/about",
                         "loginRequired": false,
-                        "notLoggedIn": false
-                    },
-                    {
-                        "title": "Logout",
-                        "icon": "exit_to_app",
-                        "target": "/logout",
-                        "loginRequired": true,
                         "notLoggedIn": false
                     }
                 ]

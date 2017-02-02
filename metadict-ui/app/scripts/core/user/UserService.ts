@@ -5,12 +5,14 @@
 module MetadictApp {
 
     import ILogService = angular.ILogService;
+    import ICookiesService = angular.cookies.ICookiesService;
 
     /**
      * Service for accessing the current user.
      */
     export class UserService {
 
+        private static SESSION_KEY_COOKIE = "sessionCookie";
         // @ngInject
         constructor(private backendAccessService: BackendAccessService, private $log: ILogService) {
             $log.debug("UserService started");
@@ -27,7 +29,8 @@ module MetadictApp {
         };
 
         /**
-         * Tries to register a user with the given registration data in the backend. After the registration finished, no login will performed.
+         * Tries to register a user with the given registration data in the backend. After the registration finished,
+         * no login will performed.
          * @param user The user data used for registration.
          * @param success The handler will will be called if the registration was successful.
          * @param error The handler will will be called if the registration failed.
@@ -39,6 +42,14 @@ module MetadictApp {
         public login(authenticationRequest: Credentials, success: SuccessCallback<UserSession>, error: ErrorCallback) {
             this.$log.debug("Attempting login for", authenticationRequest.name);
             this.backendAccessService.authenticate(authenticationRequest, this.loginSuccessHandler(success), this.loginErrorHandler(error));
+        }
+
+        /**
+         * Perform a logout on the backend.
+         */
+        public logout() {
+            this.resetSession();
+            this.backendAccessService.logout(this.afterLogoutHandler, this.afterLogoutHandler);
         }
 
         /**
@@ -102,6 +113,10 @@ module MetadictApp {
                     error(responseStatus, reason);
                 }
             };
+        };
+
+        private afterLogoutHandler = () => {
+            CommonUtils.deleteCookie(UserService.SESSION_KEY_COOKIE)
         };
 
         private resetSession() {

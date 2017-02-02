@@ -29,10 +29,10 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
-import org.xlrnet.metadict.web.auth.RegistrationRequestData;
-import org.xlrnet.metadict.web.auth.UserFactory;
-import org.xlrnet.metadict.web.auth.UserService;
-import org.xlrnet.metadict.web.services.SequenceService;
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.xlrnet.metadict.web.auth.entities.UserFactory;
+import org.xlrnet.metadict.web.auth.services.UserService;
+import org.xlrnet.metadict.web.middleware.services.SequenceService;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;

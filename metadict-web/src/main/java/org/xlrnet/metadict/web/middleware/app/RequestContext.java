@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.app;
+package org.xlrnet.metadict.web.middleware.app;
 
 import com.google.inject.servlet.RequestScoped;
 import org.jetbrains.annotations.NotNull;

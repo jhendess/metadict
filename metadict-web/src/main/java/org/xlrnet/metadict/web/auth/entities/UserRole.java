@@ -22,34 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.entities;
 
-import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
-import org.xlrnet.metadict.api.auth.User;
-import org.xlrnet.metadict.web.services.SequenceService;
 
-import javax.inject.Inject;
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * Factory for creating new {@link org.xlrnet.metadict.api.auth.User} objects.
+ * User roles for metadict web application.
  */
-public class UserFactory {
+public enum UserRole implements Role, Serializable {
 
-    private final SequenceService sequenceService;
+    ADMIN(Roles.ADMIN_ROLE_ID);
 
-    private static final List<Role> DEFAULT_ROLES = ImmutableList.of();
+    private final String roleId;
 
-    @Inject
-    public UserFactory(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
+    UserRole(final String roleId) {
+        this.roleId = roleId;
     }
 
-    @NotNull
-    public User newDefaultUser(@NotNull String username) {
-        String uuid = sequenceService.newUUIDString();
-        return new BasicUser(uuid, username, DEFAULT_ROLES);
+    @Override
+    public String getId() {
+        return roleId;
     }
 }

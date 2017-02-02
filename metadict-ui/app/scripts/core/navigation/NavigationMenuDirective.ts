@@ -15,7 +15,6 @@ module MetadictApp {
         return new NavigationMenuDirective();
     }
 
-
     metadictModule.directive("navigationMenu", NavigationMenuFactory);
 }
 

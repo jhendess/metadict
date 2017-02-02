@@ -22,27 +22,39 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.middleware.app;
 
-import org.xlrnet.metadict.api.auth.Role;
 
-import java.io.Serializable;
+import com.google.inject.servlet.RequestScoped;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
- * User roles for metadict web application.
+ * Creates a new {@link RequestContext} object for the active request.
  */
-public enum UserRole implements Role, Serializable {
+@RequestScoped
+public class RequestContextProvider implements Provider<RequestContext> {
 
-    ADMIN(Roles.ADMIN_ROLE_ID);
+    @Inject
+    private HttpServletRequest request;
 
-    private final String roleId;
-
-    UserRole(final String roleId) {
-        this.roleId = roleId;
-    }
-
+    /**
+     * Creates a {@link RequestContext} for the current request.
+     *
+     * @return An initialized {@link RequestContext}.
+     */
     @Override
-    public String getId() {
-        return roleId;
+    public RequestContext get() {
+        RequestContext requestContext = new RequestContext();
+        requestContext.setClientIdentifier(request.getRemoteAddr());
+        String pathInfo = request.getPathInfo();
+        String resourceId = StringUtils.countMatches(pathInfo, "/") > 1 ? StringUtils.substring(pathInfo, 0, pathInfo.indexOf("/", 1)) : pathInfo;
+        resourceId = StringUtils.substringAfter(resourceId, "/");
+        requestContext.setResourceId(resourceId);
+        return requestContext;
     }
 }

@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.web.auth.constraints;
 
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
@@ -35,7 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Validation constraint makes sure that both the password and its duplicate in {@link
- * org.xlrnet.metadict.web.auth.RegistrationRequestData} are equal.
+ * RegistrationRequestData} are equal.
  */
 @Target({TYPE})
 @Retention(RUNTIME)

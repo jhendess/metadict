@@ -35,6 +35,10 @@ module MetadictApp {
             return this.navigationMenuService.getSections();
         }
 
+        public logout(): void {
+            this.userService.logout();
+        }
+
         /**
          * Checks if the given {@link NavigationPage} may be rendered.
          */

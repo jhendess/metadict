@@ -128,6 +128,20 @@ module MetadictApp {
         }
 
         /**
+         * Perform a logout operation for the currently logged in user.
+         * @param successCallback Callback which will be invoked if the user was logged off successfully.
+         * @param errorCallback Callback which will be invokd on a error.
+         */
+        public logout(successCallback: SuccessCallback<any>, errorCallback: ErrorCallback) {
+            this._sessionAccess
+                .remove()
+                .then<ResponseContainer<UserSession>>(
+                    this.buildSuccessHandler(successCallback, errorCallback),
+                    this.buildErrorHandler(errorCallback)
+                );
+        }
+
+        /**
          * Generic handler for unwrapping the response container from the backend. Detects backend errors automatically
          * and will notify both the internal error registry and invoke a custom {@link ErrorCallback} for the client.
          *
@@ -140,16 +154,24 @@ module MetadictApp {
         private buildSuccessHandler<T>(successCallback: SuccessCallback<T>,
                                        errorCallback: ErrorCallback): (responseContainer: ResponseContainer<T>) => ResponseContainer<T> {
             return (responseContainer: ResponseContainer<T>): ResponseContainer<T> => {
-                let responseStatus = ResponseStatus[responseContainer.status];
+                let responseStatus: any;
+                let containerData: T;
+
+                if (responseContainer) {
+                    responseStatus = ResponseStatus[responseContainer.status];
+                    containerData = responseContainer.data;
+                }
+
                 this.$log.debug(`Received response with status ${ResponseStatus[responseStatus]}`);
-                this.$log.debug(responseContainer.data);
+                this.$log.debug(containerData);
 
                 if (responseStatus === ResponseStatus.OK) {
-                    successCallback(responseContainer.data);
+                    successCallback(containerData);
                 } else {
-                    // TODO: do system-wide error handling
-                    errorCallback(responseStatus, responseContainer.message);
+                    let message = responseContainer ? responseContainer.message : undefined;
+                    errorCallback(responseStatus, message);
                 }
+
                 return responseContainer;
             };
         }

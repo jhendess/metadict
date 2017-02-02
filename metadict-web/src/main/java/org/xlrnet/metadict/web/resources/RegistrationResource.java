@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
-import org.xlrnet.metadict.web.auth.RegistrationRequestData;
-import org.xlrnet.metadict.web.auth.UserService;
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.xlrnet.metadict.web.auth.services.UserService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

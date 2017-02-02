@@ -21,6 +21,12 @@
                 </a>
             </li>
         </ul>
+        <li ng-if="$last && nav.isLoggedIn()">
+            <a ng-click="nav.logout()" class="waves-effect">
+                <i class="material-icons inline align-middle">exit_to_app</i>
+                <span class="align-middle nav-title">Logout</span>
+            </a>
+        </li>
         <div class="divider" ng-if="!$last"></div>
     </div>
 </div>

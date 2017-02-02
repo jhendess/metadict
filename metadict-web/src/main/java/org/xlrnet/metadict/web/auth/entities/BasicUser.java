@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.entities;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -47,7 +47,7 @@ public class BasicUser implements User {
 
     private final List<Role> roles;
 
-    BasicUser(@NotNull String id, @NotNull String name, @NotNull List<Role> roles) {
+    public BasicUser(@NotNull String id, @NotNull String name, @NotNull List<Role> roles) {
         this.id = id;
         this.name = name;
         this.roles = new ArrayList<>(roles.size());

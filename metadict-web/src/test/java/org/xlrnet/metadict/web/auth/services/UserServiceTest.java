@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.auth.services;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,9 @@ import org.junit.Test;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
-import org.xlrnet.metadict.web.services.SequenceService;
+import org.xlrnet.metadict.web.auth.entities.*;
+import org.xlrnet.metadict.web.middleware.services.SequenceService;
+import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
 import java.util.Optional;
 

@@ -29,11 +29,9 @@ import org.dhatim.dropwizard.jwt.cookie.authentication.DefaultJwtCookiePrincipal
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookiePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.auth.Role;
-import org.xlrnet.metadict.api.auth.User;
-import org.xlrnet.metadict.web.api.Credentials;
 import org.xlrnet.metadict.web.api.ResponseContainer;
-import org.xlrnet.metadict.web.auth.UserService;
+import org.xlrnet.metadict.web.auth.entities.Credentials;
+import org.xlrnet.metadict.web.auth.services.SessionService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -43,9 +41,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * REST resource for creating a new user session or closing the current.
@@ -55,46 +50,36 @@ public class SessionResource {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SessionResource.class);
 
-    private final UserService userService;
+    private final SessionService sessionService;
 
     @Inject
-    public SessionResource(UserService userService) {
-        this.userService = userService;
+    public SessionResource(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context ContainerRequestContext requestContext, @NotNull @Valid Credentials credentials) {
-        DefaultJwtCookiePrincipal principal = null;
-        Optional<User> user = this.userService.authenticateWithPassword(credentials.getName(), credentials.getPassword());
+        JwtCookiePrincipal principal = sessionService.startSession(credentials, requestContext);
 
-        // TODO: Refactor the login logic into a service and move it to RequestContext
-        if (user.isPresent()) {
-            Collection<String> roles = new ArrayList<>();
-
-            for (Role role : user.get().getRoles()) {
-                roles.add(role.getId());
-            }
-
-            principal = new DefaultJwtCookiePrincipal(credentials.getName(), false, roles, null);
-            if (credentials.isStayLoggedIn()) {
-                principal.setPresistent(true);
-            }
-            principal.addInContext(requestContext);
+        try {
+            // Sleep for a while to avoid brute-force attacks
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            LOGGER.debug("Unexpected interruption while sleeping", e);
         }
 
         if (principal == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         } else {
-            LOGGER.info("User {} started a new session", principal.getName());
             return Response.ok(ResponseContainer.fromSuccessful(principal)).build();
         }
     }
 
     @DELETE
     public Response logout(@Context ContainerRequestContext requestContext) {
-        JwtCookiePrincipal.removeFromContext(requestContext);
+        sessionService.stopSession(requestContext);
         return Response.ok().build();
     }
 

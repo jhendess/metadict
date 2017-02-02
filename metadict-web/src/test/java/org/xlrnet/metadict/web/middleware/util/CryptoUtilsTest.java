@@ -22,21 +22,38 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.services;
+package org.xlrnet.metadict.web.middleware.util;
 
-import java.util.UUID;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Test;
 
-/**
- * Service for obtaining sequence and incrementing sequence ids.
- */
-public class SequenceService {
+import java.util.Objects;
 
-    /**
-     * Generates a new unique UUID.
-     *
-     * @return a new random UUID.
-     */
-    public String newUUIDString() {
-        return UUID.randomUUID().toString();
+import static junit.framework.TestCase.*;
+
+public class CryptoUtilsTest {
+
+    private static final char[] TEST_PASSWORD = "SOME_PASSWORD".toCharArray();
+
+    private static final byte[] TEST_SALT = "SOME_SALT".getBytes();
+
+    @Test
+    public void generateSalt() throws Exception {
+        byte salt[] = CryptoUtils.generateRandom(32);
+        assertNotNull(salt);
+        assertEquals(32, salt.length);
+
+        assertTrue(ArrayUtils.isNotEmpty(salt));
+
+        byte salt2[] = CryptoUtils.generateRandom(32);
+
+        assertFalse("Two salts may not be equal", Objects.deepEquals(salt, salt2));
+    }
+
+    @Test
+    public void hashPassword() throws Exception {
+        byte[] bytes = CryptoUtils.hashPassword(TEST_PASSWORD, TEST_SALT, CryptoUtils.DEFAULT_ITERATIONS, CryptoUtils.DEFAULT_KEYLENGTH);
+        assertNotNull(bytes);
+        assertTrue("Hash may not be empty", ArrayUtils.isNotEmpty(bytes));
     }
 }

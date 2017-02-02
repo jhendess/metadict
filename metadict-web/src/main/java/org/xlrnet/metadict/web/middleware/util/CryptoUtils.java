@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth;
+package org.xlrnet.metadict.web.middleware.util;
 
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 
