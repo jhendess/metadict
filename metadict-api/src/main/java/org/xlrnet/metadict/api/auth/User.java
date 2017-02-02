@@ -27,7 +27,7 @@ package org.xlrnet.metadict.api.auth;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Representation of a user account on metadict. User accounts are used to identify an individual that is using
@@ -57,5 +57,5 @@ public interface User extends Serializable {
      * @return a list of roles which are granted to this user.
      */
     @NotNull
-    List<Role> getRoles();
+    Set<Role> getRoles();
 }

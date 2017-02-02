@@ -26,6 +26,7 @@ package org.xlrnet.metadict.web.auth.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.Role;
@@ -40,9 +41,11 @@ import org.xlrnet.metadict.web.auth.entities.UserFactory;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
 import javax.inject.Inject;
+import javax.xml.bind.DatatypeConverter;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -61,6 +64,11 @@ public class UserService {
      */
     static final String GENERAL_USER_NAMESPACE = "USERS";
 
+    /**
+     * Default byte size of technical users should be 16. This will create hexadecimal user names with 32 characters.
+     */
+    private static final int TECHNICAL_USER_NAME_LENGTH = 16;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private static ReentrantLock createUserLock = new ReentrantLock();
@@ -76,7 +84,14 @@ public class UserService {
     }
 
     @NotNull
-    public Optional<User> createNewUser(@NotNull String username, @NotNull String unhashedPassword) {
+    public Optional<User> createNewUser(@NotNull String username, @NotNull String unhashedPassword, Role... additionalRoles) {
+        User user = internalCreateNewUser(username, unhashedPassword, (String u) -> userFactory.newDefaultUser(u, additionalRoles));
+
+        return Optional.ofNullable(user);
+    }
+
+    @Nullable
+    private User internalCreateNewUser(@NotNull String username, @NotNull String unhashedPassword, Function<String, User> userSupplier) {
         checkNotNull(username, "Username may not be null");
         checkNotNull(unhashedPassword, "Password may not be null");
 
@@ -89,18 +104,18 @@ public class UserService {
             Optional<User> userDataByName = findUserDataByName(username);
 
             if (!userDataByName.isPresent()) {
-                LOGGER.info("Creating new user {}", username);
+                LOGGER.debug("Creating new user {}", username);
+                user = userSupplier.apply(username);
 
                 byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
                 byte[] hashedPassword = hashPassword(unhashedPassword, salt);
 
                 BasicAuthData basicAuthData = new BasicAuthData(hashedPassword, salt);
-                user = this.userFactory.newDefaultUser(username);
 
                 try {
                     this.storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
                     this.storageService.create(GENERAL_USER_NAMESPACE, username, user);
-                    LOGGER.info("Created new user {}", username);
+                    LOGGER.debug("Created new user {}", username);
                 } catch (StorageBackendException | StorageOperationException e) {
                     LOGGER.error("Unexpected error while creating new user", e);
                 }
@@ -108,8 +123,27 @@ public class UserService {
         } finally {
             createUserLock.unlock();
         }
+        return user;
+    }
 
-        return Optional.ofNullable(user);
+    /**
+     * Creates a new technical user with a random user name.
+     *
+     * @param unhashedPassword
+     *         The unhashed password for the new technical user.
+     * @return A new technical user.
+     */
+    @NotNull
+    public User createTechnicalUser(@NotNull String unhashedPassword) {
+        checkNotNull(unhashedPassword, "Password may not be null");
+
+        byte[] bytes = CryptoUtils.generateRandom(TECHNICAL_USER_NAME_LENGTH);
+        String randomUserName = DatatypeConverter.printHexBinary(bytes);
+        User user = internalCreateNewUser(randomUserName, unhashedPassword, (String u) -> userFactory.newTechnicalUser(u));
+        if (user == null) {
+            throw new MetadictRuntimeException("New technical user was null");
+        }
+        return user;
     }
 
     /**
@@ -172,6 +206,32 @@ public class UserService {
     }
 
     /**
+     * Removes all data for the given username.
+     *
+     * @param username
+     *         The name of the user to remove.
+     * @return True if the user could be deleted, false if not.
+     * @throws StorageBackendException
+     *         Will be thrown if the deletion failed due to an error in the storage backend.
+     */
+    public boolean removeUser(@NotNull String username) throws StorageBackendException {
+        boolean result = false;
+        Optional<User> userDataByName = findUserDataByName(username);
+
+        if (userDataByName.isPresent()) {
+            createUserLock.lock();  // TODO: Replace this with a more stable solution which supports better concurrency
+            try {
+                result = this.storageService.delete(BASIC_AUTH_NAMESPACE, username);
+                result &= this.storageService.delete(GENERAL_USER_NAMESPACE, username);
+            } finally {
+                createUserLock.unlock();
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Tries to find user data for a given user id.
      *
      * @param username
@@ -183,8 +243,7 @@ public class UserService {
         checkNotNull(username);
 
         try {
-            Optional<User> read = this.storageService.read(GENERAL_USER_NAMESPACE, username, User.class);
-            return read;
+            return this.storageService.read(GENERAL_USER_NAMESPACE, username, User.class);
         } catch (StorageBackendException | StorageOperationException e) {
             LOGGER.error("An unexpected error occurred while trying to read user data", e);
             throw new MetadictRuntimeException(e);

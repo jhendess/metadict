@@ -32,7 +32,17 @@ public final class Roles {
     /**
      * ID of the admin role.
      */
-    public final static String ADMIN_ROLE_ID = "ADMIN";
+    public static final String ADMIN_ROLE_ID = "ADMIN";
+
+    /**
+     * ID of the regular user role.
+     */
+    public static final String REGULAR_USER_ROLE_ID = "REGULAR";
+
+    /**
+     * ID of the technical user role.
+     */
+    public static final String TECH_USER_ROLE_ID = "TECH";
 
     private Roles() {
 

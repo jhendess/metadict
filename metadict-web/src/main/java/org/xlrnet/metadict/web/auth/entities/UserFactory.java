@@ -24,14 +24,16 @@
 
 package org.xlrnet.metadict.web.auth.entities;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Factory for creating new {@link org.xlrnet.metadict.api.auth.User} objects.
@@ -40,16 +42,49 @@ public class UserFactory {
 
     private final SequenceService sequenceService;
 
-    private static final List<Role> DEFAULT_ROLES = ImmutableList.of();
+    private static final Set<Role> DEFAULT_TECHNICAL_ROLES = ImmutableSet.of(UserRole.TECH_USER);
+
+    private static final Set<Role> DEFAULT_USER_ROLES = ImmutableSet.of(UserRole.REGULAR_USER);
 
     @Inject
     public UserFactory(SequenceService sequenceService) {
         this.sequenceService = sequenceService;
     }
 
+    /**
+     * Creates a new regular user account.
+     *
+     * @param username
+     *         The username for the account.
+     * @param additionalRoles
+     *         Additional roles for the new account besides {@link UserRole#REGULAR_USER}.
+     * @return A new user.
+     */
     @NotNull
-    public User newDefaultUser(@NotNull String username) {
+    public User newDefaultUser(@NotNull String username, Role... additionalRoles) {
+        return internalNewUser(username, DEFAULT_USER_ROLES, additionalRoles);
+    }
+
+    /**
+     * Creates a new technical user account.
+     *
+     * @param username
+     *         The username for the account.
+     * @param additionalRoles
+     *         Additional roles for the new account besides {@link UserRole#REGULAR_USER}.
+     * @return A new technical user.
+     */
+    @NotNull
+    public User newTechnicalUser(@NotNull String username, Role... additionalRoles) {
+        return internalNewUser(username, DEFAULT_TECHNICAL_ROLES, additionalRoles);
+    }
+
+    @NotNull
+    private User internalNewUser(@NotNull String username, Set<Role> defaultRoles, Role... additionalRoles) {
         String uuid = sequenceService.newUUIDString();
-        return new BasicUser(uuid, username, DEFAULT_ROLES);
+        Set<Role> newRoles = new HashSet<>();
+        newRoles.addAll(DEFAULT_USER_ROLES);
+        Collections.addAll(newRoles, additionalRoles);
+        return new BasicUser(uuid, username, newRoles);
     }
 }

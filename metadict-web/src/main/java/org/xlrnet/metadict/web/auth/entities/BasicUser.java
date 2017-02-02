@@ -26,13 +26,13 @@ package org.xlrnet.metadict.web.auth.entities;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.apache.commons.collections.list.UnmodifiableList;
+import org.apache.commons.collections.set.UnmodifiableSet;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of {@link User} for basic authentication.
@@ -45,12 +45,12 @@ public class BasicUser implements User {
 
     private final String name;
 
-    private final List<Role> roles;
+    private final Set<Role> roles;
 
-    public BasicUser(@NotNull String id, @NotNull String name, @NotNull List<Role> roles) {
+    public BasicUser(@NotNull String id, @NotNull String name, @NotNull Set<Role> roles) {
         this.id = id;
         this.name = name;
-        this.roles = new ArrayList<>(roles.size());
+        this.roles = new HashSet<>(roles.size());
         for (Role role : roles) {
             this.roles.add(role);
         }
@@ -70,8 +70,8 @@ public class BasicUser implements User {
 
     @NotNull
     @Override
-    public List<Role> getRoles() {
-        return UnmodifiableList.decorate(this.roles);
+    public Set<Role> getRoles() {
+        return UnmodifiableSet.decorate(this.roles);
     }
 
     @Override

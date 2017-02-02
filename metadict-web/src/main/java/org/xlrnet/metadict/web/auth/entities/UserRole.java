@@ -32,7 +32,17 @@ import java.io.Serializable;
  * User roles for metadict web application.
  */
 public enum UserRole implements Role, Serializable {
-
+    /**
+     * Role for a technical user.
+     */
+    TECH_USER(Roles.TECH_USER_ROLE_ID),
+    /**
+     * Role for a regular i.e. human user.
+     */
+    REGULAR_USER(Roles.REGULAR_USER_ROLE_ID),
+    /**
+     * Role for admin users.
+     */
     ADMIN(Roles.ADMIN_ROLE_ID);
 
     private final String roleId;

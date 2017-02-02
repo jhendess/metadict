@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.web.auth.services;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,7 +108,7 @@ public class UserServiceTest {
 
     @Test
     public void testHasRole_true() throws Exception {
-        User user = new BasicUser("", TEST_USER_NAME, ImmutableList.of(UserRole.ADMIN));
+        User user = new BasicUser("", TEST_USER_NAME, ImmutableSet.of(UserRole.ADMIN));
         boolean b = this.userService.hasRole(user, Roles.ADMIN_ROLE_ID);
         assertTrue("User must have role " + Roles.ADMIN_ROLE_ID + " but hasn't", b);
     }
