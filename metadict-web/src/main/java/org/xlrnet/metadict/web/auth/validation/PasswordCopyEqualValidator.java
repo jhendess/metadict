@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth.constraints;
+package org.xlrnet.metadict.web.auth.validation;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.apache.commons.lang3.StringUtils;
+import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
- * Validation constraint for Metadict passwords.
+ * Validates whether the password and its duplicate in {@link RegistrationRequestData} are equal.
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE})
-@Retention(RUNTIME)
-@Constraint(validatedBy = ValidPasswordValidator.class)
-@Documented
-public @interface ValidPassword {
+public class PasswordCopyEqualValidator implements ConstraintValidator<PasswordCopyEqual, RegistrationRequestData> {
 
-    int MAXIMUM_PASSWORD_LENGTH = 32;
+    @Override
+    public void initialize(PasswordCopyEqual constraintAnnotation) {
+        // Nothing to do here
+    }
 
-    int MINIMUM_PASSWORD_LENGTH = 6;
-
-    String message() default "Password isn't valid";
-
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
+    @Override
+    public boolean isValid(RegistrationRequestData value, ConstraintValidatorContext context) {
+        return value != null && StringUtils.equals(value.getPassword(), value.getConfirmPassword());
+    }
 }

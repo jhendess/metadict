@@ -29,12 +29,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
 import org.xlrnet.metadict.web.auth.entities.*;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.Optional;
 
 import static junit.framework.TestCase.*;
@@ -68,8 +70,26 @@ public class UserServiceTest {
         assertEquals("testUser", user.getName());
 
         assertNotNull(user.getRoles());
-        assertTrue("Roles must be empty", user.getRoles().isEmpty());
+        assertTrue("User must have REGULAR role", user.getRoles().contains(UserRole.REGULAR_USER));
         assertTrue("User id may not be empty", StringUtils.isNotEmpty(user.getId()));
+
+        verify(this.storageService).create(eq(UserService.BASIC_AUTH_NAMESPACE), anyString(), anyString());
+        verify(this.storageService).create(eq(UserService.GENERAL_USER_NAMESPACE), anyString(), anyString());
+    }
+
+    @Test
+    public void testCreateNewTechUserWithPassword() throws Exception {
+        User user = this.userService.createTechnicalUser(TEST_PASSWORD);
+
+        assertNotNull(user);
+        assertTrue("User name may not be empty", StringUtils.isNotEmpty(user.getName()));
+
+        assertNotNull(user.getRoles());
+        assertTrue("User must have TECHNICAL role", user.getRoles().contains(UserRole.TECH_USER));
+        assertTrue("User id may not be empty", StringUtils.isNotEmpty(user.getId()));
+
+        verify(this.storageService).create(eq(UserService.BASIC_AUTH_NAMESPACE), anyString(), anyString());
+        verify(this.storageService).create(eq(UserService.GENERAL_USER_NAMESPACE), anyString(), anyString());
     }
 
     @Test
@@ -111,6 +131,32 @@ public class UserServiceTest {
         User user = new BasicUser("", TEST_USER_NAME, ImmutableSet.of(UserRole.ADMIN));
         boolean b = this.userService.hasRole(user, Roles.ADMIN_ROLE_ID);
         assertTrue("User must have role " + Roles.ADMIN_ROLE_ID + " but hasn't", b);
+    }
+
+    @Test
+    public void testRemoveUser() throws StorageBackendException {
+        // Prepare user for test
+        User user = this.userService.createTechnicalUser(TEST_PASSWORD);
+        assertTrue("User should exist, but doesn't", this.userService.findUserDataByName(user.getName()).isPresent());
+
+        // Remove the user
+        boolean status = this.userService.removeUser(user.getName());
+
+        assertTrue("Removing user should have been successful", status);
+        assertFalse("User shouldn't exist, but does", this.userService.findUserDataByName(user.getName()).isPresent());
+
+        verify(this.storageService).delete(eq(UserService.BASIC_AUTH_NAMESPACE), eq(user.getName()));
+        verify(this.storageService).delete(eq(UserService.GENERAL_USER_NAMESPACE), eq(user.getName()));
+    }
+
+    @Test
+    public void testRemoveUser_failed() throws StorageBackendException {
+        String username = DatatypeConverter.printHexBinary(CryptoUtils.generateRandom(16));
+
+        // Remove the user
+        boolean status = this.userService.removeUser(username);
+
+        assertFalse("Removing user should fail, but didn't", status);
     }
 
     private void prepareAuthDataMock() throws org.xlrnet.metadict.api.storage.StorageBackendException, org.xlrnet.metadict.api.storage.StorageOperationException {

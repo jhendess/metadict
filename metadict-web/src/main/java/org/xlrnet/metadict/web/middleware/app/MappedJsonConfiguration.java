@@ -53,14 +53,13 @@ public class MappedJsonConfiguration extends Configuration implements MetadictCo
      * @return the configuration for JWT cookie authentication.
      */
     public JwtCookieAuthConfiguration getJwtCookieAuth() {
-        return jwtCookieAuth;
+        return this.jwtCookieAuth;
     }
 
     @Override
     public StorageConfigurationImpl getStorageConfiguration() {
         return this.storage;
     }
-
 
     private static class StorageConfigurationImpl implements StorageConfiguration {
 

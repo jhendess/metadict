@@ -1,6 +1,5 @@
 package org.xlrnet.metadict.web.health;
 
-import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.web.auth.services.UserService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
@@ -20,7 +20,7 @@ import javax.xml.bind.DatatypeConverter;
  * application shutdown.
  */
 @Singleton
-public class SessionHealthCheckHelper implements Managed {
+public class SessionHealthCheckHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionHealthCheckHelper.class);
 
@@ -46,46 +46,43 @@ public class SessionHealthCheckHelper implements Managed {
      */
     private String technicalUserPassword;
 
-    /**
-     * Base path of the application used for resource tests.
-     */
-    private String basePath;
-
     private WebTarget sessionResource;
 
     @Inject
     public SessionHealthCheckHelper(Environment environment, UserService userService) {
         this.environment = environment;
         this.userService = userService;
+
+        // Prepare the technical user once the server has finished booting
+        environment.lifecycle().addServerLifecycleListener(server -> prepareTechnicalUser());
     }
 
-
-    @Override
-    public void start() throws Exception {
+    private void prepareTechnicalUser() {
         this.technicalUserPassword = DatatypeConverter.printHexBinary(CryptoUtils.generateRandom(16));
-        technicalUserName = this.userService.createTechnicalUser(technicalUserPassword).getName();
+        this.technicalUserName = this.userService.createTechnicalUser(this.technicalUserPassword).getName();
 
-        Server server = environment.getApplicationContext().getServer();
-        String contextPath = StringUtils.removeStart(environment.getApplicationContext().getContextPath(), "/");
-        basePath = server.getURI().toString() + contextPath + "api/";
-        sessionResource = ClientBuilder.newClient().target(basePath).path(SESSION_RESOURCE_PATH);
-        LOGGER.debug("Initialized session health check for {} using user {}", sessionResource.getUri().toString(), technicalUserName);
+        Server server = this.environment.getApplicationContext().getServer();
+        String contextPath = StringUtils.removeStart(this.environment.getApplicationContext().getContextPath(), "/");
+        String basePath = server.getURI().toString() + contextPath + "api/";
+        this.sessionResource = ClientBuilder.newClient().target(basePath).path(SESSION_RESOURCE_PATH);
+        LOGGER.debug("Initialized session health check for {} using user {}", this.sessionResource.getUri().toString(), this.technicalUserName);
     }
 
-    @Override
+    @PreDestroy
     public void stop() throws Exception {
-        this.userService.removeUser(technicalUserName);
+        this.userService.removeUser(this.technicalUserName);
+        LOGGER.debug("Removed technical user {} for session health check", this.technicalUserName);
     }
 
     public String getTechnicalUserName() {
-        return technicalUserName;
+        return this.technicalUserName;
     }
 
     public String getTechnicalUserPassword() {
-        return technicalUserPassword;
+        return this.technicalUserPassword;
     }
 
     public WebTarget getSessionResource() {
-        return sessionResource;
+        return this.sessionResource;
     }
 }

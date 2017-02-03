@@ -22,26 +22,34 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth.constraints;
+package org.xlrnet.metadict.web.auth.validation;
 
-import org.apache.commons.lang3.StringUtils;
-import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
- * Validates whether the password and its duplicate in {@link RegistrationRequestData} are equal.
+ * Validation constraint for Metadict passwords.
  */
-public class PasswordCopyEqualValidator implements ConstraintValidator<PasswordCopyEqual, RegistrationRequestData> {
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
+@Retention(RUNTIME)
+@Constraint(validatedBy = ValidPasswordValidator.class)
+@Documented
+public @interface ValidPassword {
 
-    @Override
-    public void initialize(PasswordCopyEqual constraintAnnotation) {
-        // Nothing to do here
-    }
+    int MAXIMUM_PASSWORD_LENGTH = 32;
 
-    @Override
-    public boolean isValid(RegistrationRequestData value, ConstraintValidatorContext context) {
-        return value != null && StringUtils.equals(value.getPassword(), value.getConfirmPassword());
-    }
+    int MINIMUM_PASSWORD_LENGTH = 6;
+
+    String message() default "Password isn't valid";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

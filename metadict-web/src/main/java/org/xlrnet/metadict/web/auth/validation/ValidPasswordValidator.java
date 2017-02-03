@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth.constraints;
+package org.xlrnet.metadict.web.auth.validation;
 
-import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
- * Validation constraint makes sure that both the password and its duplicate in {@link
- * RegistrationRequestData} are equal.
+ * Custom validator for {@link ValidPassword} constraint.
  */
-@Target({TYPE})
-@Retention(RUNTIME)
-@Constraint(validatedBy = PasswordCopyEqualValidator.class)
-@Documented
-public @interface PasswordCopyEqual {
+public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-    String message() default "password and the confirmation must be equal";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidPasswordValidator.class);
 
-    Class<?>[] groups() default {};
+    @Override
+    public void initialize(ValidPassword constraintAnnotation) {
+        /// No validation necessary
+    }
 
-    Class<? extends Payload>[] payload() default {};
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        // TODO: Add password validation logic
+        return true;
+    }
 }

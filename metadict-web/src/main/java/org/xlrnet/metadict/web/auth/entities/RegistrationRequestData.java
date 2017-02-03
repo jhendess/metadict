@@ -26,8 +26,8 @@ package org.xlrnet.metadict.web.auth.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.xlrnet.metadict.web.auth.constraints.PasswordCopyEqual;
-import org.xlrnet.metadict.web.auth.constraints.ValidPassword;
+import org.xlrnet.metadict.web.auth.validation.PasswordCopyEqual;
+import org.xlrnet.metadict.web.auth.validation.ValidPassword;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -57,15 +57,15 @@ public class RegistrationRequestData {
     private String confirmPassword;
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public String getConfirmPassword() {
-        return confirmPassword;
+        return this.confirmPassword;
     }
 
     public RegistrationRequestData setName(String name) {

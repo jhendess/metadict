@@ -85,7 +85,7 @@ public class UserService {
 
     @NotNull
     public Optional<User> createNewUser(@NotNull String username, @NotNull String unhashedPassword, Role... additionalRoles) {
-        User user = internalCreateNewUser(username, unhashedPassword, (String u) -> userFactory.newDefaultUser(u, additionalRoles));
+        User user = internalCreateNewUser(username, unhashedPassword, (String u) -> this.userFactory.newDefaultUser(u, additionalRoles));
 
         return Optional.ofNullable(user);
     }
@@ -139,7 +139,7 @@ public class UserService {
 
         byte[] bytes = CryptoUtils.generateRandom(TECHNICAL_USER_NAME_LENGTH);
         String randomUserName = DatatypeConverter.printHexBinary(bytes);
-        User user = internalCreateNewUser(randomUserName, unhashedPassword, (String u) -> userFactory.newTechnicalUser(u));
+        User user = internalCreateNewUser(randomUserName, unhashedPassword, (String u) -> this.userFactory.newTechnicalUser(u));
         if (user == null) {
             throw new MetadictRuntimeException("New technical user was null");
         }
@@ -223,9 +223,12 @@ public class UserService {
             try {
                 result = this.storageService.delete(BASIC_AUTH_NAMESPACE, username);
                 result &= this.storageService.delete(GENERAL_USER_NAMESPACE, username);
+                LOGGER.debug("Removed user {}", username);
             } finally {
                 createUserLock.unlock();
             }
+        } else {
+            LOGGER.debug("Tried to remove non-existing user {}", username);
         }
 
         return result;

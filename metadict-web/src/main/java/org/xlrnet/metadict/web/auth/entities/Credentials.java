@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.web.auth.constraints.ValidPassword;
+import org.xlrnet.metadict.web.auth.validation.ValidPassword;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -49,6 +49,7 @@ public class Credentials {
     @JsonProperty
     private String password;
 
+    @JsonProperty
     private boolean stayLoggedIn;
 
     public Credentials() {
@@ -60,9 +61,8 @@ public class Credentials {
         this.stayLoggedIn = stayLoggedIn;
     }
 
-    @NotNull
     public boolean isStayLoggedIn() {
-        return stayLoggedIn;
+        return this.stayLoggedIn;
     }
 
     @NotNull
