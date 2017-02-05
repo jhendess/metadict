@@ -150,9 +150,10 @@ public class LeoEngine implements SearchEngine {
     }
 
     /**
-     * Extracts the domain information from a given representation string.
+     * Extracts the abbreviation information from a given representation string. Tries to use "Abk." and "abbr." for
+     * detecting abbreviations.
      * <p>
-     * Example: If the input is "drive-in restaurant [cook.]", then the domain is "cook."
+     * Example: If the input is "zum Beispiel [Abk.: z. B.]", then the abbreviation is "z. B.".
      *
      * @param representation
      *         The input string.
@@ -160,9 +161,12 @@ public class LeoEngine implements SearchEngine {
      */
     @Nullable
     private String extractAbbreviationString(String representation) {
-        String substring = StringUtils.substringBetween(representation, "[abbr.:", "]");
-        if (substring != null) {
-            return cleanWhitespace(substring);
+        String abbreviation = StringUtils.substringBetween(representation, "[abbr.:", "]");
+        if (abbreviation == null) {
+            abbreviation = StringUtils.substringBetween(representation, "[Abk.:", "]");
+        }
+        if (abbreviation != null) {
+            return cleanWhitespace(abbreviation);
         }
         return null;
     }
@@ -180,7 +184,11 @@ public class LeoEngine implements SearchEngine {
     private String extractDomainString(String representation) {
         String substring = StringUtils.substringAfterLast(representation, "[");
         if (substring != null) {
-            return StringUtils.substringBefore(substring, "]");
+            String domain = StringUtils.substringBefore(substring, "]");
+            // Check if the extracted domain string is not an abbreviation
+            if (!(StringUtils.startsWithIgnoreCase("abbr.:", domain) || StringUtils.startsWithIgnoreCase("abk.:", domain)) && StringUtils.endsWith(".", domain)) {
+                return domain;
+            }
         }
         return null;
     }
@@ -236,8 +244,10 @@ public class LeoEngine implements SearchEngine {
     /**
      * Process all links to the leo.org forums and provide them as external content.
      *
-     * @param forumLinkNode The node which contains the forum link.
-     * @param resultBuilder The builder for the bilingual query result.
+     * @param forumLinkNode
+     *         The node which contains the forum link.
+     * @param resultBuilder
+     *         The builder for the bilingual query result.
      */
     private void processForumLinks(@Nullable Element forumLinkNode, @NotNull BilingualQueryResultBuilder resultBuilder) {
         if (forumLinkNode == null) {
