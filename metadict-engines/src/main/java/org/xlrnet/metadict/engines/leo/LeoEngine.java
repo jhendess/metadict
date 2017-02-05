@@ -186,7 +186,7 @@ public class LeoEngine implements SearchEngine {
         if (substring != null) {
             String domain = StringUtils.substringBefore(substring, "]");
             // Check if the extracted domain string is not an abbreviation
-            if (!(StringUtils.startsWithIgnoreCase("abbr.:", domain) || StringUtils.startsWithIgnoreCase("abk.:", domain)) && StringUtils.endsWith(".", domain)) {
+            if (!(StringUtils.endsWith(".", domain) && (StringUtils.startsWithIgnoreCase("abbr.:", domain) || StringUtils.startsWithIgnoreCase("abk.:", domain)))) {
                 return domain;
             }
         }
