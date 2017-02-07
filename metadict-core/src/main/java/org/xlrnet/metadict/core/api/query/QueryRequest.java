@@ -27,8 +27,8 @@ package org.xlrnet.metadict.core.api.query;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
-import org.xlrnet.metadict.core.services.aggregation.OrderType;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 
 import java.util.List;
 

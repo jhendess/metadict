@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.query;
+package org.xlrnet.metadict.core.services.aggregation.order;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.xlrnet.metadict.core.api.aggregation.OrderStrategy;
 
 /**
- * Qualifier for annotating and injecting the default execution strategy.
+ * Use the {@link OrderType} to determine how the entries in each {@link org.xlrnet.metadict.core.api.aggregation.Group}
+ * should be ordered.
  */
-@Qualifier
-@Retention(RUNTIME)
-@Target({TYPE, METHOD, FIELD, PARAMETER})
-public @interface DefaultExecutionStrategy {
+public enum OrderType {
+
+    /** Order entries based on their Levensthein distance from the original query. */
+    RELEVANCE(new LevenstheinRelevanceOrderStrategy());
+
+    private OrderStrategy orderStrategy;
+
+    OrderType(OrderStrategy orderStrategy) {
+        this.orderStrategy = orderStrategy;
+    }
+
+    public OrderStrategy getOrderStrategy() {
+        return this.orderStrategy;
+    }
 
 }

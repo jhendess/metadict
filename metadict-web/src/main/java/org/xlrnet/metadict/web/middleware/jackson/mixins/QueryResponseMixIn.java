@@ -25,7 +25,7 @@
 package org.xlrnet.metadict.web.middleware.jackson.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
 
 /**

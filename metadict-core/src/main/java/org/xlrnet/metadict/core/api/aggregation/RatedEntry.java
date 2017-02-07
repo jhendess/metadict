@@ -22,30 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.api.aggegation;
-
-import java.io.Serializable;
-import java.util.List;
+package org.xlrnet.metadict.core.api.aggregation;
 
 /**
- * The {@link ResultGroup} is used to group {@link ResultEntry} objects according to a specified method like e.g. the
- * type of the entry.
+ * A rated entry provides information about the relevance score regarding the original query the user entered and the
+ * source engine. This data can e.g. be used for sorting.
  */
-public interface ResultGroup extends Iterable<ResultEntry>, Serializable {
+public interface RatedEntry extends Comparable<ResultEntry> {
 
     /**
-     * Returns a string representation of the group identifier. For example if the group is based on entry types the
-     * identifier might be "NOUNS" for a group that contains only nouns.
+     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
+     * (inclusive) where a value of 1.0 means best possible relevancy.
      *
-     * @return a string representation of the group identifier.
+     * @return the calculated relevance score for this entry.
      */
-    String getGroupIdentifier();
-
-    /**
-     * Returns the entries of this group.
-     *
-     * @return the entries of this group.
-     */
-    List<ResultEntry> getResultEntries();
-
+    double getEntryScore();
 }

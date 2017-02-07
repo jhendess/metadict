@@ -27,10 +27,11 @@ package org.xlrnet.metadict.web.middleware.app;
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
+import org.xlrnet.metadict.core.api.aggregation.MergeStrategy;
 import org.xlrnet.metadict.core.api.query.QueryPlanExecutionStrategy;
 import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
+import org.xlrnet.metadict.core.services.aggregation.merge.DummyMergeStrategy;
 import org.xlrnet.metadict.core.services.query.CachedLinearExecutionStrategy;
-import org.xlrnet.metadict.core.services.query.DefaultExecutionStrategy;
 import org.xlrnet.metadict.core.services.query.SimpleQueryPlanningStrategy;
 import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
 import org.xlrnet.metadict.core.services.storage.InMemoryStorageProvider;
@@ -48,11 +49,14 @@ public class WebModule extends DropwizardAwareModule {
      */
     @Override
     protected void configure() {
+        // Configure storage system
         Multibinder.newSetBinder(binder(), StorageServiceProvider.class).addBinding().to(InMemoryStorageProvider.class);
         Multibinder.newSetBinder(binder(), StorageServiceProvider.class).addBinding().to(MapdbStorageProvider.class);
-
-        bind(QueryPlanExecutionStrategy.class).annotatedWith(DefaultExecutionStrategy.class).to(CachedLinearExecutionStrategy.class);
-        bind(QueryPlanningStrategy.class).to(SimpleQueryPlanningStrategy.class);
         bind(StorageService.class).annotatedWith(DefaultStorageService.class).toProvider(StorageServiceFactory.class);
+
+        // Configure strategies
+        bind(QueryPlanExecutionStrategy.class).to(CachedLinearExecutionStrategy.class);
+        bind(QueryPlanningStrategy.class).to(SimpleQueryPlanningStrategy.class);
+        bind(MergeStrategy.class).to(DummyMergeStrategy.class);
     }
 }

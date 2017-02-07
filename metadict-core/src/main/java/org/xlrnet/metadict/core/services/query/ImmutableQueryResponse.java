@@ -27,11 +27,14 @@ package org.xlrnet.metadict.core.services.query;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import org.xlrnet.metadict.api.query.*;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.api.query.DictionaryObject;
+import org.xlrnet.metadict.api.query.ExternalContent;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.api.query.SynonymEntry;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -42,13 +45,13 @@ import java.util.Collections;
  */
 public class ImmutableQueryResponse implements QueryResponse, Serializable {
 
-    private static final long serialVersionUID = 5254033672770609246L;
+    private static final long serialVersionUID = -6886895807189117173L;
 
     private final QueryPerformanceStatistics queryPerformanceStatistics;
 
     private final Collection<ExternalContent> externalContents;
 
-    private final Collection<ResultGroup> groupedBilingualResults;
+    private final Collection<Group<ResultEntry>> groupedBilingualResults;
 
     private final GroupingType groupingType;
 
@@ -60,7 +63,7 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
 
     private final Collection<SynonymEntry> synonymEntries;
 
-    ImmutableQueryResponse(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<ResultGroup> groupedBilingualResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries, Collection<SynonymEntry> synonymEntries) {
+    ImmutableQueryResponse(String requestString, QueryPerformanceStatistics queryPerformanceStatistics, Collection<ExternalContent> externalContents, Collection<Group<ResultEntry>> groupedBilingualResults, GroupingType groupingType, Collection<DictionaryObject> similarRecommendations, Collection<MonolingualEntry> monolingualEntries, Collection<SynonymEntry> synonymEntries) {
         this.requestString = requestString;
         this.queryPerformanceStatistics = queryPerformanceStatistics;
         this.externalContents = externalContents;
@@ -71,107 +74,59 @@ public class ImmutableQueryResponse implements QueryResponse, Serializable {
         this.synonymEntries = synonymEntries;
     }
 
-    /**
-     * Returns a {@link Collection} with all available {@link ExternalContent} objects from the query.
-     *
-     * @return all available {@link ExternalContent} objects from the query.
-     */
     @Override
     public Collection<ExternalContent> getExternalContents() {
-        if (this.externalContents != null)
+        if (this.externalContents != null) {
             return Collections.unmodifiableCollection(this.externalContents);
+        }
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * Returns a view on the underlying result set based on the requested grouping mechanism. Each element of {@link
-     * ResultGroup} in the returned collection contains the {@link ResultEntry} objects that were matched to this
-     * group.
-     *
-     * @return a view on the underlying result set based on the requested grouping mechanism.
-     */
     @Override
-    public Collection<ResultGroup> getGroupedBilingualEntries() {
-        if (this.groupedBilingualResults != null)
+    public Collection<Group<ResultEntry>> getGroupedBilingualEntries() {
+        if (this.groupedBilingualResults != null) {
             return Collections.unmodifiableCollection(this.groupedBilingualResults);
+        }
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * Returns the {@link GroupingType} that was used for grouping the resulting set.
-     *
-     * @return the {@link GroupingType} that was used for grouping the resulting set.
-     */
     @Override
     public GroupingType getGroupingType() {
         return this.groupingType;
     }
 
-    /**
-     * Returns a {@link Collection} of monolingual entries in the result sets. Monolingual entries are currently
-     * <i>not</i> grouped.
-     *
-     * @return a {@link Collection} of monolingual entries in the result sets.
-     */
     @Override
     public Collection<MonolingualEntry> getMonolingualEntries() {
-        if (this.monolingualEntries != null)
+        if (this.monolingualEntries != null) {
             return Collections.unmodifiableCollection(this.monolingualEntries);
+        }
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * Returns internal performance information about the query.
-     *
-     * @return internal performance information about the query.
-     */
     @Override
     public QueryPerformanceStatistics getPerformanceStatistics() {
         return this.queryPerformanceStatistics;
     }
 
-    /**
-     * Returns the original input query.
-     *
-     * @return the original input query.
-     */
+
     @Override
     public String getRequestString() {
         return this.requestString;
     }
 
-    /**
-     * Returns a {@link Collection} with additional search recommendations for the user. Search recommendations are
-     * only available in one language (i.e. no translation provided).
-     *
-     * @return a collection with additional search recommendations for the user.
-     */
     @Override
     public Collection<DictionaryObject> getSimilarRecommendations() {
-        if (this.similarRecommendations != null)
+        if (this.similarRecommendations != null) {
             return Collections.unmodifiableCollection(this.similarRecommendations);
+        }
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * Returns a monolingual set of synonym entries for single objects. Each entry
-     * represents all synonyms for a certain object (word, phrase, etc.) where the synonyms are grouped into
-     * different{@link SynonymGroup} objects.
-     *
-     * @return a monolingual set of synonym entries for single objects.
-     */
     @Override
     public Collection<SynonymEntry> getSynonymEntries() {
         return this.synonymEntries;
     }
 
-    /**
-     * Returns an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query. Each
-     * {@link ResultEntry} object that can be obtained via {@link ResultGroup} must also be accessible through the
-     * returned iterator of this method.
-     *
-     * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.
-     */
     @Override
     public Iterable<ResultEntry> getUngroupedBilingualEntries() {
         return Iterables.concat(getGroupedBilingualEntries());       // Don't access field directly to avoid NPEs!

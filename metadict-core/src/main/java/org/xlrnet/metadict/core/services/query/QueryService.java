@@ -29,16 +29,17 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.ExternalContent;
-import org.xlrnet.metadict.api.query.MonolingualEntry;
-import org.xlrnet.metadict.api.query.SynonymEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.MergeStrategy;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.*;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
-import org.xlrnet.metadict.core.services.aggregation.OrderType;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,11 +68,17 @@ public class QueryService {
      */
     private final QueryPlanExecutionStrategy queryPlanExecutionStrategy;
 
+    /**
+     * The strategy which should be used for merging similar objects in the result set.
+     */
+    private final MergeStrategy mergeStrategy;
+
     @Inject
-    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, @DefaultExecutionStrategy QueryPlanExecutionStrategy queryPlanExecutionStrategy) {
+    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, MergeStrategy mergeStrategy) {
         this.engineRegistryService = engineRegistryService;
         this.queryPlanningStrategy = queryPlanningStrategy;
         this.queryPlanExecutionStrategy = queryPlanExecutionStrategy;
+        this.mergeStrategy = mergeStrategy;
     }
 
     /**
@@ -98,17 +105,17 @@ public class QueryService {
 
     @NotNull
     private Iterable<QueryStepResult> executeQueryPlan(@NotNull QueryPlan queryPlan) {
-        LOGGER.debug("Executing query plan {} using executor {} ...", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
+        LOGGER.trace("Executing query plan {} using executor {} ...", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
         Iterable<QueryStepResult> queryStepResults = this.queryPlanExecutionStrategy.executeQueryPlan(queryPlan);
-        LOGGER.debug("Executed query plan {} using executor {}.", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
+        LOGGER.trace("Executed query plan {} using executor {}.", queryPlan, this.queryPlanExecutionStrategy.getClass().getSimpleName());
         return queryStepResults;
     }
 
     @NotNull
     private QueryPlan prepareQueryPlan(@NotNull QueryRequest queryRequest) {
-        LOGGER.debug("Calculating query plan using {} for request {} ...", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest);
+        LOGGER.trace("Calculating query plan using {} for request {} ...", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest);
         QueryPlan queryPlan = this.queryPlanningStrategy.calculateQueryPlan(queryRequest, this.engineRegistryService);
-        LOGGER.debug("Calculated query plan using {} for request {}: {}", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest, queryPlan);
+        LOGGER.trace("Calculated query plan using {} for request {}: {}", this.queryPlanningStrategy.getClass().getSimpleName(), queryRequest, queryPlan);
         return queryPlan;
     }
 
@@ -123,18 +130,18 @@ public class QueryService {
     }
 
     @NotNull
-    private Collection<ResultGroup> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
+    private Collection<Group<BilingualEntry>> groupQueryResults(@NotNull QueryRequest queryRequest, @NotNull Iterable<QueryStepResult> engineQueryResults) {
         GroupingType groupingType = queryRequest.getQueryGrouping();
 
-        LOGGER.debug("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
-        Collection<ResultGroup> resultGroups = groupingType.getGroupingStrategy().groupResultSets(engineQueryResults);
-        LOGGER.debug("Finished grouping results for query {} using strategy {}.", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
+        LOGGER.trace("Grouping results for query {} using strategy {} ...", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
+        Collection<Group<BilingualEntry>> resultGroups = groupingType.getGroupingStrategy().groupResultSets(engineQueryResults);
+        LOGGER.trace("Finished grouping results for query {} using strategy {}.", queryRequest, groupingType.getGroupingStrategy().getClass().getSimpleName());
 
         return resultGroups;
     }
 
     @NotNull
-    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull QueryPerformanceStatistics performanceStatistics, @NotNull List<MonolingualEntry> monolingualEntries, @NotNull List<SynonymEntry> synonymEntries) {
+    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<ResultEntry>> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull QueryPerformanceStatistics performanceStatistics, @NotNull List<MonolingualEntry> monolingualEntries, @NotNull List<SynonymEntry> synonymEntries) {
         return new QueryResponseBuilder()
                 .setQueryRequestString(queryRequest.getQueryString())
                 .setQueryPerformanceStatistics(performanceStatistics)
@@ -169,27 +176,44 @@ public class QueryService {
         long startQueryTime = System.currentTimeMillis();
         Iterable<QueryStepResult> engineQueryResults = executeQueryPlan(queryPlan);
 
-        long startGroupingTime = System.currentTimeMillis();
-        Collection<ResultGroup> resultGroups = groupQueryResults(queryRequest, engineQueryResults);
-
-        long startOrderTime = System.currentTimeMillis();
-        Collection<ResultGroup> orderedResultGroups = orderQueryResults(queryRequest, resultGroups);
-
         long startCollectingTime = System.currentTimeMillis();
         List<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
         List<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
         List<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
         List<SynonymEntry> synonymEntries = collectSynonymEntries(engineQueryResults);
 
+        long startGroupingTime = System.currentTimeMillis();
+        Collection<Group<BilingualEntry>> bilingualGroups = groupQueryResults(queryRequest, engineQueryResults);
+
+        long startMergingTime = System.currentTimeMillis();
+        Collection<Group<BilingualEntry>> mergedBilingualEntries = mergeBilingualEntries(bilingualGroups);
+        monolingualEntries = (List<MonolingualEntry>) this.mergeStrategy.mergeMonolingualEntries(monolingualEntries);   // TODO: Casting is not good, see necessary refactorings in QueryUtil
+
+        long startOrderTime = System.currentTimeMillis();
+        Collection<Group<ResultEntry>> orderedResultGroups = orderQueryResults(queryRequest, mergedBilingualEntries);
+
         long finishTime = System.currentTimeMillis();
-        performanceStatistics.setPlanningPhaseDuration(startQueryTime - startPlanningTime)
-                .setQueryPhaseDuration(startGroupingTime - startQueryTime)
-                .setGroupPhaseDuration(startOrderTime - startGroupingTime)
-                .setOrderPhaseDuration(startCollectingTime - startOrderTime)
-                .setCollectPhaseDuration(finishTime - startCollectingTime)
+        performanceStatistics.setPlanningPhaseDuration(startPlanningTime - startQueryTime)
+                .setQueryPhaseDuration(startCollectingTime - startQueryTime)
+                .setCollectPhaseDuration(startGroupingTime - startCollectingTime)
+                .setGroupPhaseDuration(startMergingTime - startGroupingTime)
+                .setMergePhaseDuration(startOrderTime - startMergingTime)
+                .setOrderPhaseDuration(finishTime - startOrderTime)
                 .setTotalDuration(finishTime - startPlanningTime);
 
         return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics, monolingualEntries, synonymEntries);
+    }
+
+    @NotNull
+    private Collection<Group<BilingualEntry>> mergeBilingualEntries(@NotNull Collection<Group<BilingualEntry>> bilingualGroups) {
+        List<Group<BilingualEntry>> mergedBilingualEntryGroups = new ArrayList<>();
+        for (Group<BilingualEntry> bilingualGroup : bilingualGroups) {
+            GroupBuilder<BilingualEntry> groupBuilder = new GroupBuilder<BilingualEntry>().setGroupIdentifier(bilingualGroup.getGroupIdentifier());
+            groupBuilder.addAll(this.mergeStrategy.mergeBilingualEntries(bilingualGroup.getResultEntries()));
+            mergedBilingualEntryGroups.add(groupBuilder.build());
+        }
+
+        return mergedBilingualEntryGroups;
     }
 
     @NotNull
@@ -203,12 +227,12 @@ public class QueryService {
     }
 
     @NotNull
-    private Collection<ResultGroup> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> resultGroups) {
+    private Collection<Group<ResultEntry>> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<BilingualEntry>> groupsToOrder) {
         OrderType orderType = queryRequest.getQueryOrdering();
 
-        LOGGER.debug("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
-        Collection<ResultGroup> sortedResultGroups = orderType.getOrderStrategy().sortResultGroups(queryRequest, resultGroups);
-        LOGGER.debug("Finished sorting results for query {} using strategy {}.", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
+        LOGGER.trace("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
+        Collection<Group<ResultEntry>> sortedResultGroups = orderType.getOrderStrategy().sortResultGroups(queryRequest, groupsToOrder);
+        LOGGER.trace("Finished sorting results for query {} using strategy {}.", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
 
         return sortedResultGroups;
     }

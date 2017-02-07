@@ -34,8 +34,8 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
-import org.xlrnet.metadict.core.services.aggregation.OrderType;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 import org.xlrnet.metadict.core.services.query.QueryService;
 import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.api.ResponseContainer;
@@ -102,12 +102,12 @@ public class QueryResource {
      *         handled automatically through the underlying JAX-RS engine.
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.GroupingType} but
-     *         will only be checked case-insensitive. If no value is defined, the single-group strategy will be used.
+     *         one of the constants defined in {@link GroupingType} but will only be checked case-insensitive. If no
+     *         value is defined, the single-group strategy will be used.
      * @param ordering
      *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
-     *         with one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.OrderType} but
-     *         will only be checked case-insensitive. If no value is defined, the relevance ordering will be used.
+     *         with one of the constants defined in {@link OrderType} but will only be checked case-insensitive. If no
+     *         value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/query/{dictionaries}/{request}")
@@ -144,12 +144,12 @@ public class QueryResource {
      *         handled automatically through the underlying JAX-RS engine.
      * @param grouping
      *         Define how the resulting entries should be grouped by metadict. This string value has to correspond with
-     *         one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.GroupingType} but
-     *         will only be checked case-insensitive. If no value is defined, the single-group strategy will be used.
+     *         one of the constants defined in {@link GroupingType} but will only be checked case-insensitive. If no
+     *         value is defined, the single-group strategy will be used.
      * @param ordering
      *         Define how the resulting entry groups should be ordered by metadict. This string value has to correspond
-     *         with one of the constants defined in {@link org.xlrnet.metadict.core.services.aggregation.OrderType} but
-     *         will only be checked case-insensitive. If no value is defined, the relevance ordering will be used.
+     *         with one of the constants defined in {@link OrderType} but will only be checked case-insensitive. If no
+     *         value is defined, the relevance ordering will be used.
      */
     @GET
     @Path("/uniquery/{dictionaries}/{request}")

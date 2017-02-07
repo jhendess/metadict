@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,29 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.api.aggregation;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.api.aggegation.GroupingStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
+import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.api.query.BilingualQueryResult;
+import org.xlrnet.metadict.core.api.query.QueryStepResult;
+
+import java.util.Collection;
 
 /**
- * Use the {@link GroupingType} to determine how the {@link ResultEntry} should be grouped.
+ * A {@link GroupingStrategy} defines how multiple {@link BilingualQueryResult} objects
+ * should be grouped.
  */
-public enum GroupingType {
-
-    /** Only one group with all results. */
-    NONE(new NoneGroupingStrategy()),
-
-    /** Group results based on the source engine. */
-    ENGINE(null),
-
-    /** Group results based on the used dictionary. */
-    DICTIONARY(new DictionaryGroupingStrategy()),
-
-    /** Group results based on the entry type of each result */
-    ENTRYTYPE(new EntryTypeGroupingStrategy());
-
-    private GroupingStrategy groupingStrategy;
-
-    GroupingType(GroupingStrategy groupingStrategy) {
-        this.groupingStrategy = groupingStrategy;
-    }
+public interface GroupingStrategy {
 
     /**
-     * Returns the strategy that should be used for this type of grouping.
+     * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
      *
-     * @return the strategy that should be used for this type of grouping.
+     * @param queryStepResults
+     *         An iterable of the query steps results.
+     * @return a collection of groups.
      */
     @NotNull
-    public GroupingStrategy getGroupingStrategy() {
-        return this.groupingStrategy;
-    }
+    Collection<Group<BilingualEntry>> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults);
+
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.group;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
-import org.xlrnet.metadict.core.api.aggegation.GroupingStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.GroupingStrategy;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
 import org.xlrnet.metadict.core.services.query.BilingualQueryStep;
 import org.xlrnet.metadict.core.util.FormatUtils;
@@ -53,7 +53,7 @@ public class DictionaryGroupingStrategy implements GroupingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(DictionaryGroupingStrategy.class);
 
     /**
-     * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
+     * Group the given step results with the internal strategy and return a collection of {@link Group} objects.
      *
      * @param queryStepResults
      *         An iterable of the query steps results.
@@ -61,30 +61,25 @@ public class DictionaryGroupingStrategy implements GroupingStrategy {
      */
     @NotNull
     @Override
-    public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
-        Map<BilingualDictionary, ResultGroupBuilder> groupBuilderMap = new HashMap<>();
+    public Collection<Group<BilingualEntry>> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
+        Map<BilingualDictionary, GroupBuilder<BilingualEntry>> groupBuilderMap = new HashMap<>();
 
         for (QueryStepResult stepResult : queryStepResults) {
-
             if (!(stepResult.getEngineQueryResult() instanceof BilingualQueryResult)) {
-                LOGGER.debug("Skipping query result of type {}", stepResult.getEngineQueryResult().getClass().getCanonicalName());
+                LOGGER.trace("Skipping query result of type {}", stepResult.getEngineQueryResult().getClass().getCanonicalName());
                 continue;
             }
 
-            String searchEngineName = stepResult.getQueryStep().getSearchEngineName();
-
             BilingualDictionary dictionary = resolveDictionaryFromQueryStep((BilingualQueryStep) stepResult.getQueryStep());
-            groupBuilderMap.putIfAbsent(dictionary, new ResultGroupBuilder());
+            groupBuilderMap.putIfAbsent(dictionary, new GroupBuilder<>());
 
-            ResultGroupBuilder groupBuilder = groupBuilderMap.get(dictionary);
+            GroupBuilder<BilingualEntry> groupBuilder = groupBuilderMap.get(dictionary);
 
             BilingualQueryResult engineQueryResult = (BilingualQueryResult) stepResult.getEngineQueryResult();
-            for (BilingualEntry entry : engineQueryResult.getBilingualEntries()) {
-                groupBuilder.addResultEntry(ScoredResultEntry.from(entry, searchEngineName));
-            }
+            groupBuilder.addAll(engineQueryResult.getBilingualEntries());
         }
 
-        Collection<ResultGroup> resultGroups = new ArrayList<>();
+        Collection<Group<BilingualEntry>> resultGroups = new ArrayList<>();
 
         groupBuilderMap.forEach((dictionary, resultGroupBuilder) -> {
                     resultGroupBuilder.setGroupIdentifier(FormatUtils.formatDictionaryName(dictionary));

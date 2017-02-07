@@ -54,7 +54,6 @@ import java.util.concurrent.ExecutionException;
  * Execution strategy that executes each query consecutively but uses an internal data structure for caching the
  * results of each query.
  */
-@DefaultExecutionStrategy
 public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachedLinearExecutionStrategy.class);

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.group;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.EntryType;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -41,19 +41,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ScoredResultEntry implements ResultEntry {
 
-    private final BilingualEntry dictionaryEntry;
+    private static final long serialVersionUID = 8973250201767143107L;
 
-    private final String sourceEngine;
+    private final BilingualEntry dictionaryEntry;
 
     private double entryScore;
 
-    private ScoredResultEntry(BilingualEntry dictionaryEntry, String sourceEngine, double entryScore) {
+    private ScoredResultEntry(BilingualEntry dictionaryEntry, double entryScore) {
         checkNotNull(dictionaryEntry, "Wrapped BilingualEntry may not be null");
-        checkNotNull(sourceEngine, "Engine name may not be null");
         checkArgument(entryScore >= 0.0 && entryScore <= 1.0, "Entry score must be in range [0.0;1.0]");
 
         this.dictionaryEntry = dictionaryEntry;
-        this.sourceEngine = sourceEngine;
         this.entryScore = entryScore;
     }
 
@@ -62,28 +60,12 @@ public class ScoredResultEntry implements ResultEntry {
      *
      * @param dictionaryEntry
      *         The {@link BilingualEntry} that should be wrapped.
-     * @param sourceEngine
-     *         The name of the engine that provided this result entry.
      * @param entryScore
      *         The relevance score for this entry. Must be between 0.0 and 1.0 (inclusive).
      * @return a new {@link ResultEntry} object around the given {@link BilingualEntry}.
      */
-    public static ResultEntry from(BilingualEntry dictionaryEntry, String sourceEngine, double entryScore) {
-        return new ScoredResultEntry(dictionaryEntry, sourceEngine, entryScore);
-    }
-
-    /**
-     * Wrap a new {@link ResultEntry} around an existing {@link BilingualEntry}. The entry score of this entry will
-     * have the value 1.0.
-     *
-     * @param dictionaryEntry
-     *         The {@link BilingualEntry} that should be wrapped.
-     * @param sourceEngine
-     *         The name of the engine that provided this result entry.
-     * @return a new {@link ResultEntry} object around the given {@link BilingualEntry}.
-     */
-    public static ResultEntry from(BilingualEntry dictionaryEntry, String sourceEngine) {
-        return new ScoredResultEntry(dictionaryEntry, sourceEngine, 1.0);
+    public static ResultEntry from(BilingualEntry dictionaryEntry, double entryScore) {
+        return new ScoredResultEntry(dictionaryEntry, entryScore);
     }
 
     @Override
@@ -97,8 +79,7 @@ public class ScoredResultEntry implements ResultEntry {
         if (!(o instanceof ScoredResultEntry)) return false;
         ScoredResultEntry that = (ScoredResultEntry) o;
         return Objects.equal(this.entryScore, that.entryScore) &&
-                Objects.equal(this.dictionaryEntry, that.dictionaryEntry) &&
-                Objects.equal(this.sourceEngine, that.sourceEngine);
+                Objects.equal(this.dictionaryEntry, that.dictionaryEntry);
     }
 
     /**
@@ -145,20 +126,14 @@ public class ScoredResultEntry implements ResultEntry {
     }
 
     @Override
-    public String getSourceEngine() {
-        return this.sourceEngine;
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hashCode(this.dictionaryEntry, this.sourceEngine, this.entryScore);
+        return Objects.hashCode(this.dictionaryEntry, this.entryScore);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("dictionaryEntry", this.dictionaryEntry)
-                .add("sourceEngine", this.sourceEngine)
                 .add("entryScore", this.entryScore)
                 .toString();
     }

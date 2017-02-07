@@ -34,7 +34,7 @@ import java.io.Serializable;
  */
 public class QueryPerformanceStatistics implements Serializable {
 
-    private static final long serialVersionUID = -7408606610412828097L;
+    private static final long serialVersionUID = 5085400308846057606L;
 
     long totalDuration;
 
@@ -42,11 +42,13 @@ public class QueryPerformanceStatistics implements Serializable {
 
     long queryPhaseDuration;
 
+    long collectPhaseDuration;
+
     long groupPhaseDuration;
 
-    long orderPhaseDuration;
+    long mergePhaseDuration;
 
-    long collectPhaseDuration;
+    long orderPhaseDuration;
 
     public long getCollectPhaseDuration() {
         return this.collectPhaseDuration;
@@ -84,6 +86,15 @@ public class QueryPerformanceStatistics implements Serializable {
         return this;
     }
 
+    public long getMergePhaseDuration() {
+        return this.mergePhaseDuration;
+    }
+
+    public QueryPerformanceStatistics setMergePhaseDuration(long mergePhaseDuration) {
+        this.mergePhaseDuration = mergePhaseDuration;
+        return this;
+    }
+
     public long getQueryPhaseDuration() {
         return this.queryPhaseDuration;
     }
@@ -108,9 +119,10 @@ public class QueryPerformanceStatistics implements Serializable {
                 .add("totalDuration", this.totalDuration)
                 .add("planningPhaseDuration", this.planningPhaseDuration)
                 .add("queryPhaseDuration", this.queryPhaseDuration)
-                .add("groupPhaseDuration", this.groupPhaseDuration)
-                .add("orderPhaseDuration", this.orderPhaseDuration)
                 .add("collectPhaseDuration", this.collectPhaseDuration)
+                .add("groupPhaseDuration", this.groupPhaseDuration)
+                .add("mergePhaseDuration", this.mergePhaseDuration)
+                .add("orderPhaseDuration", this.orderPhaseDuration)
                 .toString();
     }
 }

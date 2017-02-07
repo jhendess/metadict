@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.order;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ImmutableBilingualEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
+import org.xlrnet.metadict.core.services.aggregation.group.ScoredResultEntry;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,45 +52,45 @@ public class LevenstheinRelevanceOrderStrategyTest {
     @Test
     public void testCalculateEntryScore() throws Exception {
         ResultEntry resultEntry = createResultEntry("huse", "hause");
-        assertEquals(0.5, strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
+        assertEquals(0.5, this.strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
     }
 
     @Test
     public void testCalculateEntryScore_inverted() throws Exception {
         ResultEntry resultEntry = createResultEntry("huse", "hase");
-        assertEquals(1.0, strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
+        assertEquals(1.0, this.strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
     }
 
     @Test
     public void testCalculateEntryScore_null() throws Exception {
         ResultEntry resultEntry = createResultEntry("hus", null);
-        assertEquals(0.3333, strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
+        assertEquals(0.3333, this.strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
     }
 
     @Test
     public void testCalculateEntryScore_uppercase() throws Exception {
         ResultEntry resultEntry = createResultEntry("hus", "HASE");
-        assertEquals(1.0, strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
+        assertEquals(1.0, this.strategy.calculateEntryScore(resultEntry, "hase"), 0.01);
     }
 
     @Test
     public void testSortResultGroups() throws Exception {
 
-        ResultEntry resultEntry_10 = createResultEntry("huse", "hase");
-        ResultEntry resultEntry_03 = createResultEntry("hus", null);
-        ResultEntry resultEntry_05 = createResultEntry("huse", "hause");
+        BilingualEntry resultEntry_10 = createResultEntry("huse", "hase");
+        BilingualEntry resultEntry_03 = createResultEntry("hus", null);
+        BilingualEntry resultEntry_05 = createResultEntry("huse", "hause");
 
-        ResultGroup resultGroup = new ResultGroupBuilder()
-                .addResultEntry(resultEntry_05)
-                .addResultEntry(resultEntry_03)
-                .addResultEntry(resultEntry_10)
+        Group<BilingualEntry> resultGroup = new GroupBuilder<BilingualEntry>()
+                .add(resultEntry_05)
+                .add(resultEntry_03)
+                .add(resultEntry_10)
                 .build();
 
-        Collection<ResultGroup> testGroups = Lists.<ResultGroup>newArrayList(resultGroup);
+        Collection<Group<BilingualEntry>> testGroups = Lists.<Group<BilingualEntry>>newArrayList(resultGroup);
         QueryRequest queryRequest = createQueryRequestMock("hase");
-        Collection<ResultGroup> sortedGroups = strategy.sortResultGroups(queryRequest, testGroups);
+        Collection<Group<ResultEntry>> sortedGroups = this.strategy.sortResultGroups(queryRequest, testGroups);
 
-        ResultGroup group = sortedGroups.iterator().next();
+        Group<ResultEntry> group = sortedGroups.iterator().next();
 
         List<ResultEntry> resultEntries = group.getResultEntries();
 
@@ -114,8 +117,7 @@ public class LevenstheinRelevanceOrderStrategyTest {
                 ImmutableBilingualEntry.builder()
                         .setInputObject(inputObjectMock)
                         .setOutputObject(outputObjectMock)
-                        .build(),
-                "", 1.0);
+                        .build(), 1.0);
 
     }
 

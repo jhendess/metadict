@@ -22,28 +22,30 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.api.aggegation;
+package org.xlrnet.metadict.core.api.aggregation;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.api.query.BilingualQueryResult;
-import org.xlrnet.metadict.core.api.query.QueryStepResult;
+import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.core.api.query.QueryRequest;
 
 import java.util.Collection;
 
 /**
- * A {@link GroupingStrategy} defines how multiple {@link BilingualQueryResult} objects
- * should be grouped.
+ * A {@link OrderStrategy} defines how multiple {@link Group} objects should be sorted.
  */
-public interface GroupingStrategy {
+public interface OrderStrategy {
 
     /**
-     * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
+     * Sort the entries in the given result groups with the internal strategy and return a new collection of {@link
+     * Group} objects in the specified order.
      *
-     * @param queryStepResults
-     *         An iterable of the query steps results.
-     * @return a collection of groups.
+     * @param queryRequest
+     *         The query request that was used to create the result groups.
+     * @param unorderedResultGroups
+     *         An unsorted collection of result groups.
+     * @return a sorted collection of groups.
      */
     @NotNull
-    Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults);
+    Collection<Group<ResultEntry>> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<BilingualEntry>> unorderedResultGroups);
 
 }

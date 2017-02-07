@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,49 +22,52 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.order;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.api.aggegation.OrderStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.OrderStrategy;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
+import org.xlrnet.metadict.core.services.aggregation.group.ScoredResultEntry;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Sort the result groups with a relevance score based on the Levensthein distance.
  */
 public class LevenstheinRelevanceOrderStrategy implements OrderStrategy {
 
-    /**
-     * Sort the entries in the given result groups with the internal strategy and return a collection of {@link
-     * ResultGroup} objects in the specified order. The original result set may be altered, although it is not
-     * necessary.
-     *
-     * @param unorderedResultGroups
-     *         An unsorted collection of result groups.
-     * @return a sorted collection of groups.
-     */
     @NotNull
     @Override
-    public Collection<ResultGroup> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> unorderedResultGroups) {
+    public Collection<Group<ResultEntry>> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<BilingualEntry>> unorderedResultGroups) {
         String queryString = queryRequest.getQueryString();
-        for (ResultGroup group : unorderedResultGroups) {
-            group.forEach(entry -> ((ScoredResultEntry) entry).setEntryScore(calculateEntryScore(entry, queryString)));
-            Collections.sort(group.getResultEntries());
+        Collection<Group<ResultEntry>> sortedGroups = new ArrayList<>(unorderedResultGroups.size());
+        for (Group<BilingualEntry> group : unorderedResultGroups) {
+            sortedGroups.add(sortGroup(group, queryString));
         }
-        return unorderedResultGroups;
+        return sortedGroups;
     }
 
-    double calculateEntryScore(@NotNull ResultEntry entry, @NotNull String queryString) {
+    private Group<ResultEntry> sortGroup(@NotNull Group<BilingualEntry> group, @NotNull String queryString) {
+        List<ResultEntry> sortedEntries = group.getResultEntries()
+                .stream()
+                .map(entry -> ScoredResultEntry.from(entry, calculateEntryScore(entry, queryString)))
+                .sorted()
+                .collect(Collectors.toList());
+
+        return new GroupBuilder<ResultEntry>().addAll(sortedEntries).setGroupIdentifier(group.getGroupIdentifier()).build();
+    }
+
+    double calculateEntryScore(@NotNull BilingualEntry entry, @NotNull String queryString) {
         int levenstheinInput = StringUtils.getLevenshteinDistance(entry.getSource().getGeneralForm().toLowerCase(), queryString.toLowerCase());
-        int levenstheinOutput = Integer.MAX_VALUE;
-        if (entry.getTarget() != null && entry.getTarget().getGeneralForm() != null) {
-            levenstheinOutput = StringUtils.getLevenshteinDistance(entry.getTarget().getGeneralForm().toLowerCase(), queryString.toLowerCase());
-        }
+        int levenstheinOutput = StringUtils.getLevenshteinDistance(entry.getTarget().getGeneralForm().toLowerCase(), queryString.toLowerCase());
         int levensthein = Integer.min(levenstheinInput, levenstheinOutput);
         return 1.0 - ((double) levensthein / (1 + (double) levensthein));
     }

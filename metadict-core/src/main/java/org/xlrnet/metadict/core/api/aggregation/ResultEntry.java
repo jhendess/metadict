@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2016 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.api.aggregation;
 
-import org.xlrnet.metadict.core.api.aggegation.OrderStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.api.query.BilingualEntry;
 
 /**
- * Use the {@link OrderType} to determine how the entries in each {@link ResultGroup} should be ordered.
+ * The {@link ResultEntry} class represents a single processed result entry from the query. This is basically like the
+ * a {@link BilingualEntry} but also provides information about the source of the entry and scoring information.
  */
-public enum OrderType {
-
-    /** Order entries based on their Levensthein distance from the original query. */
-    RELEVANCE(new LevenstheinRelevanceOrderStrategy()),
-
-    /** Just pass through the order as given by the engines. */
-    PASSTHROUGH(new PassthroughOrderStrategy());
-
-    private OrderStrategy orderStrategy;
-
-    OrderType(OrderStrategy orderStrategy) {
-        this.orderStrategy = orderStrategy;
-    }
-
-    public OrderStrategy getOrderStrategy() {
-        return this.orderStrategy;
-    }
+public interface ResultEntry extends BilingualEntry, RatedEntry {
 
 }

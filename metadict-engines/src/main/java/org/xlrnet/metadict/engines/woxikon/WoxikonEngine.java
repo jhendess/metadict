@@ -138,7 +138,7 @@ public class WoxikonEngine implements SearchEngine {
                 .collect(Collectors.toList());
 
         if (synonymNodes.isEmpty()) {
-            LOGGER.debug("No synonym entries found");
+            LOGGER.trace("No synonym entries found");
             return;
         }
 
@@ -156,7 +156,7 @@ public class WoxikonEngine implements SearchEngine {
                 );
                 groupBuilder.addSynonym(newSynonym);
             } else {
-                LOGGER.warn("Synonym group is null");
+                LOGGER.trace("Synonym group is null");
             }
         }
 
@@ -299,14 +299,14 @@ public class WoxikonEngine implements SearchEngine {
         Elements wordTypeNodes = element.getElementsByClass(CLASS_WORDTYPE);
 
         if (wordTypeNodes.isEmpty()) {
-            LOGGER.debug("No wordType node found - defaulting to {}", EntryType.UNKNOWN);
+            LOGGER.trace("No wordType node found - defaulting to {}", EntryType.UNKNOWN);
             return EntryType.UNKNOWN;
         }
 
         EntryType entryType = ENTRY_TYPE_MAP.getOrDefault(wordTypeNodes.first().text(), EntryType.UNKNOWN);
 
         if (entryType == EntryType.UNKNOWN) {
-            LOGGER.debug("Unable to resolve entry type \"{}\"", entryType);
+            LOGGER.trace("Unable to resolve entry type \"{}\"", entryType);
         }
 
         return entryType;

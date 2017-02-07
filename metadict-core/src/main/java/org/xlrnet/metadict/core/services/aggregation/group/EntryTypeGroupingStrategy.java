@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,32 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.group;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.query.BilingualEntry;
 import org.xlrnet.metadict.api.query.BilingualQueryResult;
-import org.xlrnet.metadict.core.api.aggegation.GroupingStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.api.query.EntryType;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.GroupingStrategy;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The most simple grouping strategy that merges the results of all queries in one group.
+ * Grouping strategy that creates a group for each used entrytype and groups the entries according to it.
  */
-public class NoneGroupingStrategy implements GroupingStrategy {
+public class EntryTypeGroupingStrategy implements GroupingStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryTypeGroupingStrategy.class);
 
     /**
-     * Group the given step results with the internal strategy and return a collection of {@link ResultGroup} objects.
+     * Group the given step results with the internal strategy and return a collection of {@link Group} objects.
      *
      * @param queryStepResults
      *         An iterable of the query steps results.
@@ -52,9 +55,9 @@ public class NoneGroupingStrategy implements GroupingStrategy {
      */
     @NotNull
     @Override
-    public Collection<ResultGroup> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
-        ResultGroupBuilder groupBuilder = new ResultGroupBuilder().setGroupIdentifier("All bilingual entries");
-        boolean hasAnyObject = false;
+    public Collection<Group<BilingualEntry>> groupResultSets(@NotNull Iterable<QueryStepResult> queryStepResults) {
+        Map<EntryType, GroupBuilder<BilingualEntry>> entryTypeGroupBuilderMap = new HashMap<>();
+        Collection<Group<BilingualEntry>> resultGroupCollection = new ArrayList<>();
 
         for (QueryStepResult stepResult : queryStepResults) {
             if (!(stepResult.getEngineQueryResult() instanceof BilingualQueryResult)) {
@@ -63,15 +66,21 @@ public class NoneGroupingStrategy implements GroupingStrategy {
             }
 
             BilingualQueryResult engineQueryResult = (BilingualQueryResult) stepResult.getEngineQueryResult();
-            for (BilingualEntry dictionaryEntry : engineQueryResult.getBilingualEntries()) {
-                hasAnyObject = true;
-                groupBuilder.addResultEntry(ScoredResultEntry.from(dictionaryEntry, stepResult.getQueryStep().getSearchEngineName(), 1.0));
+            for (BilingualEntry entry : engineQueryResult.getBilingualEntries()) {
+                EntryType entryType = entry.getEntryType();
+                if (!entryTypeGroupBuilderMap.containsKey(entryType)) {
+                    String groupIdentifier = (entryType != EntryType.UNKNOWN) ? entryType.getDisplayname() + "s" : "Unknown";
+                    GroupBuilder<BilingualEntry> groupBuilder = new GroupBuilder<BilingualEntry>().setGroupIdentifier(groupIdentifier);
+                    entryTypeGroupBuilderMap.put(entryType, groupBuilder);
+                }
+                entryTypeGroupBuilderMap.get(entryType).add(entry);
             }
         }
 
-        Collection<ResultGroup> resultGroups = new ArrayList<>();
-        if (hasAnyObject)
-            resultGroups.add(groupBuilder.build());
-        return resultGroups;
+        for (GroupBuilder<BilingualEntry> groupBuilder : entryTypeGroupBuilderMap.values()) {
+            resultGroupCollection.add(groupBuilder.build());
+        }
+
+        return resultGroupCollection;
     }
 }

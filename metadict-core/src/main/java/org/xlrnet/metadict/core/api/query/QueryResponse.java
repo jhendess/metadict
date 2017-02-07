@@ -25,9 +25,9 @@
 package org.xlrnet.metadict.core.api.query;
 
 import org.xlrnet.metadict.api.query.*;
-import org.xlrnet.metadict.core.api.aggegation.ResultEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 import org.xlrnet.metadict.core.services.query.QueryPerformanceStatistics;
 
 import java.util.Collection;
@@ -49,12 +49,12 @@ public interface QueryResponse {
 
     /**
      * Returns a view on the underlying bilingual result set based on the requested grouping mechanism. Each element of
-     * {@link ResultGroup} in the returned collection contains the {@link ResultEntry} objects that were matched to
+     * {@link Group} in the returned collection contains the {@link ResultEntry} objects that were matched to
      * this group.
      *
      * @return a view on the underlying result set based on the requested grouping mechanism.
      */
-    Collection<ResultGroup> getGroupedBilingualEntries();
+    Collection<Group<ResultEntry>> getGroupedBilingualEntries();
 
     /**
      * Returns the {@link GroupingType} that was used for grouping the resulting set.
@@ -105,7 +105,7 @@ public interface QueryResponse {
 
     /**
      * Returns an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query. Each
-     * {@link ResultEntry} object that can be obtained via {@link ResultGroup} must also be accessible through the
+     * {@link ResultEntry} object that can be obtained via {@link Group} must also be accessible through the
      * returned iterator of this method.
      *
      * @return an {@link Iterable} that can be used to iterate over all {@link ResultEntry} objects of the query.

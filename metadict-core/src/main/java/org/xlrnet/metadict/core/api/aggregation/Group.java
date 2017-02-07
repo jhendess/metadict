@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,28 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.api.aggegation;
+package org.xlrnet.metadict.core.api.aggregation;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * A rated entry provides information about the relevance score regarding the original query the user entered and the
- * source engine. This data can e.g. be used for sorting.
+ * A group of objects which belong to each other in some way.
  */
-public interface RatedEntry extends Comparable<ResultEntry> {
+public interface Group<T> extends Iterable<T>, Serializable {
 
     /**
-     * Returns the calculated relevance score for this entry. The score should be a value between 0.0 and 1.0
-     * (inclusive) where a value of 1.0 means best possible relevancy.
+     * Returns a string representation of the group identifier. For example if the group is based on entry types the
+     * identifier might be "NOUNS" for a group that contains only nouns.
      *
-     * @return the calculated relevance score for this entry.
+     * @return a string representation of the group identifier.
      */
-    double getEntryScore();
+    String getGroupIdentifier();
 
     /**
-     * Returns the name of the engine that produced this entry.
+     * Returns the entries of this group.
      *
-     * @return the name of the engine that produced this entry.
+     * @return the entries of this group.
      */
-    String getSourceEngine();
+    List<T> getResultEntries();
 }

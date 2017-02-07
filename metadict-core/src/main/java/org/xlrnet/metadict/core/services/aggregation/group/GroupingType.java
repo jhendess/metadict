@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,42 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.api.aggegation;
+package org.xlrnet.metadict.core.services.aggregation.group;
 
 import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.api.query.QueryRequest;
-
-import java.util.Collection;
+import org.xlrnet.metadict.core.api.aggregation.GroupingStrategy;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 
 /**
- * A {@link OrderStrategy} defines how multiple {@link ResultGroup} objects should be sorted.
+ * Use the {@link GroupingType} to determine how the {@link ResultEntry} should be grouped.
  */
-public interface OrderStrategy {
+public enum GroupingType {
+
+    /** Only one group with all results. */
+    NONE(new NoneGroupingStrategy()),
+
+    /** Group results based on the source engine. */
+    ENGINE(null),
+
+    /** Group results based on the used dictionary. */
+    DICTIONARY(new DictionaryGroupingStrategy()),
+
+    /** Group results based on the entry type of each result */
+    ENTRYTYPE(new EntryTypeGroupingStrategy());
+
+    private GroupingStrategy groupingStrategy;
+
+    GroupingType(GroupingStrategy groupingStrategy) {
+        this.groupingStrategy = groupingStrategy;
+    }
 
     /**
-     * Sort the entries in the given result groups with the internal strategy and return a new collection of {@link
-     * ResultGroup} objects in the specified order.
+     * Returns the strategy that should be used for this type of grouping.
      *
-     * @param queryRequest
-     *         The query request that was used to create the result groups.
-     * @param unorderedResultGroups
-     *         An unsorted collection of result groups.
-     * @return a sorted collection of groups.
+     * @return the strategy that should be used for this type of grouping.
      */
     @NotNull
-    Collection<ResultGroup> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> unorderedResultGroups);
-
+    public GroupingStrategy getGroupingStrategy() {
+        return this.groupingStrategy;
+    }
 }

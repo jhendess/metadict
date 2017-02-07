@@ -29,9 +29,10 @@ import org.xlrnet.metadict.api.query.DictionaryObject;
 import org.xlrnet.metadict.api.query.ExternalContent;
 import org.xlrnet.metadict.api.query.MonolingualEntry;
 import org.xlrnet.metadict.api.query.SynonymEntry;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
+import org.xlrnet.metadict.core.api.aggregation.Group;
+import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
-import org.xlrnet.metadict.core.services.aggregation.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 
 import java.util.Collection;
 
@@ -44,7 +45,7 @@ class QueryResponseBuilder {
 
     private Collection<ExternalContent> externalContents;
 
-    private Collection<ResultGroup> groupedBilingualResults;
+    private Collection<Group<ResultEntry>> groupedBilingualResults;
 
     private Collection<DictionaryObject> similarRecommendations;
 
@@ -72,7 +73,7 @@ class QueryResponseBuilder {
     }
 
     @NotNull
-    public QueryResponseBuilder setGroupedBilingualResults(@NotNull Collection<ResultGroup> groupedBilingualResults) {
+    public QueryResponseBuilder setGroupedBilingualResults(@NotNull Collection<Group<ResultEntry>> groupedBilingualResults) {
         this.groupedBilingualResults = groupedBilingualResults;
         return this;
     }

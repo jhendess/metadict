@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.aggregation;
+package org.xlrnet.metadict.core.services.aggregation.merge;
 
-import org.jetbrains.annotations.NotNull;
-import org.xlrnet.metadict.core.api.aggegation.OrderStrategy;
-import org.xlrnet.metadict.core.api.aggegation.ResultGroup;
-import org.xlrnet.metadict.core.api.query.QueryRequest;
+import org.xlrnet.metadict.api.query.BilingualEntry;
+import org.xlrnet.metadict.api.query.MonolingualEntry;
+import org.xlrnet.metadict.core.api.aggregation.MergeStrategy;
 
 import java.util.Collection;
 
 /**
- * This order strategy doesn't change the order of the incoming result groups..
+ * Very simple {@link MergeStrategy} which returns the exact same collection that was used as an input.
  */
-public class PassthroughOrderStrategy implements OrderStrategy {
+public class DummyMergeStrategy implements MergeStrategy {
 
-    /**
-     * Sort the entries in the given result groups with the internal strategy and return a new collection of {@link
-     * ResultGroup} objects in the specified order.
-     *
-     * @param queryRequest
-     *         The query request that was used to create the result groups.
-     * @param unorderedResultGroups
-     *         An unsorted collection of result groups.
-     * @return a sorted collection of groups.
-     */
-    @NotNull
     @Override
-    public Collection<ResultGroup> sortResultGroups(@NotNull QueryRequest queryRequest, @NotNull Collection<ResultGroup> unorderedResultGroups) {
-        return unorderedResultGroups;
+    public Collection<BilingualEntry> mergeBilingualEntries(Collection<BilingualEntry> entriesToMerge) {
+        return entriesToMerge;
+    }
+
+    @Override
+    public Collection<MonolingualEntry> mergeMonolingualEntries(Collection<MonolingualEntry> entriesToMerge) {
+        return entriesToMerge;
     }
 }
