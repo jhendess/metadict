@@ -43,15 +43,15 @@ public class ScoredResultEntry implements ResultEntry {
 
     private static final long serialVersionUID = 8973250201767143107L;
 
-    private final BilingualEntry dictionaryEntry;
+    private final BilingualEntry bilingualEntry;
 
-    private double entryScore;
+    private final double entryScore;
 
-    private ScoredResultEntry(BilingualEntry dictionaryEntry, double entryScore) {
-        checkNotNull(dictionaryEntry, "Wrapped BilingualEntry may not be null");
+    private ScoredResultEntry(BilingualEntry bilingualEntry, double entryScore) {
+        checkNotNull(bilingualEntry, "Wrapped BilingualEntry may not be null");
         checkArgument(entryScore >= 0.0 && entryScore <= 1.0, "Entry score must be in range [0.0;1.0]");
 
-        this.dictionaryEntry = dictionaryEntry;
+        this.bilingualEntry = bilingualEntry;
         this.entryScore = entryScore;
     }
 
@@ -68,6 +68,15 @@ public class ScoredResultEntry implements ResultEntry {
         return new ScoredResultEntry(dictionaryEntry, entryScore);
     }
 
+    /**
+     * Returns the original {@link BilingualEntry} that was wrapped by this object.
+     *
+     * @return the original {@link BilingualEntry} that was wrapped by this object.
+     */
+    public BilingualEntry unwrap() {
+        return this.bilingualEntry;
+    }
+
     @Override
     public int compareTo(ResultEntry o) {
         return Double.compare(o.getEntryScore(), this.entryScore);
@@ -79,7 +88,7 @@ public class ScoredResultEntry implements ResultEntry {
         if (!(o instanceof ScoredResultEntry)) return false;
         ScoredResultEntry that = (ScoredResultEntry) o;
         return Objects.equal(this.entryScore, that.entryScore) &&
-                Objects.equal(this.dictionaryEntry, that.dictionaryEntry);
+                Objects.equal(this.bilingualEntry, that.bilingualEntry);
     }
 
     /**
@@ -93,47 +102,33 @@ public class ScoredResultEntry implements ResultEntry {
         return this.entryScore;
     }
 
-    /**
-     * Overwrite the current relevance score.
-     *
-     * @param entryScore
-     *         The relevance score for this entry. Must be between 0.0 and 1.0 (inclusive).
-     * @return
-     */
-    public ScoredResultEntry setEntryScore(double entryScore) {
-        checkArgument(entryScore >= 0.0 && entryScore <= 1.0, "Entry score must be in range [0.0;1.0]");
-
-        this.entryScore = entryScore;
-        return this;
-    }
-
     @NotNull
     @Override
     public EntryType getEntryType() {
-        return this.dictionaryEntry.getEntryType();
+        return this.bilingualEntry.getEntryType();
     }
 
     @NotNull
     @Override
     public DictionaryObject getSource() {
-        return this.dictionaryEntry.getSource();
+        return this.bilingualEntry.getSource();
     }
 
     @NotNull
     @Override
     public DictionaryObject getTarget() {
-        return this.dictionaryEntry.getTarget();
+        return this.bilingualEntry.getTarget();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.dictionaryEntry, this.entryScore);
+        return Objects.hashCode(this.bilingualEntry, this.entryScore);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("dictionaryEntry", this.dictionaryEntry)
+                .add("bilingualEntry", this.bilingualEntry)
                 .add("entryScore", this.entryScore)
                 .toString();
     }

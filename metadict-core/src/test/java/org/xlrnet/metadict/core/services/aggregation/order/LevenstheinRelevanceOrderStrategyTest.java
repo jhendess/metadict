@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.services.aggregation.order;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.xlrnet.metadict.api.query.BilingualEntry;
@@ -76,14 +77,15 @@ public class LevenstheinRelevanceOrderStrategyTest {
     @Test
     public void testSortResultGroups() throws Exception {
 
-        BilingualEntry resultEntry_10 = createResultEntry("huse", "hase");
-        BilingualEntry resultEntry_03 = createResultEntry("hus", null);
-        BilingualEntry resultEntry_05 = createResultEntry("huse", "hause");
+        BilingualEntry resultEntry_10 = createBilingualEntry("huse", "hase");
+        BilingualEntry resultEntry_03 = createBilingualEntry("hus", null);
+        BilingualEntry resultEntry_05 = createBilingualEntry("huse", "hause");
 
         Group<BilingualEntry> resultGroup = new GroupBuilder<BilingualEntry>()
                 .add(resultEntry_05)
                 .add(resultEntry_03)
                 .add(resultEntry_10)
+                .setGroupIdentifier("")
                 .build();
 
         Collection<Group<BilingualEntry>> testGroups = Lists.<Group<BilingualEntry>>newArrayList(resultGroup);
@@ -94,9 +96,9 @@ public class LevenstheinRelevanceOrderStrategyTest {
 
         List<ResultEntry> resultEntries = group.getResultEntries();
 
-        assertEquals(resultEntry_10, resultEntries.get(0));
-        assertEquals(resultEntry_05, resultEntries.get(1));
-        assertEquals(resultEntry_03, resultEntries.get(2));
+        assertEquals(resultEntry_10, ((ScoredResultEntry) resultEntries.get(0)).unwrap());
+        assertEquals(resultEntry_05, ((ScoredResultEntry) resultEntries.get(1)).unwrap());
+        assertEquals(resultEntry_03, ((ScoredResultEntry) resultEntries.get(2)).unwrap());
     }
 
     private QueryRequest createQueryRequestMock(String requestString) {
@@ -106,19 +108,22 @@ public class LevenstheinRelevanceOrderStrategyTest {
     }
 
     private ResultEntry createResultEntry(String generalFormInput, String generalFormOutput) {
+        return ScoredResultEntry.from(
+                createBilingualEntry(generalFormInput, generalFormOutput), 1.0);
 
+    }
+
+    @NotNull
+    private BilingualEntry createBilingualEntry(String generalFormInput, String generalFormOutput) {
         DictionaryObject inputObjectMock = Mockito.mock(DictionaryObject.class);
         when(inputObjectMock.getGeneralForm()).thenReturn(generalFormInput);
 
         DictionaryObject outputObjectMock = Mockito.mock(DictionaryObject.class);
         when(outputObjectMock.getGeneralForm()).thenReturn(generalFormOutput);
-
-        return ScoredResultEntry.from(
-                ImmutableBilingualEntry.builder()
-                        .setInputObject(inputObjectMock)
-                        .setOutputObject(outputObjectMock)
-                        .build(), 1.0);
-
+        return ImmutableBilingualEntry.builder()
+                .setInputObject(inputObjectMock)
+                .setOutputObject(outputObjectMock)
+                .build();
     }
 
 }
