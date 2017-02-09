@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,30 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
+package org.xlrnet.metadict.core.api.aggregation;
 
-import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Merges similar elements of type {@code <T>} inside a collection together. The concrete implementation of the merger
+ * defines what will be considered similar and how the elements will be processed.
+ *
+ * @param <T>
+ *         the type of supported elements for merging
  */
-public class WebModule extends DropwizardAwareModule {
+public interface SimilarElementsMerger<T> {
 
     /**
-     * Configures a {@link Multibinder} via the exposed methods.
+     * Merges similar elements of type {@code <T>} inside the given collection together. It will be ensured by the
+     * caller, that all elements inside the given collection are either of type {@code <T>} or a compatible subclass.
+     * The returned collection must have either the same size or must be smaller than the input collection.
+     *
+     * @param collectionToMerge
+     *         T Collection of elements to merge.
+     * @return A collection of merged elements.
      */
-    @Override
-    protected void configure() {
-
-    }
+    @NotNull
+    Collection<T> merge(@NotNull Collection<T> collectionToMerge);
 }

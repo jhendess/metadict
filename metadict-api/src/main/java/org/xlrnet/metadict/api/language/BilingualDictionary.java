@@ -146,16 +146,17 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
 
         StringBuilder builder = new StringBuilder();
 
-        if (bidirectional)
+        if (bidirectional) {
             builder.append("<>");
-
+        }
         builder.append(input.getIdentifier());
-        if (!StringUtils.isEmpty(input.getDialect()))
+        if (!StringUtils.isEmpty(input.getDialect())) {
             builder.append("_").append(input.getDialect());
+        }
         builder.append("-").append(output.getIdentifier());
-        if (!StringUtils.isEmpty(output.getDialect()))
+        if (!StringUtils.isEmpty(output.getDialect())) {
             builder.append("_").append(output.getDialect());
-
+        }
         String query = builder.toString();
 
         return instanceMap.computeIfAbsent(query, (k) -> new BilingualDictionary(input, output, bidirectional));

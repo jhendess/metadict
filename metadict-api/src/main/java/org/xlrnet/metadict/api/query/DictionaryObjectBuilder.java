@@ -26,6 +26,7 @@ package org.xlrnet.metadict.api.query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.GrammaticalGender;
 import org.xlrnet.metadict.api.language.Language;
@@ -104,7 +105,8 @@ public class DictionaryObjectBuilder {
      * Adds all syllables of a given list to the syllables of this builder. This will not overwrite already added
      * syllables.
      *
-     * @param syllabification A list of syllables to add.
+     * @param syllabification
+     *         A list of syllables to add.
      */
     @NotNull
     public DictionaryObjectBuilder setSyllabification(@NotNull List<String> syllabification) {
@@ -121,7 +123,8 @@ public class DictionaryObjectBuilder {
      * Adds all syllables of a given list to the syllables of this builder. This will not overwrite already added
      * syllables.
      *
-     * @param syllabification A list of syllables to add.
+     * @param syllabification
+     *         A list of syllables to add.
      */
     @NotNull
     public DictionaryObjectBuilder setSyllabification(@NotNull String[] syllabification) {
@@ -144,8 +147,7 @@ public class DictionaryObjectBuilder {
      *         The new alternate form to add.
      */
     @NotNull
-    public DictionaryObjectBuilder addAlternateForm(@NotNull String alternateForm) {
-        checkArgument(StringUtils.isNotBlank(alternateForm));
+    public DictionaryObjectBuilder addAlternateForm(@Nullable String alternateForm) {
         this.alternateForms.add(alternateForm);
 
         return this;
@@ -158,10 +160,10 @@ public class DictionaryObjectBuilder {
      */
     @NotNull
     public DictionaryObject build() {
-        checkNotNull(language, "Language may not be null");
-        checkNotNull(generalForm, "General form may not be null");
+        checkNotNull(this.language, "Language may not be null");
+        checkNotNull(this.generalForm, "General form may not be null");
 
-        return new ImmutableDictionaryObject(language, generalForm, description, abbreviation, domain, pronunciation, grammaticalGender, additionalForms, meanings, syllabification, alternateForms);
+        return new ImmutableDictionaryObject(this.language, this.generalForm, this.description, this.abbreviation, this.domain, this.pronunciation, this.grammaticalGender, this.additionalForms, this.meanings, this.syllabification, this.alternateForms);
     }
 
     /**
@@ -174,9 +176,7 @@ public class DictionaryObjectBuilder {
      *         An abbreviation for the new object.
      */
     @NotNull
-    public DictionaryObjectBuilder setAbbreviation(String abbreviation) {
-        checkNotNull(abbreviation);
-
+    public DictionaryObjectBuilder setAbbreviation(@Nullable String abbreviation) {
         this.abbreviation = abbreviation;
         return this;
     }
@@ -190,7 +190,7 @@ public class DictionaryObjectBuilder {
      *         The value for the grammatical form.
      */
     @NotNull
-    public DictionaryObjectBuilder setAdditionalForm(GrammaticalForm key, String value) {
+    public DictionaryObjectBuilder setAdditionalForm(@NotNull GrammaticalForm key, @NotNull String value) {
         checkNotNull(key);
         checkNotNull(value);
 
@@ -205,7 +205,7 @@ public class DictionaryObjectBuilder {
      * @return The map of all irregular forms of the new object.
      */
     @NotNull
-    public DictionaryObjectBuilder setAdditionalForms(Map<GrammaticalForm, String> additionalForms) {
+    public DictionaryObjectBuilder setAdditionalForms(@NotNull Map<GrammaticalForm, String> additionalForms) {
         checkNotNull(additionalForms);
 
         this.additionalForms = additionalForms;
@@ -220,9 +220,7 @@ public class DictionaryObjectBuilder {
      *         A description for the new object.
      */
     @NotNull
-    public DictionaryObjectBuilder setDescription(String description) {
-        checkNotNull(description);
-
+    public DictionaryObjectBuilder setDescription(@Nullable String description) {
         this.description = description;
         return this;
     }
@@ -235,9 +233,7 @@ public class DictionaryObjectBuilder {
      *         The special domain the new object is used in.
      */
     @NotNull
-    public DictionaryObjectBuilder setDomain(String domain) {
-        checkNotNull(domain);
-
+    public DictionaryObjectBuilder setDomain(@Nullable String domain) {
         this.domain = domain;
         return this;
     }
@@ -261,7 +257,7 @@ public class DictionaryObjectBuilder {
      *         The general form of the new object.
      */
     @NotNull
-    public DictionaryObjectBuilder setGeneralForm(String generalForm) {
+    public DictionaryObjectBuilder setGeneralForm(@NotNull String generalForm) {
         checkNotNull(generalForm);
 
         this.generalForm = generalForm;
@@ -276,9 +272,7 @@ public class DictionaryObjectBuilder {
      *         The grammatical gender of the new object.
      */
     @NotNull
-    public DictionaryObjectBuilder setGrammaticalGender(GrammaticalGender grammaticalGender) {
-        checkNotNull(grammaticalGender);
-
+    public DictionaryObjectBuilder setGrammaticalGender(@Nullable GrammaticalGender grammaticalGender) {
         this.grammaticalGender = grammaticalGender;
         return this;
     }
@@ -290,11 +284,32 @@ public class DictionaryObjectBuilder {
      *         The language the new object is written in.
      */
     @NotNull
-    public DictionaryObjectBuilder setLanguage(Language language) {
+    public DictionaryObjectBuilder setLanguage(@NotNull Language language) {
         checkNotNull(language);
 
         this.language = language;
         return this;
     }
 
+    /**
+     * Sets the meanings of the new object.
+     *
+     * @param meanings
+     *         The meanings of the new object.
+     */
+    public DictionaryObjectBuilder setMeanings(List<String> meanings) {
+        this.meanings = meanings;
+        return this;
+    }
+
+    /**
+     * Sets the alternate forms of the new object.
+     *
+     * @param alternateForms
+     *         The alternate forms of the new object.
+     */
+    public DictionaryObjectBuilder setAlternateForms(List<String> alternateForms) {
+        this.alternateForms = alternateForms;
+        return this;
+    }
 }

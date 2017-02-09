@@ -24,16 +24,9 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-
 /**
  * Abstract implementation of {@link SearchEngineProvider} which can already be used as an injectable Guice module.
  */
-public abstract class AbstractSearchEngineProvider extends AbstractModule implements SearchEngineProvider {
+public abstract class AbstractSearchEngineProvider implements SearchEngineProvider {
 
-    @Override
-    protected void configure() {
-        Multibinder.newSetBinder(binder(), SearchEngineProvider.class).addBinding().to(getClass());
-    }
 }

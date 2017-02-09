@@ -33,33 +33,35 @@ import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
 import org.xlrnet.metadict.core.services.aggregation.merge.DummyMergeStrategy;
+import org.xlrnet.metadict.core.services.aggregation.merge.SimilarElementsMergeService;
 
 import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for merging of synonyms.
  */
 public class QueryServiceSynonymsTest {
 
-    final SynonymGroup synonymGroup1 = ImmutableSynonymGroup.builder()
+    private final SynonymGroup synonymGroup1 = ImmutableSynonymGroup.builder()
             .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "BASE_MEANING_1"))
             .addSynonym(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "SYNONYM_1"))
             .build();
 
-    final SynonymGroup synonymGroup2 = ImmutableSynonymGroup.builder()
+    private final SynonymGroup synonymGroup2 = ImmutableSynonymGroup.builder()
             .setBaseMeaning(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "BASE_MEANING_2"))
             .addSynonym(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "SYNONYM_2"))
             .build();
 
 
-    final SynonymEntry synonymEntry1 = ImmutableSynonymEntry.builder()
+    private final SynonymEntry synonymEntry1 = ImmutableSynonymEntry.builder()
             .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "TEST_WORD_1"))
             .addSynonymGroup(this.synonymGroup1)
             .build();
 
-    final QueryStepResult stepResult1 = new QueryStepResultBuilder()
+    private final QueryStepResult stepResult1 = new QueryStepResultBuilder()
             .setEngineQueryResult(
                     ImmutableBilingualQueryResult.builder()
                             .addSynonymEntry(this.synonymEntry1)
@@ -68,12 +70,12 @@ public class QueryServiceSynonymsTest {
             .setQueryStep(new BilingualQueryStep())
             .build();
 
-    final SynonymEntry synonymEntry2 = ImmutableSynonymEntry.builder()
+    private final SynonymEntry synonymEntry2 = ImmutableSynonymEntry.builder()
             .setBaseObject(ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "TEST_WORD_2"))
             .addSynonymGroup(this.synonymGroup2)
             .build();
 
-    final QueryStepResult stepResult2 = new QueryStepResultBuilder()
+    private final QueryStepResult stepResult2 = new QueryStepResultBuilder()
             .setEngineQueryResult(
                     ImmutableBilingualQueryResult.builder()
                             .addSynonymEntry(this.synonymEntry2)
@@ -93,7 +95,8 @@ public class QueryServiceSynonymsTest {
                 new EngineRegistryService(),
                 new NullQueryPlanningStrategy(),
                 queryPlanExecutionStrategyMock,
-                new DummyMergeStrategy());
+                new DummyMergeStrategy(),
+                mock(SimilarElementsMergeService.class));
     }
 
     @Test

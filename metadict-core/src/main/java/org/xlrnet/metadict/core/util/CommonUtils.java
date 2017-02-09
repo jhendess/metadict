@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.core.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -121,10 +123,38 @@ public class CommonUtils {
      * uppercase letters, numbers and the dash symbol ("-"). Identifiers may only begin with letters and are always
      * handled case-sensitive.
      *
-     * @param identifier The identifier to check
+     * @param identifier
+     *         The identifier to check
      * @return True if valid, otherwise false
      */
     public static boolean isValidStorageServiceName(@NotNull String identifier) {
         return STORAGE_SERVICE_NAME_PATTERN.matcher(identifier).matches();
+    }
+
+    /**
+     * Applies a given {@link Function} to all elements in a given {@link Iterable} and returns the first element of the
+     * function results which is not null. If no object is null or the {@link Iterable} is empty, null will be
+     * returned.
+     *
+     * @param iterable
+     *         The iterable to which the given function should be applied.
+     * @param extractor
+     *         The extractor function used for extracting the actual value from the iterable that should be checked for
+     *         null.
+     * @param <T>
+     *         Type of elements in the {@link Iterable}.
+     * @param <V>
+     *         Type that should be returned by the extractor function.
+     * @return The first non-null element or null, if all are null or the {@link Iterable} is empty.
+     */
+    @Nullable
+    public static <T, V> V getFirstNotNull(@NotNull Iterable<T> iterable, @NotNull Function<T, V> extractor) {
+        for (T t : iterable) {
+            V extractedValue = extractor.apply(t);
+            if (extractedValue != null) {
+                return extractedValue;
+            }
+        }
+        return null;
     }
 }

@@ -30,10 +30,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthBundle;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
-import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
-import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
-import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
-import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
+import org.xlrnet.metadict.core.CoreModule;
+import org.xlrnet.metadict.engines.SearchEnginesModule;
 import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 import org.xlrnet.metadict.web.middleware.app.MetadictServletModule;
 import org.xlrnet.metadict.web.middleware.app.WebModule;
@@ -75,12 +73,12 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
                 GuiceBundle.<MappedJsonConfiguration>builder()
                         .injectorFactory(new GovernatorInjectorFactory())
                         .bindConfigurationInterfaces()
-                        .modules(new WoxikonEngineProvider(),
-                                new HeinzelnisseEngineProvider(),
-                                new LeoEngineProvider(),
-                                new OrdbokEngineProvider(),
-                                new WebModule(),
-                                new MetadictServletModule())
+                        .modules(
+                                new CoreModule(),
+                                new SearchEnginesModule(),
+                                new MetadictServletModule(),
+                                new WebModule()
+                        )
                         .enableAutoConfig(getClass().getPackage().getName())
                         .build()
         );

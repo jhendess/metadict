@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,23 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
+package org.xlrnet.metadict.core.services.aggregation.merge;
 
-import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.core.api.aggregation.Merges;
+import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
+
+import java.util.Collection;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Default merger which does no merging at all.
  */
-public class WebModule extends DropwizardAwareModule {
+@Merges(Object.class)
+public class DefaultSimilarElementsMerger implements SimilarElementsMerger<Object> {
 
-    /**
-     * Configures a {@link Multibinder} via the exposed methods.
-     */
+    @NotNull
     @Override
-    protected void configure() {
-
+    public Collection<Object> merge(@NotNull Collection<Object> collectionToMerge) {
+        return collectionToMerge;
     }
 }

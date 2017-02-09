@@ -54,21 +54,21 @@ public class IntegrationTestRule extends ExternalResource {
     }
 
     public URI baseUri() {
-        return URI.create("http://localhost:" + testSupport.getLocalPort() + "/application");
+        return URI.create("http://localhost:" + this.testSupport.getLocalPort() + "/application");
     }
 
     public DropwizardTestSupport<MappedJsonConfiguration> getSupport() {
-        return testSupport;
+        return this.testSupport;
     }
 
     @Override
     protected void before() throws Throwable {
-        testSupport.before();
+        this.testSupport.before();
     }
 
     @Override
     protected void after() {
-        testSupport.after();
+        this.testSupport.after();
     }
 
     private class FakeApplication extends MetadictApplication {

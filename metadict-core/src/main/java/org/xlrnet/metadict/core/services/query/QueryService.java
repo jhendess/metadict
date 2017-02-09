@@ -36,6 +36,7 @@ import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.*;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
+import org.xlrnet.metadict.core.services.aggregation.merge.SimilarElementsMergeService;
 import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 
 import javax.inject.Inject;
@@ -73,12 +74,16 @@ public class QueryService {
      */
     private final MergeStrategy mergeStrategy;
 
+    /** Service for merging similar elements inside a collection. */
+    private final SimilarElementsMergeService mergeService;
+
     @Inject
-    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, MergeStrategy mergeStrategy) {
+    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, MergeStrategy mergeStrategy, SimilarElementsMergeService mergeService) {
         this.engineRegistryService = engineRegistryService;
         this.queryPlanningStrategy = queryPlanningStrategy;
         this.queryPlanExecutionStrategy = queryPlanExecutionStrategy;
         this.mergeStrategy = mergeStrategy;
+        this.mergeService = mergeService;
     }
 
     /**
@@ -209,7 +214,7 @@ public class QueryService {
         List<Group<BilingualEntry>> mergedBilingualEntryGroups = new ArrayList<>();
         for (Group<BilingualEntry> bilingualGroup : bilingualGroups) {
             GroupBuilder<BilingualEntry> groupBuilder = new GroupBuilder<BilingualEntry>().setGroupIdentifier(bilingualGroup.getGroupIdentifier());
-            groupBuilder.addAll(this.mergeStrategy.mergeBilingualEntries(bilingualGroup.getResultEntries()));
+            groupBuilder.addAll(this.mergeService.mergeElements(bilingualGroup.getResultEntries(), BilingualEntry.class));
             mergedBilingualEntryGroups.add(groupBuilder.build());
         }
 

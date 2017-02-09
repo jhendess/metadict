@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
+package org.xlrnet.metadict.engines;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import org.xlrnet.metadict.api.engine.SearchEngineProvider;
+import org.xlrnet.metadict.engines.heinzelnisse.HeinzelnisseEngineProvider;
+import org.xlrnet.metadict.engines.leo.LeoEngineProvider;
+import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
+import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Created by jhendess on 08.02.2017.
  */
-public class WebModule extends DropwizardAwareModule {
+public class SearchEnginesModule extends AbstractModule {
 
-    /**
-     * Configures a {@link Multibinder} via the exposed methods.
-     */
     @Override
     protected void configure() {
-
+        Multibinder<SearchEngineProvider> binder = Multibinder.newSetBinder(binder(), SearchEngineProvider.class);
+        binder.addBinding().to(HeinzelnisseEngineProvider.class);
+        binder.addBinding().to(LeoEngineProvider.class);
+        binder.addBinding().to(OrdbokEngineProvider.class);
+        binder.addBinding().to(WoxikonEngineProvider.class);
     }
 }

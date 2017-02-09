@@ -88,7 +88,7 @@ class StorageEngineProxy implements StorageService {
                 EventTimerTask<StorageService> timerTask = new EventTimerTask<>(StorageEventType.MAINTENANCE, eventListener, this.proxiedEngine);
                 timer.scheduleAtFixedRate(timerTask, intervalMilliseconds, intervalMilliseconds);
                 this.timers.add(timer);
-                LOGGER.debug("Installed timer in {} milliseconds interval on engine '{}'", intervalMilliseconds, this.proxiedEngine.getClass().getCanonicalName());
+                LOGGER.trace("Installed timer in {} milliseconds interval on engine '{}'", intervalMilliseconds, this.proxiedEngine.getClass().getCanonicalName());
             }
         }
     }
@@ -226,7 +226,7 @@ class StorageEngineProxy implements StorageService {
 
     private void stopTimers() {
         // TODO: Move to MessageBus
-        LOGGER.debug("Stopping attached timers ...");
+        LOGGER.trace("Stopping attached timers ...");
         for (Timer timer : this.timers) {
             timer.cancel();
         }
@@ -234,7 +234,7 @@ class StorageEngineProxy implements StorageService {
 
     void notifyListeners(StorageEventType eventType) {
         // TODO: Move to MessageBus
-        LOGGER.debug("Firing '{}' event to listeners", eventType);
+        LOGGER.trace("Firing '{}' event to listeners", eventType);
         for (ListenerConfiguration<StorageEventType, StorageEventListener> listenerConfiguration : this.listeners) {
             try {
                 if (eventType.equals(listenerConfiguration.getEventType())) {

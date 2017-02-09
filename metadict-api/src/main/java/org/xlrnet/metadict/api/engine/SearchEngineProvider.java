@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.api.engine;
 
-import com.google.inject.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
@@ -35,7 +34,7 @@ import org.xlrnet.metadict.api.exception.MetadictTechnicalException;
  * the SearchEngineProvider, it must be implemented as a Guice module which performs a multibinding on {@link
  * SearchEngineProvider}.
  */
-public interface SearchEngineProvider extends Module {
+public interface SearchEngineProvider {
 
     /**
      * Return a set of user-defined automatic test cases. See {@link AutoTestCase} for more information. To enable

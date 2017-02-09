@@ -64,14 +64,25 @@ public class ImmutableBilingualEntry extends AbstractEntry implements BilingualE
         return new BilingualEntryBuilder();
     }
 
+    /**
+     * Creates a new {@link BilingualEntry} from the given object with inverted source and target.
+     *
+     * @param bilingualEntry
+     *         The object to invert.
+     * @return an inverted {@link BilingualEntry}.
+     */
+    public static BilingualEntry invert(BilingualEntry bilingualEntry) {
+        return new ImmutableBilingualEntry(bilingualEntry.getTarget(), bilingualEntry.getSource(), bilingualEntry.getEntryType());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ImmutableBilingualEntry)) return false;
         ImmutableBilingualEntry that = (ImmutableBilingualEntry) o;
-        return Objects.equal(sourceObject, that.sourceObject) &&
-                Objects.equal(targetObject, that.targetObject) &&
-                Objects.equal(entryType, that.entryType);
+        return Objects.equal(this.sourceObject, that.sourceObject) &&
+                Objects.equal(this.targetObject, that.targetObject) &&
+                Objects.equal(this.entryType, that.entryType);
     }
 
     @NotNull
@@ -88,15 +99,15 @@ public class ImmutableBilingualEntry extends AbstractEntry implements BilingualE
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(sourceObject, targetObject, entryType);
+        return Objects.hashCode(this.sourceObject, this.targetObject, this.entryType);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("sourceObject", sourceObject)
-                .add("targetObject", targetObject)
-                .add("entryType", entryType)
+                .add("sourceObject", this.sourceObject)
+                .add("targetObject", this.targetObject)
+                .add("entryType", this.entryType)
                 .toString();
     }
 }
