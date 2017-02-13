@@ -37,7 +37,7 @@ import java.util.List;
 import static junit.framework.TestCase.*;
 
 /**
- * Created by xolor on 08.02.17.
+ * Tests for {@link BilingualEntryMerger}.
  */
 public class BilingualEntryMergerTest {
 
@@ -98,6 +98,63 @@ public class BilingualEntryMergerTest {
         assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
         assertTrue(candidates.contains(ImmutableList.of(entryC)));
         assertTrue(candidates.contains(ImmutableList.of(entryD)));
+    }
+
+    /**
+     * Contains one unknown and two other entryTypes. In this case, objects may not be treated as candidates of the same
+     * group.
+     */
+    @Test
+    public void mergeCandidate_unknownDouble() {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
+        DictionaryObject targetA = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "A");
+        BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.NOUN).build();
+
+        DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("A").setDescription("bla").build();
+        DictionaryObject targetB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm("A").setDescription("bla").build();
+        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.VERB).build();
+
+        DictionaryObject sourceC = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
+        DictionaryObject targetC = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "A");
+        BilingualEntry entryC = ImmutableBilingualEntry.builder().setInputObject(sourceC).setOutputObject(targetC).setEntryType(EntryType.UNKNOWN).build();
+
+        ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB, entryC);
+        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+
+        assertEquals(3, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA)));
+        assertTrue(candidates.contains(ImmutableList.of(entryB)));
+        assertTrue(candidates.contains(ImmutableList.of(entryC)));
+    }
+
+    @Test
+    public void mergeCandidate_unknown_noElse() {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
+        DictionaryObject targetA = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "A");
+        BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.UNKNOWN).build();
+
+        ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA);
+        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+
+        assertEquals(1, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA)));
+    }
+
+    @Test
+    public void mergeCandidate_unknown() {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
+        DictionaryObject targetA = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "A");
+        BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.NOUN).build();
+
+        DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("A").setDescription("bla").build();
+        DictionaryObject targetB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm("A").setDescription("bla").build();
+        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.UNKNOWN).build();
+
+        ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
+        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+
+        assertEquals(1, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
     }
 
     @Test

@@ -39,6 +39,27 @@ public enum EntryType {
 
     private String displayname;
 
+    private static EntryType[] ALL_BUT_UNKNOWN;
+
+    /**
+     * Returns all entry types except for {@link #UNKNOWN}.
+     */
+    public static EntryType[] allButUnknown() {
+        if (ALL_BUT_UNKNOWN == null) {
+            synchronized (UNKNOWN) {
+                ALL_BUT_UNKNOWN = new EntryType[values().length - 1];
+                int i = 0;
+                for (EntryType entryType : EntryType.values()) {
+                    if (entryType == UNKNOWN) {
+                        continue;
+                    }
+                    ALL_BUT_UNKNOWN[i++] = entryType;
+                }
+            }
+        }
+        return ALL_BUT_UNKNOWN;
+    }
+
     @NotNull
     public String getDisplayname() {
         return displayname;

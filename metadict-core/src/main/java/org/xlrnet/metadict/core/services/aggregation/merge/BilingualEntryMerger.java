@@ -26,11 +26,11 @@ package org.xlrnet.metadict.core.services.aggregation.merge;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xlrnet.metadict.api.language.Language;
@@ -61,26 +61,29 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
 
     private static final String JOINED_ATTRIBUTES_SEPARATOR = ", ";
 
-    private static Function<BilingualEntry, Triple<Pair<Language, Language>, EntryType, Pair<String, String>>> INDEX_FUNCTION = input -> {
+    /**
+     * Function which is used  for indexing {@link BilingualEntry} objects into a map.
+     */
+    @NotNull
+    private static MergeCandidateIdentifier buildIdentifierFromBilingualEntry(@NotNull BilingualEntry input) {
         ImmutablePair<Language, Language> languagePair = ImmutablePair.of(input.getSource().getLanguage(), input.getTarget().getLanguage());
-        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(input.getSource().getGeneralForm(), input.getTarget().getGeneralForm());
-        return Triple.of(languagePair, input.getEntryType(), generalFormPair);
-    };
+        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(simpleNormalize(input.getSource().getGeneralForm()), simpleNormalize(input.getTarget().getGeneralForm()));
+        return new MergeCandidateIdentifier(languagePair, input.getEntryType(), generalFormPair);
+    }
 
     @NotNull
     @Override
     public Collection<BilingualEntry> merge(@NotNull Collection<BilingualEntry> collectionToMerge) {
         Collection<BilingualEntry> normalizedInput = normalizeInput(collectionToMerge);
         Collection<Collection<BilingualEntry>> candidates = findCandidates(normalizedInput);
-        Collection<BilingualEntry> mergedElements = mergeCandidates(candidates);
-        return mergedElements;
+        return mergeCandidates(candidates);
     }
 
     /**
      * Normalizes the input collection and makes sure that all entries from the same dictionary are ordered the same.
      */
     @NotNull
-    protected Collection<BilingualEntry> normalizeInput(@NotNull Collection<BilingualEntry> collectionToMerge) {
+    Collection<BilingualEntry> normalizeInput(@NotNull Collection<BilingualEntry> collectionToMerge) {
         Collection<BilingualEntry> normalizedInput = new ArrayList<>(collectionToMerge.size());
         Map<Pair<Language, Language>, Language> languageOrderMap = new HashMap<>();
 
@@ -110,27 +113,76 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
      * Find potential candidates for merging by grouping elements with the same dictionary, entry type and general form.
      */
     @NotNull
-    protected Collection<Collection<BilingualEntry>> findCandidates(@NotNull Collection<BilingualEntry> normalizedInput) {
-        Multimap<Triple<Pair<Language, Language>, EntryType, Pair<String, String>>, BilingualEntry> candidatesMap = Multimaps.index(normalizedInput, INDEX_FUNCTION::apply);
+    Collection<Collection<BilingualEntry>> findCandidates(@NotNull Collection<BilingualEntry> normalizedInput) {
+        Multimap<MergeCandidateIdentifier, BilingualEntry> candidatesMap = buildMergeCandidateMultimap(normalizedInput);
+        Multimap<MergeCandidateIdentifier, BilingualEntry> knownMap = Multimaps.filterEntries(candidatesMap, this::toNullIfUnknown);
+        Multimap<MergeCandidateIdentifier, BilingualEntry> unknownMap = Multimaps.filterEntries(candidatesMap, this::toNullIfKnown);
         Collection<Collection<BilingualEntry>> candidates = new ArrayList<>(candidatesMap.keys().size());
-        for (Triple<Pair<Language, Language>, EntryType, Pair<String, String>> key : candidatesMap.asMap().keySet()) {
+
+        identifyUnknownEntryTypeCandidates(candidatesMap, knownMap, unknownMap, candidates);
+
+        for (MergeCandidateIdentifier key : knownMap.asMap().keySet()) {
             candidates.add(candidatesMap.get(key));
         }
-        // TODO: Try to associate objects with unknown entryTypes to objects with known entryType
+
         return candidates;
     }
 
     @NotNull
-    protected Collection<BilingualEntry> mergeCandidates(@NotNull Collection<Collection<BilingualEntry>> candidates) {
-        Collection<BilingualEntry> merged = new ArrayList<>(candidates.size());
-        for (Collection<BilingualEntry> candidate : candidates) {
-            merged.add(mergeCandidate(candidate));
+    private Multimap<MergeCandidateIdentifier, BilingualEntry> buildMergeCandidateMultimap(@NotNull Collection<BilingualEntry> normalizedInput) {
+        Multimap<MergeCandidateIdentifier, BilingualEntry> candidatesMap = MultimapBuilder.hashKeys(normalizedInput.size()).linkedListValues().build();
+        for (BilingualEntry bilingualEntry : normalizedInput) {
+            candidatesMap.put(buildIdentifierFromBilingualEntry(bilingualEntry), bilingualEntry);
         }
-        return merged;
+        return candidatesMap;
+    }
+
+    /**
+     * Try to detect the EntryType of unknown objects automatically by checking if an identifier with the same language
+     * and general forms parameter exists in another EntryType. If exactly one possible key could be found, then add the
+     * unknown entry to it as another candidate. If more than one candidates exist, treat the unknown object as actually
+     * unknown.
+     */
+    private void identifyUnknownEntryTypeCandidates(@NotNull Multimap<MergeCandidateIdentifier, BilingualEntry> candidatesMap,
+                                                    @NotNull Multimap<MergeCandidateIdentifier, BilingualEntry> knownMap,
+                                                    @NotNull Multimap<MergeCandidateIdentifier, BilingualEntry> unknownMap,
+                                                    @NotNull Collection<Collection<BilingualEntry>> candidates) {
+        for (MergeCandidateIdentifier unknownTypeKey : unknownMap.asMap().keySet()) {
+            Collection<BilingualEntry> values = candidatesMap.get(unknownTypeKey);
+            MergeCandidateIdentifier newCandidateIdentifier = null;
+            boolean isAdded = false;
+            for (EntryType entryType : EntryType.allButUnknown()) {
+                MergeCandidateIdentifier candidateIdentifier = new MergeCandidateIdentifier(unknownTypeKey.getLanguagePair(), entryType, unknownTypeKey.getGeneralForms());
+                if (knownMap.containsKey(candidateIdentifier)) {
+                    if (newCandidateIdentifier != null) {
+                        // If two possible EntryTypes exist, then abort automatic discovery and treat unknown as third
+                        candidates.add(values);
+                        isAdded = true;
+                        break;
+                    } else {
+                        newCandidateIdentifier = candidateIdentifier;
+                    }
+                }
+            }
+            // Treat the candidates either again as unknown or add it to the possible identified entryType group
+            if (newCandidateIdentifier == null) {
+                candidates.add(values);
+            } else if (!isAdded) {
+                knownMap.putAll(newCandidateIdentifier, values);
+            }
+        }
+    }
+
+    private boolean toNullIfKnown(@Nullable Map.Entry<MergeCandidateIdentifier, BilingualEntry> input) {
+        return (input != null ? input.getKey().getEntryType() : null) == EntryType.UNKNOWN;
+    }
+
+    private boolean toNullIfUnknown(@Nullable Map.Entry<MergeCandidateIdentifier, BilingualEntry> input) {
+        return (input != null ? input.getKey().getEntryType() : null) != EntryType.UNKNOWN;
     }
 
     @NotNull
-    protected BilingualEntry mergeCandidate(@NotNull Collection<BilingualEntry> candidate) {
+    BilingualEntry mergeCandidate(@NotNull Collection<BilingualEntry> candidate) {
         BilingualEntryBuilder builder = ImmutableBilingualEntry.builder();
         List<DictionaryObject> sourceObjects = new ArrayList<>(candidate.size());
         List<DictionaryObject> targetObjects = new ArrayList<>(candidate.size());
@@ -153,6 +205,15 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
     }
 
     @NotNull
+    private Collection<BilingualEntry> mergeCandidates(@NotNull Collection<Collection<BilingualEntry>> candidates) {
+        Collection<BilingualEntry> merged = new ArrayList<>(candidates.size());
+        for (Collection<BilingualEntry> candidate : candidates) {
+            merged.add(mergeCandidate(candidate));
+        }
+        return merged;
+    }
+
+    @NotNull
     private DictionaryObject mergeDictionaryObjects(@NotNull List<DictionaryObject> sourceObjects) {
         DictionaryObjectBuilder builder = ImmutableDictionaryObject.builder();
         builder.setLanguage(sourceObjects.get(0).getLanguage());
@@ -166,7 +227,7 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
         builder.setMeanings(mergeCollectionAttribute(sourceObjects, DictionaryObject::getMeanings));
         builder.setAlternateForms(mergeCollectionAttribute(sourceObjects, DictionaryObject::getAlternateForms));
 
-        // TODO: Include merging for additional forms, pronunciation and syylabification
+        // TODO: Include merging for additional forms, pronunciation and syllabification
 
         return builder.build();
     }
@@ -205,7 +266,7 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
     }
 
     @NotNull
-    private String simpleNormalize(@NotNull String collectedString) {
+    private static String simpleNormalize(@NotNull String collectedString) {
         return StringUtils.lowerCase(StringUtils.strip(collectedString));
     }
 }
