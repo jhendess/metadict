@@ -28,13 +28,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
-import org.xlrnet.metadict.core.api.aggregation.MergeStrategy;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
 import org.xlrnet.metadict.core.api.query.QueryPlanExecutionStrategy;
 import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
 import org.xlrnet.metadict.core.services.aggregation.merge.BilingualEntryMerger;
 import org.xlrnet.metadict.core.services.aggregation.merge.DefaultSimilarElementsMerger;
-import org.xlrnet.metadict.core.services.aggregation.merge.DummyMergeStrategy;
+import org.xlrnet.metadict.core.services.aggregation.merge.DictionaryObjectMerger;
+import org.xlrnet.metadict.core.services.aggregation.merge.MonolingualEntryMerger;
 import org.xlrnet.metadict.core.services.query.CachedLinearExecutionStrategy;
 import org.xlrnet.metadict.core.services.query.SimpleQueryPlanningStrategy;
 import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
@@ -58,11 +58,12 @@ public class CoreModule extends AbstractModule {
         // Configure strategies
         bind(QueryPlanExecutionStrategy.class).to(CachedLinearExecutionStrategy.class);
         bind(QueryPlanningStrategy.class).to(SimpleQueryPlanningStrategy.class);
-        bind(MergeStrategy.class).to(DummyMergeStrategy.class);
 
         // Configure mergers
         Multibinder<SimilarElementsMerger> similarElementsMergerBinder = Multibinder.newSetBinder(binder(), SimilarElementsMerger.class);
         similarElementsMergerBinder.addBinding().to(DefaultSimilarElementsMerger.class);
         similarElementsMergerBinder.addBinding().to(BilingualEntryMerger.class);
+        similarElementsMergerBinder.addBinding().to(MonolingualEntryMerger.class);
+        similarElementsMergerBinder.addBinding().to(DictionaryObjectMerger.class);
     }
 }

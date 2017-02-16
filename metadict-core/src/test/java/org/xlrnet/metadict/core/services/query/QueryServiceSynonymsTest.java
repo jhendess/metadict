@@ -32,7 +32,6 @@ import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
-import org.xlrnet.metadict.core.services.aggregation.merge.DummyMergeStrategy;
 import org.xlrnet.metadict.core.services.aggregation.merge.SimilarElementsMergeService;
 
 import java.util.Collection;
@@ -95,7 +94,6 @@ public class QueryServiceSynonymsTest {
                 new EngineRegistryService(),
                 new NullQueryPlanningStrategy(),
                 queryPlanExecutionStrategyMock,
-                new DummyMergeStrategy(),
                 mock(SimilarElementsMergeService.class));
     }
 

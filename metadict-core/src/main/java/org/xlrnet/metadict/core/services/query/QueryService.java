@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.aggregation.Group;
-import org.xlrnet.metadict.core.api.aggregation.MergeStrategy;
 import org.xlrnet.metadict.core.api.aggregation.ResultEntry;
 import org.xlrnet.metadict.core.api.query.*;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
@@ -69,20 +68,14 @@ public class QueryService {
      */
     private final QueryPlanExecutionStrategy queryPlanExecutionStrategy;
 
-    /**
-     * The strategy which should be used for merging similar objects in the result set.
-     */
-    private final MergeStrategy mergeStrategy;
-
     /** Service for merging similar elements inside a collection. */
     private final SimilarElementsMergeService mergeService;
 
     @Inject
-    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, MergeStrategy mergeStrategy, SimilarElementsMergeService mergeService) {
+    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, SimilarElementsMergeService mergeService) {
         this.engineRegistryService = engineRegistryService;
         this.queryPlanningStrategy = queryPlanningStrategy;
         this.queryPlanExecutionStrategy = queryPlanExecutionStrategy;
-        this.mergeStrategy = mergeStrategy;
         this.mergeService = mergeService;
     }
 
@@ -146,7 +139,7 @@ public class QueryService {
     }
 
     @NotNull
-    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<ResultEntry>> resultGroups, @NotNull List<DictionaryObject> similarRecommendations, @NotNull List<ExternalContent> externalContents, @NotNull QueryPerformanceStatistics performanceStatistics, @NotNull List<MonolingualEntry> monolingualEntries, @NotNull List<SynonymEntry> synonymEntries) {
+    private QueryResponse buildQueryResponse(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<ResultEntry>> resultGroups, @NotNull Collection<DictionaryObject> similarRecommendations, @NotNull Collection<ExternalContent> externalContents, @NotNull QueryPerformanceStatistics performanceStatistics, @NotNull Collection<MonolingualEntry> monolingualEntries, @NotNull Collection<SynonymEntry> synonymEntries) {
         return new QueryResponseBuilder()
                 .setQueryRequestString(queryRequest.getQueryString())
                 .setQueryPerformanceStatistics(performanceStatistics)
@@ -182,20 +175,21 @@ public class QueryService {
         Iterable<QueryStepResult> engineQueryResults = executeQueryPlan(queryPlan);
 
         long startCollectingTime = System.currentTimeMillis();
-        List<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
-        List<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
-        List<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
-        List<SynonymEntry> synonymEntries = collectSynonymEntries(engineQueryResults);
+        Collection<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
+        Collection<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
+        Collection<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
+        Collection<SynonymEntry> synonymEntries = collectSynonymEntries(engineQueryResults);
 
         long startGroupingTime = System.currentTimeMillis();
         Collection<Group<BilingualEntry>> bilingualGroups = groupQueryResults(queryRequest, engineQueryResults);
 
         long startMergingTime = System.currentTimeMillis();
         Collection<Group<BilingualEntry>> mergedBilingualEntries = mergeBilingualEntries(bilingualGroups);
-        monolingualEntries = (List<MonolingualEntry>) this.mergeStrategy.mergeMonolingualEntries(monolingualEntries);   // TODO: Casting is not good, see necessary refactorings in QueryUtil
+        monolingualEntries = mergeService.mergeElements(monolingualEntries, MonolingualEntry.class);
+        similarRecommendations = mergeService.mergeElements(similarRecommendations, DictionaryObject.class);
 
         long startOrderTime = System.currentTimeMillis();
-        Collection<Group<ResultEntry>> orderedResultGroups = orderQueryResults(queryRequest, mergedBilingualEntries);
+        Collection<Group<ResultEntry>> orderedResultGroups = orderBilingualEntries(queryRequest, mergedBilingualEntries);
 
         long finishTime = System.currentTimeMillis();
         performanceStatistics.setPlanningPhaseDuration(startPlanningTime - startQueryTime)
@@ -232,7 +226,7 @@ public class QueryService {
     }
 
     @NotNull
-    private Collection<Group<ResultEntry>> orderQueryResults(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<BilingualEntry>> groupsToOrder) {
+    private Collection<Group<ResultEntry>> orderBilingualEntries(@NotNull QueryRequest queryRequest, @NotNull Collection<Group<BilingualEntry>> groupsToOrder) {
         OrderType orderType = queryRequest.getQueryOrdering();
 
         LOGGER.trace("Sorting results for query {} using strategy {} ...", queryRequest, orderType.getOrderStrategy().getClass().getSimpleName());
