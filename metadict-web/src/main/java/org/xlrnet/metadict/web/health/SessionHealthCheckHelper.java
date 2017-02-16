@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.web.auth.services.UserService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 
@@ -69,7 +70,7 @@ public class SessionHealthCheckHelper {
     }
 
     @PreDestroy
-    public void stop() throws Exception {
+    public void stop() throws StorageBackendException {
         this.userService.removeUser(this.technicalUserName);
         LOGGER.debug("Removed technical user {} for session health check", this.technicalUserName);
     }

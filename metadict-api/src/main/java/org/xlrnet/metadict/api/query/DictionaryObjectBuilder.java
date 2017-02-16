@@ -24,20 +24,20 @@
 
 package org.xlrnet.metadict.api.query;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.api.language.GrammaticalForm;
-import org.xlrnet.metadict.api.language.GrammaticalGender;
-import org.xlrnet.metadict.api.language.Language;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xlrnet.metadict.api.language.GrammaticalForm;
+import org.xlrnet.metadict.api.language.GrammaticalGender;
+import org.xlrnet.metadict.api.language.Language;
 
 /**
  * Builder for creating new {@link DictionaryObject} objects.
@@ -311,5 +311,15 @@ public class DictionaryObjectBuilder {
     public DictionaryObjectBuilder setAlternateForms(List<String> alternateForms) {
         this.alternateForms = alternateForms;
         return this;
+    }
+
+    /**
+     * Sets the pronunciation of the new object.
+     *
+     * @param pronunciation
+     *         The pronunciation of the new object.
+     */
+    public void setPronunciation(String pronunciation) {
+        this.pronunciation = pronunciation;
     }
 }

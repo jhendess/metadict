@@ -24,7 +24,6 @@
 
 package org.xlrnet.metadict.core.services.aggregation.merge;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
@@ -33,10 +32,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.xlrnet.metadict.api.language.GrammaticalForm;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.aggregation.Merges;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
+import org.xlrnet.metadict.core.util.CollectionUtils;
 import org.xlrnet.metadict.core.util.CommonUtils;
 
 import java.util.*;
@@ -67,7 +68,7 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
     @NotNull
     private static MergeCandidateIdentifier buildIdentifierFromBilingualEntry(@NotNull BilingualEntry input) {
         ImmutablePair<Language, Language> languagePair = ImmutablePair.of(input.getSource().getLanguage(), input.getTarget().getLanguage());
-        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(simpleNormalize(input.getSource().getGeneralForm()), simpleNormalize(input.getTarget().getGeneralForm()));
+        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(CommonUtils.simpleNormalize(input.getSource().getGeneralForm()), CommonUtils.simpleNormalize(input.getTarget().getGeneralForm()));
         return new MergeCandidateIdentifier(languagePair, input.getEntryType(), generalFormPair);
     }
 
@@ -224,10 +225,18 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
         builder.setDescription(mergeAttribute(sourceObjects, DictionaryObject::getDescription));
         builder.setDomain(mergeAttribute(sourceObjects, DictionaryObject::getDomain));
         builder.setAbbreviation(mergeAttribute(sourceObjects, DictionaryObject::getAbbreviation));
-        builder.setMeanings(mergeCollectionAttribute(sourceObjects, DictionaryObject::getMeanings));
-        builder.setAlternateForms(mergeCollectionAttribute(sourceObjects, DictionaryObject::getAlternateForms));
+        builder.setPronunciation(mergeAttribute(sourceObjects, DictionaryObject::getPronunciation));
+        builder.setMeanings(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getMeanings, CommonUtils::simpleNormalize));
+        builder.setAlternateForms(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getAlternateForms, CommonUtils::simpleNormalize));
 
-        // TODO: Include merging for additional forms, pronunciation and syllabification
+        Map<GrammaticalForm, String> mergedAdditionalForms = CollectionUtils.divideAndMerge(
+                sourceObjects,
+                DictionaryObject::getAdditionalForms,
+                CommonUtils::simpleNormalize,
+                ((v, r) -> StringUtils.stripToEmpty(v) + (r != null ? ", " + r : ""))
+        );
+        builder.setAdditionalForms(mergedAdditionalForms);
+        setFirstNonEmptySyllabificationInBuilder(sourceObjects, builder);
 
         return builder.build();
     }
@@ -240,7 +249,7 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
             if (collectedString == null) {
                 continue;
             }
-            String normalized = simpleNormalize(collectedString);
+            String normalized = CommonUtils.simpleNormalize(collectedString);
             normalizedAndActualAttributes.putIfAbsent(normalized, collectedString);
         }
 
@@ -248,25 +257,14 @@ public class BilingualEntryMerger implements SimilarElementsMerger<BilingualEntr
         return StringUtils.stripToNull(joinedAttributes);
     }
 
-    @Nullable
-    private List<String> mergeCollectionAttribute(@NotNull List<DictionaryObject> sourceObjects, @NotNull Function<DictionaryObject, List<String>> collector) {
-        Map<String, String> normalizedAndActualAttributes = new HashMap<>(sourceObjects.size());
+    private void setFirstNonEmptySyllabificationInBuilder(@NotNull List<DictionaryObject> sourceObjects, @NotNull DictionaryObjectBuilder builder) {
         for (DictionaryObject sourceObject : sourceObjects) {
-            List<String> collected = collector.apply(sourceObject);
-            if (collected == null) {
-                continue;
-            }
-            for (String s : collected) {
-                String normalized = simpleNormalize(s);
-                normalizedAndActualAttributes.putIfAbsent(normalized, s);
+            List<String> syllabification = sourceObject.getSyllabification();
+            if (!syllabification.isEmpty()) {
+                builder.setSyllabification(syllabification);
+                break;
             }
         }
-
-        return ImmutableList.sortedCopyOf(normalizedAndActualAttributes.values());
     }
 
-    @NotNull
-    private static String simpleNormalize(@NotNull String collectedString) {
-        return StringUtils.lowerCase(StringUtils.strip(collectedString));
-    }
 }

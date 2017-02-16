@@ -27,8 +27,7 @@ package org.xlrnet.metadict.core.services.aggregation.merge;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import org.xlrnet.metadict.api.language.GrammaticalGender;
-import org.xlrnet.metadict.api.language.Language;
+import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
 
 import java.util.Collection;
@@ -159,6 +158,8 @@ public class BilingualEntryMergerTest {
 
     @Test
     public void mergeCandidate() throws Exception {
+        String[] syllabification = {"Hund"};
+
         DictionaryObject candidateSourceA = ImmutableDictionaryObject.builder()
                 .setLanguage(Language.GERMAN)
                 .setGeneralForm("Hund")
@@ -167,6 +168,8 @@ public class BilingualEntryMergerTest {
                 .setAbbreviation("H.")
                 .setDomain("Haushalt")
                 .setMeanings(ImmutableList.of("Haustier", "Hund"))
+                .setAdditionalForm(new NounForm(GrammaticalCase.NOMINATIVE, GrammaticalNumber.PLURAL, GrammaticalGender.MASCULINE), "Hunde")
+                .setAdditionalForm(new NounForm(GrammaticalCase.GENITIVE, GrammaticalNumber.SINGULAR, null), "Hunds")
                 .build();
 
         DictionaryObject candidateTargetA = ImmutableDictionaryObject.builder()
@@ -187,6 +190,9 @@ public class BilingualEntryMergerTest {
                 .setAbbreviation("hu.")
                 .setDomain("Zool.")
                 .setMeanings(ImmutableList.of("hund"))
+                .setAdditionalForm(new NounForm(GrammaticalCase.NOMINATIVE, GrammaticalNumber.PLURAL, GrammaticalGender.MASCULINE), "hunde")
+                .setAdditionalForm(new NounForm(GrammaticalCase.GENITIVE, GrammaticalNumber.SINGULAR, null), "Hundes")
+                .setSyllabification(syllabification)
                 .build();
 
         DictionaryObject candidateTargetB = ImmutableDictionaryObject.builder()
@@ -213,6 +219,11 @@ public class BilingualEntryMergerTest {
                 .setAbbreviation("hu., H.")
                 .setDomain("Haushalt, Zool.")
                 .setMeanings(ImmutableList.of("Haustier", "Hund"))
+                // Normalized duplicates should be reduced
+                .setAdditionalForm(new NounForm(GrammaticalCase.NOMINATIVE, GrammaticalNumber.PLURAL, GrammaticalGender.MASCULINE), "Hunde")
+                // Additional values should be merged
+                .setAdditionalForm(new NounForm(GrammaticalCase.GENITIVE, GrammaticalNumber.SINGULAR, null), "Hundes, Hunds")
+                .setSyllabification(syllabification)
                 .build();
 
         DictionaryObject expectedTarget = ImmutableDictionaryObject.builder()

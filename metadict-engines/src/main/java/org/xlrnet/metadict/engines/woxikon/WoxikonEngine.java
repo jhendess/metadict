@@ -190,17 +190,18 @@ public class WoxikonEngine implements SearchEngine {
         }
     }
 
-    private Language determineLanguageFromElement(Language currentLanguage, Element node) {
+    private Language determineLanguageFromElement(Language lastLanguage, Element node) {
         Set<String> classNames = node.classNames();
         classNames.remove("flagicon");
+        Language newLanguage = lastLanguage;
         for (String className : classNames) {
             Language candidate = Language.getExistingLanguageById(className);
             if (candidate != null) {
-                currentLanguage = candidate;
+                newLanguage = candidate;
                 break;
             }
         }
-        return currentLanguage;
+        return newLanguage;
     }
 
     private void processTranslationTable(@NotNull String queryString, @NotNull Document document, @NotNull BilingualQueryResultBuilder resultBuilder, @NotNull Language sourceLanguage, @NotNull Language targetLanguage) {

@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -156,5 +157,10 @@ public class CommonUtils {
             }
         }
         return null;
+    }
+
+    @NotNull
+    public static String simpleNormalize(@NotNull String collectedString) {
+        return StringUtils.lowerCase(StringUtils.strip(collectedString));
     }
 }
