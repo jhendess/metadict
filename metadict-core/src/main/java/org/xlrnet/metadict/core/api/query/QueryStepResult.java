@@ -55,9 +55,9 @@ public interface QueryStepResult extends Serializable {
     String getErrorMessage();
 
     /**
-     * Returns the time that the attached {@link AbstractQueryStep} took in milliseconds.
+     * Returns the time that the attached {@link AbstractQueryStep} took in nanoseconds.
      *
-     * @return the time that the attached {@link AbstractQueryStep} took in milliseconds.
+     * @return the time that the attached {@link AbstractQueryStep} took in nanoseconds.
      */
     long getExecutionTime();
 

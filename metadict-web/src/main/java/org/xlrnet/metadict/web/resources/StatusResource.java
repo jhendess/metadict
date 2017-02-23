@@ -24,7 +24,7 @@
 
 package org.xlrnet.metadict.web.resources;
 
-import org.xlrnet.metadict.core.services.status.SystemStatusService;
+import org.xlrnet.metadict.core.services.foundation.SystemStatusService;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 
 import javax.inject.Inject;

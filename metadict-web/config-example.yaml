@@ -32,7 +32,7 @@ server:
    #
    adminConnectors:
    - type: http
-     port: 8081
+     port: 8091
 
 #
 # Configuration of the storage subsystem

@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.core.services.query;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,7 +38,9 @@ import org.xlrnet.metadict.core.services.aggregation.group.GroupBuilder;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 import org.xlrnet.metadict.core.services.aggregation.merge.SimilarElementsMergeService;
 import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
+import org.xlrnet.metadict.core.services.foundation.MetricsService;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,12 +74,25 @@ public class QueryService {
     /** Service for merging similar elements inside a collection. */
     private final SimilarElementsMergeService mergeService;
 
+    /**
+     * Service for collecting metrics.
+     */
+    private final MetricsService metricsService;
+
+    private MetricRegistry phaseRegistry;
+
     @Inject
-    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, SimilarElementsMergeService mergeService) {
+    public QueryService(EngineRegistryService engineRegistryService, QueryPlanningStrategy queryPlanningStrategy, QueryPlanExecutionStrategy queryPlanExecutionStrategy, SimilarElementsMergeService mergeService, MetricsService metricsService) {
         this.engineRegistryService = engineRegistryService;
         this.queryPlanningStrategy = queryPlanningStrategy;
         this.queryPlanExecutionStrategy = queryPlanExecutionStrategy;
         this.mergeService = mergeService;
+        this.metricsService = metricsService;
+    }
+
+    @PostConstruct
+    private void initialize() {
+        phaseRegistry = metricsService.getRegistryByName(QueryService.class, "phase");
     }
 
     /**
@@ -167,31 +183,31 @@ public class QueryService {
         QueryPerformanceStatistics performanceStatistics = new QueryPerformanceStatistics();
         validateQueryRequest(queryRequest);
 
-        long startPlanningTime = System.currentTimeMillis();
+        long startPlanningTime = System.nanoTime();
         QueryPlan queryPlan = prepareQueryPlan(queryRequest);
         // TODO: validate query plan
 
-        long startQueryTime = System.currentTimeMillis();
+        long startQueryTime = System.nanoTime();
         Iterable<QueryStepResult> engineQueryResults = executeQueryPlan(queryPlan);
 
-        long startCollectingTime = System.currentTimeMillis();
+        long startCollectingTime = System.nanoTime();
         Collection<DictionaryObject> similarRecommendations = collectSimilarRecommendations(engineQueryResults);
         Collection<ExternalContent> externalContents = collectExternalContent(engineQueryResults);
         Collection<MonolingualEntry> monolingualEntries = collectMonolingualEntries(engineQueryResults);
         Collection<SynonymEntry> synonymEntries = collectSynonymEntries(engineQueryResults);
 
-        long startGroupingTime = System.currentTimeMillis();
+        long startGroupingTime = System.nanoTime();
         Collection<Group<BilingualEntry>> bilingualGroups = groupQueryResults(queryRequest, engineQueryResults);
 
-        long startMergingTime = System.currentTimeMillis();
+        long startMergingTime = System.nanoTime();
         Collection<Group<BilingualEntry>> mergedBilingualEntries = mergeBilingualEntries(bilingualGroups);
         monolingualEntries = mergeService.mergeElements(monolingualEntries, MonolingualEntry.class);
         similarRecommendations = mergeService.mergeElements(similarRecommendations, DictionaryObject.class);
 
-        long startOrderTime = System.currentTimeMillis();
+        long startOrderTime = System.nanoTime();
         Collection<Group<ResultEntry>> orderedResultGroups = orderBilingualEntries(queryRequest, mergedBilingualEntries);
 
-        long finishTime = System.currentTimeMillis();
+        long finishTime = System.nanoTime();
         performanceStatistics.setPlanningPhaseDuration(startPlanningTime - startQueryTime)
                 .setQueryPhaseDuration(startCollectingTime - startQueryTime)
                 .setCollectPhaseDuration(startGroupingTime - startCollectingTime)
@@ -200,7 +216,19 @@ public class QueryService {
                 .setOrderPhaseDuration(finishTime - startOrderTime)
                 .setTotalDuration(finishTime - startPlanningTime);
 
+        recordPhaseMetrics(performanceStatistics);
+
         return buildQueryResponse(queryRequest, orderedResultGroups, similarRecommendations, externalContents, performanceStatistics, monolingualEntries, synonymEntries);
+    }
+
+    private void recordPhaseMetrics(QueryPerformanceStatistics performanceStatistics) {
+        phaseRegistry.histogram("planning").update(performanceStatistics.getPlanningPhaseDuration());
+        phaseRegistry.histogram("query").update(performanceStatistics.getQueryPhaseDuration());
+        phaseRegistry.histogram("collect").update(performanceStatistics.getCollectPhaseDuration());
+        phaseRegistry.histogram("group").update(performanceStatistics.getGroupPhaseDuration());
+        phaseRegistry.histogram("merge").update(performanceStatistics.getMergePhaseDuration());
+        phaseRegistry.histogram("order").update(performanceStatistics.getOrderPhaseDuration());
+        phaseRegistry.histogram("total").update(performanceStatistics.getTotalDuration());
     }
 
     @NotNull

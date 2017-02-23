@@ -125,7 +125,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         String queryStepKey = currentQueryStep.toString();
         Optional<QueryStepResult> storedStepResult = readCachedValueFromStorage(queryStepKey);
 
-        if (storedStepResult != null && storedStepResult.isPresent()) {
+        if (storedStepResult.isPresent()) {
             return storedStepResult.get();
         }
 
@@ -177,7 +177,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
         LOGGER.debug("Executing query step {}", step);
 
         QueryStepResultBuilder stepResultBuilder = new QueryStepResultBuilder().setQueryStep(step);
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
 
         try {
             EngineQueryResult queryResult;
@@ -198,7 +198,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             }
             stepResultBuilder.setEngineQueryResult(queryResult);
 
-            long executionTime = System.currentTimeMillis() - startTime;
+            long executionTime = System.nanoTime() - startTime;
             stepResultBuilder.setExecutionTime(executionTime);
 
             LOGGER.debug("Executed query step {} in {} ms", step, executionTime);
@@ -207,7 +207,7 @@ public class CachedLinearExecutionStrategy implements QueryPlanExecutionStrategy
             LOGGER.error("Query step {} failed", step, e);
             stepResultBuilder.setFailedStep(true).setErrorMessage(e.getMessage())
                     .setEngineQueryResult(ImmutableBilingualQueryResult.EMPTY_QUERY_RESULT)
-                    .setExecutionTime(System.currentTimeMillis() - startTime);
+                    .setExecutionTime(System.nanoTime() - startTime);
         }
         return stepResultBuilder.build();
     }

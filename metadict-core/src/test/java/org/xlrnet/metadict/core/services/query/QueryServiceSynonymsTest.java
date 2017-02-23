@@ -33,6 +33,7 @@ import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.api.query.QueryResponse;
 import org.xlrnet.metadict.core.api.query.QueryStepResult;
 import org.xlrnet.metadict.core.services.aggregation.merge.SimilarElementsMergeService;
+import org.xlrnet.metadict.core.services.foundation.MetricsService;
 
 import java.util.Collection;
 
@@ -94,7 +95,8 @@ public class QueryServiceSynonymsTest {
                 new EngineRegistryService(),
                 new NullQueryPlanningStrategy(),
                 queryPlanExecutionStrategyMock,
-                mock(SimilarElementsMergeService.class));
+                mock(SimilarElementsMergeService.class),
+                mock(MetricsService.class));
     }
 
     @Test

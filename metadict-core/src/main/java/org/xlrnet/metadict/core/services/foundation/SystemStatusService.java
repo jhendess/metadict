@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.core.services.status;
+package org.xlrnet.metadict.core.services.foundation;
 
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
