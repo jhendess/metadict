@@ -54,7 +54,7 @@ public class LeoEngineProvider extends AbstractSearchEngineProvider {
                                                         .setLanguage(Language.ENGLISH)
                                                         .setAbbreviation("MRE")
                                                         .setGeneralForm("meal ready to eat")
-                                                        .setDomain("mil.")
+                                                        .setDomain("MIL.")
                                                         .build())
                                                 .setOutputObject(ImmutableDictionaryObject.builder()
                                                         .setLanguage(Language.GERMAN)
