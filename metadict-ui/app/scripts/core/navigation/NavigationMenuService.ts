@@ -42,11 +42,11 @@ module MetadictApp {
                 "title": "More",
                 "pages": [
                     /*{
-                        "title": "Account settings",
-                        "icon": "settings",
-                        "target": "/account",
-                        "loginRequired": true,
-                        "notLoggedIn": false
+                     "title": "Account settings",
+                     "icon": "settings",
+                     "target": "/account",
+                     "loginRequired": true,
+                     "notLoggedIn": false
                      },*/
                     {
                         "title": "Register / Login",
@@ -56,7 +56,14 @@ module MetadictApp {
                         "notLoggedIn": true
                     },
                     {
-                        "title": "About Metadict",
+                        "title": "Help",
+                        "icon": "help",
+                        "target": "/help",
+                        "loginRequired": false,
+                        "notLoggedIn": false
+                    },
+                    {
+                        "title": "About",
                         "icon": "info",
                         "target": "/about",
                         "loginRequired": false,

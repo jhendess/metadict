@@ -67,6 +67,8 @@ module MetadictApp {
                 templateUrl: "views/favorites.html"
             }).when("/about", {
                 templateUrl: "views/about.html"
+            }).when("/help", {
+                templateUrl: "views/help.html"
             }).when("/login", {
                 templateUrl: "views/login.html"
             }).when("/register", {
