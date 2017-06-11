@@ -67,6 +67,8 @@ public class OrdbokEngine implements SearchEngine {
 
     private static final String SYLLABLE_SEPARATOR_CHAR = "|";
 
+    private static final String BASE_URL = "http://ordbok.uib.no/perl/ordbok.cgi?OPP=";
+
     @NotNull
     @Override
     public MonolingualQueryResult executeMonolingualQuery(@NotNull String queryString, @NotNull Language queryLanguage) throws MetadictTechnicalException {
@@ -87,7 +89,7 @@ public class OrdbokEngine implements SearchEngine {
 
     @NotNull
     private String buildTargetUrl(@NotNull String searchRequest, boolean queryBokmaal, boolean queryNynorsk) throws UnsupportedEncodingException {
-        StringBuilder targetUrlBuilder = new StringBuilder("http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=")
+        StringBuilder targetUrlBuilder = new StringBuilder(BASE_URL)
                 .append(URLEncoder.encode(searchRequest, "UTF-8"))
                 .append("&");
 
