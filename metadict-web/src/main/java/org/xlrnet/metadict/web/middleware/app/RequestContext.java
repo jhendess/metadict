@@ -26,6 +26,7 @@ package org.xlrnet.metadict.web.middleware.app;
 
 import com.google.inject.servlet.RequestScoped;
 import org.jetbrains.annotations.NotNull;
+import org.xlrnet.metadict.api.auth.User;
 
 /**
  * Contains information about the request sent to the application.
@@ -33,8 +34,15 @@ import org.jetbrains.annotations.NotNull;
 @RequestScoped
 public class RequestContext {
 
+    public RequestContext(String clientIdentifier, String resourceId, User authenticatedUser) {
+        this.clientIdentifier = clientIdentifier;
+        this.resourceId = resourceId;
+    }
+
+    /** The client identifier (e.g. IP address) of the client that performed this request. */
     private String clientIdentifier;
 
+    /** Id of the requested resource. */
     private String resourceId;
 
     /**
@@ -43,18 +51,9 @@ public class RequestContext {
      * @return the client identifier of the client that performed this request.
      */
     @NotNull
+
     public String getClientIdentifier() {
         return clientIdentifier;
-    }
-
-    /**
-     * Sets the client identifier of the client that performed this request.
-     *
-     * @param clientIdentifier
-     *         the client identifier of the client that performed this request.
-     */
-    void setClientIdentifier(@NotNull String clientIdentifier) {
-        this.clientIdentifier = clientIdentifier;
     }
 
     /**
@@ -67,13 +66,4 @@ public class RequestContext {
         return resourceId;
     }
 
-    /**
-     * Sets the id of the current resource.
-     *
-     * @param resourceId
-     *         the client identifier of the client that performed this request.
-     */
-    public void setResourceId(@NotNull String resourceId) {
-        this.resourceId = resourceId;
-    }
 }

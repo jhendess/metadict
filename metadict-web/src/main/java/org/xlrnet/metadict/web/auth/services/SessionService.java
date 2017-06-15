@@ -1,6 +1,5 @@
 package org.xlrnet.metadict.web.auth.services;
 
-import org.dhatim.dropwizard.jwt.cookie.authentication.DefaultJwtCookiePrincipal;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookiePrincipal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
 import org.xlrnet.metadict.web.auth.entities.Credentials;
 
 import javax.inject.Inject;
@@ -42,7 +42,7 @@ public class SessionService {
      */
     @Nullable
     public JwtCookiePrincipal startSession(@NotNull Credentials credentials, @NotNull ContainerRequestContext requestContext) {
-        DefaultJwtCookiePrincipal principal = null;
+        JwtPrincipal principal = null;
         Optional<User> user = this.userService.authenticateWithPassword(credentials.getName(), credentials.getPassword());
 
         if (user.isPresent()) {
@@ -52,7 +52,7 @@ public class SessionService {
                 roles.add(role.getId());
             }
 
-            principal = new DefaultJwtCookiePrincipal(credentials.getName(), false, roles, null);
+            principal = new JwtPrincipal(credentials.getName(), false, roles, null);
             if (credentials.isStayLoggedIn()) {
                 principal.setPresistent(true);
             }

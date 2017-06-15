@@ -1,4 +1,4 @@
-package org.xlrnet.metadict.web.health;
+package org.xlrnet.metadict.web.middleware.health;
 
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.StringUtils;

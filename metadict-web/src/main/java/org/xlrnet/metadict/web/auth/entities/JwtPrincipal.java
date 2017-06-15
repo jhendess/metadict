@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,27 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
+package org.xlrnet.metadict.web.auth.entities;
 
-import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import io.jsonwebtoken.Claims;
+import org.dhatim.dropwizard.jwt.cookie.authentication.DefaultJwtCookiePrincipal;
+
+import java.util.Collection;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Custom implementation of {@link java.security.Principal} for Metadict based on {@link org.dhatim.dropwizard.jwt.cookie.authentication.DefaultJwtCookiePrincipal}.
  */
-public class WebModule extends DropwizardAwareModule {
+public class JwtPrincipal extends DefaultJwtCookiePrincipal {
 
-    /**
-     * Configures a {@link Multibinder} via the exposed methods.
-     */
-    @Override
-    protected void configure() {
-        
+    public JwtPrincipal(String name, boolean persistent, Collection<String> roles, Claims claims) {
+        super(name, persistent, roles, claims);
+    }
+
+    public JwtPrincipal(String name) {
+        super(name);
+    }
+
+    public JwtPrincipal(Claims claims) {
+        super(claims);
     }
 }

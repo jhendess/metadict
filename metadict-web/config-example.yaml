@@ -97,11 +97,6 @@ jwtCookieAuth:
   secretSeed: null
 
   #
-  # Indicates if the 'secure' flag must be set on cookies.
-  #
-  httpsOnlyCookie: false
-
-  #
   # Duration of volatile cookies (in ISO 8601 format).
   #
   sessionExpiryVolatile: PT30m

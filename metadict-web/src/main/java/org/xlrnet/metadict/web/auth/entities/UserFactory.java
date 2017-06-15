@@ -81,7 +81,7 @@ public class UserFactory {
 
     @NotNull
     private User internalNewUser(@NotNull String username, Set<Role> defaultRoles, Role... additionalRoles) {
-        String uuid = this.sequenceService.newUUIDString();
+        String uuid = sequenceService.newUUIDString();
         Set<Role> newRoles = new HashSet<>();
         newRoles.addAll(defaultRoles);
         Collections.addAll(newRoles, additionalRoles);

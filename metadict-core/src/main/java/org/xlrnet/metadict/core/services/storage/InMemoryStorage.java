@@ -87,6 +87,7 @@ public class InMemoryStorage implements StorageService {
         checkArguments(namespace, key);
         checkNotNull(value);
 
+        LOGGER.trace("Put namespace={}, key={}, value={}", namespace, key, value);
         this.backingMap.put(namespace, key, cloneValue(value));
 
         return value;
@@ -101,6 +102,8 @@ public class InMemoryStorage implements StorageService {
     @Override
     public boolean delete(@NotNull String namespace, @NotNull String key) throws StorageBackendException {
         checkArguments(namespace, key);
+
+        LOGGER.trace("Deleting namespace={}, key={}", namespace, key);
 
         if (!this.backingMap.containsKey(namespace, key)) {
             return false;
@@ -140,8 +143,9 @@ public class InMemoryStorage implements StorageService {
         checkArguments(namespace, key);
         checkNotNull(newValue);
 
-        if (!this.backingMap.containsKey(namespace, key))
+        if (!this.backingMap.containsKey(namespace, key)) {
             throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
+        }
 
         this.backingMap.put(namespace, key, cloneValue(newValue));
 

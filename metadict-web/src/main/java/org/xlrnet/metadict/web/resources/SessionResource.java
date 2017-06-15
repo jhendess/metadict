@@ -25,11 +25,11 @@
 package org.xlrnet.metadict.web.resources;
 
 import io.dropwizard.auth.Auth;
-import org.dhatim.dropwizard.jwt.cookie.authentication.DefaultJwtCookiePrincipal;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookiePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.web.api.ResponseContainer;
+import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
 import org.xlrnet.metadict.web.auth.entities.Credentials;
 import org.xlrnet.metadict.web.auth.services.SessionService;
 
@@ -85,7 +85,7 @@ public class SessionResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response testAuthenticatedResource(@Auth DefaultJwtCookiePrincipal principal) {
+    public Response testAuthenticatedResource(@Auth JwtPrincipal principal) {
         return Response.ok(ResponseContainer.fromSuccessful(principal)).build();
     }
 }

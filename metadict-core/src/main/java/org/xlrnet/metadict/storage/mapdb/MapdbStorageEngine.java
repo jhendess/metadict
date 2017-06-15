@@ -50,7 +50,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class MapdbStorageEngine implements StorageService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(MapdbStorageEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapdbStorageEngine.class);
 
     private final DBMaker dbMaker;
 
@@ -80,13 +80,13 @@ public class MapdbStorageEngine implements StorageService {
         checkArguments(namespace, key, value);
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
-        this.LOGGER.trace("Create namespace={}, key={}, value={}", namespace, key, value);
+        LOGGER.trace("Create namespace={}, key={}, value={}", namespace, key, value);
 
         if (namespaceMap.containsKey(key)) {
-            this.LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
+            LOGGER.debug("Creation failed: key {} exists already in namespace {}", key, namespace);
             throw new StorageOperationException("Creation failed: key already exists", namespace, key);
         } else {
-            this.LOGGER.debug("Created key {} in namespace {}", key, namespace);
+            LOGGER.debug("Created key {} in namespace {}", key, namespace);
             namespaceMap.put(key, value);
         }
 
@@ -100,7 +100,7 @@ public class MapdbStorageEngine implements StorageService {
 
         HTreeMap<String, Object> openNamespace = internalOpenNamespace(namespace);
 
-        this.LOGGER.trace("Putting namespace={}, key={}", namespace, key);
+        LOGGER.trace("Putting namespace={}, key={}", namespace, key);
         openNamespace.put(key, value);
 
         return value;
@@ -118,11 +118,11 @@ public class MapdbStorageEngine implements StorageService {
         checkArguments(namespace, key);
 
         HTreeMap<String, Object> openNamespace = internalOpenNamespace(namespace);
-        this.LOGGER.trace("Deleting namespace={}, key={}", namespace, key);
+        LOGGER.trace("Deleting namespace={}, key={}", namespace, key);
         boolean removeSuccessful = openNamespace.remove(namespace, key);
 
         if (!removeSuccessful) {
-            this.LOGGER.trace("Failed to delete namespace={}, key={}", namespace, key);
+            LOGGER.trace("Failed to delete namespace={}, key={}", namespace, key);
         }
 
         return removeSuccessful;
@@ -147,7 +147,7 @@ public class MapdbStorageEngine implements StorageService {
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
 
-        this.LOGGER.trace("Reading namespace={}, key={}", namespace, key);
+        LOGGER.trace("Reading namespace={}, key={}", namespace, key);
 
         try {
             T readValue = clazz.cast(namespaceMap.get(key));
@@ -164,7 +164,7 @@ public class MapdbStorageEngine implements StorageService {
 
         HTreeMap<String, Object> namespaceMap = internalOpenNamespace(namespace);
 
-        this.LOGGER.trace("Put namespace={}, key={}, value={}", namespace, key, newValue);
+        LOGGER.trace("Put namespace={}, key={}, value={}", namespace, key, newValue);
 
         if (!namespaceMap.containsKey(key)) {
             throw new StorageOperationException("Update failed: key doesn't exist", namespace, key);
@@ -177,12 +177,12 @@ public class MapdbStorageEngine implements StorageService {
 
     void shutdown() {
         commit();
-        this.LOGGER.info("Closing database ...");
+        LOGGER.info("Closing database ...");
         this.db.close();
     }
 
     void commit() {
-        this.LOGGER.debug("Committing database changes ...");
+        LOGGER.debug("Committing database changes ...");
         this.db.commit();
     }
 
@@ -197,7 +197,7 @@ public class MapdbStorageEngine implements StorageService {
         if (this.db.exists(namespace)) {
             return this.db.getHashMap(namespace);
         }
-        this.LOGGER.trace("Creating new namespace={}", namespace);
+        LOGGER.trace("Creating new namespace={}", namespace);
         DB.HTreeMapMaker mapMaker = this.db.createHashMap(namespace);
 
         for (Serializer serializer : this.serializers) {

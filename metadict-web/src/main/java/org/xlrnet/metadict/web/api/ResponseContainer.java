@@ -28,6 +28,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.ws.rs.core.Link;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A response container for wrapping any response objects.
  */
@@ -42,10 +46,14 @@ public class ResponseContainer<T> {
     @JsonProperty
     private final T data;
 
-    public ResponseContainer(ResponseStatus status, String message, T data) {
+    @JsonProperty
+    private final List<ResourceLink> links;
+
+    public ResponseContainer(ResponseStatus status, String message, T data, Link... links) {
         this.status = status;
         this.message = message;
         this.data = data;
+        this.links = buildLinks(links);
     }
 
     /**
@@ -55,8 +63,8 @@ public class ResponseContainer<T> {
      *         The data object to return.
      * @return A constructed response container object.
      */
-    public static ResponseContainer<Object> fromSuccessful(@NotNull Object data) {
-        return new ResponseContainer<>(ResponseStatus.OK, null, data);
+    public static ResponseContainer<Object> fromSuccessful(@NotNull Object data, Link... links) {
+        return new ResponseContainer<>(ResponseStatus.OK, null, data, links);
     }
 
     /**
@@ -66,8 +74,8 @@ public class ResponseContainer<T> {
      *         The status to set in the new container.
      * @return A constructed response container object.
      */
-    public static ResponseContainer<Object> withStatus(@NotNull ResponseStatus status) {
-        return new ResponseContainer<>(status, null, null);
+    public static ResponseContainer<Object> withStatus(@NotNull ResponseStatus status, Link... links) {
+        return new ResponseContainer<>(status, null, null, links);
     }
 
     @Nullable
@@ -85,5 +93,18 @@ public class ResponseContainer<T> {
         return this.status;
     }
 
+    public List<ResourceLink> getLinks() {
+        return links;
+    }
 
+    /**
+     * Builds the internal link-map for HATEOAS patterns.
+     */
+    private List<ResourceLink> buildLinks(Link[] links) {
+        List<ResourceLink> resourceLinks = new ArrayList<>();
+        for (Link link : links) {
+            resourceLinks.add(ResourceLink.fromJaxRsLink(link));
+        }
+        return resourceLinks;
+    }
 }

@@ -27,10 +27,14 @@ package org.xlrnet.metadict.web.middleware.app;
 
 import com.google.inject.servlet.RequestScoped;
 import org.apache.commons.lang3.StringUtils;
+import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.auth.services.UserService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.SecurityContext;
+import java.util.Optional;
 
 
 /**
@@ -39,8 +43,16 @@ import javax.servlet.http.HttpServletRequest;
 @RequestScoped
 public class RequestContextProvider implements Provider<RequestContext> {
 
+    private final HttpServletRequest request;
+
+
+    private final UserService userService;
+
     @Inject
-    private HttpServletRequest request;
+    public RequestContextProvider(HttpServletRequest request, SecurityContext securityContext, UserService userService) {
+        this.request = request;
+        this.userService = userService;
+    }
 
     /**
      * Creates a {@link RequestContext} for the current request.
@@ -49,12 +61,11 @@ public class RequestContextProvider implements Provider<RequestContext> {
      */
     @Override
     public RequestContext get() {
-        RequestContext requestContext = new RequestContext();
-        requestContext.setClientIdentifier(request.getRemoteAddr());
+        String clientIdentifier = request.getRemoteAddr();
         String pathInfo = request.getPathInfo();
         String resourceId = StringUtils.countMatches(pathInfo, "/") > 1 ? StringUtils.substring(pathInfo, 0, pathInfo.indexOf("/", 1)) : pathInfo;
         resourceId = StringUtils.substringAfter(resourceId, "/");
-        requestContext.setResourceId(resourceId);
-        return requestContext;
+        Optional<User> user = Optional.empty();
+        return new RequestContext(clientIdentifier, resourceId, user.orElse(null));
     }
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,44 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
+package org.xlrnet.metadict.web.history.entities;
 
-import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import org.xlrnet.metadict.core.api.query.QueryRequest;
+
+import java.io.Serializable;
+import java.time.Instant;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Single entry of te query log. .
  */
-public class WebModule extends DropwizardAwareModule {
+public class QueryLogEntry implements Serializable {
 
-    /**
-     * Configures a {@link Multibinder} via the exposed methods.
-     */
-    @Override
-    protected void configure() {
-        
+    private static final long serialVersionUID = -8686903484223403622L;
+
+    /** UUID of the query log entry. */
+    private final String id;
+
+    /** The original performed query request. */
+    private final QueryRequest queryRequest;
+
+    /** Time when the request was performed. */
+    private final Instant requestTime;
+
+    public QueryLogEntry(String id, QueryRequest queryRequest, Instant requestTime) {
+        this.id = id;
+        this.queryRequest = queryRequest;
+        this.requestTime = requestTime;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public QueryRequest getQueryRequest() {
+        return queryRequest;
+    }
+
+    public Instant getRequestTime() {
+        return requestTime;
     }
 }

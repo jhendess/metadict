@@ -22,62 +22,55 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.resources;
+package org.xlrnet.metadict.web;
 
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.xlrnet.metadict.web.AbstractIT;
+import org.jetbrains.annotations.NotNull;
+import org.junit.ClassRule;
 import org.xlrnet.metadict.web.auth.entities.Credentials;
 import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Cookie;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Test the complete user session lifecycle (registration, login, logout).
+ * Abstract class for integration tests.
  */
-public class SessionLifecycleIT extends AbstractIT {
+public class AbstractIT {
 
-    private static final String TEST_PASSWORD = "TEST_PASSWORD";
+    @ClassRule
+    public static final DropwizardAppRule<MappedJsonConfiguration> RULE =
+            new DropwizardAppRule<>(MetadictApplication.class, ResourceHelpers.resourceFilePath("integration-tests.yaml"));
 
-    private static final String TEST_USERNAME = "TEST_USERNAME";
+    private final WebTarget target = ClientBuilder.newClient().target(String.format("http://localhost:%d/api", RULE.getLocalPort()));
 
-    @Test
-    public void testSessionLifecycle() {
-        // Verify that no user is logged in:
-        Response sessionBeforeGet = getTarget().path("/session").request().get();
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), sessionBeforeGet.getStatus());
-
+    @NotNull
+    protected NewCookie registerAndLogin(String testUsername, String testPassword) {
         // Register new user:
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
+        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(testUsername).setPassword(testPassword).setConfirmPassword(testPassword);
         Response registrationResponse = getTarget().path("/register").request().post(Entity.json(registrationRequestData));
         assertEquals("User registration failed", Response.Status.ACCEPTED.getStatusCode(), registrationResponse.getStatus());
 
         // Login:
-        Credentials credentials = new Credentials(TEST_USERNAME, TEST_PASSWORD, false);
+        Credentials credentials = new Credentials(testUsername, testPassword, false);
         Response loginResponse = getTarget().path("/session").request().post(Entity.json(credentials));
         assertEquals("User login failed", Response.Status.OK.getStatusCode(), loginResponse.getStatus());
 
         NewCookie loginCookie = loginResponse.getCookies().get("sessionToken");
         assertTrue("Session cookie may not be empty", StringUtils.isNotEmpty(loginCookie.getValue()));
-
-        // Check if protected resource is accessible
-        Response sessionLoggedIn = getTarget().path("/session").request().cookie(loginCookie).get();
-        assertEquals(Response.Status.OK.getStatusCode(), sessionLoggedIn.getStatus());
-
-        // Logout:
-        Response deleteResponse = getTarget().path("/session").request().cookie(loginCookie).delete();
-        Cookie logoutCookie = deleteResponse.getCookies().get("sessionToken");
-        assertNotNull(logoutCookie);
-        assertEquals("", logoutCookie.getValue());
-
-        // Verify that no user is logged in:
-        Response sessionAfterLogout = getTarget().path("/session").request().get();
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), sessionAfterLogout.getStatus());
+        return loginCookie;
     }
 
+    protected WebTarget getTarget() {
+        return target;
+    }
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.health;
+package org.xlrnet.metadict.web.middleware.health;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.xlrnet.metadict.api.storage.StorageBackendException;

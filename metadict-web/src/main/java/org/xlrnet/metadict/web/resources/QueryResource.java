@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web.resources;
 
 import com.google.common.base.Enums;
+import io.dropwizard.auth.Auth;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,12 +41,15 @@ import org.xlrnet.metadict.core.services.query.QueryService;
 import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.api.ResponseStatus;
+import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
+import org.xlrnet.metadict.web.history.services.QueryLoggingService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * REST service for sending a query to the Metadict core.
@@ -70,14 +74,15 @@ public class QueryResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryResource.class);
 
     /** Injected query service. */
-    private QueryService queryService;
+    private final QueryService queryService;
 
-    public QueryResource() {
-    }
+    /** Injected query logging service. Stores all queries performed by a user. */
+    private final QueryLoggingService queryLoggingService;
 
     @Inject
-    public QueryResource(QueryService queryService) {
+    public QueryResource(QueryService queryService, QueryLoggingService queryLoggingService) {
         this.queryService = queryService;
+        this.queryLoggingService = queryLoggingService;
     }
 
     /**
@@ -112,8 +117,8 @@ public class QueryResource {
     @GET
     @Path("/query/{dictionaries}/{request}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response bidirectionalQuery(@PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryRequest, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
-        return internalExecuteQuery(dictionaryString, queryRequest, grouping, ordering, true);
+    public Response bidirectionalQuery(@Auth Optional<JwtPrincipal> principal, @PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryRequest, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
+        return internalExecuteQuery(principal, dictionaryString, queryRequest, grouping, ordering, true);
     }
 
     /**
@@ -154,11 +159,14 @@ public class QueryResource {
     @GET
     @Path("/uniquery/{dictionaries}/{request}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response unidirectionalQuery(@PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryString, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
-        return internalExecuteQuery(dictionaryString, queryString, grouping, ordering, false);
+    public Response unidirectionalQuery(@Auth Optional<JwtPrincipal> principal, @PathParam("dictionaries") String dictionaryString, @PathParam("request") String queryString, @QueryParam("groupBy") String grouping, @QueryParam("orderBy") String ordering) {
+        return internalExecuteQuery(principal, dictionaryString, queryString, grouping, ordering, false);
     }
 
-    private Response internalExecuteQuery(@NotNull String dictionaryString, @NotNull String queryString, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
+    /**
+     * Resolve dictionaries and finally execute the query.
+     */
+    private Response internalExecuteQuery(@Auth Optional<JwtPrincipal> principal, @NotNull String dictionaryString, @NotNull String queryString, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
         GroupingType groupingType = Enums.getIfPresent(GroupingType.class, StringUtils.stripToEmpty(grouping).toUpperCase()).or(GroupingType.NONE);
         OrderType orderType = Enums.getIfPresent(OrderType.class, StringUtils.stripToEmpty(ordering).toUpperCase()).or(OrderType.RELEVANCE);
         List<BilingualDictionary> dictionaries;
@@ -181,9 +189,12 @@ public class QueryResource {
                 .setGroupBy(groupingType)
                 .setOrderBy(orderType)
                 .build();
-        QueryResponse queryResponse = this.queryService.executeQuery(
-                queryRequest
-        );
+
+        if (principal.isPresent()) {
+            queryLoggingService.logQuery(principal, queryRequest);
+        }
+
+        QueryResponse queryResponse = this.queryService.executeQuery(queryRequest);
 
         return Response.ok(new ResponseContainer<>(ResponseStatus.OK, null, queryResponse)).build();
     }

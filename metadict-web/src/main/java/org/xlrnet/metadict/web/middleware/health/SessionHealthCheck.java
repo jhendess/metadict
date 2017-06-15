@@ -1,4 +1,4 @@
-package org.xlrnet.metadict.web.health;
+package org.xlrnet.metadict.web.middleware.health;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

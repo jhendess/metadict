@@ -32,6 +32,7 @@ import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthBundle;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
 import org.xlrnet.metadict.core.CoreModule;
 import org.xlrnet.metadict.engines.SearchEnginesModule;
+import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
 import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 import org.xlrnet.metadict.web.middleware.app.MetadictServletModule;
 import org.xlrnet.metadict.web.middleware.app.WebModule;
@@ -84,8 +85,9 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
         );
 
         // Enable JWT cookie authentication
-        bootstrap.addBundle(JwtCookieAuthBundle.getDefault().withConfigurationSupplier(
-                (Configuration c) -> ((MappedJsonConfiguration) c).getJwtCookieAuth())
+        bootstrap.addBundle(
+                new JwtCookieAuthBundle<>(JwtPrincipal.class, JwtPrincipal::getClaims, JwtPrincipal::new)
+                .withConfigurationSupplier((Configuration c) -> ((MappedJsonConfiguration) c).getJwtCookieAuth())
         );
 
         // Serve static content (i.e. app)

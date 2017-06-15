@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jakob Hendeß
+ * Copyright (c) 2017 Jakob Hendeß
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,21 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.middleware.app;
-
-import com.google.inject.multibindings.Multibinder;
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+package org.xlrnet.metadict.web.middleware.util;
 
 /**
- * Guice module for the Metadict Web Application.
+ * Class with various static constants.
  */
-public class WebModule extends DropwizardAwareModule {
+public class Constants {
 
-    /**
-     * Configures a {@link Multibinder} via the exposed methods.
-     */
-    @Override
-    protected void configure() {
-        
+    private Constants() {
+
     }
+
+    /** Name of the HATEOAS relation to the next page. */
+    public static final String NEXT_PAGE_LINK_NAME = "next";
+
+    /** Name of the HATEOAS relation to the previous page. */
+    public  static final String PREVIOUS_PAGE_LINK_NAME = "previous";
+
 }

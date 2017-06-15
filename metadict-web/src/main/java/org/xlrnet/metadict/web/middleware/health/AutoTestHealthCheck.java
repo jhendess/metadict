@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.health;
+package org.xlrnet.metadict.web.middleware.health;
 
 import org.xlrnet.metadict.core.services.autotest.AutoTestReport;
 import org.xlrnet.metadict.core.services.autotest.AutoTestService;
