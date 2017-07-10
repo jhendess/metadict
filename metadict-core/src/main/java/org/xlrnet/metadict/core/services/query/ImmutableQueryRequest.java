@@ -32,12 +32,15 @@ import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Implementation for {@link QueryRequest}.
  */
-public class ImmutableQueryRequest implements QueryRequest {
+public class ImmutableQueryRequest implements QueryRequest, Serializable {
+
+    private static final long serialVersionUID = -8365716036210376923L;
 
     private final String queryString;
 
