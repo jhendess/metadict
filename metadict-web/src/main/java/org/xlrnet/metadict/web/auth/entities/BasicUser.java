@@ -31,29 +31,40 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Implementation of {@link User} for basic authentication.
  */
+@Entity
+@Table(name = "user")
 public class BasicUser implements User {
 
     private static final long serialVersionUID = 1066514268054405602L;
 
-    private final String id;
+    @Id
+    @Column(name = "id", unique = true, nullable = false, length = 36)
+    private String id;
 
-    private final String name;
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
-    private final Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = UserRole.class)
+    @CollectionTable(name = "user_role")
+    @Column(name = "role")
+    private Set<Role> roles;
+
+    public BasicUser() {
+    }
 
     public BasicUser(@NotNull String id, @NotNull String name, @NotNull Set<Role> roles) {
         this.id = id;
         this.name = name;
         this.roles = new HashSet<>(roles.size());
-        for (Role role : roles) {
-            this.roles.add(role);
-        }
+        this.setRoles(roles);
     }
 
     @NotNull
@@ -72,6 +83,18 @@ public class BasicUser implements User {
     @Override
     public Set<Role> getRoles() {
         return UnmodifiableSet.decorate(this.roles);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles.addAll(roles);
     }
 
     @Override

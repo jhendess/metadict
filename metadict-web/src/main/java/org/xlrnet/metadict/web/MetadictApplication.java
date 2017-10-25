@@ -37,6 +37,8 @@ import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
 import org.xlrnet.metadict.web.middleware.app.MetadictServletModule;
 import org.xlrnet.metadict.web.middleware.app.WebModule;
 import org.xlrnet.metadict.web.middleware.bundles.SinglePageAppAssetsBundle;
+import org.xlrnet.metadict.web.middleware.db.DatabaseBundle;
+import org.xlrnet.metadict.web.middleware.db.DatabaseModule;
 import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
 import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
@@ -69,6 +71,10 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
 
     @Override
     public void initialize(Bootstrap<MappedJsonConfiguration> bootstrap) {
+        // Install Hibernate ORM
+        DatabaseBundle databaseBundle = new DatabaseBundle();
+        bootstrap.addBundle(databaseBundle);
+
         // Start Guicey container
         bootstrap.addBundle(
                 GuiceBundle.<MappedJsonConfiguration>builder()
@@ -78,6 +84,7 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
                                 new CoreModule(),
                                 new SearchEnginesModule(),
                                 new MetadictServletModule(),
+                                new DatabaseModule(databaseBundle),
                                 new WebModule()
                         )
                         .enableAutoConfig(getClass().getPackage().getName())

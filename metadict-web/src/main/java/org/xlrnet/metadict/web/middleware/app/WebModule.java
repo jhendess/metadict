@@ -37,6 +37,6 @@ public class WebModule extends DropwizardAwareModule {
      */
     @Override
     protected void configure() {
-        
+        // No configuration necessary
     }
 }
