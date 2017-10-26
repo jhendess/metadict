@@ -45,7 +45,9 @@ public class CommonUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtils.class);
 
-    /** Valid naming pattern for storage services. */
+    /**
+     * Valid naming pattern for storage services.
+     */
     private static final Pattern STORAGE_SERVICE_NAME_PATTERN = Pattern.compile("[A-z][A-z0-9\\-]*");
 
     private CommonUtils() {

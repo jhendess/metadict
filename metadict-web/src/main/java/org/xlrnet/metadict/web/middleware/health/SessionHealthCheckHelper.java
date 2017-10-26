@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.web.auth.services.UserService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
+import org.xlrnet.metadict.web.util.ConversionUtils;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Helper class for the session health check. Creates a random new technical user on startup and removes it on
@@ -59,7 +59,7 @@ public class SessionHealthCheckHelper {
     }
 
     private void prepareTechnicalUser() {
-        this.technicalUserPassword = DatatypeConverter.printHexBinary(CryptoUtils.generateRandom(16));
+        this.technicalUserPassword = ConversionUtils.byteArrayToHexString(CryptoUtils.generateRandom(16));
         this.technicalUserName = this.userService.createTechnicalUser(this.technicalUserPassword).getName();
 
         Server server = this.environment.getApplicationContext().getServer();

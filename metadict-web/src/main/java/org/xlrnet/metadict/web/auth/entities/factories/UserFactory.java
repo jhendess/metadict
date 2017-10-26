@@ -22,12 +22,15 @@
  * THE SOFTWARE.
  */
 
-package org.xlrnet.metadict.web.auth.entities;
+package org.xlrnet.metadict.web.auth.entities.factories;
 
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
+import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
+import org.xlrnet.metadict.web.auth.entities.BasicUser;
+import org.xlrnet.metadict.web.auth.entities.UserRole;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 
 import javax.inject.Inject;
@@ -86,5 +89,15 @@ public class UserFactory {
         newRoles.addAll(defaultRoles);
         Collections.addAll(newRoles, additionalRoles);
         return new BasicUser(uuid, username, newRoles);
+    }
+
+    /**
+     * Creates a new {@link User} from a persisted {@link PersistedUser} entity.
+     * @param persistedUser The persisted from which a user should be created.
+     * @return A new user instance.
+     */
+    @NotNull
+    public User fromPersistedEntity(@NotNull PersistedUser persistedUser) {
+        return new BasicUser(persistedUser.getId(), persistedUser.getName(), persistedUser.getRoles());
     }
 }

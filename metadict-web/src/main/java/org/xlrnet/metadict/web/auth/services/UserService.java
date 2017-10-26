@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.web.auth.services;
 
+import io.dropwizard.hibernate.UnitOfWork;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,18 +34,14 @@ import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageOperationException;
-import org.xlrnet.metadict.api.storage.StorageService;
-import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
-import org.xlrnet.metadict.web.auth.entities.BasicAuthData;
-import org.xlrnet.metadict.web.auth.entities.UserFactory;
+import org.xlrnet.metadict.web.auth.db.dao.UserAccess;
+import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
+import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
+import org.xlrnet.metadict.web.util.ConversionUtils;
 
 import javax.inject.Inject;
-import javax.xml.bind.DatatypeConverter;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -71,16 +68,20 @@ public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    private static ReentrantLock createUserLock = new ReentrantLock();
-
-    private final StorageService storageService;
-
+    /**
+     * Factory for creating new users.
+     */
     private final UserFactory userFactory;
 
+    /**
+     * Access component for user data.
+     */
+    private final UserAccess userAccess;
+
     @Inject
-    public UserService(@DefaultStorageService StorageService storageService, UserFactory userFactory) {
-        this.storageService = storageService;
+    public UserService(UserFactory userFactory, UserAccess userAccess) {
         this.userFactory = userFactory;
+        this.userAccess = userAccess;
     }
 
     @NotNull
@@ -97,31 +98,24 @@ public class UserService {
 
         User user = null;
 
-        // Lock user account creation to avoid race conditions
-        createUserLock.lock(); // TODO: Replace this with a more stable solution which supports better concurrency
+        Optional<User> userDataByName = findUserDataByName(username);
 
-        try {
-            Optional<User> userDataByName = findUserDataByName(username);
+        if (!userDataByName.isPresent()) {
+            LOGGER.debug("Creating new user {}", username);
+            user = userSupplier.apply(username);
 
-            if (!userDataByName.isPresent()) {
-                LOGGER.debug("Creating new user {}", username);
-                user = userSupplier.apply(username);
+            byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
+            String saltString = ConversionUtils.byteArrayToHexString(salt);
+            String hashedPassword = hashPassword(unhashedPassword, saltString);
 
-                byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
-                byte[] hashedPassword = hashPassword(unhashedPassword, salt);
+            PersistedUser persistedUser = new PersistedUser();
+            persistedUser.setId(user.getId());
+            persistedUser.setName(user.getName());
+            persistedUser.setRoles(user.getRoles());
+            persistedUser.setPassword(hashedPassword);
+            persistedUser.setSalt(saltString);
 
-                BasicAuthData basicAuthData = new BasicAuthData(hashedPassword, salt);
-
-                try {
-                    this.storageService.create(BASIC_AUTH_NAMESPACE, username, basicAuthData);
-                    this.storageService.create(GENERAL_USER_NAMESPACE, username, user);
-                    LOGGER.debug("Created new user {}", username);
-                } catch (StorageBackendException | StorageOperationException e) {
-                    LOGGER.error("Unexpected error while creating new user", e);
-                }
-            }
-        } finally {
-            createUserLock.unlock();
+            userAccess.persist(persistedUser);
         }
         return user;
     }
@@ -134,11 +128,12 @@ public class UserService {
      * @return A new technical user.
      */
     @NotNull
+    @UnitOfWork
     public User createTechnicalUser(@NotNull String unhashedPassword) {
         checkNotNull(unhashedPassword, "Password may not be null");
 
         byte[] bytes = CryptoUtils.generateRandom(TECHNICAL_USER_NAME_LENGTH);
-        String randomUserName = DatatypeConverter.printHexBinary(bytes);
+        String randomUserName = ConversionUtils.byteArrayToHexString(bytes);
         User user = internalCreateNewUser(randomUserName, unhashedPassword, (String u) -> this.userFactory.newTechnicalUser(u));
         if (user == null) {
             throw new MetadictRuntimeException("New technical user was null");
@@ -163,23 +158,18 @@ public class UserService {
 
         Optional<User> user = Optional.empty();
 
-        try {
-            Optional<BasicAuthData> hashedData = this.storageService.read(BASIC_AUTH_NAMESPACE, username, BasicAuthData.class);
-            if (hashedData.isPresent()) {
-                BasicAuthData basicAuthData = hashedData.get();
-                byte[] hashPassword = hashPassword(unhashedPassword, basicAuthData.getSalt());
-                if (Arrays.equals(basicAuthData.getHashedPassword(), hashPassword)) {
-                    LOGGER.debug("Successfully authenticated user {}", username);
-                    user = findUserDataByName(username);
-                } else {
-                    LOGGER.debug("Authentication failed for user {}", username);
-                }
+        Optional<PersistedUser> optionalPersistedUser = userAccess.findByName(username);
+        if (optionalPersistedUser.isPresent()) {
+            PersistedUser persistedUser = optionalPersistedUser.get();
+            String hashPassword = hashPassword(unhashedPassword, persistedUser.getSalt());
+            if (StringUtils.equals(persistedUser.getPassword(), hashPassword)) {
+                LOGGER.debug("Successfully authenticated user {}", username);
+                user = findUserDataByName(username);
             } else {
-                LOGGER.debug("No authentication data found for user {}", username);
+                LOGGER.debug("Authentication failed for user {}", username);
             }
-        } catch (StorageBackendException | StorageOperationException e) {
-            LOGGER.error("An unexpected error occured while trying to authenticate a user", e);
-            throw new MetadictRuntimeException(e);
+        } else {
+            LOGGER.debug("No authentication data found for user {}", username);
         }
 
         return user;
@@ -211,22 +201,12 @@ public class UserService {
      * @param username
      *         The name of the user to remove.
      * @return True if the user could be deleted, false if not.
-     * @throws StorageBackendException
-     *         Will be thrown if the deletion failed due to an error in the storage backend.
      */
     public boolean removeUser(@NotNull String username) throws StorageBackendException {
-        boolean result = false;
-        Optional<User> userDataByName = findUserDataByName(username);
+        boolean result = userAccess.deleteByName(username);
 
-        if (userDataByName.isPresent()) {
-            createUserLock.lock();  // TODO: Replace this with a more stable solution which supports better concurrency
-            try {
-                result = this.storageService.delete(BASIC_AUTH_NAMESPACE, username);
-                result &= this.storageService.delete(GENERAL_USER_NAMESPACE, username);
-                LOGGER.debug("Removed user {}", username);
-            } finally {
-                createUserLock.unlock();
-            }
+        if (result) {
+            LOGGER.info("Deleted user {}", username);
         } else {
             LOGGER.debug("Tried to remove non-existing user {}", username);
         }
@@ -243,18 +223,17 @@ public class UserService {
      */
     @NotNull
     public Optional<User> findUserDataByName(@NotNull String username) {
-        checkNotNull(username);
-
-        try {
-            return this.storageService.read(GENERAL_USER_NAMESPACE, username, User.class);
-        } catch (StorageBackendException | StorageOperationException e) {
-            LOGGER.error("An unexpected error occurred while trying to read user data", e);
-            throw new MetadictRuntimeException(e);
+        Optional<PersistedUser> userByName = userAccess.findByName(username);
+        if (userByName.isPresent()) {
+            PersistedUser persistedUser = userByName.get();
+            return Optional.of(userFactory.fromPersistedEntity(persistedUser));
         }
+        return Optional.empty();
     }
 
     @NotNull
-    byte[] hashPassword(@NotNull String unhashedPassword, @NotNull byte[] salt) {
-        return CryptoUtils.hashPassword(unhashedPassword.toCharArray(), salt, CryptoUtils.DEFAULT_ITERATIONS, CryptoUtils.DEFAULT_KEYLENGTH);
+    String hashPassword(@NotNull String unhashedPassword, @NotNull String salt) {
+        byte[] bytes = CryptoUtils.hashPassword(unhashedPassword.toCharArray(), ConversionUtils.hexStringToByteArray(salt), CryptoUtils.DEFAULT_ITERATIONS, CryptoUtils.DEFAULT_KEYLENGTH);
+        return ConversionUtils.byteArrayToHexString(bytes);
     }
 }

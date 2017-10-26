@@ -30,11 +30,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageService;
-import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
-import org.xlrnet.metadict.web.auth.entities.*;
+import org.xlrnet.metadict.web.auth.db.dao.UserAccess;
+import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
+import org.xlrnet.metadict.web.auth.entities.BasicUser;
+import org.xlrnet.metadict.web.auth.entities.Roles;
+import org.xlrnet.metadict.web.auth.entities.UserRole;
+import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
+import org.xlrnet.metadict.web.util.ConversionUtils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.Optional;
@@ -48,17 +52,17 @@ public class UserServiceTest {
 
     private static final String TEST_PASSWORD = "testPassword";
 
-    private StorageService storageService;
-
     private UserService userService;
 
     private UserFactory userFactory;
 
+    private UserAccess userAccess;
+
     @Before
     public void setup() {
-        this.storageService = spy(new InMemoryStorage());
         this.userFactory = new UserFactory(new SequenceService());
-        this.userService = spy(new UserService(this.storageService, this.userFactory));
+        this.userAccess = mock(UserAccess.class);
+        this.userService = spy(new UserService(this.userFactory, userAccess));
     }
 
     @Test
@@ -73,8 +77,7 @@ public class UserServiceTest {
         assertTrue("User must have REGULAR role", user.getRoles().contains(UserRole.REGULAR_USER));
         assertTrue("User id may not be empty", StringUtils.isNotEmpty(user.getId()));
 
-        verify(this.storageService).create(eq(UserService.BASIC_AUTH_NAMESPACE), anyString(), anyString());
-        verify(this.storageService).create(eq(UserService.GENERAL_USER_NAMESPACE), anyString(), anyString());
+        verify(this.userAccess).persist(any(PersistedUser.class));
     }
 
     @Test
@@ -88,8 +91,7 @@ public class UserServiceTest {
         assertTrue("User must have TECHNICAL role", user.getRoles().contains(UserRole.TECH_USER));
         assertTrue("User id may not be empty", StringUtils.isNotEmpty(user.getId()));
 
-        verify(this.storageService).create(eq(UserService.BASIC_AUTH_NAMESPACE), anyString(), anyString());
-        verify(this.storageService).create(eq(UserService.GENERAL_USER_NAMESPACE), anyString(), anyString());
+        verify(this.userAccess).persist(any(PersistedUser.class));
     }
 
     @Test
@@ -99,8 +101,7 @@ public class UserServiceTest {
 
         Optional<User> newUser = this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
         assertFalse("New user must be non-existing", newUser.isPresent());
-        verify(this.storageService, never()).create(anyString(), anyString(), anyString());
-        verify(this.storageService, never()).put(anyString(), anyString(), anyString());
+        verify(this.userAccess, never()).persist(any(PersistedUser.class));
     }
 
     @Test
@@ -145,8 +146,7 @@ public class UserServiceTest {
         assertTrue("Removing user should have been successful", status);
         assertFalse("User shouldn't exist, but does", this.userService.findUserDataByName(user.getName()).isPresent());
 
-        verify(this.storageService).delete(eq(UserService.BASIC_AUTH_NAMESPACE), eq(user.getName()));
-        verify(this.storageService).delete(eq(UserService.GENERAL_USER_NAMESPACE), eq(user.getName()));
+        verify(this.userAccess).deleteByName(user.getName());
     }
 
     @Test
@@ -159,14 +159,15 @@ public class UserServiceTest {
         assertFalse("Removing user should fail, but didn't", status);
     }
 
-    private void prepareAuthDataMock() throws org.xlrnet.metadict.api.storage.StorageBackendException, org.xlrnet.metadict.api.storage.StorageOperationException {
-        byte[] salt = CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH);
-        byte[] hashedPassword = this.userService.hashPassword(TEST_PASSWORD, salt);
-        Optional<BasicAuthData> authData = Optional.of(new BasicAuthData(hashedPassword, salt));
-        Optional<User> user = Optional.of(this.userFactory.newDefaultUser(TEST_USER_NAME));
+    private void prepareAuthDataMock() {
+        String salt = ConversionUtils.byteArrayToHexString(CryptoUtils.generateRandom(CryptoUtils.DEFAULT_SALT_LENGTH));
+        String hashedPassword = this.userService.hashPassword(TEST_PASSWORD, salt);
+        PersistedUser persistedUser = new PersistedUser();
+        persistedUser.setId("123");
+        persistedUser.setName(TEST_USER_NAME);
+        persistedUser.setSalt(salt);
+        persistedUser.setPassword(hashedPassword);
 
-
-        doReturn(authData).when(this.storageService).read(UserService.BASIC_AUTH_NAMESPACE, TEST_USER_NAME, BasicAuthData.class);
-        doReturn(authData).when(this.storageService).read(UserService.GENERAL_USER_NAMESPACE, TEST_USER_NAME, User.class);
+        doReturn(persistedUser).when(userAccess).findByName(TEST_USER_NAME);
     }
 }

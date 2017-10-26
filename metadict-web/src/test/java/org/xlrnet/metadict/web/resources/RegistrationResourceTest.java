@@ -28,9 +28,9 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.xlrnet.metadict.core.services.storage.InMemoryStorage;
+import org.xlrnet.metadict.web.auth.db.dao.UserAccess;
 import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
-import org.xlrnet.metadict.web.auth.entities.UserFactory;
+import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
 import org.xlrnet.metadict.web.auth.services.UserService;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 
@@ -45,13 +45,13 @@ import static org.mockito.Mockito.*;
  */
 public class RegistrationResourceTest {
 
-    private static final InMemoryStorage storageService = new InMemoryStorage();
-
     private static final SequenceService sequenceService = new SequenceService();
 
     private static final UserFactory userFactory = new UserFactory(sequenceService);
 
-    private static final UserService userService = spy(new UserService(storageService, userFactory));
+    private static final UserAccess userAccess = new UserAccess(null);
+
+    private static final UserService userService = spy(new UserService(userFactory, userAccess));
 
     private static final int UNPROCESSABLE_ENTITY = 422;
 
@@ -72,7 +72,6 @@ public class RegistrationResourceTest {
 
     @After
     public void tearDown() throws Exception {
-        storageService.reset();
         // Reset the invocation count
         reset(userService);
     }

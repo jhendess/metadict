@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.web.resources;
 
+import io.dropwizard.hibernate.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.User;
@@ -70,6 +71,7 @@ public class RegistrationResource {
      * if the user already exists. If the registration was successful, the user will also be logged in automatically.
      */
     @POST
+    @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response register(@Valid @NotNull RegistrationRequestData registrationRequestData) {

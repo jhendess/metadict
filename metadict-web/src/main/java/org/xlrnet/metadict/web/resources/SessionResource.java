@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web.resources;
 
 import io.dropwizard.auth.Auth;
+import io.dropwizard.hibernate.UnitOfWork;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookiePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public class SessionResource {
     }
 
     @POST
+    @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context ContainerRequestContext requestContext, @NotNull @Valid Credentials credentials) {

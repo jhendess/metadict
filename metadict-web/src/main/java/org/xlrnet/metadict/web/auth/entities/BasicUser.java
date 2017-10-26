@@ -31,30 +31,20 @@ import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Implementation of {@link User} for basic authentication.
  */
-@Entity
-@Table(name = "user")
 public class BasicUser implements User {
 
     private static final long serialVersionUID = 1066514268054405602L;
 
-    @Id
-    @Column(name = "id", unique = true, nullable = false, length = 36)
     private String id;
 
-    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER, targetClass = UserRole.class)
-    @CollectionTable(name = "user_role")
-    @Column(name = "role")
     private Set<Role> roles;
 
     public BasicUser() {
