@@ -195,7 +195,7 @@ public class WoxikonEngine implements SearchEngine {
         classNames.remove("flagicon");
         Language newLanguage = lastLanguage;
         for (String className : classNames) {
-            Language candidate = Language.getExistingLanguageById(className);
+            Language candidate = Language.getLanguageById(className);
             if (candidate != null) {
                 newLanguage = candidate;
                 break;

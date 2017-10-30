@@ -34,8 +34,8 @@ import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.web.auth.db.dao.UserAccess;
-import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
+import org.xlrnet.metadict.web.auth.dao.UserAccess;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 import org.xlrnet.metadict.web.util.ConversionUtils;
@@ -215,20 +215,29 @@ public class UserService {
     }
 
     /**
-     * Tries to find user data for a given user id.
+     * Tries to find user data for a given user name.
      *
      * @param username
-     *         The user id.
+     *         The user name.
      * @return An {@link Optional} containing the user data or an empty optional if no user could be found.
      */
     @NotNull
     public Optional<User> findUserDataByName(@NotNull String username) {
-        Optional<PersistedUser> userByName = userAccess.findByName(username);
+        Optional<PersistedUser> userByName = findPersistedUserByName(username);
         if (userByName.isPresent()) {
             PersistedUser persistedUser = userByName.get();
             return Optional.of(userFactory.fromPersistedEntity(persistedUser));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns the persisted user data for the given username.
+     * @param username The user name.
+     * @return
+     */
+    public Optional<PersistedUser> findPersistedUserByName(@NotNull String username) {
+        return userAccess.findByName(username);
     }
 
     @NotNull

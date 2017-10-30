@@ -24,19 +24,52 @@
 
 package org.xlrnet.metadict.web.middleware.injection;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
+import com.google.inject.util.Modules;
 import com.netflix.governator.guice.LifecycleInjector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.web.middleware.util.CustomInjectorFactory;
 import ru.vyarus.dropwizard.guice.injector.InjectorFactory;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Guice injector factory to start Netflix Governator.
+ * Guice injector factory to start Netflix Governator. Provides support for overriding modules. See
+ * https://xvik.github.io/dropwizard-guicey/4.0.1/guide/test/#overriding-beans.
  */
 public class GovernatorInjectorFactory implements InjectorFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomInjectorFactory.class);
+
+    /**
+     * Custom modules which override the existing ones.
+     */
+    private static Set<Module> customModules;
+
     @Override
     public Injector createInjector(Stage stage, Iterable<? extends Module> modules) {
-        return LifecycleInjector.builder().withModules(modules).inStage(stage).build().createInjector();
+        Iterable<? extends Module> finalModules = modules;
+        if (customModules != null) {
+            LOGGER.warn("------------------------------------------------------------------");
+            LOGGER.warn("Creating injector with overridden modules - use only in TEST code!");
+            LOGGER.warn("------------------------------------------------------------------");
+            finalModules = Lists.newArrayList(Modules.override(modules).with(customModules));
+        }
+        return LifecycleInjector.builder().withModules(finalModules).inStage(stage).build().createInjector();
+    }
+
+    public static void override(Module... modules) {
+        customModules = new HashSet<>();
+        customModules.addAll(Arrays.asList(modules));
+    }
+
+    public static void clear() {
+        customModules.clear();
     }
 }

@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
-import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.BasicUser;
 import org.xlrnet.metadict.web.auth.entities.UserRole;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;

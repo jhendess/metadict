@@ -24,17 +24,15 @@
 
 package org.xlrnet.metadict.web.history.services;
 
+import io.dropwizard.hibernate.UnitOfWork;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xlrnet.metadict.api.auth.User;
-import org.xlrnet.metadict.api.storage.StorageBackendException;
-import org.xlrnet.metadict.api.storage.StorageOperationException;
-import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
-import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
 import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.services.UserService;
+import org.xlrnet.metadict.web.history.dao.QueryLogAccess;
 import org.xlrnet.metadict.web.history.entities.QueryLogEntry;
 import org.xlrnet.metadict.web.middleware.services.SequenceService;
 
@@ -42,7 +40,6 @@ import javax.inject.Inject;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,21 +54,17 @@ public class QueryLoggingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryLoggingService.class);
 
-    static final String QUERY_LOG_NAMESPACE = "QUERY_LOG";
-
-    static final String QUERY_LOG_ENTRIES_NAMESPACE = "QUERY_LOG_ENTRIES";
-
-    private final StorageService storageService;
-
     private final SequenceService sequenceService;
 
     private final UserService userService;
 
+    private final QueryLogAccess queryLogAccess;
+
     @Inject
-    public QueryLoggingService(@DefaultStorageService StorageService storageService, SequenceService sequenceService, UserService userService) {
-        this.storageService = storageService;
+    public QueryLoggingService(SequenceService sequenceService, UserService userService, QueryLogAccess queryLogAccess) {
         this.sequenceService = sequenceService;
         this.userService = userService;
+        this.queryLogAccess = queryLogAccess;
     }
 
     /**
@@ -80,41 +73,35 @@ public class QueryLoggingService {
      * @param queryRequest
      *         The query request to log.
      */
-    public void logQuery(@NotNull Optional<JwtPrincipal> principal, @NotNull QueryRequest queryRequest) {
+    @UnitOfWork
+    public boolean logQuery(@NotNull Optional<JwtPrincipal> principal, @NotNull QueryRequest queryRequest) {
         checkNotNull(queryRequest);
+        boolean logged = false;
 
         if (principal.isPresent()) {
-            Optional<User> userDataByName = userService.findUserDataByName(principal.get().getName());
-            userDataByName.ifPresent(user -> logQuery(queryRequest, user));
+            Optional<PersistedUser> persistedUser = userService.findPersistedUserByName(principal.get().getName());
+            if (persistedUser.isPresent()) {
+                persistedUser.ifPresent(user -> logQuery(queryRequest, persistedUser.get()));
+                logged = true;
+            }
         } else {
             LOGGER.trace("Won't log query since no user is authenticated");
         }
+        return logged;
     }
 
     /**
-     * Perform the actual logging of the query. TODO: Don't use synchronized. Replace with proper approach.
+     * Perform the actual logging of the query.
      *
      * @param queryRequest
      *         The request to log.
      * @param user
      *         The user that performed the request.
      */
-    private synchronized void logQuery(@NotNull QueryRequest queryRequest, @NotNull User user) {
+    private void logQuery(@NotNull QueryRequest queryRequest, @NotNull PersistedUser user) {
         String requestId = sequenceService.newUUIDString();
-        try {
-            // FIXME: The current approach is not very elegant - indeed it becomes slower the more queries are stored. Replace by better approach.
-            Optional<ArrayList> storedQueryIds = storageService.read(QUERY_LOG_NAMESPACE, user.getId(), ArrayList.class);
-            ArrayList<String> queryIds = storedQueryIds.orElse(new ArrayList<String>());
-            queryIds.add(requestId);
-
-            QueryLogEntry queryLogEntry = new QueryLogEntry(requestId, queryRequest, Instant.now());
-            storageService.put(QUERY_LOG_ENTRIES_NAMESPACE, requestId, queryLogEntry);
-            storageService.put(QUERY_LOG_NAMESPACE, user.getId(), queryIds);
-        } catch (StorageBackendException e) {
-            LOGGER.error("Unexpected backend error while trying to write query log", e);
-        } catch (StorageOperationException e) {
-            LOGGER.error("Unexpected error while trying to write query log", e);
-        }
+        QueryLogEntry queryLogEntry = new QueryLogEntry(requestId, queryRequest, user, Instant.now());
+        queryLogAccess.persist(queryLogEntry);
     }
 
     /**
@@ -127,13 +114,14 @@ public class QueryLoggingService {
      * @return A list containing the logged queries. If no user is currently authenticated, the list will be empty.
      */
     @NotNull
+    @UnitOfWork
     public List<QueryLogEntry> getLoggedQueries(@NotNull Principal principal, int offset, int size) {
         checkArgument(offset >= 0, "Offset must be greater than zero or equal");
         checkArgument(size > 0, "Size must be greater than zero");
 
         List<QueryLogEntry> result;
 
-        Optional<User> user = userService.findUserDataByName(principal.getName());
+        Optional<PersistedUser> user = userService.findPersistedUserByName(principal.getName());
         if (user.isPresent()) {
             result = readQueryLog(user.get(), offset, size);
         } else {
@@ -144,42 +132,7 @@ public class QueryLoggingService {
     }
 
     @NotNull
-    private List<QueryLogEntry> readQueryLog(User user, int offset, int size) {
-        List<QueryLogEntry> queryLog = new ArrayList<>(size);
-        try {
-            Optional<ArrayList> readQueryIds = storageService.read(QUERY_LOG_NAMESPACE, user.getId(), ArrayList.class);
-
-            if (readQueryIds.isPresent()) {
-                Iterator<String> iterator = readQueryIds.get().iterator();
-
-                // Skip using the iterator
-                if (offset > 0) {
-                    int i = 0;
-                    while (i < offset && iterator.hasNext()) {
-                        i++;
-                        iterator.next();
-                    }
-                }
-
-                int i = 0;
-                while ((size > 0 && i < size) && iterator.hasNext()) {
-                    String queryLogId = iterator.next();
-                    Optional<QueryLogEntry> read = storageService.read(QUERY_LOG_ENTRIES_NAMESPACE, queryLogId, QueryLogEntry.class);
-                    if (read.isPresent()) {
-                        queryLog.add(read.get());
-                    } else {
-                        LOGGER.warn("Orphaned query log entry {} couldn't be found", queryLogId);
-                    }
-                    i++;
-                }
-            }
-
-        } catch (StorageBackendException e) {
-            LOGGER.error("Unexpected backend error while trying to read query log", e);
-        } catch (StorageOperationException e) {
-            LOGGER.error("Unexpected error while trying to read query log", e);
-        }
-
-        return queryLog;
+    private List<QueryLogEntry> readQueryLog(PersistedUser user, int offset, int size) {
+        return queryLogAccess.findQueryLogEntriesPaged(user, offset, size);
     }
 }

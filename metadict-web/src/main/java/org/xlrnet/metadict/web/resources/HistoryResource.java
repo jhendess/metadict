@@ -25,6 +25,7 @@
 package org.xlrnet.metadict.web.resources;
 
 import io.dropwizard.auth.Auth;
+import io.dropwizard.hibernate.UnitOfWork;
 import org.xlrnet.metadict.web.api.ResponseContainer;
 import org.xlrnet.metadict.web.auth.entities.JwtPrincipal;
 import org.xlrnet.metadict.web.history.entities.QueryLogEntry;
@@ -63,6 +64,7 @@ public class HistoryResource {
     }
 
     @GET
+    @UnitOfWork
     public Response listQueries(@Auth JwtPrincipal principal, @Min(0) @QueryParam(OFFSET_PARAMETER) int offset, @Min(0) @QueryParam(SIZE_PARAMETER) int size) {
         if (size == 0) {
             size = 10;

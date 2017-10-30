@@ -351,7 +351,7 @@ public class LeoEngine implements SearchEngine {
         // Extract language:
         String languageIdentifier = side.attr("lang");
         languageIdentifier = fixLanguageIdentifier(languageIdentifier);
-        Language language = Language.getExistingLanguageById(languageIdentifier);
+        Language language = Language.getLanguageById(languageIdentifier);
 
         final String[] pluralForm = new String[1];      // Workaround since objects inside lambda should be final
 
@@ -426,7 +426,7 @@ public class LeoEngine implements SearchEngine {
         for (Element side : sides) {
             String lang = side.attr("lang");
             lang = fixLanguageIdentifier(lang);
-            Language sideLanguage = Language.getExistingLanguageById(lang);
+            Language sideLanguage = Language.getLanguageById(lang);
 
             for (Element word : side.getElementsByTag("word")) {
                 String wordText = cleanWhitespace(word.text());

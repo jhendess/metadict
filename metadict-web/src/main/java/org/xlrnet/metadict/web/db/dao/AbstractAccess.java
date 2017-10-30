@@ -1,4 +1,4 @@
-package org.xlrnet.metadict.web.db;
+package org.xlrnet.metadict.web.db.dao;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;

@@ -1,5 +1,7 @@
 package org.xlrnet.metadict.web.middleware.health;
 
+import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
@@ -10,7 +12,6 @@ import org.xlrnet.metadict.web.auth.services.UserService;
 import org.xlrnet.metadict.web.middleware.util.CryptoUtils;
 import org.xlrnet.metadict.web.util.ConversionUtils;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
@@ -21,7 +22,7 @@ import javax.ws.rs.client.WebTarget;
  * application shutdown.
  */
 @Singleton
-public class SessionHealthCheckHelper {
+public class SessionHealthCheckHelper implements Managed {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionHealthCheckHelper.class);
 
@@ -53,9 +54,6 @@ public class SessionHealthCheckHelper {
     public SessionHealthCheckHelper(Environment environment, UserService userService) {
         this.environment = environment;
         this.userService = userService;
-
-        // Prepare the technical user once the server has finished booting
-        environment.lifecycle().addServerLifecycleListener(server -> prepareTechnicalUser());
     }
 
     private void prepareTechnicalUser() {
@@ -69,7 +67,14 @@ public class SessionHealthCheckHelper {
         LOGGER.debug("Initialized session health check for {} using user {}", this.sessionResource.getUri().toString(), this.technicalUserName);
     }
 
-    @PreDestroy
+    @Override
+    @UnitOfWork
+    public void start() throws Exception {
+        // Prepare the technical user once the server has finished booting
+        prepareTechnicalUser();
+    }
+
+    @UnitOfWork
     public void stop() throws StorageBackendException {
         this.userService.removeUser(this.technicalUserName);
         LOGGER.debug("Removed technical user {} for session health check", this.technicalUserName);

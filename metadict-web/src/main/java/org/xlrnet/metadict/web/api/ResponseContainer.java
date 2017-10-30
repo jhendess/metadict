@@ -38,16 +38,19 @@ import java.util.List;
 public class ResponseContainer<T> {
 
     @JsonProperty
-    private final ResponseStatus status;
+    private ResponseStatus status;
 
     @JsonProperty
-    private final String message;
+    private String message;
 
     @JsonProperty
-    private final T data;
+    private T data;
 
     @JsonProperty
-    private final List<ResourceLink> links;
+    private List<ResourceLink> links;
+
+    public ResponseContainer() {
+    }
 
     public ResponseContainer(ResponseStatus status, String message, T data, Link... links) {
         this.status = status;

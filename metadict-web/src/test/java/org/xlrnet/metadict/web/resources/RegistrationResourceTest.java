@@ -25,10 +25,11 @@
 package org.xlrnet.metadict.web.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.xlrnet.metadict.web.auth.db.dao.UserAccess;
+import org.xlrnet.metadict.web.auth.dao.UserAccess;
 import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
 import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
 import org.xlrnet.metadict.web.auth.services.UserService;
@@ -49,7 +50,7 @@ public class RegistrationResourceTest {
 
     private static final UserFactory userFactory = new UserFactory(sequenceService);
 
-    private static final UserAccess userAccess = new UserAccess(null);
+    private static final UserAccess userAccess = new UserAccess(mock(SessionFactory.class));
 
     private static final UserService userService = spy(new UserService(userFactory, userAccess));
 
@@ -170,16 +171,6 @@ public class RegistrationResourceTest {
         Response post = performRequest(registrationRequestData);
 
         assertFailedRegistration(post);
-    }
-
-
-    @Test
-    public void testSuccessful() {
-        RegistrationRequestData registrationRequestData = new RegistrationRequestData().setName(TEST_USERNAME).setPassword(TEST_PASSWORD).setConfirmPassword(TEST_PASSWORD);
-        Response post = performRequest(registrationRequestData);
-
-        assertEquals(Response.Status.ACCEPTED.getStatusCode(), post.getStatus());
-        verify(userService).createNewUser(TEST_USERNAME, TEST_PASSWORD);
     }
 
     private void assertFailedRegistration(Response post) {

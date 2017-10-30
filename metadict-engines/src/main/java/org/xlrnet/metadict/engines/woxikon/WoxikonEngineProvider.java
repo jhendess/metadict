@@ -48,7 +48,7 @@ public class WoxikonEngineProvider extends AbstractSearchEngineProvider {
         return ImmutableAutoTestSuite.builder()
                 .addAutoTestCase(ImmutableAutoTestCase.builder()
                         .setTestQueryString("essen")
-                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-en", true))
+                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de<>en"))
                         .setExpectedBilingualResults(
                                 ImmutableBilingualQueryResult.builder()
                                         .addBilingualEntry(ImmutableBilingualEntry.builder()
@@ -74,7 +74,7 @@ public class WoxikonEngineProvider extends AbstractSearchEngineProvider {
                         .build())
                 .addAutoTestCase(ImmutableAutoTestCase.builder()
                         .setTestQueryString("Tier")
-                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de-sv", true))
+                        .setBilingualTargetDictionary(BilingualDictionary.fromQueryString("de<>sv"))
                         .setExpectedBilingualResults(
                                 ImmutableBilingualQueryResult.builder()
                                         .addBilingualEntry(ImmutableBilingualEntry.builder()

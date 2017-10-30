@@ -46,6 +46,8 @@ public class QueryRequestBuilder {
 
     private String queryString;
 
+    private String originalQueryString;
+
     private Set<BilingualDictionary> queryDictionaries = new HashSet<>();
 
     private GroupingType groupingType = GroupingType.NONE;
@@ -92,7 +94,7 @@ public class QueryRequestBuilder {
             }
         }
 
-        return new ImmutableQueryRequest(this.queryString, Lists.newArrayList(this.queryDictionaries), this.groupingType, this.orderType, Lists.newArrayList(this.queryLanguages));
+        return new ImmutableQueryRequest(this.queryString, Lists.newArrayList(this.queryDictionaries), this.groupingType, this.orderType, Lists.newArrayList(this.queryLanguages), this.originalQueryString);
     }
 
     /**
@@ -167,6 +169,7 @@ public class QueryRequestBuilder {
     public QueryRequestBuilder setQueryString(@NotNull String queryString) {
         checkNotNull(queryString);
 
+        this.originalQueryString = queryString;
         this.queryString = StringUtils.lowerCase(queryString);
         return this;
     }

@@ -15,14 +15,14 @@ import javax.inject.Inject;
 /**
  * Custom guice interceptor which provides support for {@link UnitOfWork} outside of jersey resources.
  */
-public class TransactionInterceptor implements MethodInterceptor {
+public class UnitOfWorkInterceptor implements MethodInterceptor {
 
     private final Provider<SessionFactory> sessionFactoryProvider;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkInterceptor.class);
 
     @Inject
-    public TransactionInterceptor(Provider<SessionFactory> sessionFactory) {
+    public UnitOfWorkInterceptor(Provider<SessionFactory> sessionFactory) {
         this.sessionFactoryProvider = sessionFactory;
         LOGGER.debug("Created new transaction interceptor");
     }
@@ -35,14 +35,17 @@ public class TransactionInterceptor implements MethodInterceptor {
         Object result;
 
         try {
+            LOGGER.trace("Starting unit of work for {}", invocation.getMethod().toString());
             aspect.beforeStart(unitOfWork);
             result = invocation.proceed();
             aspect.afterEnd();
         } catch (Exception e) {
             aspect.onError();
+            LOGGER.trace("Unexpected exception while processing unit of work {}", invocation.getMethod().toString(), e);
             throw e;
         } finally {
             aspect.onFinish();
+            LOGGER.trace("Finished unit of work {}", invocation.getMethod().toString());
         }
         return result;
 

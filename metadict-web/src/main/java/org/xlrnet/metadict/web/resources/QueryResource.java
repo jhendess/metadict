@@ -54,29 +54,30 @@ import java.util.Optional;
 /**
  * REST service for sending a query to the Metadict core.
  * <p/>
- * This endpoint can be accessed in two different ways:
- * <ul>
- * <li>Two-way dictionary query: call /api/query/DICTIONARIES/{REQUEST} where DICTIONARIES is the list of
- * dictionary languages that should be queried and REQUEST is the concrete query string that should be sent to
- * metadict.
- * This method invokes an automatic two-way query on the core and tries to resolve the internal dictionaries with this
- * preference. This is usually the preferred way for querying.</li>
- * <li>One-way dictionary query: call /api/uniquery/DICTIONARIES/{REQUEST} where DICTIONARIES is the list of
- * dictionary languages that should be queried and REQUEST is the concrete query string that should be sent to
- * metadict.
- * This method invokes the query exactly with the provided dictionaries. Use this method if you want to search only in
- * one direction.</li>
- * </ul>
+ * This endpoint can be accessed in two different ways: <ul> <li>Two-way dictionary query: call
+ * /api/query/DICTIONARIES/{REQUEST} where DICTIONARIES is the list of dictionary languages that should be queried and
+ * REQUEST is the concrete query string that should be sent to metadict. This method invokes an automatic two-way query
+ * on the core and tries to resolve the internal dictionaries with this preference. This is usually the preferred way
+ * for querying.</li> <li>One-way dictionary query: call /api/uniquery/DICTIONARIES/{REQUEST} where DICTIONARIES is the
+ * list of dictionary languages that should be queried and REQUEST is the concrete query string that should be sent to
+ * metadict. This method invokes the query exactly with the provided dictionaries. Use this method if you want to search
+ * only in one direction.</li> </ul>
  */
 @Path("/")
 public class QueryResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryResource.class);
 
-    /** Injected query service. */
+    private static final int MAX_REQUEST_LENGTH = 200;
+
+    /**
+     * Injected query service.
+     */
     private final QueryService queryService;
 
-    /** Injected query logging service. Stores all queries performed by a user. */
+    /**
+     * Injected query logging service. Stores all queries performed by a user.
+     */
     private final QueryLoggingService queryLoggingService;
 
     @Inject
@@ -88,12 +89,12 @@ public class QueryResource {
     /**
      * Issue a two-way dictionary query.
      * <p/>
-     * Endpoint: /api/query/{DICTIONARIES}/{REQUEST}?groupBy={GROUPING}&orderBy={ORDERING} where DICTIONARIES is
-     * the list of dictionary languages that should be queried and REQUEST is the concrete query string that should be
-     * sent to metadict. Optional parameters {GROUPING} and {ORDERING} can be used to define how the results should be
-     * grouped and ordered. See the concrete parameter description for more information about the parameters.
-     * This method invokes an automatic two-way query on the core and tries to resolve the internal dictionaries with
-     * this preference. This is usually the preferred way for querying.
+     * Endpoint: /api/query/{DICTIONARIES}/{REQUEST}?groupBy={GROUPING}&orderBy={ORDERING} where DICTIONARIES is the
+     * list of dictionary languages that should be queried and REQUEST is the concrete query string that should be sent
+     * to metadict. Optional parameters {GROUPING} and {ORDERING} can be used to define how the results should be
+     * grouped and ordered. See the concrete parameter description for more information about the parameters. This
+     * method invokes an automatic two-way query on the core and tries to resolve the internal dictionaries with this
+     * preference. This is usually the preferred way for querying.
      *
      * @param dictionaryString
      *         A comma-separated list of dictionaries to call. Each dictionary's language is separated with a minus
@@ -124,18 +125,15 @@ public class QueryResource {
     /**
      * Issue a one-way dictionary query.
      * <p/>
-     * Endpoint: /api/uniquery/{DICTIONARIES}/{REQUEST}?groupBy={GROUPING}&orderBy={ORDERING} where DICTIONARIES is
-     * the list of dictionary languages that should be queried and REQUEST is the concrete query string that should be
-     * sent to metadict. Optional parameters {GROUPING} and {ORDERING} can be used to define how the results should be
-     * grouped and ordered. See the concrete parameter description for more information about the parameters.
-     * This method invokes only a one-way query on the core and tries to resolve the internal dictionaries with
-     * this preference.
+     * Endpoint: /api/uniquery/{DICTIONARIES}/{REQUEST}?groupBy={GROUPING}&orderBy={ORDERING} where DICTIONARIES is the
+     * list of dictionary languages that should be queried and REQUEST is the concrete query string that should be sent
+     * to metadict. Optional parameters {GROUPING} and {ORDERING} can be used to define how the results should be
+     * grouped and ordered. See the concrete parameter description for more information about the parameters. This
+     * method invokes only a one-way query on the core and tries to resolve the internal dictionaries with this
+     * preference.
      * <p/>
-     * Error situations:
-     * <ul>
-     * <li>If an unknown dictionary was requested, a 404 response will be returned.</li>
-     * <li>If the dictionary query is invalid, a 400 response will be returned.</li>
-     * </ul>
+     * Error situations: <ul> <li>If an unknown dictionary was requested, a 404 response will be returned.</li> <li>If
+     * the dictionary query is invalid, a 400 response will be returned.</li> </ul>
      *
      * @param dictionaryString
      *         A comma-separated list of dictionaries to call. Each dictionary's language is separated with a minus
@@ -180,6 +178,10 @@ public class QueryResource {
 
         if (dictionaries.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).entity(new ResponseContainer<>(ResponseStatus.ERROR, "No matching dictionaries found", null)).build();
+        }
+
+        if (StringUtils.length(queryString) > MAX_REQUEST_LENGTH) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Request too long. Only 200 characters supported", null)).build();
         }
 
         QueryRequest queryRequest = this.queryService.createNewQueryRequestBuilder()

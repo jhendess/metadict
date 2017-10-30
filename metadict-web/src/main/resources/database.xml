@@ -7,7 +7,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="1" author="jhendess">
-        <comment>Create initial user tables</comment>
+        <comment>Create initial user and querylog tables</comment>
         <createTable tableName="user" remarks="User table">
             <column name="user_id" type="CHAR(36)" remarks="Technical key of a user.">
                 <constraints primaryKey="true" nullable="false"/>
@@ -30,5 +30,58 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <createTable tableName="querylog" remarks="Log of all requests executed by a user.">
+            <column name="qlog_id" type="CHAR(36)" remarks="Technical key of the querylog.">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="qlog_user_id" type="CHAR(36)" remarks="Technical key of the user who executed the request.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlog_request" type="VARCHAR(250)" remarks="Request string which was used in the query.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlog_request_time" type="TIMESTAMP" remarks="Timestamp when the query was sent.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlog_grouping" type="VARCHAR(20)" remarks="Grouping type which was used in the query.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlog_order" type="VARCHAR(20)" remarks="Order which was used in the query.">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="querylog" baseColumnNames="qlog_user_id" constraintName="querylog_fk0"
+                                 referencedTableName="user"
+                                 referencedColumnNames="user_id" onDelete="CASCADE"/>
+        <createTable tableName="qlog_bilingual" remarks="Bilingual dictionaries which were requested in a query.">
+            <column name="qlbd_request_id" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlbd_dictionary" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="qlog_bilingual" indexName="qlog_bilingual_idx0">
+            <column name="qlbd_request_id"/>
+        </createIndex>
+        <addForeignKeyConstraint baseTableName="qlog_bilingual" baseColumnNames="qlbd_request_id"
+                                 constraintName="qlog_bilingual_fk0"
+                                 referencedTableName="querylog"
+                                 referencedColumnNames="qlog_id" onDelete="CASCADE"/>
+        <createTable tableName="qlog_monolingual" remarks="Monolingual languages which were requested in a query.">
+            <column name="qlml_request_id" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qlml_language" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="qlog_monolingual" indexName="qlog_monolingual_idx0">
+            <column name="qlml_request_id"/>
+        </createIndex>
+        <addForeignKeyConstraint baseTableName="qlog_monolingual" baseColumnNames="qlml_request_id"
+                                 constraintName="qlog_monolingual_fk0"
+                                 referencedTableName="querylog"
+                                 referencedColumnNames="qlog_id" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

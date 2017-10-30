@@ -1,7 +1,6 @@
-package org.xlrnet.metadict.web.auth.db.entities;
+package org.xlrnet.metadict.web.auth.entities;
 
 import org.xlrnet.metadict.api.auth.Role;
-import org.xlrnet.metadict.web.auth.entities.UserRole;
 
 import javax.persistence.*;
 import java.util.Set;

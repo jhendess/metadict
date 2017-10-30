@@ -30,7 +30,6 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.language.UnsupportedDictionaryException;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -39,16 +38,20 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class BilingualDictionaryUtils {
 
-    private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)(,[A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)*");
-
     public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws UnsupportedDictionaryException {
-        checkArgument(DICTIONARY_QUERY_PATTERN.matcher(dictionaryQuery).matches(), "Invalid dictionary query");
+        checkArgument(BilingualDictionary.DICTIONARY_QUERY_PATTERN  .matcher(dictionaryQuery).matches(), "Invalid dictionary query");
 
         String[] explodedQuery = StringUtils.split(dictionaryQuery, ",");
         List<BilingualDictionary> dictionaryList = new ArrayList<>(explodedQuery.length);
 
         for (String query : explodedQuery) {
-            BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query, bidirectional);
+            if (bidirectional) {
+                query = query.replace(BilingualDictionary.UNIDIRECTIONAL_FLAG, BilingualDictionary.BIDIRECTIONAL_FLAG);
+            } else {
+                query = query.replace(BilingualDictionary.BIDIRECTIONAL_FLAG, BilingualDictionary.UNIDIRECTIONAL_FLAG);
+            }
+
+            BilingualDictionary dictionary = BilingualDictionary.fromQueryString(query);
             dictionaryList.add(dictionary);
         }
 

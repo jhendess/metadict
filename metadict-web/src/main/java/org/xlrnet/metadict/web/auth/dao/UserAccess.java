@@ -1,10 +1,9 @@
-package org.xlrnet.metadict.web.auth.db.dao;
+package org.xlrnet.metadict.web.auth.dao;
 
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.xlrnet.metadict.web.auth.db.entities.PersistedUser;
-import org.xlrnet.metadict.web.db.AbstractAccess;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
+import org.xlrnet.metadict.web.db.dao.AbstractAccess;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -30,8 +29,8 @@ public class UserAccess extends AbstractAccess<PersistedUser> {
      * @return An Optional which contains either the user if it exists or is empty.
      */
     @NotNull
-    public Optional<PersistedUser> findByName(@Nullable String name) {
-        return Optional.ofNullable(this.query("SELECT U FROM PersistedUser U WHERE U.name = :name").setParameter("name", name).uniqueResult());
+    public Optional<PersistedUser> findByName(@NotNull String name) {
+        return Optional.ofNullable(query("SELECT U FROM PersistedUser U WHERE U.name = :name").setParameter("name", name).uniqueResult());
     }
 
     /**
@@ -42,6 +41,6 @@ public class UserAccess extends AbstractAccess<PersistedUser> {
      * @return True if the user was deleted or false if not.
      */
     public boolean deleteByName(@NotNull String name) {
-        return query("DELETE FROM PersistedUser U WHERE U.name = :name").setParameter("name", name).executeUpdate() > 0;
+        return currentSession().createQuery("DELETE FROM PersistedUser U WHERE U.name = :name").setParameter("name", name).executeUpdate() > 0;
     }
 }

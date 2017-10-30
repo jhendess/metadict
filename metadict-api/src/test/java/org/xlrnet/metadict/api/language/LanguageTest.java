@@ -26,6 +26,7 @@ package org.xlrnet.metadict.api.language;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -47,6 +48,29 @@ public class LanguageTest {
         assertTrue(Language.isValidIdentifier("a"));
         assertTrue(Language.isValidIdentifier("aB"));
         assertTrue(Language.isValidIdentifier("ABcZ"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetLanguageById_fail1() {
+        Language.getLanguageById("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetLanguageById_fail2() {
+        Language.getLanguageById("12_34");
+    }
+
+    @Test
+    public void testGetLanguageById_regular() {
+        Language language = Language.getLanguageById("XX");
+        assertEquals("xx", language.getIdentifier());
+    }
+
+    @Test
+    public void testGetLanguageById_dialect() {
+        Language language = Language.getLanguageById("XX_yy");
+        assertEquals("xx", language.getIdentifier());
+        assertEquals("yy", language.getDialect());
     }
 
 }

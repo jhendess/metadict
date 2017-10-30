@@ -25,6 +25,6 @@ public class DatabaseModule extends AbstractModule {
         bindInterceptor(Matchers.any(),
                 Matchers.annotatedWith(UnitOfWork.class)
                         .and(Matchers.not(Matchers.annotatedWith(Path.class))),
-                new TransactionInterceptor(getProvider(SessionFactory.class)));
+                new UnitOfWorkInterceptor(getProvider(SessionFactory.class)));
     }
 }

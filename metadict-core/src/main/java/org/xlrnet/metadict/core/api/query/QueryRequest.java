@@ -77,4 +77,12 @@ public interface QueryRequest {
      */
     @NotNull
     String getQueryString();
+
+    /**
+     * Returns the original query string as entered by the end user.
+     *
+     * @return the original query string as entered by the end user.
+     */
+    @NotNull
+    String getOriginalQueryString();
 }

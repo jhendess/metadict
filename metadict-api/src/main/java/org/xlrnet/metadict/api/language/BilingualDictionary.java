@@ -50,7 +50,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BilingualDictionary implements Serializable, Comparable<BilingualDictionary> {
 
-    private static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?-[A-z]+(_[A-z]+)?)");
+    public static final Pattern DICTIONARY_QUERY_PATTERN = Pattern.compile("([A-z]+(_[A-z]+)?(<>|-)[A-z]+(_[A-z]+)?)");
+
+    public static final String BIDIRECTIONAL_FLAG = "<>";
+
+    public static final String UNIDIRECTIONAL_FLAG = "-";
 
     private static final Map<String, BilingualDictionary> instanceMap = new HashMap<>();
 
@@ -75,8 +79,8 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     }
 
     /**
-     * Builds the query string for a given {@link Language} object.
-     * Each dictionary's language identifier is separated with a minus ("-"). This method does not respect dialects.
+     * Builds the query string for a given {@link Language} object. Each dictionary's language identifier is separated
+     * with a minus ("-"). This method does not respect dialects.
      * <p>
      * Example: "de-en" is the query string for a dictionary from german ("de") to english ("en")
      *
@@ -97,9 +101,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     }
 
     /**
-     * Builds the query string for two given {@link Language} objects.
-     * Each dictionary's language identifier is separated with a minus ("-"). If a concrete dialect is available,
-     * an underscore will be set ("_") after the language identifiers followed by the dialect identifier.
+     * Builds the query string for two given {@link Language} objects. Each dictionary's language identifier is
+     * separated with a minus ("-"). If a concrete dialect is available, an underscore will be set ("_") after the
+     * language identifiers followed by the dialect identifier.
      * <p>
      * Example: "de-no_ny" is the query string for a dictionary from german to norwegian nynorsk (i.e. the identifier
      * "de" and the dialect "ny" of language "no").
@@ -163,14 +167,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     }
 
     /**
-     * Find an existing dictionary from a dictionary query string.  A dictionary query string is a comma-separated list
-     * of dictionaries. Each dictionary's language is separated with a minus ("-"). If you need a concrete dialect,
-     * use an underscore ("_") after the language identifiers. Note, that this does not create new {@link
-     * BilingualDictionary} object but find existing ones.
+     * Create a bilingual dictionary from a dictionary query string. Each dictionary's language is separated with a
+     * minus ("-"). If you need a concrete dialect, use an underscore ("_") after the language identifiers.
      * <p>
-     * Example: "de-en,de-no_ny" will find a bilingual dictionary between german and english (i.e. the two identifiers
-     * "de" and "en") and also another dictionary with german and norwegian nynorsk (i.e. the identifier "de" and the
-     * dialect "ny" of language "no").
      *
      * @param queryString
      *         The query string - see method description body.
@@ -179,37 +178,31 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      *         Will be thrown if the given dictionary query is invalid.
      */
     @NotNull
-    public static BilingualDictionary fromQueryString(String queryString, boolean bidirectional) throws UnsupportedDictionaryException {
+    public static BilingualDictionary fromQueryString(String queryString) {
         if (!isValidDictionaryQuery(queryString)) {
             throw new IllegalArgumentException("Illegal dictionary query string: " + queryString);
         }
 
-        if (bidirectional) {
-            if (instanceMap.containsKey("<>" + queryString)) {
-                return instanceMap.get("<>" + queryString);
-            } else {
-                // Inverse the direction and try another lookup
-                String[] languages = StringUtils.split(queryString, "-");
-                String inverseQuery = "<>" + languages[1] + "-" + languages[0];
-                if (instanceMap.containsKey(inverseQuery))
-                    return instanceMap.get(inverseQuery);
-                else
-                    throw new UnsupportedDictionaryException(
-                            Language.getExistingLanguageById(languages[0]),
-                            Language.getExistingLanguageById(languages[1]),
-                            true);
-            }
+        if (queryString.contains(BIDIRECTIONAL_FLAG)) {
+            return instanceMap.computeIfAbsent(BIDIRECTIONAL_FLAG + queryString, (key) -> {
+                Language fromLanguage = Language.getLanguageById(StringUtils.substringBefore(queryString, BIDIRECTIONAL_FLAG));
+                Language toLanguage = Language.getLanguageById(StringUtils.substringAfter(queryString, BIDIRECTIONAL_FLAG));
+                return fromLanguages(fromLanguage, toLanguage, true);
+            });
         } else {
-            return instanceMap.get(queryString);
+            return instanceMap.computeIfAbsent(queryString, (key) -> {
+                Language fromLanguage = Language.getLanguageById(StringUtils.substringBefore(queryString, UNIDIRECTIONAL_FLAG));
+                Language toLanguage = Language.getLanguageById(StringUtils.substringAfter(queryString, "-"));
+                return fromLanguages(fromLanguage, toLanguage, false);
+            });
         }
     }
 
     /**
      * Inverses the language direction of the given {@link BilingualDictionary} object.
      * <p>
-     * Example:
-     * If the given dictionary is de-en this method will return a dictionary with en-de. The bidirectional state will
-     * not change.
+     * Example: If the given dictionary is de-en this method will return a dictionary with en-de. The bidirectional
+     * state will not change.
      *
      * @param dictionary
      *         The dictionary object to invert.
@@ -221,8 +214,8 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     }
 
     /**
-     * Checks if the given matches a dictionary query (only a single). Each language is separated with a
-     * minus ("-"). If you need a concrete dialect, use an underscore ("_") after the language identifiers.
+     * Checks if the given matches a dictionary query (only a single). Each language is separated with a minus ("-"). If
+     * you need a concrete dialect, use an underscore ("_") after the language identifiers.
      *
      * @param queryString
      *         The query to check.
@@ -296,15 +289,13 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         if (this == o) return true;
         if (!(o instanceof BilingualDictionary)) return false;
         BilingualDictionary that = (BilingualDictionary) o;
-        return this.bidirectional == that.bidirectional &&
-                Objects.equal(this.source, that.source) &&
-                Objects.equal(this.target, that.target) &&
-                Objects.equal(this.queryString, that.queryString) &&
-                Objects.equal(this.queryStringWithDialect, that.queryStringWithDialect);
+        return bidirectional == that.bidirectional &&
+                Objects.equal(source, that.source) &&
+                Objects.equal(target, that.target);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.source, this.target, this.bidirectional, this.queryString, this.queryStringWithDialect);
+        return Objects.hashCode(source, target, bidirectional);
     }
 }

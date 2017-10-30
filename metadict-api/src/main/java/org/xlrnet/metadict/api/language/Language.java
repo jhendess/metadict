@@ -25,6 +25,8 @@
 package org.xlrnet.metadict.api.language;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +46,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Language implements Serializable {
 
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[A-Za-z]+");
+
+    private static final Pattern FULL_IDENTIFIER_PATTERN = Pattern.compile("[A-Za-z]+(_[A-Za-z]+)?");
 
     private static final ConcurrentMap<String, Language> languageCache = new ConcurrentHashMap<>();
 
@@ -131,6 +135,8 @@ public class Language implements Serializable {
 
     private static final long serialVersionUID = 8370338805084250120L;
 
+    private static final String DIALECT_FLAG = "_";
+
     private final String identifier;
 
     private final String displayName;
@@ -171,18 +177,24 @@ public class Language implements Serializable {
     }
 
     /**
-     * Return the {@link Language} object that is currently associated with the given identifier. This call will not
-     * create a new object but only return existing ones - not including dialects.
+     * Return the {@link Language} object that is currently associated with the given identifier. If the given language
+     * id is not yet cached, it will be created without any display names.
      *
      * @param identifier
      *         the language object that is currently associated with the given identifier.
      * @return Either the resulting language or null if nothing found.
      */
-    @Nullable
-    public static Language getExistingLanguageById(String identifier) {
+    @NotNull
+    public static Language getLanguageById(String identifier) {
         checkNotNull(identifier, "Language identifier may not be null");
+        checkArgument(isValidIdentifier(identifier));
 
-        return languageCache.get(identifier.toLowerCase());
+        if (identifier.contains(DIALECT_FLAG)) {
+            String[] strings = StringUtils.split(identifier, "_");
+            return Language.forSimpleLanguage(strings[0], strings[0], strings[1], strings[1]);
+        } else {
+            return Language.forSimpleLanguage(identifier, identifier);
+        }
     }
 
     /**
@@ -194,7 +206,7 @@ public class Language implements Serializable {
      * @return true if the given string is a valid identifier, otherwise false.
      */
     static boolean isValidIdentifier(String identifier) {
-        return IDENTIFIER_PATTERN.matcher(identifier).matches();
+        return FULL_IDENTIFIER_PATTERN.matcher(identifier).matches();
     }
 
     /**
@@ -262,8 +274,7 @@ public class Language implements Serializable {
     }
 
     /**
-     * Returns the identifier of this language (without the dialect). This method has to be unique per runtime and
-     * should only be used internally.
+     * Returns the identifier of this language (without the dialect).
      *
      * @return the identifier of this language.
      */
@@ -272,11 +283,35 @@ public class Language implements Serializable {
         return this.identifier;
     }
 
+    /**
+     * Returns the full identifier of this language including the dialect.
+     *
+     * @return the full identifier of this language including the dialect.
+     */
+    @NotNull
+    public String getIdentifierWithDialect() {
+        return this.identifier + this.dialect;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("identifier", this.identifier)
                 .add("dialect", this.dialect)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Language)) return false;
+        Language language = (Language) o;
+        return Objects.equal(identifier, language.identifier) &&
+                Objects.equal(dialect, language.dialect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(identifier, dialect);
     }
 }

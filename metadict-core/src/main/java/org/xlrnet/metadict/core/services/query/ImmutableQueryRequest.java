@@ -44,6 +44,8 @@ public class ImmutableQueryRequest implements QueryRequest, Serializable {
 
     private final String queryString;
 
+    private final String originalQueryString;
+
     @Override
     public String toString() {
         return "QueryRequestImpl{" +
@@ -63,12 +65,13 @@ public class ImmutableQueryRequest implements QueryRequest, Serializable {
 
     private final List<Language> monolingualLanguages;
 
-    ImmutableQueryRequest(String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages) {
+    ImmutableQueryRequest(String queryString, List<BilingualDictionary> queryDictionaries, GroupingType groupingType, OrderType orderType, List<Language> monolingualLanguages, String originalQueryString) {
         this.queryString = queryString;
         this.queryDictionaries = queryDictionaries;
         this.groupingType = groupingType;
         this.orderType = orderType;
         this.monolingualLanguages = monolingualLanguages;
+        this.originalQueryString = originalQueryString;
     }
 
     @Override
@@ -80,70 +83,45 @@ public class ImmutableQueryRequest implements QueryRequest, Serializable {
                 Objects.equal(this.queryDictionaries, that.queryDictionaries);
     }
 
-    /**
-     * Returns how the final query should be grouped.
-     *
-     * @return how the final query should be grouped.
-     */
     @NotNull
     public GroupingType getGroupingType() {
         return this.groupingType;
     }
 
-    /**
-     * Return a list with all dictionaries that should be queried.
-     *
-     * @return a list with all dictionaries that should be queried.
-     */
     @Override
     @NotNull
     public List<BilingualDictionary> getBilingualDictionaries() {
         return this.queryDictionaries;
     }
 
-    /**
-     * Return a list of all languages that should be queried for a monolingual lookup (i.e. translations).
-     *
-     * @return a list of all languages that should be queried.
-     */
     @NotNull
     @Override
     public List<Language> getMonolingualLanguages() {
         return this.monolingualLanguages;
     }
 
-    /**
-     * Returns how the final query should be grouped.
-     *
-     * @return how the final query should be grouped.
-     */
     @NotNull
     @Override
     public GroupingType getQueryGrouping() {
         return this.groupingType;
     }
 
-    /**
-     * Returns how the result groups should be ordered.
-     *
-     * @return how the result groups should be ordered.
-     */
     @NotNull
     @Override
     public OrderType getQueryOrdering() {
         return this.orderType;
     }
 
-    /**
-     * Returns the query string for this request. This is usually the string that will be forwarded to the search
-     * backend.
-     *
-     * @return the query string for this request.
-     */
     @Override
     @NotNull
     public String getQueryString() {
         return this.queryString;
+    }
+
+    @Override
+    @NotNull
+    public String getOriginalQueryString() {
+        return originalQueryString;
     }
 
     @Override
