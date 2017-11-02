@@ -35,6 +35,20 @@ server:
      port: 14269
 
 #
+# Database configuration
+#
+database:
+  #
+  # The JDBC connection URL to use
+  #
+  connection: jdbc:hsqldb:mem:metadict
+
+  #
+  # The database management system which will be used. Currently only "HSQLDB" is supported.
+  #
+  dbms: HSQLDB
+
+#
 # Configuration of the storage subsystem
 #
 storage:

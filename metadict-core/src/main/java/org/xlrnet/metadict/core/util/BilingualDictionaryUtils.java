@@ -39,12 +39,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class BilingualDictionaryUtils {
 
     public static List<BilingualDictionary> resolveDictionaries(String dictionaryQuery, boolean bidirectional) throws UnsupportedDictionaryException {
-        checkArgument(BilingualDictionary.DICTIONARY_QUERY_PATTERN  .matcher(dictionaryQuery).matches(), "Invalid dictionary query");
 
         String[] explodedQuery = StringUtils.split(dictionaryQuery, ",");
         List<BilingualDictionary> dictionaryList = new ArrayList<>(explodedQuery.length);
 
         for (String query : explodedQuery) {
+            checkArgument(BilingualDictionary.DICTIONARY_QUERY_PATTERN.matcher(query).matches(), "Invalid dictionary query: %s", query);
             if (bidirectional) {
                 query = query.replace(BilingualDictionary.UNIDIRECTIONAL_FLAG, BilingualDictionary.BIDIRECTIONAL_FLAG);
             } else {

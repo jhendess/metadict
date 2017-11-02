@@ -164,15 +164,17 @@ public class QueryResource {
     /**
      * Resolve dictionaries and finally execute the query.
      */
-    private Response internalExecuteQuery(@Auth Optional<JwtPrincipal> principal, @NotNull String dictionaryString, @NotNull String queryString, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
+    private Response internalExecuteQuery(Optional<JwtPrincipal> principal, @NotNull String dictionaryString, @NotNull String queryString, @Nullable String grouping, @Nullable String ordering, boolean bidirectional) {
         GroupingType groupingType = Enums.getIfPresent(GroupingType.class, StringUtils.stripToEmpty(grouping).toUpperCase()).or(GroupingType.NONE);
         OrderType orderType = Enums.getIfPresent(OrderType.class, StringUtils.stripToEmpty(ordering).toUpperCase()).or(OrderType.RELEVANCE);
         List<BilingualDictionary> dictionaries;
         try {
             dictionaries = BilingualDictionaryUtils.resolveDictionaries(dictionaryString, bidirectional);
-        } catch (IllegalArgumentException e) {    // NOSONAR: Logging not necessary
+        } catch (IllegalArgumentException e) {
+            LOGGER.debug("Malformed dictionary query", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Malformed dictionary query", null)).build();
-        } catch (UnsupportedDictionaryException e) {    // NOSONAR: Logging not necessary
+        } catch (UnsupportedDictionaryException e) {
+            LOGGER.debug("Unsuported dictionary", e);
             return Response.status(Response.Status.NOT_FOUND).entity(new ResponseContainer<>(ResponseStatus.ERROR, "Unsupported dictionary", null)).build();
         }
 
@@ -181,6 +183,7 @@ public class QueryResource {
         }
 
         if (StringUtils.length(queryString) > MAX_REQUEST_LENGTH) {
+            LOGGER.warn("Request too log - only 200 characters supported");
             return Response.status(Response.Status.BAD_REQUEST).entity(new ResponseContainer<>(ResponseStatus.MALFORMED_QUERY, "Request too long. Only 200 characters supported", null)).build();
         }
 

@@ -30,6 +30,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_user_id" constraintName="user_role_fk0"
+                                 referencedTableName="user"
+                                 referencedColumnNames="user_id" onDelete="CASCADE"/>
         <createTable tableName="querylog" remarks="Log of all requests executed by a user.">
             <column name="qlog_id" type="CHAR(36)" remarks="Technical key of the querylog.">
                 <constraints primaryKey="true" nullable="false"/>

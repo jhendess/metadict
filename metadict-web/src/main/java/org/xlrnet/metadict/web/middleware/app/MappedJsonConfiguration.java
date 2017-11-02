@@ -29,6 +29,8 @@ import io.dropwizard.Configuration;
 import org.dhatim.dropwizard.jwt.cookie.authentication.JwtCookieAuthConfiguration;
 import org.xlrnet.metadict.core.api.config.MetadictConfiguration;
 import org.xlrnet.metadict.core.api.config.StorageConfiguration;
+import org.xlrnet.metadict.web.middleware.db.DatabaseEnabledConfiguration;
+import org.xlrnet.metadict.web.middleware.db.DatabaseType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,7 +39,7 @@ import java.util.Map;
 /**
  * Configuration class for standalone deployment using dropwizard.
  */
-public class MappedJsonConfiguration extends Configuration implements MetadictConfiguration {
+public class MappedJsonConfiguration extends Configuration implements MetadictConfiguration, DatabaseEnabledConfiguration {
 
     @Valid
     @NotNull
@@ -46,6 +48,10 @@ public class MappedJsonConfiguration extends Configuration implements MetadictCo
     @NotNull
     @JsonProperty("storage")
     private StorageConfigurationImpl storage;
+
+    @NotNull
+    @JsonProperty("database")
+    private DatabaseConfigurationImpl databaseConfiguration;
 
     /**
      * Returns the configuration for JWT cookie authentication.
@@ -61,7 +67,34 @@ public class MappedJsonConfiguration extends Configuration implements MetadictCo
         return this.storage;
     }
 
-    private static class StorageConfigurationImpl implements StorageConfiguration {
+    @Override
+    public DatabaseConfigurationImpl getDatabaseConfiguration() {
+        return databaseConfiguration;
+    }
+
+    /**
+     * Configuration class for a database management system which is used as the backend.
+     */
+    public static class DatabaseConfigurationImpl implements DatabaseConfiguration {
+
+        @NotNull
+        @JsonProperty("dbms")
+        private DatabaseType dbms;
+
+        @NotNull
+        @JsonProperty("connection")
+        private String connection;
+
+        public String getConnection() {
+            return connection;
+        }
+
+        public DatabaseType getDbms() {
+            return dbms;
+        }
+    }
+
+    static class StorageConfigurationImpl implements StorageConfiguration {
 
         @JsonProperty("engines")
         private Map<String, Map<String, String>> engines;
