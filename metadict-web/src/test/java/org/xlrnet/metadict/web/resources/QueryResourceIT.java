@@ -31,7 +31,7 @@ public class QueryResourceIT extends AbstractIT {
     }
 
     @Test
-    public void testLogRequest_authenticated() {
+    public void testLogRequest_authenticatedHistoryLogging() {
         NewCookie sessionCookie = registerAndLogin();
         getTarget().path("/query/demo-test/sampleQuery").request().cookie(sessionCookie).buildGet().invoke();
 
@@ -39,5 +39,4 @@ public class QueryResourceIT extends AbstractIT {
         assertNotNull(responseContainer.getData());
         assertFalse(responseContainer.getData().isEmpty());
     }
-
 }

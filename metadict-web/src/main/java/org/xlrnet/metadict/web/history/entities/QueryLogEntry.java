@@ -32,9 +32,9 @@ import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
 import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.db.converter.BilingualDictionaryConverter;
 import org.xlrnet.metadict.web.db.converter.LanguageConverter;
+import org.xlrnet.metadict.web.db.entities.AbstractMetadictEntity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
@@ -43,14 +43,10 @@ import java.util.List;
  */
 @Entity
 @Table(name = "querylog")
-public class QueryLogEntry implements Serializable {
+@AttributeOverride(name = "id", column = @Column(name = "qlog_id", unique = true, nullable = false, length = 36))
+public class QueryLogEntry extends AbstractMetadictEntity {
 
     private static final long serialVersionUID = -8686903484223403622L;
-
-    /** UUID of the query log entry. */
-    @Id
-    @Column(name = "qlog_id", unique = true, nullable = false, length = 36)
-    private String id;
 
     /** The query that was sent by the user. */
     @Column(name = "qlog_request", nullable = false, length = 250)
@@ -89,10 +85,11 @@ public class QueryLogEntry implements Serializable {
     private OrderType orderType;
 
     public QueryLogEntry() {
+        super();
     }
 
     public QueryLogEntry(String id, QueryRequest queryRequest, PersistedUser persistedUser, Instant requestTime) {
-        this.id = id;
+        this.setId(id);
         this.requestTime = requestTime;
         this.bilingualDictionaries = queryRequest.getBilingualDictionaries();
         this.monolingualLanguages = queryRequest.getMonolingualLanguages();
@@ -100,10 +97,6 @@ public class QueryLogEntry implements Serializable {
         this.orderType = queryRequest.getQueryOrdering();
         this.queryString = queryRequest.getOriginalQueryString();
         this.user = persistedUser;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public Instant getRequestTime() {

@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.xlrnet.metadict.api.auth.Role;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
-import org.xlrnet.metadict.api.storage.StorageBackendException;
 import org.xlrnet.metadict.web.auth.dao.UserAccess;
 import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
@@ -202,7 +201,7 @@ public class UserService {
      *         The name of the user to remove.
      * @return True if the user could be deleted, false if not.
      */
-    public boolean removeUser(@NotNull String username) throws StorageBackendException {
+    public boolean removeUser(@NotNull String username) {
         boolean result = userAccess.deleteByName(username);
 
         if (result) {

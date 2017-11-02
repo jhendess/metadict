@@ -1,6 +1,7 @@
 package org.xlrnet.metadict.web.auth.entities;
 
 import org.xlrnet.metadict.api.auth.Role;
+import org.xlrnet.metadict.web.db.entities.AbstractMetadictEntity;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -10,11 +11,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
-public class PersistedUser {
-
-    @Id
-    @Column(name = "user_id", unique = true, nullable = false, length = 36)
-    private String id;
+@AttributeOverride(name = "id", column = @Column(name = "user_id", unique = true, nullable = false, length = 36))
+public class PersistedUser extends AbstractMetadictEntity {
 
     @Column(name = "user_name", unique = true, nullable = false, length = 32)
     private String name;
@@ -30,14 +28,6 @@ public class PersistedUser {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "role_user_id"))
     @Column(name = "role_name", nullable = false)
     private Set<Role> roles;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

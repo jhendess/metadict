@@ -32,8 +32,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.xlrnet.metadict.web.auth.entities.Credentials;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.RegistrationRequestData;
+import org.xlrnet.metadict.web.history.entities.QueryLogEntry;
 import org.xlrnet.metadict.web.middleware.app.MappedJsonConfiguration;
+import org.xlrnet.metadict.web.util.CleanupAccess;
 import org.xlrnet.metadict.web.util.UnitOfWorkRunner;
 import ru.vyarus.dropwizard.guice.injector.lookup.InjectorLookup;
 
@@ -42,7 +45,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -61,13 +63,24 @@ public class AbstractIT {
 
     private WebTarget target;
 
+    private CleanupAccess cleanupAccess;
+
     @Before
     public void setup() {
         target = ClientBuilder.newClient().target(String.format("http://localhost:%d/api", INTEGRATION_TEST_PORT));
+        cleanupAccess = getBean(CleanupAccess.class);
+
+        runAsUnitOfWork(this::cleanupBeforeTest);
     }
 
     protected <T> T getBean(Class<T> clazz) {
         return InjectorLookup.getInjector(RULE.getApplication()).get().getBinding(clazz).getProvider().get();
+    }
+
+    private Void cleanupBeforeTest() {
+        cleanupAccess.deleteAll(PersistedUser.class);
+        cleanupAccess.deleteAll(QueryLogEntry.class);
+        return null;
     }
 
     /**

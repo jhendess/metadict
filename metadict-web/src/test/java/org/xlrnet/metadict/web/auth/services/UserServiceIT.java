@@ -25,14 +25,16 @@
 package org.xlrnet.metadict.web.auth.services;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.auth.User;
 import org.xlrnet.metadict.api.storage.StorageBackendException;
+import org.xlrnet.metadict.web.AbstractIT;
 import org.xlrnet.metadict.web.auth.dao.UserAccess;
-import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.BasicUser;
+import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.auth.entities.Roles;
 import org.xlrnet.metadict.web.auth.entities.UserRole;
 import org.xlrnet.metadict.web.auth.entities.factories.UserFactory;
@@ -46,28 +48,37 @@ import java.util.Optional;
 import static junit.framework.TestCase.*;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+public class UserServiceIT extends AbstractIT {
 
     private static final String TEST_USER_NAME = "testUser";
 
     private static final String TEST_PASSWORD = "testPassword";
 
+    /**
+     * User service.
+     */
     private UserService userService;
 
+    /**
+     * User factory service.
+     */
     private UserFactory userFactory;
 
+    /**
+     * Injected userAccess component.
+     */
     private UserAccess userAccess;
 
     @Before
     public void setup() {
         this.userFactory = new UserFactory(new SequenceService());
-        this.userAccess = mock(UserAccess.class);
+        this.userAccess = spy(getBean(UserAccess.class));
         this.userService = spy(new UserService(this.userFactory, userAccess));
     }
 
     @Test
     public void testCreateNewUserWithPassword() throws Exception {
-        Optional<User> newUserWithPassword = this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> newUserWithPassword = runAsUnitOfWork(() -> this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD));
 
         assertTrue(newUserWithPassword.isPresent());
         User user = newUserWithPassword.get();
@@ -82,7 +93,7 @@ public class UserServiceTest {
 
     @Test
     public void testCreateNewTechUserWithPassword() throws Exception {
-        User user = this.userService.createTechnicalUser(TEST_PASSWORD);
+        User user = runAsUnitOfWork(() -> this.userService.createTechnicalUser(TEST_PASSWORD));
 
         assertNotNull(user);
         assertTrue("User name may not be empty", StringUtils.isNotEmpty(user.getName()));
@@ -97,9 +108,9 @@ public class UserServiceTest {
     @Test
     public void testCreateNewUserWithPassword_existing() throws Exception {
         Optional<User> existingUser = Optional.of(this.userFactory.newDefaultUser(TEST_USER_NAME));
-        doReturn(existingUser).when(this.userService).findUserDataByName(TEST_USER_NAME);
+        doReturn(existingUser).when(userService).findUserDataByName(TEST_USER_NAME);
 
-        Optional<User> newUser = this.userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> newUser = runAsUnitOfWork(() -> userService.createNewUser(TEST_USER_NAME, TEST_PASSWORD));
         assertFalse("New user must be non-existing", newUser.isPresent());
         verify(this.userAccess, never()).persist(any(PersistedUser.class));
     }
@@ -107,7 +118,7 @@ public class UserServiceTest {
     @Test
     public void testAuthenticateWithPassword_correct() throws Exception {
         prepareAuthDataMock();
-        Optional<User> user = this.userService.authenticateWithPassword(TEST_USER_NAME, TEST_PASSWORD);
+        Optional<User> user = userService.authenticateWithPassword(TEST_USER_NAME, TEST_PASSWORD);
 
         assertTrue("User should be present but isn't (i.e. password check doesn't work)", user.isPresent());
     }
@@ -115,7 +126,7 @@ public class UserServiceTest {
     @Test
     public void testAuthenticateWithPassword_wrong() throws Exception {
         prepareAuthDataMock();
-        Optional<User> user = this.userService.authenticateWithPassword(TEST_USER_NAME, "Some_Wrong_Password");
+        Optional<User> user = userService.authenticateWithPassword(TEST_USER_NAME, "Some_Wrong_Password");
 
         assertFalse("User shouldn't be present but is (i.e. password check doesn't work)", user.isPresent());
     }
@@ -137,16 +148,19 @@ public class UserServiceTest {
     @Test
     public void testRemoveUser() throws StorageBackendException {
         // Prepare user for test
-        User user = this.userService.createTechnicalUser(TEST_PASSWORD);
-        assertTrue("User should exist, but doesn't", this.userService.findUserDataByName(user.getName()).isPresent());
+        runAsUnitOfWork(() -> {
+            User user = this.userService.createTechnicalUser(TEST_PASSWORD);
+            assertTrue("User should exist, but doesn't", this.userService.findUserDataByName(user.getName()).isPresent());
 
-        // Remove the user
-        boolean status = this.userService.removeUser(user.getName());
+            // Remove the user
+            boolean status = this.userService.removeUser(user.getName());
 
-        assertTrue("Removing user should have been successful", status);
-        assertFalse("User shouldn't exist, but does", this.userService.findUserDataByName(user.getName()).isPresent());
+            assertTrue("Removing user should have been successful", status);
+            assertFalse("User shouldn't exist, but does", this.userService.findUserDataByName(user.getName()).isPresent());
 
-        verify(this.userAccess).deleteByName(user.getName());
+            verify(this.userAccess).deleteByName(user.getName());
+            return null;
+        });
     }
 
     @Test
@@ -154,7 +168,7 @@ public class UserServiceTest {
         String username = DatatypeConverter.printHexBinary(CryptoUtils.generateRandom(16));
 
         // Remove the user
-        boolean status = this.userService.removeUser(username);
+        boolean status = runAsUnitOfWork(() -> this.userService.removeUser(username));
 
         assertFalse("Removing user should fail, but didn't", status);
     }
@@ -167,7 +181,8 @@ public class UserServiceTest {
         persistedUser.setName(TEST_USER_NAME);
         persistedUser.setSalt(salt);
         persistedUser.setPassword(hashedPassword);
+        persistedUser.setRoles(Sets.newHashSet(UserRole.REGULAR_USER));
 
-        doReturn(persistedUser).when(userAccess).findByName(TEST_USER_NAME);
+        doReturn(Optional.of(persistedUser)).when(userAccess).findByName(TEST_USER_NAME);
     }
 }
