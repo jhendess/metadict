@@ -39,6 +39,7 @@ import org.xlrnet.metadict.web.middleware.app.WebModule;
 import org.xlrnet.metadict.web.middleware.bundles.SinglePageAppAssetsBundle;
 import org.xlrnet.metadict.web.middleware.db.DatabaseBundle;
 import org.xlrnet.metadict.web.middleware.db.DatabaseModule;
+import org.xlrnet.metadict.web.middleware.db.LiquibaseMigrationBundle;
 import org.xlrnet.metadict.web.middleware.injection.GovernatorInjectorFactory;
 import org.xlrnet.metadict.web.middleware.jackson.JacksonUtils;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
@@ -74,6 +75,10 @@ public class MetadictApplication extends Application<MappedJsonConfiguration> {
         // Install Hibernate ORM
         DatabaseBundle databaseBundle = new DatabaseBundle();
         bootstrap.addBundle(databaseBundle);
+
+        // Enable liquibase migrations
+        LiquibaseMigrationBundle liquibaseBundle = new LiquibaseMigrationBundle();
+        bootstrap.addBundle(liquibaseBundle);
 
         // Start Guicey container
         bootstrap.addBundle(

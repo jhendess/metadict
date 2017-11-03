@@ -290,7 +290,7 @@ public class Language implements Serializable {
      */
     @NotNull
     public String getIdentifierWithDialect() {
-        return this.identifier + this.dialect;
+        return this.identifier + StringUtils.stripToEmpty(this.dialect);
     }
 
     @Override

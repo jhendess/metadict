@@ -33,7 +33,7 @@ import org.xlrnet.metadict.engines.nobordbok.OrdbokEngineProvider;
 import org.xlrnet.metadict.engines.woxikon.WoxikonEngineProvider;
 
 /**
- * Created by jhendess on 08.02.2017.
+ * Guice module which installs search engines.
  */
 public class SearchEnginesModule extends AbstractModule {
 

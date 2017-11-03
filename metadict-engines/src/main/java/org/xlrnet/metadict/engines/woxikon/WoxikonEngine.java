@@ -255,8 +255,9 @@ public class WoxikonEngine implements SearchEngine {
         objectBuilder.setLanguage(language);
 
         // Extract entry text:
-        String context = StringUtils.substringBefore(element.text(), element.getElementsByTag("a").first().text());
-        String generalForm = context + element.getElementsByTag("a").first().text();
+        Element linkElement = element.getElementsByTag("a").first();
+        String context = linkElement != null ? StringUtils.substringBefore(element.text(), linkElement.text()) : element.text();
+        String generalForm = context + (linkElement != null ? linkElement.text() : "");
         objectBuilder.setGeneralForm(StringUtils.strip(generalForm));
 
         // Extract description:

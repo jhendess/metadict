@@ -54,4 +54,6 @@ public class DatabaseBundle extends ScanningHibernateBundle<MappedJsonConfigurat
 
         return dataSourceFactory;
     }
+
+
 }
