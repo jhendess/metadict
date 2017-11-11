@@ -314,3 +314,15 @@ input[type="checkbox"].filled-in:checked + label:after {
 .validationMessageBox {
     color: maroon;;
 }
+
+/** History view */
+
+.historyContainer .table {
+    width: 100%;
+}
+
+.historyContainer td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 50%;
+}

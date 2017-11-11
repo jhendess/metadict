@@ -24,6 +24,8 @@
 
 package org.xlrnet.metadict.web.history.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.xlrnet.metadict.api.language.BilingualDictionary;
 import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
@@ -99,10 +101,12 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.user = persistedUser;
     }
 
+    @JsonProperty("requestTime")
     public Instant getRequestTime() {
         return requestTime;
     }
 
+    @JsonProperty("queryString")
     public String getQueryString() {
         return queryString;
     }
@@ -111,6 +115,7 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.queryString = queryString;
     }
 
+    @JsonIgnore
     public PersistedUser getUser() {
         return user;
     }
@@ -119,6 +124,7 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.user = user;
     }
 
+    @JsonProperty("dictionaries")
     public List<BilingualDictionary> getBilingualDictionaries() {
         return bilingualDictionaries;
     }
@@ -127,6 +133,7 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.bilingualDictionaries = bilingualDictionaries;
     }
 
+    @JsonProperty("languages")
     public List<Language> getMonolingualLanguages() {
         return monolingualLanguages;
     }
@@ -135,6 +142,7 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.monolingualLanguages = monolingualLanguages;
     }
 
+    @JsonProperty("groupingType")
     public GroupingType getGroupingType() {
         return groupingType;
     }
@@ -143,6 +151,7 @@ public class QueryLogEntry extends AbstractMetadictEntity {
         this.groupingType = groupingType;
     }
 
+    @JsonProperty("orderType")
     public OrderType getOrderType() {
         return orderType;
     }

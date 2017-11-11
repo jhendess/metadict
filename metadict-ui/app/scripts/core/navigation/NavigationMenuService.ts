@@ -23,6 +23,13 @@ module MetadictApp {
                         "target": "/search",
                         "loginRequired": false,
                         "notLoggedIn": false
+                    },
+                    {
+                        "title": "History",
+                        "icon": "history",
+                        "target": "/history",
+                        "loginRequired": true,
+                        "notLoggedIn": false
                     }/*,
                      {
                      "title": "Favorites",

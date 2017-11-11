@@ -39,12 +39,15 @@ module MetadictApp {
 
     declare let window;
 
+    export const DEFAULT_PAGE = "/search";
+
     export let metadictModule = angular.module("MetadictApp", [
         "ngRoute",
         "ngMessages",
         "restangular",
         "ui.materialize",
-        "LocalStorageModule"
+        "LocalStorageModule",
+        "infinite-scroll"
     ]);
 
     let basePathElement: JQuery = $("base").first();
@@ -73,8 +76,10 @@ module MetadictApp {
                 templateUrl: "views/login.html"
             }).when("/register", {
                 templateUrl: "views/register.html"
+            }).when("/history", {
+                templateUrl: "views/history.html"
             }).otherwise({
-                redirectTo: "/search"
+                redirectTo: MetadictApp.DEFAULT_PAGE
             });
         })
         .config(($locationProvider: ILocationProvider) => {

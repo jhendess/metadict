@@ -6,7 +6,7 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
     import IScope = angular.IScope;
-    import Config = MetadictApp.Config;
+    import ILocationService = angular.ILocationService;
 
     /**
      * Controller for handling the left navigation menu.
@@ -21,7 +21,7 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $scope: IScope, private $log: ILogService, private userService: UserService,
-                    private navigationMenuService: NavigationMenuService) {
+                    private navigationMenuService: NavigationMenuService, private $location: ILocationService) {
             this.setupWatchers();
 
             $log.debug("NavigationMenuController started");
@@ -37,6 +37,7 @@ module MetadictApp {
 
         public logout(): void {
             this.userService.logout();
+            this.$location.path(MetadictApp.DEFAULT_PAGE);
         }
 
         /**

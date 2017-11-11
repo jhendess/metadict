@@ -4,13 +4,32 @@
 
 module MetadictApp {
 
+    /**
+     * Main container which wraps wrap request results.
+     */
     export interface ResponseContainer<T> {
 
+        /** Short status code of the response. */
         status: string;
 
+        /** Detailed message of the response. */
         message: string;
 
+        /** Wrapped data inside the container. */
         data: T;
+
+        /** Links to further result sets. */
+        links: Link[];
+    }
+
+    /** A link to a resource. */
+    export interface Link {
+
+        /** The relationship between this link and the original resource. */
+        rel: string;
+
+        /** Location of the linked resource. */
+        href: string;
     }
 
     export interface BilingualDictionary {
@@ -173,7 +192,7 @@ module MetadictApp {
         /** Password for logging in. */
         password: string;
         /** Flag which indicates if the user session should be long-running. */
-        stayLoggedIn: boolean
+        stayLoggedIn: boolean;
     }
 
     /**
@@ -192,5 +211,31 @@ module MetadictApp {
          * The confirmation of the password.
          */
         confirmPassword: string;
+    }
+
+    /**
+     * Single entry of the query log.
+     */
+    export interface QueryLogEntry {
+
+        /**
+         * The query sent to the backend.
+         */
+        queryString: string;
+
+        /**
+         * Time when the request was sent.
+         */
+        requestTime: string;
+
+        /**
+         * Dictionaries used for querying.
+         */
+        dictionaries: BilingualDictionary[];
+
+        /**
+         * Languages used for querying.
+         */
+        languages: Language[];
     }
 }

@@ -4,23 +4,14 @@
 
 module MetadictApp {
 
-    declare var Offline;
-
-    import ILogService = angular.ILogService;
+                                 import ILogService = angular.ILogService;
     import IRestangularService = restangular.IService;
     import IRestangularElement = restangular.IElement;
 
     /**
      * Central service for accessing the Metadict backend data.
      */
-    export class BackendAccessService {
-        // @ngInject
-        constructor(private $log: ILogService, private Restangular: IRestangularService) {
-            this.setupResources();
-
-            $log.debug("BackendAccessService started");
-        }
-
+    export class BackendAccessService extends AbstractAccessService {
         private _bilingualDictionaryAccess: IRestangularElement;
 
         private _bilingualQueryAccess: IRestangularElement;
@@ -30,6 +21,14 @@ module MetadictApp {
         private _registrationAccess: IRestangularElement;
 
         private _sessionAccess: IRestangularElement;
+
+        // @ngInject
+        constructor($log: ILogService, Restangular: IRestangularService) {
+            super($log, Restangular);
+            this.setupResources();
+
+            $log.debug("BackendAccessService started");
+        }
 
         /**
          * @inheritDoc
@@ -139,59 +138,6 @@ module MetadictApp {
                     this.buildSuccessHandler(successCallback, errorCallback),
                     this.buildErrorHandler(errorCallback)
                 );
-        }
-
-        /**
-         * Generic handler for unwrapping the response container from the backend. Detects backend errors automatically
-         * and will notify both the internal error registry and invoke a custom {@link ErrorCallback} for the client.
-         *
-         * @param successCallback The callback function that will be invoked if the response container was sent with
-         * status {@link ResponseStatus.OK}.
-         * @param errorCallback The callback function that will be invoked if the response container was sent with any
-         * other status than {@link ResponseStatus.OK}.
-         * @returns {function(ResponseContainer<T>): undefined}
-         */
-        private buildSuccessHandler<T>(successCallback: SuccessCallback<T>,
-                                       errorCallback: ErrorCallback): (responseContainer: ResponseContainer<T>) => ResponseContainer<T> {
-            return (responseContainer: ResponseContainer<T>): ResponseContainer<T> => {
-                let responseStatus: any;
-                let containerData: T;
-
-                if (responseContainer) {
-                    responseStatus = ResponseStatus[responseContainer.status];
-                    containerData = responseContainer.data;
-                }
-
-                this.$log.debug(`Received response with status ${ResponseStatus[responseStatus]}`);
-                this.$log.debug(containerData);
-
-                if (responseStatus === ResponseStatus.OK) {
-                    successCallback(containerData);
-                } else {
-                    let message = responseContainer ? responseContainer.message : undefined;
-                    errorCallback(responseStatus, message);
-                }
-
-                return responseContainer;
-            };
-        }
-
-        /**
-         * Builds an restangular-compatible error handler which wraps the internal Metadict error callback.
-         * @param errorCallback The internal callback to wrap.
-         * @returns {(reason:string)=>undefined} A restangular-compatible error callback.
-         */
-        private buildErrorHandler(errorCallback: ErrorCallback): (reason: any) => any {
-            return (reason: any) => {
-                let responseContainer = <ResponseContainer<any>> reason.data;
-                // TODO: do system-wide error handling
-                Offline.check();
-                if (responseContainer != null) {
-                    errorCallback(ResponseStatus[responseContainer.status], responseContainer.message);
-                } else {
-                    errorCallback(ResponseStatus.ERROR, reason);
-                }
-            };
         }
 
         /**

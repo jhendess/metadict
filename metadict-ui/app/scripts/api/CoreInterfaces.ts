@@ -8,7 +8,7 @@ module MetadictApp {
         [index: string]: T;
     }
 
-    export type SuccessCallback<T> = (data: T) => any;
+    export type SuccessCallback<T> = (data: T, links?: LinkContainer) => any;
     export type ErrorCallback = (responseStatus: ResponseStatus, reason: any) => any;
 
     /**
@@ -23,7 +23,10 @@ module MetadictApp {
         target: string;
         /** If true, then the link will only be displayed if the user is logged in. */
         loginRequired: boolean;
-        /** If true, then the link will only be displayed if no user is logged in. If this is true, then {@link #loginRequired} may not be true. */
+        /**
+         * If true, then the link will only be displayed if no user is logged in. If this is true, then
+         * {@link #loginRequired} may not be true.
+         */
         notLoggedIn: boolean;
     }
 
@@ -39,5 +42,17 @@ module MetadictApp {
         img?: string;
 
         name: string;
+    }
+
+    /**
+     * Container which contains links to other resources.
+     */
+    export interface LinkContainer {
+
+        /** Link to the next resource. */
+        next?: Link;
+
+        /** Link to the previous resource. */
+        previous?: Link;
     }
 }
