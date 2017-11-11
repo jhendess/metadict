@@ -82,3 +82,5 @@ crashlytics-build.properties
 
 
 /metadict-ui/typings/
+/metadict-web/config-dev.yaml
+/metadict-ui/app/scripts/Config.ts

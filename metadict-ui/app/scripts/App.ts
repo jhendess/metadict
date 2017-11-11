@@ -82,13 +82,16 @@ module MetadictApp {
         })
         .config((RestangularProvider: IRestangularProvider) => {
             RestangularProvider.setBaseUrl(Config.API_URL);
+            RestangularProvider.setDefaultHttpFields({
+                withCredentials: true
+            });
         })
         .config(($provide: ng.auto.IProvideService) => {
             $provide.decorator("$exceptionHandler", extendedExceptionHandler);
         })
         .run((generalUiService: GeneralUiService, clientUpdateService: ClientUpdateService, bootstrapService: BootstrapService) => {
             clientUpdateService.registerEventHandlers();
-            generalUiService.registerEventHandlers()
+            generalUiService.registerEventHandlers();
             bootstrapService.bootstrapApplication();
         });
 }
