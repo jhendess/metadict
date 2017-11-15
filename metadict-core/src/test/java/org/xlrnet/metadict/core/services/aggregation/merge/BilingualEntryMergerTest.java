@@ -153,8 +153,10 @@ public class BilingualEntryMergerTest {
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
         Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
 
+        BilingualEntry entryBexpected = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.NOUN).build();
+
         assertEquals(1, candidates.size());
-        assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
+        assertTrue(candidates.contains(ImmutableList.of(entryA, entryBexpected)));
     }
 
     @Test
@@ -170,12 +172,10 @@ public class BilingualEntryMergerTest {
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
         Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
 
-        DictionaryObject targetAexpected = ImmutableDictionaryObject.createSimpleObject(Language.getLanguageById("en_uk"), "A");
-        BilingualEntry entryAexpected = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetAexpected).setEntryType(EntryType.NOUN).build();
+        BilingualEntry entryBexpected = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.NOUN).build();
 
-        assertEquals(2, candidates.size());
-        assertTrue(candidates.contains(ImmutableList.of(entryAexpected)));
-        assertTrue(candidates.contains(ImmutableList.of(entryB)));
+        assertEquals(1, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA, entryBexpected)));
     }
 
     @Test
