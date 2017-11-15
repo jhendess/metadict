@@ -88,7 +88,7 @@ public class SimilarElementsMergeService {
      * @throws IllegalArgumentException
      *         Will be thrown on configuration errors.
      */
-    public synchronized <T> void registerNewMerger(@NotNull SimilarElementsMerger<T> elementsMerger) throws IllegalArgumentException {
+    synchronized <T> void registerNewMerger(@NotNull SimilarElementsMerger<T> elementsMerger) throws IllegalArgumentException {
         checkNotNull(elementsMerger);
 
         String mergerCanonicalName = elementsMerger.getClass().getCanonicalName();

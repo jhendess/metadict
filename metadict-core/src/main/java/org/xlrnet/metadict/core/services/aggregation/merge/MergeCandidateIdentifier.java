@@ -1,5 +1,6 @@
 package org.xlrnet.metadict.core.services.aggregation.merge;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.apache.commons.lang3.tuple.Pair;
 import org.xlrnet.metadict.api.language.Language;
@@ -47,5 +48,14 @@ public class MergeCandidateIdentifier {
     @Override
     public int hashCode() {
         return Objects.hashCode(languagePair, entryType, generalForms);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("languagePair", languagePair)
+                .add("entryType", entryType)
+                .add("generalForms", generalForms)
+                .toString();
     }
 }

@@ -242,6 +242,16 @@ public class Language implements Serializable {
     }
 
     /**
+     * Returns a second instance of the given language without dialect.
+     * @param language The language to return without dialect.
+     * @return a second instance of the given language without dialect.
+     */
+    @NotNull
+    public static Language getWithoutDialect(@NotNull Language language) {
+        return getLanguageById(language.getIdentifier());
+    }
+
+    /**
      * Returns the dialect's identifier of this language.
      *
      * @return the dialect's identifier of this language.
@@ -291,6 +301,14 @@ public class Language implements Serializable {
     @NotNull
     public String getIdentifierWithDialect() {
         return this.identifier + StringUtils.stripToEmpty(this.dialect);
+    }
+
+    /**
+     * Returns whether this language is a dialect.
+     * @return whether this language is a dialect.
+     */
+    public boolean isDialect() {
+        return StringUtils.isNotBlank(getDialect());
     }
 
     @Override

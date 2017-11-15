@@ -27,10 +27,7 @@ package org.xlrnet.metadict.core.services.aggregation.merge;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 import org.xlrnet.metadict.api.language.Language;
-import org.xlrnet.metadict.api.query.DictionaryObject;
-import org.xlrnet.metadict.api.query.ImmutableMonolingualEntry;
-import org.xlrnet.metadict.api.query.MonolingualEntry;
-import org.xlrnet.metadict.api.query.MonolingualEntryBuilder;
+import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.aggregation.Merges;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
 import org.xlrnet.metadict.core.util.CommonUtils;
@@ -51,6 +48,11 @@ public class MonolingualEntryMerger extends AbstractEntryMerger<MonolingualEntry
         ImmutablePair<Language, Language> languagePair = ImmutablePair.of(input.getContent().getLanguage(), null);
         ImmutablePair<String, String> generalFormPair = ImmutablePair.of(CommonUtils.simpleNormalize(input.getContent().getGeneralForm()), null);
         return new MergeCandidateIdentifier(languagePair, input.getEntryType(), generalFormPair);
+    }
+
+    @Override
+    protected MonolingualEntry enrichEntryByEntryType(MonolingualEntry entry, EntryType entryType) {
+        return ImmutableMonolingualEntry.builder().setContent(entry.getContent()).setEntryType(entryType).build();
     }
 
     @NotNull

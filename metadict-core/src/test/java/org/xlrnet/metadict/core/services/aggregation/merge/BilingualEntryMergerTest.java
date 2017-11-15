@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -157,6 +158,27 @@ public class BilingualEntryMergerTest {
     }
 
     @Test
+    public void mergeCandidate_unknownWithDialect() {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
+        DictionaryObject targetA = ImmutableDictionaryObject.createSimpleObject(Language.getLanguageById("en_uk"), "A");
+        BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.NOUN).build();
+
+        DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("A").setDescription("bla").build();
+        DictionaryObject targetB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm("A").setDescription("bla").build();
+        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.UNKNOWN).build();
+
+        ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
+        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+
+        DictionaryObject targetAexpected = ImmutableDictionaryObject.createSimpleObject(Language.getLanguageById("en_uk"), "A");
+        BilingualEntry entryAexpected = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetAexpected).setEntryType(EntryType.NOUN).build();
+
+        assertEquals(2, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryAexpected)));
+        assertTrue(candidates.contains(ImmutableList.of(entryB)));
+    }
+
+    @Test
     public void mergeCandidate() throws Exception {
         String[] syllabification = {"Hund"};
 
@@ -237,7 +259,106 @@ public class BilingualEntryMergerTest {
         BilingualEntry expected = ImmutableBilingualEntry.builder().setInputObject(expectedSource).setOutputObject(expectedTarget).setEntryType(EntryType.NOUN).build();
 
         assertEquals(expected, actualMerged);
+    }
 
+    /**
+     * If only one language of two same words on one side is a dialect, the result must become a dialect.
+     */
+    @Test
+    public void mergeSamePair_oneSideOneDialect() {
+        BilingualEntry firstEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN, "trykker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.GERMAN, "Drucker")
+                ).build();
+        BilingualEntry secondEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.GERMAN, "Drucker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_BOKMÅL, "trykker")
+                ).build();
+
+        BilingualEntry expected = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_BOKMÅL, "trykker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.GERMAN, "Drucker")
+                ).build();
+
+        ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
+        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+
+        ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
+
+        assertEquals("Expected input objects to be merged", 1, actualList.size());
+        assertEquals(expected, actualList.get(0));
+    }
+
+    /**
+     * If both languages of the same word on one side belong to different dialects, they may not be merged.
+     */
+    @Test
+    public void mergeSamePair_oneSideTwoDifferentDialect() {
+        BilingualEntry firstEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_NYNORSK, "trykker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.GERMAN, "Drucker")
+                ).build();
+        BilingualEntry secondEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.GERMAN, "Drucker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_BOKMÅL, "trykker")
+                ).build();
+
+        ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
+        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+
+        ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
+
+        assertEquals("Expected input objects to be not merged", 2, actualList.size());
+    }
+
+    /**
+     * If both languages of the same word on both sides belong to different dialects, they may not be merged.
+     */
+    @Test
+    public void mergeSamePair_bothSidesTwoDifferentDialect() {
+        BilingualEntry firstEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_NYNORSK, "trykker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.getLanguageById("de_sv"), "Drucker")
+                ).build();
+        BilingualEntry secondEntry = ImmutableBilingualEntry.builder()
+                .setInputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.getLanguageById("de_sx"), "Drucker"))
+                .setOutputObject(
+                        ImmutableDictionaryObject.createSimpleObject(
+                                Language.NORWEGIAN_BOKMÅL, "trykker")
+                ).build();
+
+        ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
+        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+
+        ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
+
+        assertEquals("Expected input objects to be not merged", 2, actualList.size());
     }
 
 }
