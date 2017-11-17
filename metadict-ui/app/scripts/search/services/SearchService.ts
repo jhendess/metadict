@@ -61,7 +61,12 @@ module MetadictApp {
             } else {
                 let request : Map<string> = {};
                 request[Parameters.QUERY_STRING] = requestString;
-                request[Parameters.DICTIONARIES] = dictionaries ? dictionaries :   this.dictionaryService.getCurrentDictionaryString();
+                if (dictionaries) {
+                    request[Parameters.DICTIONARIES] = dictionaries;
+                    this.dictionaryService.enableDictionariesFromQueryString(dictionaries);
+                } else {
+                    request[Parameters.DICTIONARIES] = this.dictionaryService.getCurrentDictionaryString();
+                }
                 this.$location.path(SEARCH_PAGE).search(request);
             }
         }

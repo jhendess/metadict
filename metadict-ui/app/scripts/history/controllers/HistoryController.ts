@@ -55,7 +55,9 @@ module MetadictApp {
         private firstCalled: boolean;
 
         // @ngInject
-        constructor(private $log: ILogService, private historyAccessService: HistoryAccessService, private $location: ILocationService, private $scope: HistoryScope, private dictionaryService: DictionaryService) {
+        constructor(private $log: ILogService, private historyAccessService: HistoryAccessService,
+                    private $location: ILocationService, private $scope: HistoryScope,
+                    private dictionaryService: DictionaryService) {
             $log.debug("HistoryController started");
             $scope.queryLogs = [];
             $scope.buildIconClass = dictionaryService.buildIconClass;
