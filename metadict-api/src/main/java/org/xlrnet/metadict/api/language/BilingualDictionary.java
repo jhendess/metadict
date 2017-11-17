@@ -33,6 +33,8 @@ import org.xlrnet.metadict.api.engine.FeatureSet;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -75,7 +77,7 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         this.target = target;
         this.bidirectional = bidirectional;
         this.queryString = buildQueryString(source, target);
-        this.queryStringWithDialect = buildQueryStringWithDialect(source, target);
+        this.queryStringWithDialect = buildQueryStringWithDialect(source, target, bidirectional);
     }
 
     /**
@@ -115,19 +117,27 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * @return a dictionary query string
      */
     @NotNull
-    public static String buildQueryStringWithDialect(@Nullable Language input, @Nullable Language output) {
+    public static String buildQueryStringWithDialect(@Nullable Language input, @Nullable Language output, boolean bidirectional) {
         checkNotNull(input);
         checkNotNull(output);
 
-        StringBuilder idBuilder = new StringBuilder().append(input.getIdentifier());
-        if (StringUtils.isNotEmpty(input.getDialect())) {
-            idBuilder.append("_").append(input.getDialect());
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(input.getIdentifier());
+        if (!StringUtils.isEmpty(input.getDialect())) {
+            builder.append("_").append(input.getDialect());
         }
-        idBuilder.append("-").append(output.getIdentifier());
-        if (StringUtils.isNotEmpty(output.getDialect())) {
-            idBuilder.append("_").append(output.getDialect());
+        if (bidirectional) {
+            builder.append("<>");
+        } else {
+            builder.append("-");
         }
-        return idBuilder.toString();
+        builder.append(output.getIdentifier());
+        if (!StringUtils.isEmpty(output.getDialect())) {
+            builder.append("_").append(output.getDialect());
+        }
+
+        return builder.toString();
     }
 
     /**
@@ -148,20 +158,8 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         checkNotNull(input, "Input language for dictionary may not be null");
         checkNotNull(output, "Output language for dictionary may not be null");
 
-        StringBuilder builder = new StringBuilder();
 
-        if (bidirectional) {
-            builder.append("<>");
-        }
-        builder.append(input.getIdentifier());
-        if (!StringUtils.isEmpty(input.getDialect())) {
-            builder.append("_").append(input.getDialect());
-        }
-        builder.append("-").append(output.getIdentifier());
-        if (!StringUtils.isEmpty(output.getDialect())) {
-            builder.append("_").append(output.getDialect());
-        }
-        String query = builder.toString();
+        String query = buildQueryStringWithDialect(input, output, bidirectional);
 
         return instanceMap.computeIfAbsent(query, (k) -> new BilingualDictionary(input, output, bidirectional));
     }
@@ -211,6 +209,24 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
     @NotNull
     public static BilingualDictionary inverse(@NotNull BilingualDictionary dictionary) {
         return BilingualDictionary.fromLanguages(dictionary.getTarget(), dictionary.getSource(), dictionary.isBidirectional());
+    }
+
+    /**
+     * Creates a query string from multiple bilingual dictionaries. Multiple query strings are separated by ",".
+     * @param bilingualDictionaries The dictionaries from which a query string should be created.
+     * @return a query string from multiple bilingual dictionaries.
+     */
+    @NotNull
+    public static String buildQueryString(@NotNull List<BilingualDictionary> bilingualDictionaries) {
+        StringBuilder builder = new StringBuilder();
+        for (Iterator<BilingualDictionary> iterator = bilingualDictionaries.iterator(); iterator.hasNext(); ) {
+            BilingualDictionary bilingualDictionary = iterator.next();
+            builder.append(bilingualDictionary.getQueryStringWithDialect());
+            if (iterator.hasNext()) {
+                builder.append(",");
+            }
+        }
+        return builder.toString();
     }
 
     /**

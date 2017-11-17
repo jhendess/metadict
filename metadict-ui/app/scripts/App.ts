@@ -39,7 +39,7 @@ module MetadictApp {
 
     declare let window;
 
-    export const DEFAULT_PAGE = "/search";
+    export const SEARCH_PAGE = "/search";
 
     export let metadictModule = angular.module("MetadictApp", [
         "ngRoute",
@@ -79,7 +79,7 @@ module MetadictApp {
             }).when("/history", {
                 templateUrl: "views/history.html"
             }).otherwise({
-                redirectTo: MetadictApp.DEFAULT_PAGE
+                redirectTo: MetadictApp.SEARCH_PAGE
             });
         })
         .config(($locationProvider: ILocationProvider) => {

@@ -49,16 +49,20 @@ module MetadictApp {
         }
 
         /**
-         * Trigger a search by changing the requestString parameter to the requested search value. This workaround is
-         * necessary to support correct behaviour of the HTML5 history API.
+         * Trigger a search by changing the requestString and dictionaries parameter to the requested search value. This
+         * workaround is necessary to support correct behaviour of the HTML5 history API.
          * @param requestString The string that will be searched for.
+         * @param {string} dictionaries The dictionaries to use in that query.
          */
-        public triggerSearch(requestString: string) {
+        public triggerSearch(requestString: string, dictionaries: string) {
             let oldRequest = this.$location.search()[Parameters.QUERY_STRING];
             if (oldRequest === requestString) {
                 this.$rootScope.$broadcast(SearchEvents.FORCE_SEARCH);
             } else {
-                this.$location.search(Parameters.QUERY_STRING, requestString);
+                let request : Map<string> = {};
+                request[Parameters.QUERY_STRING] = requestString;
+                request[Parameters.DICTIONARIES] = dictionaries ? dictionaries :   this.dictionaryService.getCurrentDictionaryString();
+                this.$location.path(SEARCH_PAGE).search(request);
             }
         }
     }

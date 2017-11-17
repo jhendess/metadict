@@ -25,13 +25,14 @@
                         <table class="striped">
                             <tr ng-repeat="logEntry in queryLogs">
                                 <td>
-                                    {{ logEntry.queryString }}
+                                    <a class="underlinedLink black-text" click-query dictionaries="{{ logEntry.dictionaryString }}">{{
+                                        logEntry.queryString }}</a>
                                 </td>
                                 <td class="center">
-                            <span class="chip" ng-repeat="dictionary in logEntry.dictionaries">
-                                <span class="flag-icon" ng-class="buildIconClass(dictionary.source)"></span>
-                                <span class="flag-icon" ng-class="buildIconClass(dictionary.target)"></span>
-                            </span>
+                                    <span class="chip" ng-repeat="dictionary in logEntry.dictionaries">
+                                        <span class="flag-icon" ng-class="buildIconClass(dictionary.source)"></span>
+                                        <span class="flag-icon" ng-class="buildIconClass(dictionary.target)"></span>
+                                    </span>
                                 </td>
                             </tr>
                         </table>

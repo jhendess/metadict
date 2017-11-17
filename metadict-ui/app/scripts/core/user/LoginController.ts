@@ -55,7 +55,7 @@ module MetadictApp {
         };
 
         private afterSuccessHandler: SuccessCallback<UserSession> = (response: UserSession) => {
-            this.$location.path(MetadictApp.DEFAULT_PAGE);     // TODO: Display a welcome popup for a new registration
+            this.$location.path(MetadictApp.SEARCH_PAGE);     // TODO: Display a welcome popup for a new registration
             Materialize.toast(`Welcome back ${response.name}!`, 4000);
         };
     }

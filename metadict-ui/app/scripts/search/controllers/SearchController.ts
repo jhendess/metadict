@@ -59,7 +59,7 @@ module MetadictApp {
                 return;
             }
 
-            this.searchService.triggerSearch(requestString);
+            this.searchService.triggerSearch(requestString, null);
         };
 
         private animateClickQuery = () => {

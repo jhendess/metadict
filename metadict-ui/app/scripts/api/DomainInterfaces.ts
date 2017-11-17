@@ -224,6 +224,11 @@ module MetadictApp {
         queryString: string;
 
         /**
+         * The dictionary string sent to the backend.
+         */
+        dictionaryString: string;
+
+        /**
          * Time when the request was sent.
          */
         requestTime: string;

@@ -17,12 +17,14 @@ module MetadictApp {
 
         public restrict = "A";
 
-        public link = (scope: IScope, element: IAugmentedJQuery) => {
+        public link = (scope: IScope, element: IAugmentedJQuery, attributes: Map<string>) => {
             element.on("click", () => {
-                let queryString = element.text();
+                let queryString = _.trim(element.text());
+                let dictionaries = attributes['dictionaries'];
+                this.$log.debug(`Invoking click query for queryString='${queryString}' and dictionaries '${dictionaries}'`)
                 scope.$apply(() => {
                     scope.$emit(CoreEvents.INVOKE_CLICK_QUERY, queryString);
-                    this.searchService.triggerSearch(queryString);
+                    this.searchService.triggerSearch(queryString, dictionaries);
                 });
             });
         };

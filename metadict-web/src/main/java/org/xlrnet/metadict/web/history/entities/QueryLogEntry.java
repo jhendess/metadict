@@ -31,6 +31,7 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.core.api.query.QueryRequest;
 import org.xlrnet.metadict.core.services.aggregation.group.GroupingType;
 import org.xlrnet.metadict.core.services.aggregation.order.OrderType;
+import org.xlrnet.metadict.core.util.BilingualDictionaryUtils;
 import org.xlrnet.metadict.web.auth.entities.PersistedUser;
 import org.xlrnet.metadict.web.db.converter.BilingualDictionaryConverter;
 import org.xlrnet.metadict.web.db.converter.LanguageConverter;
@@ -158,5 +159,10 @@ public class QueryLogEntry extends AbstractMetadictEntity {
 
     public void setOrderType(OrderType orderType) {
         this.orderType = orderType;
+    }
+
+    @JsonProperty("dictionaryString")
+    public String getDictionaryString() {
+        return BilingualDictionary.buildQueryString(this.bilingualDictionaries);
     }
 }

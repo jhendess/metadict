@@ -59,6 +59,7 @@ module MetadictApp {
             $log.debug("HistoryController started");
             $scope.queryLogs = [];
             $scope.buildIconClass = dictionaryService.buildIconClass;
+            $scope.isEmpty = false;
         }
 
         public loadMore() : QueryLogEntry[] {
@@ -76,7 +77,7 @@ module MetadictApp {
         private handleQueryLogLoadSuccess = (queryLogs: QueryLogEntry[], links: LinkContainer) => {
             this.next = links.next;
             this.loading = false;
-            if (!this.next && (!queryLogs || queryLogs.length === 0)) {
+            if (!this.next && (!queryLogs || queryLogs.length === 0) && this.$scope.queryLogs.length === 0) {
                 this.$scope.isEmpty = true;
                 this.$log.debug("No query logs found");
             } else {
@@ -92,7 +93,7 @@ module MetadictApp {
             this.loading = false;
             this.$log.error("Loading query logs failed: ", responseStatus, reason);
             if (responseStatus === ResponseStatus.UNAUTHORIZED) {
-                this.$location.path(MetadictApp.DEFAULT_PAGE);
+                this.$location.path(MetadictApp.SEARCH_PAGE);
             }
         }
     }

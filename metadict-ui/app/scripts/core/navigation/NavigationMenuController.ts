@@ -37,7 +37,7 @@ module MetadictApp {
 
         public logout(): void {
             this.userService.logout();
-            this.$location.path(MetadictApp.DEFAULT_PAGE);
+            this.$location.path(MetadictApp.SEARCH_PAGE);
         }
 
         /**

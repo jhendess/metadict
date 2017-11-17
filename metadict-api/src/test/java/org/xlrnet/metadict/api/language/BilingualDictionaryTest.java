@@ -24,6 +24,7 @@
 
 package org.xlrnet.metadict.api.language;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,5 +42,16 @@ public class BilingualDictionaryTest {
 
         assertEquals("Cached dictionaries should have the same reference", d1, d2);
         assertTrue("Cached dictionaries should have the same reference", d1 == d2);
+    }
+
+    @Test
+    public void testBuildQueryString_list() {
+        ImmutableList<BilingualDictionary> dictionaries = ImmutableList.of(
+                BilingualDictionary.fromLanguages(Language.GERMAN, Language.NORWEGIAN, false),
+                BilingualDictionary.fromLanguages(Language.NORWEGIAN_BOKMÅL, Language.NORWEGIAN_NYNORSK, true)
+        );
+        String actual = BilingualDictionary.buildQueryString(dictionaries);
+
+        assertEquals("de-no,no_bo<>no_ny", actual);
     }
 }
