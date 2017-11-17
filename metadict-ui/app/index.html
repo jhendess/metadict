@@ -71,7 +71,7 @@
     <div class="nav-wrapper container">
         <ul class="right hide-on-med-and-down">
             <li>
-                <a href="#" data-activates="menu-right" data-sidenav="right" class="right"
+                <a href="#" data-activates="menu-right" data-sidenav="right" class="right" data-closeonclick="{{main.isMobileView()}}"
                    data-menuwidth="300">
                     <i class="material-icons">settings</i>
                 </a>
@@ -90,14 +90,14 @@
             <select-dictionaries-menu></select-dictionaries-menu>
         </ul>
 
-        <a href="#" data-activates="menu-left" data-sidenav="left" class="button-collapse"
+        <a href="#" data-activates="menu-left" data-sidenav="left" class="button-collapse" data-closeonclick="{{main.isMobileView()}}"
            data-menuwidth="300">
             <i class="material-icons">menu</i>
         </a>
 
         <a id="logo-container" href="#" class="brand-logo">Metadict</a>
 
-        <a href="#" data-activates="menu-right" data-sidenav="right" class="button-collapse right"
+        <a href="#" data-activates="menu-right" data-sidenav="right" class="button-collapse right" data-closeonclick="{{main.isMobileView()}}"
            data-menuwidth="300">
             <i class="material-icons">settings</i>
         </a>

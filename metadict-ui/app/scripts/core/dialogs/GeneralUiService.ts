@@ -37,7 +37,7 @@ module MetadictApp {
          * Recalculate the heights of the sidenav elements.
          */
         public updateSidenavs = () => {
-            if (window.innerWidth < GeneralUiService.MOBILE_SCREEN_WIDTH_THRESHOLD) {
+            if (this.isMobileView()) {
                 return;
             }
 
@@ -50,6 +50,10 @@ module MetadictApp {
             $("#menu-left").css("top", newTop + "px");
             $("#menu-left").css("height", newHeight + "px");
         };
+
+        public isMobileView(): boolean {
+            return window.innerWidth < GeneralUiService.MOBILE_SCREEN_WIDTH_THRESHOLD;
+        }
 
         private onElementHeightChange(element, callback: Function) {
             let jqElement: JQuery = $(element);

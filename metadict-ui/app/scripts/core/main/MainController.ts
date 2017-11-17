@@ -41,11 +41,16 @@ module MetadictApp {
 
         // @ngInject
         constructor(private $scope: IMainScope, private $log: ILogService, private statusService: StatusService,
-                    private $rootScope: IRootScopeService, private navigationMenuService: NavigationMenuService) {
+                    private $rootScope: IRootScopeService, private navigationMenuService: NavigationMenuService,
+                    private generalUiService: GeneralUiService) {
             this.checkFinishedUpdate();
             $scope.statusService = statusService;
             $scope.prependBasePath = this.navigationMenuService.prependBasePath;
             $log.debug("MainController started");
+        }
+
+        public isMobileView() {
+            return this.generalUiService.isMobileView();
         }
 
         private checkFinishedUpdate() {
