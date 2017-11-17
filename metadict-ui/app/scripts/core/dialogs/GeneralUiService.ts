@@ -6,6 +6,8 @@ module MetadictApp {
 
     import ILogService = angular.ILogService;
 
+    declare let Materialize;
+
     /**
      * Service which provides general UI related services.
      */
@@ -51,6 +53,19 @@ module MetadictApp {
             $("#menu-left").css("height", newHeight + "px");
         };
 
+        /**
+         * Displays a small "Toast" popup which closes automatically after the given timeout.
+         * @param {string} text The text to display.
+         * @param {number} timeout The timeout after which the toast will close.
+         */
+        public showSmallPopup(text: string, timeout: number) {
+            Materialize.toast(text, timeout);
+        }
+
+        /**
+         * Checks if the application runs on a small mobile view.
+         * @returns {boolean}
+         */
         public isMobileView(): boolean {
             return window.innerWidth < GeneralUiService.MOBILE_SCREEN_WIDTH_THRESHOLD;
         }

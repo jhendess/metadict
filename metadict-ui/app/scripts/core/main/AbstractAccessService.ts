@@ -32,6 +32,7 @@ module MetadictApp {
     import ILogService = angular.ILogService;
     import IRestangularService = restangular.IService;
     import IRestangularResponse = restangular.IResponse;
+    import IRootScopeService = angular.IRootScopeService;
     declare let Offline;
 
 
@@ -40,7 +41,7 @@ module MetadictApp {
      */
     export abstract class AbstractAccessService {
         // @ngInject
-        constructor(protected $log: ILogService, protected Restangular: IRestangularService) {
+        constructor(protected $log: ILogService, protected Restangular: IRestangularService, protected $rootScope: IRootScopeService) {
             Restangular.setErrorInterceptor(this.errorInterceptor);
         }
 
@@ -112,6 +113,8 @@ module MetadictApp {
                 response.data = {
                     status: ResponseStatus[ResponseStatus.UNAUTHORIZED]
                 };
+            } else if (response.status === 429) {
+                this.$rootScope.$broadcast(CoreEvents.TOO_MANY_REQUESTS);
             }
             return true;
         };

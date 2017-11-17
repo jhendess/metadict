@@ -9,8 +9,6 @@ module MetadictApp {
     import IFormController = angular.IFormController;
     import ILocationService = angular.ILocationService;
 
-    declare let Materialize;
-
     interface IRegistrationScope extends IScope {
         /** The registration request data. */
         user: RegistrationData;
@@ -29,7 +27,8 @@ module MetadictApp {
      */
     class RegistrationController {
         // @ngInject
-        constructor(private $scope: IRegistrationScope, private userService: UserService, private $location: ILocationService, private $log: ILogService) {
+        constructor(private $scope: IRegistrationScope, private userService: UserService,
+                    private $location: ILocationService, private $log: ILogService, private generalUiService: GeneralUiService) {
             $log.debug("RegistrationController started");
         }
 
@@ -72,7 +71,7 @@ module MetadictApp {
         private afterLoginHandler: SuccessCallback<UserSession> = (response: UserSession) => {
             this.$scope.registering = false;
             this.$location.path("/search");     // TODO: Display a welcome popup for a new registration
-            Materialize.toast(`Welcome ${response.name}!`, 4000);
+            this.generalUiService.showSmallPopup(`Welcome ${response.name}!`, 4000);
         };
     }
 

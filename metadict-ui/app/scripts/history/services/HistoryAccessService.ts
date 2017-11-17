@@ -31,6 +31,7 @@ module MetadictApp {
     import ILogService = angular.ILogService;
     import IRestangularService = restangular.IService;
     import IRestangularElement = restangular.IElement;
+    import IRootScopeService = angular.IRootScopeService;
 
     /**
      * Access service for fetching data from the history resource.
@@ -42,8 +43,8 @@ module MetadictApp {
         private _historyAccess: IRestangularElement;
 
         // @ngInject
-        constructor($log: ILogService, Restangular: IRestangularService) {
-            super($log, Restangular);
+        constructor($log: ILogService, Restangular: IRestangularService, $rootScope: IRootScopeService) {
+            super($log, Restangular, $rootScope);
 
             $log.debug("HistoryAccessService started");
             this._historyAccess = Restangular.one(HistoryAccessService.HISTORY_RESOURCE_NAME);

@@ -32,5 +32,11 @@ module MetadictApp {
          * @type {string}
          */
         public static INVOKE_CLICK_QUERY = "INVOKE_CLICK_QUERY";
+
+        /**
+         * The user sent to many requests to a limited backend resource.
+         * @type {string}
+         */
+        public static TOO_MANY_REQUESTS = "TOO_MANY_REQUESTS";
     }
 }

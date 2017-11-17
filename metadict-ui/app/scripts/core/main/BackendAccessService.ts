@@ -4,9 +4,10 @@
 
 module MetadictApp {
 
-                                 import ILogService = angular.ILogService;
+    import ILogService = angular.ILogService;
     import IRestangularService = restangular.IService;
     import IRestangularElement = restangular.IElement;
+    import IRootScopeService = angular.IRootScopeService;
 
     /**
      * Central service for accessing the Metadict backend data.
@@ -23,8 +24,8 @@ module MetadictApp {
         private _sessionAccess: IRestangularElement;
 
         // @ngInject
-        constructor($log: ILogService, Restangular: IRestangularService) {
-            super($log, Restangular);
+        constructor($log: ILogService, Restangular: IRestangularService, $rootScope: IRootScopeService) {
+            super($log, Restangular, $rootScope);
             this.setupResources();
 
             $log.debug("BackendAccessService started");

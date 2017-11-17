@@ -9,8 +9,6 @@ module MetadictApp {
     import IScope = angular.IScope;
     import ILocationService = angular.ILocationService;
 
-    declare var Materialize;
-
     export interface ISearchScope extends IScope {
 
         searchRequest: string;
@@ -31,7 +29,7 @@ module MetadictApp {
         constructor(private $scope: ISearchScope, private $log: ILogService,
                     private searchService: SearchService, private $location: ILocationService,
                     private prettyFormattingService: PrettyFormattingService,
-                    private dictionaryService: DictionaryService,
+                    private dictionaryService: DictionaryService, private generalUiService: GeneralUiService,
                     private statusService: StatusService) {
 
             this.prepareScope();
@@ -51,11 +49,11 @@ module MetadictApp {
             let dictionaries: string = this.dictionaryService.getCurrentDictionaryString();
 
             if (!requestString || requestString.length <= 0) {
-                Materialize.toast("No query entered", 4000);
+                this.generalUiService.showSmallPopup("No query entered", 4000);
                 return;
             }
             if (!dictionaries || dictionaries.length <= 0) {
-                Materialize.toast("No dictionaries selected", 4000);
+                this.generalUiService.showSmallPopup("No dictionaries selected", 4000);
                 return;
             }
 

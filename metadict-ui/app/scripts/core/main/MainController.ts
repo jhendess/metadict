@@ -8,9 +8,6 @@ module MetadictApp {
     import IRootScopeService = angular.IRootScopeService;
     import IScope = angular.IScope;
 
-    declare var Materialize;
-
-
     export interface IMainScope extends IScope {
 
         statusService: StatusService;
@@ -47,6 +44,10 @@ module MetadictApp {
             $scope.statusService = statusService;
             $scope.prependBasePath = this.navigationMenuService.prependBasePath;
             $log.debug("MainController started");
+            $rootScope.$on(CoreEvents.TOO_MANY_REQUESTS, () => {
+                this.$log.warn("Too many requests sent to the backend");
+                this.generalUiService.showSmallPopup("You sent too many requests. <br/>Please wait a moment and try again.", 4000);
+            });
         }
 
         public isMobileView() {
@@ -55,7 +56,7 @@ module MetadictApp {
 
         private checkFinishedUpdate() {
             if (this.statusService.isUpdateFinished === true) {
-                Materialize.toast(MainController.APPLICATION_UPDATE_MESSAGE, MainController.APPLICATION_UPDATE_MESSAGE_TIMEOUT);
+                this.generalUiService.showSmallPopup(MainController.APPLICATION_UPDATE_MESSAGE, MainController.APPLICATION_UPDATE_MESSAGE_TIMEOUT);
                 this.statusService.isUpdateFinished = false;
             }
         }
