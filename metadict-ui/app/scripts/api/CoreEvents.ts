@@ -38,5 +38,15 @@ module MetadictApp {
          * @type {string}
          */
         public static TOO_MANY_REQUESTS = "TOO_MANY_REQUESTS";
+
+        /**
+         * The device was offline and has now again a connection to the backend.
+         */
+        public static CONNECTION_RECOVERED = "CONNECTION_RECOVERED";
+
+        /**
+         * The device was online and has lost the connection
+         */
+        public static CONNECTION_LOST = "CONNECTION_LOST";
     }
 }

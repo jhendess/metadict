@@ -17,6 +17,11 @@ module MetadictApp {
          * @param target The target to which the base path should be prepended.
          */
         prependBasePath: (target: string) => string;
+
+        /**
+         * Flag to show if the application is currently connected to a backend.
+         */
+        isConnected: boolean;
     }
 
     /**
@@ -48,6 +53,9 @@ module MetadictApp {
                 this.$log.warn("Too many requests sent to the backend");
                 this.generalUiService.showSmallPopup("You sent too many requests. <br/>Please wait a moment and try again.", 4000);
             });
+            $scope.$on(CoreEvents.CONNECTION_LOST, () => this.$scope.$apply(() => this.$scope.isConnected = false));
+            $scope.$on(CoreEvents.CONNECTION_RECOVERED, () => this.$scope.$apply(() => this.$scope.isConnected = true));
+            this.$scope.isConnected = statusService.isConnected;
         }
 
         public isMobileView() {

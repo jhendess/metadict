@@ -17,16 +17,21 @@
                 <div class="row">
                     <h5>Query history</h5>
 
-                    <p class="center" ng-if="isEmpty">You haven't searched for anything yet.</p>
+                    <p class="center" ng-if="!isConnected">
+                        You are currently offline. Go online to see your query history.
+                    </p>
+
+                    <p class="center" ng-if="isEmpty && isConnected">You haven't searched for anything yet.</p>
 
                     <div class="historyContainer" infinite-scroll="historyController.loadMore()"
                          infinite-scroll-distance="3" infinite-scroll-immediate-check="true"
-                         infinite-scroll-disabled="disableLoading || historyController.loading">
+                         infinite-scroll-disabled="!isConnected || disableLoading || historyController.loading"
+                         infinite-scroll-listen-for-event="CONNECTION_RECOVERED">
                         <table class="striped">
                             <tr ng-repeat="logEntry in queryLogs">
                                 <td>
-                                    <a class="underlinedLink black-text" click-query dictionaries="{{ logEntry.dictionaryString }}">{{
-                                        logEntry.queryString }}</a>
+                                    <a class="underlinedLink black-text" click-query
+                                       data-dictionaries="{{ logEntry.dictionaryString }}">{{logEntry.queryString }}</a>
                                 </td>
                                 <td class="center">
                                     <span class="chip" ng-repeat="dictionary in logEntry.dictionaries">

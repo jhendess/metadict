@@ -194,10 +194,11 @@ module MetadictApp {
          * Enables all dictionaries from the given query string. Already selected dictionaries will be deselected.
          */
         public enableDictionariesFromQueryString(dictionaryString) {
-            this._selectedDictionaryIds = []
+            this._selectedDictionaryIds = [];
             _.forEach(dictionaryString.split(Parameters.SEPARATOR), (dictionaryId: string) => {
                 this.enableDictionary(dictionaryId, false);
             });
+            this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
         };
 
         private isDictionaryAvailable(dictionaryIdentifier: string): boolean {

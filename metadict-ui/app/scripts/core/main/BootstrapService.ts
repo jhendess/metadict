@@ -4,6 +4,7 @@
 
 module MetadictApp {
 
+    import IRootScopeService = angular.IRootScopeService;
     declare var Offline;
     import ILogService = angular.ILogService;
 
@@ -12,7 +13,9 @@ module MetadictApp {
      */
     export class BootstrapService {
         // @ngInject
-        constructor(private $log: ILogService, private dictionaryService: DictionaryService, private userService: UserService) {
+        constructor(private $log: ILogService, private dictionaryService: DictionaryService,
+                    private userService: UserService, private statusService: StatusService,
+                    private $rootScope: IRootScopeService) {
             $log.debug("BootstrapService started");
         }
 
@@ -37,6 +40,18 @@ module MetadictApp {
                     }
                 }
             };
+            Offline.on("down", () => {
+                this.$log.info("Application is now offline");
+                this.$rootScope.$broadcast(CoreEvents.CONNECTION_LOST);
+                this.statusService.isConnected = false;
+            });
+            Offline.on("up", () => {
+                this.$log.info("Application is now online");
+                this.$rootScope.$broadcast(CoreEvents.CONNECTION_RECOVERED);
+                this.statusService.isConnected = true;
+            });
+            Offline.check();
+            this.statusService.isConnected = Offline.state === "up";
         }
 
         private checkLoginStatus() {
