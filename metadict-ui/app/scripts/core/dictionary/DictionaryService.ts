@@ -196,7 +196,7 @@ module MetadictApp {
         public enableDictionariesFromQueryString(dictionaryString) {
             this._selectedDictionaryIds = [];
             _.forEach(dictionaryString.split(Parameters.SEPARATOR), (dictionaryId: string) => {
-                this.enableDictionary(dictionaryId, false);
+                this.enableDictionary(dictionaryId, true);
             });
             this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
         };
