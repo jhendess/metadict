@@ -93,6 +93,12 @@ module MetadictApp {
         private internalRunSearch = () => {
             // Update the scope variable (in case the request was triggered externally)
             this.$scope.searchRequest = this.$location.search()[Parameters.QUERY_STRING];
+
+            // Initialize the dictionaries manually in case they aren't loaded yet and ignore unknown dictionaries
+            if (!this.dictionaryService.isDictionaryListLoaded()) {
+                this.dictionaryService.initializeDictionaryConfiguration(false);
+            }
+
             if (this.$scope.searchRequest) {
                 this.searchService.runBilingualQuery(this.$scope.searchRequest, this.successCallback, this.errorCallback);
             }

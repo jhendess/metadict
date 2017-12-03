@@ -48,5 +48,10 @@ module MetadictApp {
          * The device was online and has lost the connection
          */
         public static CONNECTION_LOST = "CONNECTION_LOST";
+
+        /**
+         * Event which will be fired when the dictionary selection was changed by a click query.
+         */
+        public static DICTIONARY_SELECTION_CHANGE_BY_CLICK_QUERY = "DICTIONARY_SELECTION_CHANGE_BY_CLICK_QUERY";
     }
 }

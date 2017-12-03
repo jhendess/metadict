@@ -29,8 +29,17 @@ module MetadictApp {
 
             $scope.$watch(
                 () => dictionaryService.isDictionaryListLoaded(),
-                () => $scope.availableDictionaries = dictionaryService.getBilingualDictionaries()
+                () => {
+                    $scope.availableDictionaries = dictionaryService.getBilingualDictionaries();
+                    this.initializeSelectionMap();
+                }
             );
+
+            // Force update of selected dictionaries if a click query modified the selected dictionaries
+            $scope.$on(CoreEvents.DICTIONARY_SELECTION_CHANGE_BY_CLICK_QUERY,
+                () => {
+                    this.initializeSelectionMap();
+                });
 
             $log.debug("SelectDictionariesMenuController started");
         }
@@ -44,6 +53,7 @@ module MetadictApp {
         }
 
         private initializeSelectionMap() {
+            this.$log.debug("Initializing selected dictionaries menu");
             this.$scope.selectionMap = {};
             for (let dictionaryId of this.dictionaryService.selectedDictionaryIds) {
                 this.$scope.selectionMap[dictionaryId] = true;

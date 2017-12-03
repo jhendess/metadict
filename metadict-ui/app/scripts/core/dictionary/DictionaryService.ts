@@ -50,7 +50,7 @@ module MetadictApp {
                 return this.isDictionaryAvailable(dictionaryId);
             });
 
-            this.initializeDictionaryConfiguration();
+            this.initializeDictionaryConfiguration(true);
 
             this._dictionaryListLoaded = true;
             this._dictionaryListLoading = false;
@@ -179,7 +179,7 @@ module MetadictApp {
             return _.filter(this.getBilingualDictionaries(), (bd: BilingualDictionary) => this.isDictionarySelected(bd.queryStringWithDialect));
         }
 
-        public initializeDictionaryConfiguration() {
+        public initializeDictionaryConfiguration(checkIfExisting: boolean) {
             let dictionaryString = this.$location.search()[Parameters.DICTIONARIES];
 
             if (!dictionaryString) {
@@ -187,17 +187,18 @@ module MetadictApp {
             }
 
             if (dictionaryString) {
-                this.enableDictionariesFromQueryString(dictionaryString);
+                this.enableDictionariesFromQueryString(dictionaryString, checkIfExisting);
             }
         }
 
         /**
          * Enables all dictionaries from the given query string. Already selected dictionaries will be deselected.
          */
-        public enableDictionariesFromQueryString(dictionaryString) {
+        public enableDictionariesFromQueryString(dictionaryString: string, checkIfExisting: boolean) {
             this._selectedDictionaryIds = [];
+            this.$log.debug(`Trying to enable dictionaries ${dictionaryString}. `, "Will " + (!checkIfExisting ? "not " : "") + "check if dictionaries exist");
             _.forEach(dictionaryString.split(Parameters.SEPARATOR), (dictionaryId: string) => {
-                this.enableDictionary(dictionaryId, true);
+                this.enableDictionary(dictionaryId, checkIfExisting);
             });
             this.$rootScope.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE);
         };

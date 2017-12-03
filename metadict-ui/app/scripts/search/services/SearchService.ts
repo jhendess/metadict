@@ -63,7 +63,7 @@ module MetadictApp {
                 request[Parameters.QUERY_STRING] = requestString;
                 if (dictionaries) {
                     request[Parameters.DICTIONARIES] = dictionaries;
-                    this.dictionaryService.enableDictionariesFromQueryString(dictionaries);
+                    this.dictionaryService.enableDictionariesFromQueryString(dictionaries, this.dictionaryService.isDictionaryListLoaded());
                 } else {
                     request[Parameters.DICTIONARIES] = this.dictionaryService.getCurrentDictionaryString();
                 }

@@ -25,6 +25,9 @@ module MetadictApp {
                 scope.$apply(() => {
                     scope.$emit(CoreEvents.INVOKE_CLICK_QUERY, queryString);
                     this.searchService.triggerSearch(queryString, dictionaries);
+                    if (dictionaries) {
+                        scope.$root.$broadcast(CoreEvents.DICTIONARY_SELECTION_CHANGE_BY_CLICK_QUERY);
+                    }
                 });
             });
         };
