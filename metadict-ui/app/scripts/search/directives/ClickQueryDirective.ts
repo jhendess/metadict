@@ -20,7 +20,7 @@ module MetadictApp {
         public link = (scope: IScope, element: IAugmentedJQuery, attributes: Map<string>) => {
             element.on("click", () => {
                 let queryString = _.trim(element.text());
-                let dictionaries = attributes["data-dictionaries"];
+                let dictionaries = attributes["dictionaries"];
                 this.$log.debug(`Invoking click query for queryString='${queryString}' and dictionaries '${dictionaries}'`)
                 scope.$apply(() => {
                     scope.$emit(CoreEvents.INVOKE_CLICK_QUERY, queryString);

@@ -19,7 +19,6 @@ module MetadictApp {
         constructor(private $log: ILogService, private backendAccessService: BackendAccessService,
                     private $rootScope: IRootScopeService, private $location: ILocationService,
                     private localStorageService: ILocalStorageService) {
-            this.initializeDictionaryConfiguration();
             $log.debug("DictionaryService started");
         }
 
@@ -50,6 +49,8 @@ module MetadictApp {
             _.filter(this._selectedDictionaryIds, (dictionaryId: string) => {
                 return this.isDictionaryAvailable(dictionaryId);
             });
+
+            this.initializeDictionaryConfiguration();
 
             this._dictionaryListLoaded = true;
             this._dictionaryListLoading = false;

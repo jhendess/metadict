@@ -62,6 +62,10 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
 
     private static final long serialVersionUID = -1851855085963129942L;
 
+    private static final String BIDIRECTIONAL_SYMBOL = "<>";
+
+    private static final String UNIDIRECTIONAL_SYMBOL = "-";
+
     private final Language source;
 
     private final Language target;
@@ -76,7 +80,7 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
         this.source = source;
         this.target = target;
         this.bidirectional = bidirectional;
-        this.queryString = buildQueryString(source, target);
+        this.queryString = buildQueryString(source, target, bidirectional);
         this.queryStringWithDialect = buildQueryStringWithDialect(source, target, bidirectional);
     }
 
@@ -93,13 +97,18 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
      * @return a dictionary query string
      */
     @NotNull
-    public static String buildQueryString(@Nullable Language input, @Nullable Language output) {
+    public static String buildQueryString(@Nullable Language input, @Nullable Language output, boolean bidirectional) {
         checkNotNull(input);
         checkNotNull(output);
 
-        StringBuilder idBuilder = new StringBuilder().append(input.getIdentifier());
-        idBuilder.append("-").append(output.getIdentifier());
-        return idBuilder.toString();
+        StringBuilder builder = new StringBuilder().append(input.getIdentifier());
+        if (bidirectional) {
+            builder.append(BIDIRECTIONAL_SYMBOL);
+        } else {
+            builder.append(UNIDIRECTIONAL_SYMBOL);
+        }
+        builder.append(output.getIdentifier());
+        return builder.toString();
     }
 
     /**
@@ -128,9 +137,9 @@ public class BilingualDictionary implements Serializable, Comparable<BilingualDi
             builder.append("_").append(input.getDialect());
         }
         if (bidirectional) {
-            builder.append("<>");
+            builder.append(BIDIRECTIONAL_SYMBOL);
         } else {
-            builder.append("-");
+            builder.append(UNIDIRECTIONAL_SYMBOL);
         }
         builder.append(output.getIdentifier());
         if (!StringUtils.isEmpty(output.getDialect())) {

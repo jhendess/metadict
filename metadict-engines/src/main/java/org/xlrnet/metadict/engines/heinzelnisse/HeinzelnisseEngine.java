@@ -85,7 +85,7 @@ public class HeinzelnisseEngine implements SearchEngine {
     public BilingualQueryResult executeBilingualQuery(@NotNull String queryInput, @NotNull Language inputLanguage, @NotNull Language outputLanguage, boolean allowBothWay) throws MetadictTechnicalException {
         boolean queryGerman = false;
         boolean queryNorwegian = false;
-        String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage);
+        String requestedDictionary = BilingualDictionary.buildQueryString(inputLanguage, outputLanguage, false);
 
         if ("de-no".equals(requestedDictionary)) {
             if (Language.NORWEGIAN.equals(outputLanguage) || Language.NORWEGIAN_BOKMÅL.equals(outputLanguage)) {
