@@ -26,6 +26,7 @@ package org.xlrnet.metadict.core.services.aggregation.merge;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
@@ -40,6 +41,13 @@ import static junit.framework.TestCase.assertTrue;
  * Tests for {@link MonolingualEntryMerger}.
  */
 public class MonolingualEntryMergerTest {
+
+    private MonolingualEntryMerger merger;
+
+    @Before
+    public void setup() {
+        merger = new MonolingualEntryMerger(null);  // Normalizer not necessary for tests
+    }
 
     @Test
     public void findCandidates() throws Exception {
@@ -57,7 +65,7 @@ public class MonolingualEntryMergerTest {
 
         ImmutableList<MonolingualEntry> toCandidatize = ImmutableList.of(entryA, entryB, entryC, entryD);
 
-        Collection<Collection<MonolingualEntry>> candidates = new MonolingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<MonolingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(3, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
@@ -82,7 +90,7 @@ public class MonolingualEntryMergerTest {
                 setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<MonolingualEntry> toCandidatize = ImmutableList.of(entryA, entryB, entryC);
-        Collection<Collection<MonolingualEntry>> candidates = new MonolingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<MonolingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(3, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA)));
@@ -96,7 +104,7 @@ public class MonolingualEntryMergerTest {
         MonolingualEntry entryA = ImmutableMonolingualEntry.builder().setContent(sourceA).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<MonolingualEntry> toCandidatize = ImmutableList.of(entryA);
-        Collection<Collection<MonolingualEntry>> candidates = new MonolingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<MonolingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(1, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA)));
@@ -111,7 +119,7 @@ public class MonolingualEntryMergerTest {
         MonolingualEntry entryB = ImmutableMonolingualEntry.builder().setContent(sourceB).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<MonolingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
-        Collection<Collection<MonolingualEntry>> candidates = new MonolingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<MonolingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(1, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
@@ -151,7 +159,7 @@ public class MonolingualEntryMergerTest {
 
         List<MonolingualEntry> candidates = Lists.newArrayList(candidateA, candidateB);
 
-        MonolingualEntry actualMerged = new MonolingualEntryMerger().mergeCandidate(candidates);
+        MonolingualEntry actualMerged = merger.mergeCandidate(candidates);
 
         DictionaryObject expectedSource = ImmutableDictionaryObject.builder()
                 .setLanguage(Language.GERMAN)

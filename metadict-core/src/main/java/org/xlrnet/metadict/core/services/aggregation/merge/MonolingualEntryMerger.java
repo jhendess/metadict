@@ -30,8 +30,8 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.aggregation.Merges;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
-import org.xlrnet.metadict.core.util.CommonUtils;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,11 +42,20 @@ import java.util.List;
 @Merges(MonolingualEntry.class)
 public class MonolingualEntryMerger extends AbstractEntryMerger<MonolingualEntry> {
 
+    /** Service for normalization. */
+    private final NormalizationService normalizationService;
+
+    @Inject
+    public MonolingualEntryMerger(NormalizationService normalizationService) {
+        this.normalizationService = normalizationService;
+    }
+
     @NotNull
     @Override
     protected MergeCandidateIdentifier buildCandidateIdentifier(@NotNull MonolingualEntry input) {
         ImmutablePair<Language, Language> languagePair = ImmutablePair.of(input.getContent().getLanguage(), null);
-        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(CommonUtils.simpleNormalize(input.getContent().getGeneralForm()), null);
+        String normalized = normalizationService.getNormalizedGeneralForm(input.getContent(), input.getEntryType());
+        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(normalized, null);
         return new MergeCandidateIdentifier(languagePair, input.getEntryType(), generalFormPair);
     }
 

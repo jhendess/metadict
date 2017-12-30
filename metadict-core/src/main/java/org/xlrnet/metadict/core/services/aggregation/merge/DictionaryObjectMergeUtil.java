@@ -75,13 +75,13 @@ public class DictionaryObjectMergeUtil {
         builder.setDomain(mergeAttribute(sourceObjects, DictionaryObject::getDomain));
         builder.setAbbreviation(mergeAttribute(sourceObjects, DictionaryObject::getAbbreviation));
         builder.setPronunciation(mergeAttribute(sourceObjects, DictionaryObject::getPronunciation));
-        builder.setMeanings(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getMeanings, CommonUtils::simpleNormalize));
-        builder.setAlternateForms(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getAlternateForms, CommonUtils::simpleNormalize));
+        builder.setMeanings(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getMeanings, CommonUtils::stripAndLowercase));
+        builder.setAlternateForms(CollectionUtils.divideAndFilterNormalized(sourceObjects, DictionaryObject::getAlternateForms, CommonUtils::stripAndLowercase));
 
         Map<GrammaticalForm, String> mergedAdditionalForms = CollectionUtils.divideAndMerge(
                 sourceObjects,
                 DictionaryObject::getAdditionalForms,
-                CommonUtils::simpleNormalize,
+                CommonUtils::stripAndLowercase,
                 ((v, r) -> StringUtils.stripToEmpty(v) + (r != null ? ", " + r : ""))
         );
         builder.setAdditionalForms(mergedAdditionalForms);
@@ -98,7 +98,7 @@ public class DictionaryObjectMergeUtil {
             if (collectedString == null) {
                 continue;
             }
-            String normalized = CommonUtils.simpleNormalize(collectedString);
+            String normalized = CommonUtils.stripAndLowercase(collectedString);
             normalizedAndActualAttributes.putIfAbsent(normalized, collectedString);
         }
 

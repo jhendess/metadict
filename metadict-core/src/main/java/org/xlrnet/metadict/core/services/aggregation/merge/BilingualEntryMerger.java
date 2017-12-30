@@ -35,8 +35,8 @@ import org.xlrnet.metadict.api.language.Language;
 import org.xlrnet.metadict.api.query.*;
 import org.xlrnet.metadict.core.api.aggregation.Merges;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
-import org.xlrnet.metadict.core.util.CommonUtils;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -47,6 +47,14 @@ public class BilingualEntryMerger extends AbstractEntryMerger<BilingualEntry> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BilingualEntryMerger.class);
 
+    /** Service for normalization. */
+    private final NormalizationService normalizationService;
+
+    @Inject
+    public BilingualEntryMerger(NormalizationService normalizationService) {
+        this.normalizationService = normalizationService;
+    }
+
     /**
      * Function which is used  for indexing {@link BilingualEntry} objects into a map.
      */
@@ -54,7 +62,9 @@ public class BilingualEntryMerger extends AbstractEntryMerger<BilingualEntry> {
     @NotNull
     protected MergeCandidateIdentifier buildCandidateIdentifier(@NotNull BilingualEntry input) {
         ImmutablePair<Language, Language> languagePair = ImmutablePair.of(input.getSource().getLanguage(), input.getTarget().getLanguage());
-        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(CommonUtils.simpleNormalize(input.getSource().getGeneralForm()), CommonUtils.simpleNormalize(input.getTarget().getGeneralForm()));
+        String normalizedSource = normalizationService.getNormalizedGeneralForm(input.getSource(), input.getEntryType());
+        String normalizedTarget = normalizationService.getNormalizedGeneralForm(input.getTarget(), input.getEntryType());
+        ImmutablePair<String, String> generalFormPair = ImmutablePair.of(normalizedSource, normalizedTarget);
         return new MergeCandidateIdentifier(languagePair, input.getEntryType(), generalFormPair);
     }
 

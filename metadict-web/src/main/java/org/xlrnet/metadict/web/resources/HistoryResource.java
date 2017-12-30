@@ -34,10 +34,7 @@ import org.xlrnet.metadict.web.middleware.util.Constants;
 
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -65,10 +62,7 @@ public class HistoryResource {
 
     @GET
     @UnitOfWork
-    public Response listQueries(@Auth JwtPrincipal principal, @Min(0) @QueryParam(OFFSET_PARAMETER) int offset, @Min(0) @QueryParam(SIZE_PARAMETER) int size) {
-        if (size == 0) {
-            size = 10;
-        }
+    public Response listQueries(@Auth JwtPrincipal principal, @Min(0) @QueryParam(OFFSET_PARAMETER) int offset, @DefaultValue("10") @Min(0) @QueryParam(SIZE_PARAMETER) int size) {
         List<QueryLogEntry> loggedQueries = queryLoggingService.getLoggedQueries(principal, offset, size);
 
         List<Link> links = new ArrayList<>();

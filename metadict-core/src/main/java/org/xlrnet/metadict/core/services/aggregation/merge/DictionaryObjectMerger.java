@@ -60,7 +60,7 @@ public class DictionaryObjectMerger extends AbstractMerger<DictionaryObject> {
 
         for (DictionaryObject dictionaryObject : normalizedInput) {
             Pair<String, Language> candidateIdentifier = ImmutablePair.of(
-                    CommonUtils.simpleNormalize(dictionaryObject.getGeneralForm()),
+                    CommonUtils.stripAndLowercase(dictionaryObject.getGeneralForm()),
                     dictionaryObject.getLanguage()
             );
             candidateMap.put(candidateIdentifier, dictionaryObject);

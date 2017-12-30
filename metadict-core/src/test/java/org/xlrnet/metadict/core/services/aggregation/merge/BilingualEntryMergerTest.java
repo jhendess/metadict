@@ -26,6 +26,7 @@ package org.xlrnet.metadict.core.services.aggregation.merge;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
@@ -40,6 +41,13 @@ import static junit.framework.TestCase.*;
  * Tests for {@link BilingualEntryMerger}.
  */
 public class BilingualEntryMergerTest {
+
+    private BilingualEntryMerger merger;
+
+    @Before
+    private void setup() {
+        merger = new BilingualEntryMerger(null); // Normalizer not necessary for tests
+    }
 
     @Test
     public void normalizeInput() throws Exception {
@@ -61,7 +69,7 @@ public class BilingualEntryMergerTest {
 
         ImmutableList<BilingualEntry> toNormalize = ImmutableList.of(entryA, entryB, entryC, entryD);
 
-        Collection<BilingualEntry> normalizedInput = new BilingualEntryMerger().normalizeInput(toNormalize);
+        Collection<BilingualEntry> normalizedInput = merger.normalizeInput(toNormalize);
 
         assertNotNull(normalizedInput);
         assertEquals(toNormalize.size(), normalizedInput.size());
@@ -92,7 +100,7 @@ public class BilingualEntryMergerTest {
 
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB, entryC, entryD);
 
-        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(3, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
@@ -119,7 +127,7 @@ public class BilingualEntryMergerTest {
         BilingualEntry entryC = ImmutableBilingualEntry.builder().setInputObject(sourceC).setOutputObject(targetC).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB, entryC);
-        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(3, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA)));
@@ -134,7 +142,7 @@ public class BilingualEntryMergerTest {
         BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA);
-        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         assertEquals(1, candidates.size());
         assertTrue(candidates.contains(ImmutableList.of(entryA)));
@@ -151,7 +159,7 @@ public class BilingualEntryMergerTest {
         BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
-        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         BilingualEntry entryBexpected = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.NOUN).build();
 
@@ -170,7 +178,7 @@ public class BilingualEntryMergerTest {
         BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.UNKNOWN).build();
 
         ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
-        Collection<Collection<BilingualEntry>> candidates = new BilingualEntryMerger().findCandidates(toCandidatize);
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
 
         BilingualEntry entryBexpected = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.NOUN).build();
 
@@ -231,7 +239,7 @@ public class BilingualEntryMergerTest {
 
         List<BilingualEntry> candidates = Lists.newArrayList(candidateA, candidateB);
 
-        BilingualEntry actualMerged = new BilingualEntryMerger().mergeCandidate(candidates);
+        BilingualEntry actualMerged = merger.mergeCandidate(candidates);
 
         DictionaryObject expectedSource = ImmutableDictionaryObject.builder()
                 .setLanguage(Language.GERMAN)
@@ -293,7 +301,7 @@ public class BilingualEntryMergerTest {
                 ).build();
 
         ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
-        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+        Collection<BilingualEntry> actual = merger.merge(collectionToMerge);
 
         ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
 
@@ -324,7 +332,7 @@ public class BilingualEntryMergerTest {
                 ).build();
 
         ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
-        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+        Collection<BilingualEntry> actual = merger.merge(collectionToMerge);
 
         ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
 
@@ -354,7 +362,7 @@ public class BilingualEntryMergerTest {
                 ).build();
 
         ArrayList<BilingualEntry> collectionToMerge = Lists.newArrayList(firstEntry, secondEntry);
-        Collection<BilingualEntry> actual = new BilingualEntryMerger().merge(collectionToMerge);
+        Collection<BilingualEntry> actual = merger.merge(collectionToMerge);
 
         ArrayList<BilingualEntry> actualList = Lists.newArrayList(actual);
 

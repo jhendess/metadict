@@ -300,7 +300,10 @@ public class Language implements Serializable {
      */
     @NotNull
     public String getIdentifierWithDialect() {
-        return this.identifier + StringUtils.stripToEmpty(this.dialect);
+        if (dialect != null) {
+            return this.identifier + "_" + StringUtils.stripToEmpty(this.dialect);
+        }
+        return getIdentifier();
     }
 
     /**

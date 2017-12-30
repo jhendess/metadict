@@ -28,6 +28,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.xlrnet.metadict.api.storage.StorageService;
 import org.xlrnet.metadict.api.storage.StorageServiceProvider;
+import org.xlrnet.metadict.core.api.aggregation.Normalizer;
 import org.xlrnet.metadict.core.api.aggregation.SimilarElementsMerger;
 import org.xlrnet.metadict.core.api.query.QueryPlanExecutionStrategy;
 import org.xlrnet.metadict.core.api.query.QueryPlanningStrategy;
@@ -35,6 +36,8 @@ import org.xlrnet.metadict.core.services.aggregation.merge.BilingualEntryMerger;
 import org.xlrnet.metadict.core.services.aggregation.merge.DefaultSimilarElementsMerger;
 import org.xlrnet.metadict.core.services.aggregation.merge.DictionaryObjectMerger;
 import org.xlrnet.metadict.core.services.aggregation.merge.MonolingualEntryMerger;
+import org.xlrnet.metadict.core.services.aggregation.merge.normalizer.EnglishVerbNormalizer;
+import org.xlrnet.metadict.core.services.aggregation.merge.normalizer.NorwegianVerbNormalizer;
 import org.xlrnet.metadict.core.services.query.CachedLinearExecutionStrategy;
 import org.xlrnet.metadict.core.services.query.SimpleQueryPlanningStrategy;
 import org.xlrnet.metadict.core.services.storage.DefaultStorageService;
@@ -65,5 +68,10 @@ public class CoreModule extends AbstractModule {
         similarElementsMergerBinder.addBinding().to(BilingualEntryMerger.class);
         similarElementsMergerBinder.addBinding().to(MonolingualEntryMerger.class);
         similarElementsMergerBinder.addBinding().to(DictionaryObjectMerger.class);
+
+        // Configure normalizers
+        Multibinder<Normalizer> normalizerBinder = Multibinder.newSetBinder(binder(), Normalizer.class);
+        normalizerBinder.addBinding().to(EnglishVerbNormalizer.class);
+        normalizerBinder.addBinding().to(NorwegianVerbNormalizer.class);
     }
 }

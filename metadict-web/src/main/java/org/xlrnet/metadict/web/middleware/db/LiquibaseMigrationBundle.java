@@ -10,6 +10,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlrnet.metadict.api.exception.MetadictRuntimeException;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -49,7 +50,7 @@ public class LiquibaseMigrationBundle implements ConfiguredBundle<DatabaseEnable
         Class<? extends JdbcConnection> liquibaseConnectionClass = configuration.getDatabaseConfiguration().getDbms().getLiquibaseConnectionClass();
         Constructor<? extends JdbcConnection> constructor = liquibaseConnectionClass.getConstructor(Connection.class);
         if (constructor == null) {
-            throw new RuntimeException("No suitable constructor found for class " + liquibaseConnectionClass.getCanonicalName());
+            throw new MetadictRuntimeException("No suitable constructor found for class " + liquibaseConnectionClass.getCanonicalName());
         }
         return constructor.newInstance(connection);
     }

@@ -161,8 +161,15 @@ public class CommonUtils {
         return null;
     }
 
+    /**
+     * Transforms the given input string to lowercase and trims whitespace.
+     *
+     * @param input
+     *         The input string to normalize.
+     * @return The trimmed and lowercased string.
+     */
     @NotNull
-    public static String simpleNormalize(@NotNull String collectedString) {
-        return StringUtils.lowerCase(StringUtils.strip(collectedString));
+    public static String stripAndLowercase(@NotNull String input) {
+        return StringUtils.lowerCase(StringUtils.strip(input));
     }
 }
