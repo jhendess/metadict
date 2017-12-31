@@ -25,11 +25,13 @@
 package org.xlrnet.metadict.core.services.aggregation.merge;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.core.services.aggregation.merge.normalizer.EnglishVerbNormalizer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +47,10 @@ public class BilingualEntryMergerTest {
     private BilingualEntryMerger merger;
 
     @Before
-    private void setup() {
-        merger = new BilingualEntryMerger(null); // Normalizer not necessary for tests
+    public void setup() {
+        NormalizationService normalizationService = new NormalizationService(ImmutableSet.of(new EnglishVerbNormalizer()));
+        normalizationService.initialize();
+        merger = new BilingualEntryMerger(normalizationService);
     }
 
     @Test
@@ -109,6 +113,27 @@ public class BilingualEntryMergerTest {
     }
 
     /**
+     * Tests the normalization of English verbs (i.e. adding a "to" in the beginning).
+     */
+    @Test
+    public void findCandidates_englishVerbs() {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, " to eat");
+        DictionaryObject targetA = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "essen");
+        BilingualEntry entryA = ImmutableBilingualEntry.builder().setInputObject(sourceA).setOutputObject(targetA).setEntryType(EntryType.VERB).build();
+
+        DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm(" eat ").setDescription("bla").build();
+        DictionaryObject targetB = ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("essen").setDescription("bla").build();
+        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.VERB).build();
+
+        ImmutableList<BilingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
+
+        Collection<Collection<BilingualEntry>> candidates = merger.findCandidates(toCandidatize);
+
+        assertEquals(1, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
+    }
+
+    /**
      * Contains one unknown and two other entryTypes. In this case, objects may not be treated as candidates of the same
      * group.
      */
@@ -120,7 +145,7 @@ public class BilingualEntryMergerTest {
 
         DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.GERMAN).setGeneralForm("A").setDescription("bla").build();
         DictionaryObject targetB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm("A").setDescription("bla").build();
-        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.VERB).build();
+        BilingualEntry entryB = ImmutableBilingualEntry.builder().setInputObject(sourceB).setOutputObject(targetB).setEntryType(EntryType.CONJUNCTION).build();
 
         DictionaryObject sourceC = ImmutableDictionaryObject.createSimpleObject(Language.GERMAN, "A");
         DictionaryObject targetC = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, "A");

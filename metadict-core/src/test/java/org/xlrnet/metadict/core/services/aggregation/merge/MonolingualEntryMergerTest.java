@@ -25,11 +25,13 @@
 package org.xlrnet.metadict.core.services.aggregation.merge;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.xlrnet.metadict.api.language.*;
 import org.xlrnet.metadict.api.query.*;
+import org.xlrnet.metadict.core.services.aggregation.merge.normalizer.EnglishVerbNormalizer;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +48,9 @@ public class MonolingualEntryMergerTest {
 
     @Before
     public void setup() {
-        merger = new MonolingualEntryMerger(null);  // Normalizer not necessary for tests
+        NormalizationService normalizationService = new NormalizationService(ImmutableSet.of(new EnglishVerbNormalizer()));
+        normalizationService.initialize();
+        merger = new MonolingualEntryMerger(normalizationService);
     }
 
     @Test
@@ -71,6 +75,22 @@ public class MonolingualEntryMergerTest {
         assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
         assertTrue(candidates.contains(ImmutableList.of(entryC)));
         assertTrue(candidates.contains(ImmutableList.of(entryD)));
+    }
+
+    @Test
+    public void findCandidates_englishVerbs() throws Exception {
+        DictionaryObject sourceA = ImmutableDictionaryObject.createSimpleObject(Language.ENGLISH, " to eat");
+        MonolingualEntry entryA = ImmutableMonolingualEntry.builder().setContent(sourceA).setEntryType(EntryType.VERB).build();
+
+        DictionaryObject sourceB = ImmutableDictionaryObject.builder().setLanguage(Language.ENGLISH).setGeneralForm("eat ").setDescription("bla").build();
+        MonolingualEntry entryB = ImmutableMonolingualEntry.builder().setContent(sourceB).setEntryType(EntryType.VERB).build();
+
+        ImmutableList<MonolingualEntry> toCandidatize = ImmutableList.of(entryA, entryB);
+
+        Collection<Collection<MonolingualEntry>> candidates = merger.findCandidates(toCandidatize);
+
+        assertEquals(1, candidates.size());
+        assertTrue(candidates.contains(ImmutableList.of(entryA, entryB)));
     }
 
     /**

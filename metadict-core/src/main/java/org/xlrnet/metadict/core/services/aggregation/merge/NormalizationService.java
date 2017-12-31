@@ -41,7 +41,7 @@ public class NormalizationService {
     }
 
     @PostConstruct
-    private void initialize() {
+    void initialize() {
         for (Normalizer normalizer : normalizers) {
             registerNormalizer(normalizer);
         }
